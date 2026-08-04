@@ -1,0 +1,1744 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "a57fcc851c917a2bedad42d8df128954cb7480f52b960d1019c7757e0ec27443",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:8816b821452453fc84078e4fa213029b",
+      "kind": "paragraph",
+      "text": "PGN: Design and Implementation of a Vision-Language Navigation System Based",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 75,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:968bad2a6e54cd63ea169abbc45959fb",
+      "kind": "heading",
+      "text": "on Pangu Multimodal Foundation Model",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model"
+      ],
+      "char_start": 77,
+      "char_end": 113,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1329cddebf029cce2bb62d413273a246",
+      "kind": "heading",
+      "text": "Xian, Mingxi Li, Yizheng Wang, Yiming Shen, Qi Chen, Zhuoling Xiao*",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Xian, Mingxi Li, Yizheng Wang, Yiming Shen, Qi Chen, Zhuoling Xiao*"
+      ],
+      "char_start": 115,
+      "char_end": 182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86eba067383387f2ea3baef963bb4be6",
+      "kind": "paragraph",
+      "text": "School of Information and Communication Engineering University of Electronic Science and Technology of China *Corresponding author:zhuolingxiao@uestc.edu.cn",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Xian, Mingxi Li, Yizheng Wang, Yiming Shen, Qi Chen, Zhuoling Xiao*"
+      ],
+      "char_start": 184,
+      "char_end": 340,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d396e752ca4648ede4735e524222709",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract"
+      ],
+      "char_start": 342,
+      "char_end": 350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf3795003fda32a23d1a703f4897a9a0",
+      "kind": "paragraph",
+      "text": "Vision-Language Navigation (VLN) requires an embodied agent to interpret a natural-language instruction and predict actions from temporally ordered visual observations. Adapting a multimodal large language model to VLN requires visual-language alignment, compact temporal inputs, actionspace grounding, and stable training on the target hardware. This technical report presents PGN (Pangu Navigator), an offline VLN action-prediction system built on OpenPangu- 7B. Training proceeds in two stages. First, PGMM aligns a frozen EVA-ViT-G/14 vision encoder with the frozen language backbone by training a Q-Former and a two-layer MLP projector. Second, PGN adapts the aligned model to expert navigation trajectories using five-observation windows, epoch-dependent temporal sampling, and a reasoningthen-action output format; this stage freezes the aligned visual pathway and updates three structural-token embeddings and LoRA adapters. The implementation combines mixed-precision computation, selective FP32 computation, and DeepSpeed ZeRO-2 on eight Ascend 910B NPUs. Under teacher-forced, open-loop evaluation on 500 held-out expert trajectories, V9 reports a 62.29% Normalized Action Match (NAM) and a 100.00% Non-empty Rate (NER). These metrics quantify offline expert-action alignment rather than closed-loop navigation success; evaluating error accumulation, path efficiency, and goal completion remains future work.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract"
+      ],
+      "char_start": 352,
+      "char_end": 1771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70bbeb670bdbaa35fb75ced41f837b29",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1773,
+      "char_end": 1785,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd7eba574c0a365be2ff056ff5ce8aeb",
+      "kind": "paragraph",
+      "text": "Vision-Language Navigation (VLN) connects visual perception, language understanding, spatial reasoning, and action generation. Given an instruction such as “walk past the kitchen and stop near the vase,” an agent must interpret landmarks, use recent observations as temporal context, and select a sequence of low-level actions. Early VLN benchmarks use discrete navigation graphs [ 1], while VLN-CE extends the task to continuous environments with forward and turning actions [8]. Multimodal large language models (MLLMs) offer broad visual-language representations and flexible text generation [2, 11]. However, adapting a general MLLM to continuous navigation requires aligning visual features with the language model, representing temporal observations compactly, grounding generated responses in a small action space, and maintaining an efficient training stack. These constraints are particularly relevant when a 7B-scale model is trained on Ascend NPUs, where unsupported or unstable half-precision operations may require selective full-precision computation. This report describes PGN, an implementation that adapts OpenPangu-7B [ 3] to offline VLN action prediction. It addresses these requirements through two-stage visuallanguage alignment and navigation adaptation. The current study evaluates offline expert-action alignment under teacher-forced, open-loop observation histories rather than closed-loop navigation success. The contributions are: • A two-stage system that first aligns visual and language",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1787,
+      "char_end": 3303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b93fa49e4f5b7026789242a53e134358",
+      "kind": "paragraph",
+      "text": "representations through PGMM and then adapts the aligned model to expert navigation trajectories with temporal observations and LoRA. • A structured navigation input and output format combining five-frame observation windows, temporal boundary tokens, reasoning text, and a canonical four-action space. • An Ascend-oriented training implementation and a teacherforced, open-loop evaluation across model iterations, together with a discussion of what offline action matching can and cannot establish.",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3305,
+      "char_end": 3804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f036c59743bb66737328f5a363db2c37",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Related Work"
+      ],
+      "char_start": 3806,
+      "char_end": 3818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bde84368d4f4e16062a787c3d6a86134",
+      "kind": "paragraph",
+      "text": "Vision-language navigation.R2R introduced languageguided navigation in real scanned environments [ 1], and RxR expanded the task with multilingual, densely grounded instructions [10]. VLN-CE extended navigation from predefined graph nodes to continuous environments [8]. Historyaware transformers [ 4] and in-domain pretraining [ 5] im- 1",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Related Work"
+      ],
+      "char_start": 3820,
+      "char_end": 4158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34e971c2a8819f4ce53afafc60161d21",
+      "kind": "table",
+      "text": "arXiv:2607.17806v1  [cs.AI]  20 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Related Work"
+      ],
+      "char_start": 4160,
+      "char_end": 4200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef89944949d18e26973ebe213e89c6ff",
+      "kind": "paragraph",
+      "text": "prove temporal and cross-modal representations. More recent work uses large language models for explicit navigation reasoning [16] and navigation instruction tuning [7]. These studies motivate PGN’s use of temporally ordered observations and instruction-conditioned action prediction. Multimodal foundation models.BLIP-2 uses a Q-Former to connect a frozen vision encoder and a frozen language model [11]. LLaV A demonstrates the effectiveness of visual instruction tuning [13], while DeepSeek-VL2 explores sparse multimodal architectures [ 15]. PGN follows this frozen-backbone alignment pattern while using OpenPangu- 7B as the language backbone and an Ascend NPU training stack. Reasoning and parameter-efficient adaptation.Chainof-thought prompting elicits intermediate reasoning text before a final response [14], and LoRA enables task adaptation through low-rank updates rather than full-model fine-tuning [6]. In PGN, reasoning text precedes the final canonical action, while LoRA adapters limit updates to the language backbone.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "Related Work"
+      ],
+      "char_start": 4202,
+      "char_end": 5238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:badb38aa86866e26f609f1a52245f24e",
+      "kind": "heading",
+      "text": "PGN Method",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "PGN Method"
+      ],
+      "char_start": 5240,
+      "char_end": 5250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7fbfbd15a761d0e41a59dde43171ca5",
+      "kind": "heading",
+      "text": "Navigation Formulation",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "PGN Method",
+        "Navigation Formulation"
+      ],
+      "char_start": 5252,
+      "char_end": 5274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c26444b2c1144b3393fff40a335133f",
+      "kind": "paragraph",
+      "text": "At time step t, PGN receives a navigation instruction I and an ordered window containing four historical observations and the current observation: Ot = (ot−4s, ot−3s, ot−2s, ot−s, ot),(1) where oτ denotes the observation at time τ, and s is the temporal sampling stride. The window length remains fixed at five observations, while s controls the temporal spacing between them. The observations retain their chronological order in the serialized multimodal input, and special structural tokens mark image starts, image ends, and frame boundaries. The action space is",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "Abstract",
+        "PGN Method",
+        "Navigation Formulation"
+      ],
+      "char_start": 5276,
+      "char_end": 5841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a6ad73274e68fbbfab00f2a82d26ea7",
+      "kind": "heading",
+      "text": "A={forward,left,right,stop},(2)",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)"
+      ],
+      "char_start": 5843,
+      "char_end": 5874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daf2ec48e48bd8262f035ec00896ee30",
+      "kind": "paragraph",
+      "text": "where the four symbols denote semantic action classes. In the collected trajectories, forward motion is 0.25 m and each turn is 15 degrees. The model generates reasoning text rt before the actiona t:",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)"
+      ],
+      "char_start": 5876,
+      "char_end": 6075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5675ee519c85166f161e13876faa9404",
+      "kind": "table",
+      "text": "P(r t, at |I, Ot) =P(r t |I, Ot)P(a t |r t, I, Ot).(3)",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)"
+      ],
+      "char_start": 6077,
+      "char_end": 6131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d364ffa13dda1703528e47d1e6c890ec",
+      "kind": "paragraph",
+      "text": "This factorization specifies the output format; the present experiments do not separately measure reasoning quality.",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)"
+      ],
+      "char_start": 6133,
+      "char_end": 6249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:211e9b8dba1e50405333011bc1c49737",
+      "kind": "heading",
+      "text": "Model Components",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Model Components"
+      ],
+      "char_start": 6251,
+      "char_end": 6267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2219be9025e031278a75ed2fc14b266",
+      "kind": "caption",
+      "text": "Figure 1 summarizes the data flow. PGN denotes the",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Model Components"
+      ],
+      "char_start": 6269,
+      "char_end": 6319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b68af35f88568337fd23c81c489fe69",
+      "kind": "paragraph",
+      "text": "complete navigation action-generation system, whereas OpenPangu-7B serves as its language backbone. For each 224×224 observation, EV A-ViT-G/14 first extracts patchlevel visual features. A Q-Former then uses 32 learnable query tokens and cross-attention to produce a fixed-size visual representation. A two-layer MLP projector maps each 768-dimensional query representation to the 4096dimensional OpenPangu-7B embedding space, making the projected visual tokens dimensionally compatible with the language backbone. The component is labeled “mm-mlp Perceiver” in Figure 1; we use the term “two-layer MLP projector” in the text. The five observations are processed by this shared visualalignment pathway, and their projected tokens remain temporally ordered. A navigation-assistant identity prompt, the instruction, and the ordered visual tokens form a single autoregressive context. Three learned structural tokens delimit image starts, image ends, and frame boundaries. OpenPangu- 7B then generates reasoning text followed by a canonical action, while LoRA adapters provide navigation-specific updates without full-model fine-tuning.",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Model Components"
+      ],
+      "char_start": 6321,
+      "char_end": 7454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29d2a2b7dccb6916dd58120593bd687b",
+      "kind": "heading",
+      "text": "Data and Training",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training"
+      ],
+      "char_start": 7456,
+      "char_end": 7473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:822c68ab375c81497e3ecaf4325ca4b7",
+      "kind": "paragraph",
+      "text": "PGN is trained in two stages. Stage 1 aligns visual and language representations using paired images and captions, and Stage 2 uses expert navigation trajectories to adapt the aligned model for supervised next-action generation. This division separates visual conditioning from navigation-task adaptation.",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training"
+      ],
+      "char_start": 7475,
+      "char_end": 7780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12c2441f3799e74e35b695dd0e2400f5",
+      "kind": "heading",
+      "text": "Visual-Language Alignment",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Visual-Language Alignment"
+      ],
+      "char_start": 7782,
+      "char_end": 7807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd74b21dbfd605e8a2a79ea2f77e5afb",
+      "kind": "paragraph",
+      "text": "Stage 1 trains PGMM on image-caption pairs from Microsoft COCO [12] and Visual Genome [9]. As shown in Figure 3(a), the EV A-ViT-G/14 vision encoder and OpenPangu-7B language backbone remain frozen, while the Q-Former and twolayer MLP projector are optimized for image-conditioned text generation. This stage prepares visual inputs for the language backbone before navigation adaptation.",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Visual-Language Alignment"
+      ],
+      "char_start": 7809,
+      "char_end": 8196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:708a2da635744e9ba1e844d408628e53",
+      "kind": "heading",
+      "text": "Expert Trajectory Collection",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 8198,
+      "char_end": 8226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9e0a1198a4b474dd97e280c49891c73",
+      "kind": "paragraph",
+      "text": "The navigation dataset was collected through a DAggercompatible simulation pipeline. At collection iteration i, the policy mixture is πactive =β iπ∗ + (1−β i)ˆπ,(4) where π∗ is the expert policy and ˆπis the learned policy. The recorded configuration fixes β= 1, so βi = 1and the active policy is always the expert. Consequently, the procedure is expert-only data collection followed by supervised behavior cloning, rather than iterative on-policy DAgger training. 2",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 8228,
+      "char_end": 8694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:267d827a0b2cf1da6afc3b856db95f41",
+      "kind": "caption",
+      "text": "Figure 1. PGN system topology. Five temporally ordered observations pass through the shared EV A-ViT-G, Q-Former, and multimodal MLP",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 8696,
+      "char_end": 8828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbdeb5cf77fccf4e3e1f7ec27b81d72d",
+      "kind": "paragraph",
+      "text": "pathway. Their visual tokens are assembled with the tokenized navigation instruction in the OpenPangu-7B embedding space and processed by the multimodal fusion layers. Expert-only collection (beta = 1) Observation 1 Observation 2 Observation 3 Turn left 15 deg Forward 0.25 m Image + instruction + expert action -> supervised behavior cloning",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 8830,
+      "char_end": 9172,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b3760eb7f13fc9ff4ef70f94d93db57",
+      "kind": "caption",
+      "text": "Figure 2. Example of expert-only trajectory collection. The data",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 9174,
+      "char_end": 9238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a60723ecbebe8f339f58464a60f469f",
+      "kind": "paragraph",
+      "text": "pipeline uses β= 1 , so every stored action label is produced by the expert policy and is used for supervised behavior cloning. After cleaning, the development record contains 19,699 navigation trajectories and 1,567,487 observation frames. Each trajectory pairs a natural-language instruction and a sequence of observations with the expert action at each step.",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 9240,
+      "char_end": 9601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4aa055a71559c93fd95b8e127ba18703",
+      "kind": "caption",
+      "text": "Figure 2 illustrates a short segment.",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Expert Trajectory Collection"
+      ],
+      "char_start": 9603,
+      "char_end": 9640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8db9586c4deedd5d812ccdc6458c1484",
+      "kind": "heading",
+      "text": "Temporal and Action-Aware Sampling",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Temporal and Action-Aware Sampling"
+      ],
+      "char_start": 9642,
+      "char_end": 9676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbdf7b8178ea3dd3d769ce17db2bdee7",
+      "kind": "paragraph",
+      "text": "During Stage 2, five-observation windows are sampled from each trajectory. To vary the temporal offset while keeping the window length fixed, the starting index changes with epoche: istart =emods.(5) The recorded Stage 2 sampling curriculum uses (s, p) = (4,0.1) , (6,0.6) , and (8,0.2) in three successive phases. Here, s is the temporal stride defined in Section 3.1, and p is the probability that the action-aware sampler replaces a forward-dominated selection with an available turning or stopping sample. Rotating the starting offset and rebalancing action selection are separate operations.",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Temporal and Action-Aware Sampling"
+      ],
+      "char_start": 9678,
+      "char_end": 10274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:298a0e3515ffcc94792c115d92b09d41",
+      "kind": "heading",
+      "text": "Optimization and Ascend Implementation",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 10276,
+      "char_end": 10314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d085659ac4810cb0a83dc0a68b1f0b60",
+      "kind": "caption",
+      "text": "Figure 3 summarizes the parameter updates. Stage 1 updates",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 10316,
+      "char_end": 10374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f302533f47eb7d6f1267dcef31769023",
+      "kind": "paragraph",
+      "text": "the Q-Former and two-layer MLP projector while keeping both backbones frozen. In Stage 2, the aligned EV A-ViT- G/14, Q-Former, projector, tokenizer, and base OpenPangu- 7B parameters remain frozen. Navigation-specific learning is confined to the three structural-token embeddings and the LoRA adapters injected into the language model. The training stack uses eight Ascend 910B NPUs, mixedprecision computation, and DeepSpeed ZeRO-2. When FP16 attention-mask operations produced numerical overflow, only the affected computation was performed in FP32. FP32 was therefore used selectively for numerical stability rather than as the global training precision. 3",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 10376,
+      "char_end": 11036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ae327f8df5e57ce599e6b319ddf45ac",
+      "kind": "paragraph",
+      "text": "(a) Stage 1: multimodal alignment pretraining (b) Stage 2: navigation adaptation",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 11038,
+      "char_end": 11118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a3d4b47a355b068ad54edc6ffea0e59",
+      "kind": "caption",
+      "text": "Figure 3. Two-stage training architecture. Stage 1 freezes EV A-ViT-G and OpenPangu-7B while training the Q-Former and multimodal",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 11120,
+      "char_end": 11249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:277f741f8ad986c92ae4a7d68442c758",
+      "kind": "paragraph",
+      "text": "MLP projector on image-text pairs. Stage 2 freezes the aligned visual pathway and the base language model, while training three structuraltoken embeddings and LoRA adapters on expert navigation trajectories. Snowflakes and flames denote frozen and trainable components, respectively.",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 11251,
+      "char_end": 11534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10e2473677cdcb10271c209690eee4fd",
+      "kind": "caption",
+      "text": "Figure 4. Offline expert-trajectory alignment evaluation. The held-",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 11536,
+      "char_end": 11603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b34696e0b0da08b3ae6e6efcb7720bb5",
+      "kind": "paragraph",
+      "text": "out trajectory supplies the observation history and teacher action. PGN predicts an action token, which is compared with the teacher action to compute and log alignment metrics. The prediction is not executed to obtain the next observation.",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Data and Training",
+        "Optimization and Ascend Implementation"
+      ],
+      "char_start": 11605,
+      "char_end": 11845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:419d2bcb0b783a403cc5d7eeca19fcf6",
+      "kind": "heading",
+      "text": "Offline Evaluation",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation"
+      ],
+      "char_start": 11847,
+      "char_end": 11865,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:199bd5fd262fcb4d7ace3fb47fd0cf51",
+      "kind": "heading",
+      "text": "Protocol and Metrics",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation",
+        "Protocol and Metrics"
+      ],
+      "char_start": 11867,
+      "char_end": 11887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fdecd49f5d2d2a73b202fb2ba0a8c9a",
+      "kind": "paragraph",
+      "text": "The validation split contains 500 held-out expert trajectories. Evaluation uses stride s= 1 and supplies the model with a fixed five-observation window: four historical observations and the current observation from the expert trajectory. Figure 4 retains the evaluation flow from the prior manuscript. Although the Habitat simulator is shown as the source of the recorded trajectory, the model prediction does not change the next evaluation observation. The protocol therefore measures teacher-forced local action agreement without closed-loop error accumulation. We report three metrics: • Exact-string Match (EM):the generated response exactly equals the canonical action string. • Normalized Action Match (NAM):an action is extracted from the response after normalizing forward, left, right, and stop expressions, then compared with the expert action. • Non-empty Rate (NER):the fraction of action predictions producing any non-empty response. For V6, the retained raw file contains 40,000 action predictions over the 500 trajectories and reproduces EM= 11.61%, NAM= 23.18%, and NER= 99.17%. 4",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation",
+        "Protocol and Metrics"
+      ],
+      "char_start": 11889,
+      "char_end": 12985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a03de493486109b3006d3841f31f7554",
+      "kind": "heading",
+      "text": "Results Across Iterations",
+      "order": 47,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation",
+        "Results Across Iterations"
+      ],
+      "char_start": 12987,
+      "char_end": 13012,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42865c4d70a338dee6cf929025d91ae3",
+      "kind": "caption",
+      "text": "Table 1. Original offline evaluation data reported across PGN iterations. Strict, Fuzzy, and Non-blank correspond to EM, NAM, and NER in",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation",
+        "Results Across Iterations"
+      ],
+      "char_start": 13014,
+      "char_end": 13150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34b53018b326fa8f64c81746d5b87273",
+      "kind": "paragraph",
+      "text": "the revised terminology. Metric values are percentages; the ten rightmost columns are raw counts of held-out trajectories in per-trajectory Fuzzy/NAM intervals. Action-level metrics (%) Per-trajectory Fuzzy/NAM interval counts Version Strict Fuzzy Non-blank 0–10 10–20 20–30 30–40 40–50 50–60 60–70 70–80 80–90 90–100 V3 8.40 8.40 12.93 39 8 7 0 1 1 0 0 0 0 V5 25.40 25.40 33.98 41 115 160 113 40 18 10 2 1 0 V6 11.61 23.18 99.17 80 175 118 43 31 26 16 8 3 0 V8 0.00 62.13 100.00 5 1 15 26 51 141 147 85 26 3 V9 0.00 62.29 100.00 5 1 13 25 53 133 160 84 23 3 V6 is reproducible from retained per-action predictions; V8 and V9 are retained aggregate summaries. The original V3 interval counts sum to 56 rather than 500, so V3 is preserved here for source fidelity but excluded from Figure 5(b). (a) Version-level offline metrics 0% 20% 40% 60% 80% 100% V3 V5 V6 V8 V9",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "Offline Evaluation",
+        "Results Across Iterations"
+      ],
+      "char_start": 13152,
+      "char_end": 14018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:134a5f33542453e23a0ee19e75172caf",
+      "kind": "heading",
+      "text": "4",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "4"
+      ],
+      "char_start": 14020,
+      "char_end": 14021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f0bb217b527c96a93422d81d92056f3",
+      "kind": "heading",
+      "text": "4",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "4"
+      ],
+      "char_start": 14023,
+      "char_end": 14024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f53141a3b221558a4cb5f6c40d16ac2",
+      "kind": "heading",
+      "text": "2",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "2"
+      ],
+      "char_start": 14026,
+      "char_end": 14027,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fd05ee992d905f361ffeadd1a51aa1e",
+      "kind": "heading",
+      "text": "1",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "1"
+      ],
+      "char_start": 14029,
+      "char_end": 14030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79cb5962777b95b82d778832aa1331fa",
+      "kind": "heading",
+      "text": "3",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "3"
+      ],
+      "char_start": 14032,
+      "char_end": 14033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39f6554babea2c5c7961380bd4a6d523",
+      "kind": "heading",
+      "text": "9",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "9"
+      ],
+      "char_start": 14035,
+      "char_end": 14036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c08051f9f6f17c4e73abf45d46b5169",
+      "kind": "heading",
+      "text": "0",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "0"
+      ],
+      "char_start": 14038,
+      "char_end": 14039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72f8d17278c0910437af1ad316d38d93",
+      "kind": "heading",
+      "text": "2",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "2"
+      ],
+      "char_start": 14041,
+      "char_end": 14042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80ae7f38d7dfd746296200dae1d08df1",
+      "kind": "heading",
+      "text": "0",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "0"
+      ],
+      "char_start": 14044,
+      "char_end": 14045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00bf9375dadb3fb76cda80cc1b7fb83b",
+      "kind": "heading",
+      "text": "0",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "0"
+      ],
+      "char_start": 14047,
+      "char_end": 14048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff29865bf238bf82f98808c618cc6c21",
+      "kind": "paragraph",
+      "text": "Normalized action match Non-empty rate (b) Per-trajectory action-match distribution",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "A={forward,left,right,stop},(2)",
+        "0"
+      ],
+      "char_start": 14050,
+      "char_end": 14133,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27afb8b438666ef25cfcdef32c3f0493",
+      "kind": "heading",
+      "text": "10",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "10"
+      ],
+      "char_start": 14135,
+      "char_end": 14137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2334b043635df41a3aaf03f079a7f784",
+      "kind": "heading",
+      "text": "20",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "20"
+      ],
+      "char_start": 14139,
+      "char_end": 14141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b5ad42f01959b8ce3eb5cc556bd32c1",
+      "kind": "heading",
+      "text": "30",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "30"
+      ],
+      "char_start": 14143,
+      "char_end": 14145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e17d50dcf1671fca189d6a61e4fe645",
+      "kind": "heading",
+      "text": "40",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "40"
+      ],
+      "char_start": 14147,
+      "char_end": 14149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50ba2bd2bada8237918d74ee593b8988",
+      "kind": "heading",
+      "text": "50",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "50"
+      ],
+      "char_start": 14151,
+      "char_end": 14153,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43c8e442f1756e24bd3b80cc740789d8",
+      "kind": "heading",
+      "text": "60",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "60"
+      ],
+      "char_start": 14155,
+      "char_end": 14157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8c6c49611b293b851dd633d29183369",
+      "kind": "heading",
+      "text": "70",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "70"
+      ],
+      "char_start": 14159,
+      "char_end": 14161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bccd861f0fe91001247ebf7ec354171b",
+      "kind": "heading",
+      "text": "80",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "80"
+      ],
+      "char_start": 14163,
+      "char_end": 14165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfa025a040e6affd0a2f9df875fe02cc",
+      "kind": "heading",
+      "text": "90",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "90"
+      ],
+      "char_start": 14167,
+      "char_end": 14169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a19d635029ff722eaf9232b4cecf2046",
+      "kind": "heading",
+      "text": "100",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14171,
+      "char_end": 14174,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b701c687dfb96b24693ee5efc903e75",
+      "kind": "paragraph",
+      "text": "Trajectory-level normalized action match (%) V5 8 23 32 23 8 4 2 0 0 0 V6 16 35 24 9 6 5 3 2 1 0 V8 1 0 3 5 10 28 29 17 5 1 V9 1 0 3 5 11 27 32 17 5 1 Cell values are percentages of 500 held-out trajectories.",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14176,
+      "char_end": 14384,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60f3108a2028be7f5aa3dea0abb82118",
+      "kind": "caption",
+      "text": "Figure 5. Visualization of the raw results in Table 1. (a) Fuzzy and Non-blank are shown using the revised NAM and NER terminology. (b)",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14386,
+      "char_end": 14521,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab661046e8b6aea85cd5db677e298aef",
+      "kind": "paragraph",
+      "text": "The raw interval counts for versions with internally consistent 500-trajectory totals are converted to percentages and displayed as a heatmap. V3 is omitted from the heatmap because its recorded counts sum to 56.",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14523,
+      "char_end": 14735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5338aa678f0656ffcfcb80fc5edfcfcd",
+      "kind": "caption",
+      "text": "Table 1 preserves the original metric values and interval",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14737,
+      "char_end": 14794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7852602fe052632de50c89e4dd2afb6d",
+      "kind": "paragraph",
+      "text": "counts, while Figure 5 visualizes the comparable trends and distributions. From V5 to V6, NER rises from 33.98% to",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100"
+      ],
+      "char_start": 14796,
+      "char_end": 14910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a19d8f07f5801a79a1f8a30c6c75447e",
+      "kind": "heading",
+      "text": "17%, while NAM changes from 25.40% to 23.18%. V8",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "17%, while NAM changes from 25.40% to 23.18%. V8"
+      ],
+      "char_start": 14912,
+      "char_end": 14960,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d95072af3e345494a95e7d8f2e4d853",
+      "kind": "paragraph",
+      "text": "and V9 report NAM values of 62.13% and 62.29%, respectively, with NER of 100.00%. Their EM is zero because these versions generate reasoning text before the action; whole-response exact matching is therefore not comparable with versions that emit only an action phrase. The per-trajectory distribution also moves from the 10– 30% region for V5/V6 toward the 50–80% region for V8/V9. Reasoning-then-action output, identity prompting, temporal sampling, and action-aware sampling were introduced within the same development cycle. The available results therefore document the combined version change but do not isolate the causal contribution of each component.",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "17%, while NAM changes from 25.40% to 23.18%. V8"
+      ],
+      "char_start": 14962,
+      "char_end": 15621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c939391dd532a9e03942178246a867d3",
+      "kind": "heading",
+      "text": "Evaluation Limitations",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "17%, while NAM changes from 25.40% to 23.18%. V8",
+        "Evaluation Limitations"
+      ],
+      "char_start": 15623,
+      "char_end": 15645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ace07c4aa43f0d5063cf2c820561732",
+      "kind": "paragraph",
+      "text": "The teacher-forced protocol measures action agreement under expert observation histories. It does not measure whether the model can recover from an incorrect action, stop within a goal radius, or follow an efficient path. Accordingly, the reported numbers are not Success Rate, SPL, navigation error, or nDTW. Closed-loop Habitat evaluation is required before making claims about navigation success. In addition, per-action logs were retained for V6 but not for the later aggregate summaries. We therefore do not report action-wise error percentages for V8 or V9. The aggregate trend is useful as a development record, but it should not be interpreted as an ablation study or a comparison with 5",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "17%, while NAM changes from 25.40% to 23.18%. V8",
+        "Evaluation Limitations"
+      ],
+      "char_start": 15647,
+      "char_end": 16342,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1832e3f01da6f18cc323849c2a985661",
+      "kind": "paragraph",
+      "text": "published VLN systems.",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "17%, while NAM changes from 25.40% to 23.18%. V8",
+        "Evaluation Limitations"
+      ],
+      "char_start": 16344,
+      "char_end": 16366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:101783424a5a21ece6373cf062a0e5d2",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "Conclusion"
+      ],
+      "char_start": 16368,
+      "char_end": 16378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb63aae897900f40f6e36529cfd73cfd",
+      "kind": "paragraph",
+      "text": "This report presented PGN, an OpenPangu-7B-based system for offline VLN action prediction. PGN combines Q- Former-based visual alignment, a two-stage training pipeline, five-observation temporal inputs, LoRA adaptation, and an Ascend-oriented distributed training stack. V8 and V9 report NAM values of 62.13% and 62.29%, respectively, with NER of 100.00% under teacher-forced, open-loop evaluation. These results support the feasibility of adapting OpenPangu- 7B to offline expert-action alignment, but they do not establish closed-loop navigation success. Future evaluation should execute predicted actions in the simulator and report goal completion, path efficiency, trajectory similarity, and recovery from accumulated errors.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "100",
+        "Conclusion"
+      ],
+      "char_start": 16380,
+      "char_end": 17110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2cd102bfe95363158d8baa07dcc1a4e",
+      "kind": "heading",
+      "text": "References",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "References"
+      ],
+      "char_start": 17112,
+      "char_end": 17122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b05fac63849905d2cc5680d97fabf42f",
+      "kind": "reference",
+      "text": "[1] Peter Anderson, Qi Wu, Damien Teney, et al. Vision-and-language navigation: Interpreting visually-grounded navigation instructions in real environments. InCVPR, 2018. [2] Davide Caffagni et al. The revolution of multimodal large language models: A survey.arXiv preprint arXiv:2402.12451, 2024. [3] Hanting Chen, Yasheng Wang, Kai Han, et al. Pangu Embedded:",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "References"
+      ],
+      "char_start": 17124,
+      "char_end": 17485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bb35290d14ace28f33d984617815c1f",
+      "kind": "heading",
+      "text": "An Efficient Dual-system LLM Reasoner with Metacognition.arXiv",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "An Efficient Dual-system LLM Reasoner with Metacognition.arXiv"
+      ],
+      "char_start": 17487,
+      "char_end": 17549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38b76e68c15a869dfeba86cd820fa324",
+      "kind": "paragraph",
+      "text": "preprint arXiv:2505.22375, 2025. [4] Shizhe Chen, Pierre-Louis Guhur, Cordelia Schmid, and Ivan Laptev. History aware multimodal transformer for vision-and-language navigation. InCVPR, 2022. [5] Pierre-Louis Guhur, Makarand Tapaswi, Shizhe Chen, et al. Airbert: In-domain pretraining for vision-and-language navigation. InICCV, 2021. [6] Edward J. Hu, Yelong Shen, Phillip Wallis, et al. Lora: Low-rank adaptation of large language models. InICLR, 2022. [7] Fukai Huang et al. Navillm: Towards generalizable embodied agents via navigation instruction tuning. InCVPR, 2024. [8] Jacob Krantz, Erik Wijmans, Arjun Majumdar, et al. Beyond the navgraph: Vision-and-language navigation in continuous environments. InCVPR, 2020. [9] Ranjay Krishna, Yuke Zhu, Oliver Groth, et al. Visual genome: Connecting language and vision using crowdsourced dense image annotations.International Journal of Computer Vision, 2017. [10] Alexander Ku, Peter Anderson, Roma Patel, et al. Room-acrossroom: Multilingual vision-and-language navigation with dense spatiotemporal grounding. InEMNLP, 2020.",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "An Efficient Dual-system LLM Reasoner with Metacognition.arXiv"
+      ],
+      "char_start": 17551,
+      "char_end": 18627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d6ab824f433923f548b58aa419a35f2",
+      "kind": "heading",
+      "text": "[11] Junnan Li, Dongxu Li, Silvio Savarese, and Steven Hoi. Blip-2: Boot-",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "[11] Junnan Li, Dongxu Li, Silvio Savarese, and Steven Hoi. Blip-2: Boot-"
+      ],
+      "char_start": 18629,
+      "char_end": 18702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81565d5c0179782e730931e72fec5619",
+      "kind": "paragraph",
+      "text": "strapping language-image pre-training with frozen image encoders and large language models.arXiv preprint arXiv:2301.12597, 2023. [12] Tsung-Yi Lin, Michael Maire, Serge Belongie, et al. Microsoft coco: Common objects in context. InECCV, 2014.",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "[11] Junnan Li, Dongxu Li, Silvio Savarese, and Steven Hoi. Blip-2: Boot-"
+      ],
+      "char_start": 18704,
+      "char_end": 18947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65f54a26d8b31fa65b7b4de0d0cc63ce",
+      "kind": "heading",
+      "text": "[13] Haotian Liu, Chunyuan Li, Qingyang Wu, and Yong Jae Lee. Vi-",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "[13] Haotian Liu, Chunyuan Li, Qingyang Wu, and Yong Jae Lee. Vi-"
+      ],
+      "char_start": 18949,
+      "char_end": 19014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42e711c47437ba1d25faf2abeb829a3a",
+      "kind": "paragraph",
+      "text": "sual instruction tuning.Advances in Neural Information Processing Systems, 2024. [14] Jason Wei, Xuezhi Wang, Dale Schuurmans, et al. Chain-of-thought prompting elicits reasoning in large language models.Advances in Neural Information Processing Systems, 2022. [15] Zhiyu Wu et al. Deepseek-vl2: Mixture-of-experts vision-language models for advanced multimodal understanding.arXiv preprint arXiv:2412.10302, 2024. [16] Gengze Zhou, Yicong Hong, Zun Wang, et al. Navgpt: Explicit reasoning in vision-and-language navigation with large language models. arXiv preprint arXiv:2305.16986, 2023. 6",
+      "order": 90,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "on Pangu Multimodal Foundation Model",
+        "[13] Haotian Liu, Chunyuan Li, Qingyang Wu, and Yong Jae Lee. Vi-"
+      ],
+      "char_start": 19016,
+      "char_end": 19608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.17806",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

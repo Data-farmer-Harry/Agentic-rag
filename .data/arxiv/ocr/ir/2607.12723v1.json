@@ -1,0 +1,2974 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "e045626034b57ac5ece593d49e04bc8d0dde595eeea2031a551544b849cbc520",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:c1cdb976910090663ccb9d4d6f5278ec",
+      "kind": "heading",
+      "text": "Bulkhead: Automated Semantic Detection and",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and"
+      ],
+      "char_start": 0,
+      "char_end": 42,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb496768bca3f5e7c0aace1d3e6baec8",
+      "kind": "heading",
+      "text": "Remediation of Container Escape Vulnerabilities",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Remediation of Container Escape Vulnerabilities"
+      ],
+      "char_start": 44,
+      "char_end": 91,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ed104007d4d2ab2719e90ac1ac7ced7",
+      "kind": "paragraph",
+      "text": "Qiyuan Fan1, Zhi Li 1, Junjie Li 2, XiaoFeng Wang 2, Bin Yuan 1, and Deqing Zou 1 1Huazhong University of Science and Technology, Wuhan, China 2Nanyang Technological University, Singapore Abstract—Filesystem isolation in container ecosystems is often weakened by cross-boundary path misresolution, causingpath traversal(PaTra) vulnerabilities. These vulnerabilities stem from insecure host-container interactions and have become increasingly pervasive as cloud systems mount shared resources, such as GPUs and agent workspaces, into containers to support AI workloads. Existing defenses remain inadequate. Kernel-level protections are intrusive, can destabilize system calls, and have therefore not been accepted into the Linux mainline. Detection methods rely on static rule matching or manual code auditing. Static rules can flag path-related functions but fail to capture the semantics needed to determine whether a host-container interaction exists, causing many false positives. Manual review requires domain expertise, making it costly, inefficient, and difficult to scale. To address this threat, we presentBulkhead, an automated framework that integrates large language models (LLMs) with formal methods for semantic vulnerability discovery and remediation. Bulkhead uses a multi-agent system to identify and repair PaTra vulnerabilities through multi-dimensional knowledge patterns generalized from known cases. It first applies high-risk functional patterns to locate entry points for crossboundary interactions in containerized code, then uses call-",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Remediation of Container Escape Vulnerabilities"
+      ],
+      "char_start": 93,
+      "char_end": 1653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6c861c92f50d7a3931cc9376a315531",
+      "kind": "paragraph",
+      "text": "chain patterns to recover the corresponding execution paths at suitable depth. The Detection pipeline analyzes these call chains against the application scenarios and threat model, identifying vulnerabilities such as missing security checks and TOCTOU flaws in cross-boundary interactions, and generating proof-ofconcept (PoC) exploits for validation. These PoCs then guide patch generation. To ensure remediation correctness, the Patch pipeline performs assertion-driven verification using predefined model-checking templates.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Remediation of Container Escape Vulnerabilities"
+      ],
+      "char_start": 1655,
+      "char_end": 2182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:647cfd5cba859ed785110d393c8f3447",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Remediation of Container Escape Vulnerabilities",
+        "INTRODUCTION"
+      ],
+      "char_start": 2184,
+      "char_end": 2196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88f5fe2c2848f920b809d7dd2a85145a",
+      "kind": "paragraph",
+      "text": "Container technologies leverage kernel mechanisms to provide lightweight isolation, serving as the foundational infrastructure for cloud platforms [1], [2]. With the rapid advancement of Large Language Models (LLMs), this adoption has accelerated as systems like OpenHands [3] utilizes container-based sandboxes to provide isolated workspaces for autonomous agents. However, this ubiquitous deployment is continually threatened by logic vulnerabilities, particularly Path Traversal (PaTra). These vulnerabilities arise from one of two root causes: a complete absence of security checks, or a failure to securely bind these checks to the execution phase, creating Time-of-Check to Time-of-Use (TOCTOU) race conditions. Consequently, when a container interacts with the host filesystem, attackers can breach isolation boundaries either through direct, unvalidated path resolution or by exploiting the brief time window between validation and actual resource utilization [4], [5].",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Remediation of Container Escape Vulnerabilities",
+        "INTRODUCTION"
+      ],
+      "char_start": 2198,
+      "char_end": 3175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2567d5fabd785ea1a97d0f32ca75905b",
+      "kind": "heading",
+      "text": "The Persistent Recurrence of PaTra Vulnerabilities.After",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "The Persistent Recurrence of PaTra Vulnerabilities.After"
+      ],
+      "char_start": 3177,
+      "char_end": 3233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f8dacbaa46c006c433d2f0cfc0795c4",
+      "kind": "paragraph",
+      "text": "years of attention and effort, this security threat, however, remains unresolved, as evidenced by 27 major CVEs recorded over the past decade and an upward trend of such vulnerabilities throughout 2024 and 2025. This persistent resurgence is fundamentally driven by the architectural evolution of cloud-native ecosystems where the demand for cross-boundary resource access has intensified. Beyond traditional container management platforms, the proliferation of GPU container toolkits and containerized workspaces for AI agents has exposed a vast array of privileged interaction interfaces. These modern scenarios frequently require mounting host resources, driver libraries, or device nodes into isolated environments to facilitate execution, which inadvertently expands the attack surface for path resolution exploits. A representative example of this expanding risk is CVE-",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "The Persistent Recurrence of PaTra Vulnerabilities.After"
+      ],
+      "char_start": 3235,
+      "char_end": 4111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1361a3e208cfb63398ce5bae3388b9c",
+      "kind": "heading",
+      "text": "0132 in the NVIDIA Container Toolkit [6]. In this",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "0132 in the NVIDIA Container Toolkit [6]. In this"
+      ],
+      "char_start": 4113,
+      "char_end": 4162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63e4df66bf2e762c0abce4c8098505a1",
+      "kind": "paragraph",
+      "text": "case, the utility fails to safely resolve the symbolic links (symlinks) while processing container-provided library paths during initialization. An attacker can place a malicious symlink inside a container image to induce the privileged host-level toolkit to access sensitive host filesystem locations, thereby bypassing container isolation. Although core container runtimes have been substantially hardened, the rapid growth of plugins and AI execution servers has shifted much of this risk to third-party components, whose developers often lack the specialized security context needed to enforce complex isolation invariants. This, in turn, exacerbates the recurrence of logic-based container escape vulnerabilities. Challenges of Existing Solutions.Addressing PaTra vulnerabilities has become an intractable challenge for both academia and the open-source community. In the academic sphere, the previous work introduced strict access controls directly within the Virtual File System (VFS) layer of the Linux kernel [7]. While theoretically sound, its practical deployment is highly problematic. The required modifications are too deeply integrated into the kernel mainline, which inevitably leads to un-",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "0132 in the NVIDIA Container Toolkit [6]. In this"
+      ],
+      "char_start": 4164,
+      "char_end": 5370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c04e88e4a7101290c50aae84de6eba93",
+      "kind": "heading",
+      "text": "Conference Name: XXX",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Name: XXX"
+      ],
+      "char_start": 5372,
+      "char_end": 5392,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6c53de2cd8aa56d0d80bb01952e94f2",
+      "kind": "heading",
+      "text": "Conference Date: XXX",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Date: XXX"
+      ],
+      "char_start": 5394,
+      "char_end": 5414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22a227eb699c06153a9759ccc43fd856",
+      "kind": "heading",
+      "text": "ISBN: XXX",
+      "order": 12,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "ISBN: XXX"
+      ],
+      "char_start": 5416,
+      "char_end": 5425,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6b6d7d5c3b26b7472c1c3b168c6c036",
+      "kind": "heading",
+      "text": "Conference Website: XXX",
+      "order": 13,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Website: XXX"
+      ],
+      "char_start": 5427,
+      "char_end": 5450,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88087b946d39269378f0154350d57218",
+      "kind": "paragraph",
+      "text": "XXX",
+      "order": 14,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Website: XXX"
+      ],
+      "char_start": 5452,
+      "char_end": 5455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23b03e85af4fa655f25869c1933bf819",
+      "kind": "table",
+      "text": "arXiv:2607.12723v1  [cs.CR]  14 Jul 2026",
+      "order": 15,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Website: XXX"
+      ],
+      "char_start": 5457,
+      "char_end": 5497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2daea323df28b5c862766f3c84e5feb9",
+      "kind": "paragraph",
+      "text": "derlying system call instability. Furthermore, this kernel-level intervention is overly specialized for containerized scenarios, adversely affecting the normal, everyday usage of the Linux operating system, which explains why it has consistently failed to be accepted or merged by the mainstream Linux kernel community. The open-source community adopts the approach of vulnerability detection and patching case by case, which is error-prone. A classic example is the evolution of CVE-2018-",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Conference Website: XXX"
+      ],
+      "char_start": 5499,
+      "char_end": 5988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c88b5c8b4f07fbce357e7641c759800",
+      "kind": "heading",
+      "text": "[8], where the initial patch merely addressed a basic",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "[8], where the initial patch merely addressed a basic"
+      ],
+      "char_start": 5990,
+      "char_end": 6043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30737184c3bf0d084c5edb5f2de437e0",
+      "kind": "paragraph",
+      "text": "symlink traversal, only to be bypassed and completely broken a year later in CVE-2019-14271 [9], because the underlying TOCTOU race condition was left unaddressed. Furthermore, patches often introduce secondary bugs, severely degrading system stability. The complexity here is so daunting that some mainstream container engines (e.g., Alibaba’s Pouch [10]) have resorted to extreme measures, such as completely disabling symlink follow, simply to avoid the insurmountable risk of path resolution exploits. Given the impracticality of eradicating symlink-induced path traversal vulnerabilities at the kernel level, a pragmatic strategy centers on helping community for rapid detection and intelligent remediation. Previous detection approaches predominantly rely on static analysis techniques, such as static rule matching [11] or Deterministic Finite Automata (DFA) [12]. While these methods can identify path-related operations, they cannot fundamentally understand deeper code semantics and contextual intent. In the complex setting of containerhost isolation and interaction, this semantic blindness leads to substantial false positives. For instance, a static analyzer may flag path operations within the host system or other path strings that are not exploitable as potentially vulnerable. Moreover, manually crafting precise rules or automata for complex vulnerability logic demands significant human expertise, resulting in high maintenance costs and slow response times that cannot keep pace with the rapid evolution of new escape risks.",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "[8], where the initial patch merely addressed a basic"
+      ],
+      "char_start": 6045,
+      "char_end": 7590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a94b5fb64350a61af77c65bdd8e04e9f",
+      "kind": "paragraph",
+      "text": "Our Apporach.To overcome these limitations, we propose an automated agent framework that integrates LLMs with model checking to achieve end-to-end vulnerability detection and remediation. Our approach leverages the semantic reasoning capabilities of LLMs to comprehend complex code logic and interaction patterns within container environments, enabling precise vulnerability localization and detection. Simultaneously, we introduce model checking to rigorously verify the patches automatically generated by the LLM. The core methodology of this detection and remediation process lies in systematically generalizing known vulnerabilities from multiple dimensions into knowledge bases to guide the LLMs. Detection patterns are abstracted from established PaTra CVEs by decomposing exploits into their constituent objects, interaction sequences, and exploitation strategies, thereby establishing definitive threat models and capability boundaries for cross-boundary interactions. Moreover, in order to extract the complete code call-chain that can reflect the threat model of the target function, call-chain patterns are summarized to identify the entries for high-risk functions and optimal call-chain depths. Furthermore, standardized model checking templates are derived from the logic of existing patches to facilitate the formal validation of generated patches. Extensive real-world evaluations demonstrate the efficacy of this approach, as Bulkhead successfully identified 9 deepseated logic vulnerabilities in mainstream repositories, result-",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "[8], where the initial patch merely addressed a basic"
+      ],
+      "char_start": 7592,
+      "char_end": 9138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:640a91845ac038839cb224fb1bb9dbca",
+      "kind": "paragraph",
+      "text": "ing in the assignment of 3 new CVEs so far. Moreover, we have submitted the automatically generated and formally verified patches to open-source communities and are awaiting their approval for merge. Contributions.Our contributions are outlined as follows: •New Understanding of PaTra Vulnerabilities:We present a systematic study of PaTra vulnerabilities in container ecosystems. By analyzing major CVEs over the past decade, we identify a fundamental shift in the threat landscape: vulnerabilities are increasingly emerging from logic flaws in third-party components that mediate cross-boundary resource interactions, rather than from core container runtimes. •A Knowledge-Guided Approach for Logic Vulnerability Detection and Remediation:We propose a knowledge-guided approach for detecting and remediating PaTra logic vulnerabilities. By abstracting historical vulnerabilities into structured semantic knowledge, Bulkhead guides LLM-driven reasoning to progressively localize security-critical logic in complex codebases, enabling precise vulnerability detection, automated patch generation, and formal verification. •Real-World Security Impact:We evaluate Bulkhead on mainstream container-related open-source repositories and uncover",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "[8], where the initial patch merely addressed a basic"
+      ],
+      "char_start": 9140,
+      "char_end": 10378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53efd0841e9157dcb96288751813569e",
+      "kind": "heading",
+      "text": "previously unknown logic vulnerabilities, leading to the",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "previously unknown logic vulnerabilities, leading to the"
+      ],
+      "char_start": 10380,
+      "char_end": 10436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35348b5955a4988f91a12075f073fddd",
+      "kind": "paragraph",
+      "text": "assignment of 3 new CVEs so far. Furthermore, the automatically generated patches have been submitted to upstream communities, demonstrating the practical effectiveness and deployability of our approach.",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "previously unknown logic vulnerabilities, leading to the"
+      ],
+      "char_start": 10438,
+      "char_end": 10641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:746dac1e11cc2afba370f6c16cfe58bf",
+      "kind": "heading",
+      "text": "BACKGROUND",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "previously unknown logic vulnerabilities, leading to the",
+        "BACKGROUND"
+      ],
+      "char_start": 10643,
+      "char_end": 10653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0abf0dd6ac67effa838e8d277caf47bc",
+      "kind": "heading",
+      "text": "A. Container Filesystem Isolation Vulnerabilities",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities"
+      ],
+      "char_start": 10655,
+      "char_end": 10704,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eac467b662138176a07ba28f809fe853",
+      "kind": "paragraph",
+      "text": "Container technologies enforce lightweight isolation through Linux kernel mechanisms like namespaces [13] and cgroups [14]. Filesystem isolation combines the mount namespace withchrootorpivot_rootoperations to restrict a process to a designated root hierarchy. This isolation primarily modifies the process’s view rather than partitioning the underlying kernel objects. The VFS layer continues to represent file objects via globally manageddentryand inodestructures shared across namespace boundaries [15]. As a result, although containerized processes operate within isolated filesystem views, host-level components still retain visibility into both host and container filesystems through the shared VFS infrastructure. Consequently, container management tools and runtime services often need to traverse and access filesystem objects under container-controlled paths when performing administrative operations . Host-container filesystem interactions arise throughout the container lifecycle. Before container startup, runtimes and 2",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities"
+      ],
+      "char_start": 10706,
+      "char_end": 11740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33bf6139c854f8aa68d4de3cb2e6d783",
+      "kind": "paragraph",
+      "text": "orchestration components perform operations such as volume mounting to provision persistent storage and host resources. For example, the NVIDIA Container Toolkit performs privileged mount operations to inject GPU drivers and device nodes into containers [16]. After deployment, privileged components continue to access container-controlled paths for tasks such as file synchronization, artifact extraction, and state inspection. This kind of interaction also appears in emerging agent frameworks. For instance, OpenHands uses containerized workspaces to execute agent-generated code and exchange artifacts with the host. Although these systems serve different purposes, they share the same security assumption that privileged host processes must resolve and operate on filesystem paths originating from an untrusted container context. Although this security assumption is fundamental to safe host-container interactions, it is often overlooked in practice when third-party developers build runtime extensions or application-level container services [17]. Some implementations fail to treat container-controlled paths as untrusted input and omit necessary boundary checks during path resolution. Others attempt to enforce these checks but perform validation and object access in separate steps, which introduces a race condition during pathname resolution. An attacker inside the container can exploit this gap by modifying intermediate filesystem states between validation and use, for example by replacing directories or files with symlinks. By exploiting this",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities"
+      ],
+      "char_start": 11742,
+      "char_end": 13303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb8071285eda9e79cb1175896e4febfc",
+      "kind": "paragraph",
+      "text": "TOCTOU condition, the attacker can redirect privileged host operations to unintended filesystem targets, escape container isolation, and access sensitive host resources. B. LLMs in Vulnerability Detection and Remediation LLMs provide semantic reasoning capabilities that support vulnerability detection in complex software systems [18]. Traditional static analysis relies on predefined rules and syntactic matching, which limits its ability to capture violations of implicit security assumptions. In container systems, vulnerabilities often arise from incorrect handling of host-container interactions rather than explicit programming errors. Detecting such issues requires tracking how container-controlled inputs propagate across functions and whether privileged operations enforce isolation constraints. LLMs analyze code by modeling execution semantics across multiple functions and contexts. In vulnerability detection, LLM traces the flow of path variables, identifies operations that access the host filesystem, and determines whether these operations rely on container-controlled inputs. It evaluates the ordering of validation and resolution steps and checks whether the implementation preserves filesystem boundary invariants. This process enables the identification of logic vulnerabilities such as unsafe symlink resolution and non-atomic pathname handling, which are difficult to capture through rule-based analysis. LLMs also assist vulnerability repair by generating candidate patches that align with security invariants[19]. For path",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities"
+      ],
+      "char_start": 13305,
+      "char_end": 14854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1d2d994eeaa55d14938316cc4ea0577",
+      "kind": "paragraph",
+      "text": "traversal vulnerabilities, LLM suggests modifications such as enforcing path normalization, introducing boundary checks, or replacing path-based operations with file descriptor-based access. It also identifies cases where validation and use are separated and recommends restructuring the code to ensure atomicity. These repairs are derived from the semantic structure of the vulnerability rather than isolated code patterns. Despite these advantages, applying LLMs to real-world container codebases requires careful control of analysis scope and validation of results. Large codebases produce long execution paths that exceed context limits, and generated fixes may introduce inconsistencies if not constrained by the original logic. Effective use of LLMs therefore depends on structured inputs, precise localization of relevant code, and explicit alignment with security invariants.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities"
+      ],
+      "char_start": 14856,
+      "char_end": 15739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca1970d31e720662a68256280563d336",
+      "kind": "heading",
+      "text": "UNDERSTANDINGPATRAVULNERABILITIES",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities",
+        "UNDERSTANDINGPATRAVULNERABILITIES"
+      ],
+      "char_start": 15741,
+      "char_end": 15774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe8863a42b58410957e950047fb2378f",
+      "kind": "paragraph",
+      "text": "Although prior work characterized PaTra vulnerabilities in core container runtimes, our research of recent CVEs shows that similar vulnerabilities now appear in a broader set of ecosystem components and remain exploitable at significant impact. This section revisits PaTra vulnerabilities in the broader container ecosystem, focusing on cases disclosed in recent years. We analyze how recent vulnerabilities diverge from previously studied patterns, and identify unresolved challenges that motivate our work.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Container Filesystem Isolation Vulnerabilities",
+        "UNDERSTANDINGPATRAVULNERABILITIES"
+      ],
+      "char_start": 15776,
+      "char_end": 16284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4e85a10a0521c7194a7dc6a83637c69",
+      "kind": "heading",
+      "text": "A. Threat Model",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Threat Model"
+      ],
+      "char_start": 16286,
+      "char_end": 16301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a732ea8b35b51ae71a883fca26f98dda",
+      "kind": "paragraph",
+      "text": "We study containerized environments where core runtimes (e.g., Docker, runc) and privileged extensions (e.g., NVIDIA Container Toolkit, AI Sandbox) perform filesystem operations on behalf of containers. The host operating system and these management components are trusted. We assume their privilege boundaries are correctly enforced, while their implementations may still contain logic flaws in filesystem path handling. We consider two attacker models that correspond to different stages of the container lifecycle. In the pre-start phase, the attacker can supply a malicious container image or mount configuration. Although the container has not yet started, the attacker fully controls the filesystem contents that will be loaded into the container environment. This allows the attacker to embed crafted symlinks, manipulate directory layouts, or introduce other malicious filesystem objects that are later processed by privileged host components during container initialization. In the runtime phase, the attacker further gains control of a running container after deployment. At this stage, the attacker can directly execute code inside the container and fully control its filesystem state. This includes creating, deleting, renaming, or replacing files and directories, as well as dynamically introducing symlinks while privileged host operations are accessing container-controlled paths. The attacker’s goal is to escape container isolation and access host resources by exploiting privileged host operations over container-controlled paths. We consider common host-",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Threat Model"
+      ],
+      "char_start": 16303,
+      "char_end": 17876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f351c1d004823ec8b2299a513dfec09c",
+      "kind": "paragraph",
+      "text": "container interfaces such as volume mounting, file copying, runtime resource injection, and filesystem synchronization. 3",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Threat Model"
+      ],
+      "char_start": 17878,
+      "char_end": 17999,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea5432bd660407f33b5a54a7e461be7f",
+      "kind": "paragraph",
+      "text": "By supplying malicious filesystem inputs during initialization or actively modifying filesystem states during runtime path resolution, the attacker can trigger path misresolution, causing privileged host components to access unintended filesystem targets outside the intended container boundary.",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Threat Model"
+      ],
+      "char_start": 18001,
+      "char_end": 18296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e48b4353cd7dff54b193a3d12db2b03",
+      "kind": "heading",
+      "text": "TABLE I: PaTra Vulnerabilities",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "TABLE I: PaTra Vulnerabilities"
+      ],
+      "char_start": 18298,
+      "char_end": 18328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e60a08a56c607c734f6a21c2a6aaf960",
+      "kind": "heading",
+      "text": "CVE ID Component Lifecycle Root Cause",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE ID Component Lifecycle Root Cause"
+      ],
+      "char_start": 18330,
+      "char_end": 18367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:497bf8779f1c121583bd2a9561fc4779",
+      "kind": "heading",
+      "text": "CVE-2017-1002101 Kubernetes Pre-Start TOCTOU",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2017-1002101 Kubernetes Pre-Start TOCTOU"
+      ],
+      "char_start": 18369,
+      "char_end": 18413,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4883406cb9a68e2747ef63c2b627ee99",
+      "kind": "heading",
+      "text": "CVE-2018-15664 Docker Runtime TOCTOU",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2018-15664 Docker Runtime TOCTOU"
+      ],
+      "char_start": 18415,
+      "char_end": 18451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4f90e31d63a61d81054c6b0057e0d14",
+      "kind": "heading",
+      "text": "CVE-2019-10152 Podman Runtime Symlink",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2019-10152 Podman Runtime Symlink"
+      ],
+      "char_start": 18453,
+      "char_end": 18490,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a0fdf6c4129b9ac5a7e56942674519e",
+      "kind": "heading",
+      "text": "CVE-2019-18466 Podman Pre-Start Symlink",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2019-18466 Podman Pre-Start Symlink"
+      ],
+      "char_start": 18492,
+      "char_end": 18531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83fab6fb485e67e4ea5a80a402936949",
+      "kind": "paragraph",
+      "text": "CVE-2019-5736 runc Runtime Symlink CVE-2019-16884 runc Pre-Start TOCTOU CVE-2019-19921 runc Pre-Start TOCTOU",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2019-18466 Podman Pre-Start Symlink"
+      ],
+      "char_start": 18533,
+      "char_end": 18641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:074289afaa00d6e8e0cbdab33fba6fc7",
+      "kind": "heading",
+      "text": "CVE-2020-10696 Podman Pre-Start Symlink",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2020-10696 Podman Pre-Start Symlink"
+      ],
+      "char_start": 18643,
+      "char_end": 18682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca4f7dda0e81d3f09d4ae8550d3eade1",
+      "kind": "paragraph",
+      "text": "CVE-2021-30465 runc Runtime TOCTOU",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2020-10696 Podman Pre-Start Symlink"
+      ],
+      "char_start": 18684,
+      "char_end": 18718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f077ad1e13746386f215acb265c83f8",
+      "kind": "heading",
+      "text": "CVE-2021-25741 Kubernetes Runtime TOCTOU",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2021-25741 Kubernetes Runtime TOCTOU"
+      ],
+      "char_start": 18720,
+      "char_end": 18760,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55b161e3ea0cc5fd1d537a7267ae9816",
+      "kind": "heading",
+      "text": "CVE-2022-23648 Containerd Pre-Start Symlink",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2022-23648 Containerd Pre-Start Symlink"
+      ],
+      "char_start": 18762,
+      "char_end": 18805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d47084f91656f8267ae1fa7dff1ad2e6",
+      "kind": "heading",
+      "text": "CVE-2023-0778 Podman Pre-Start TOCTOU",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2023-0778 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 18807,
+      "char_end": 18844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7967ff94b8d8219e495fe87c8079fd85",
+      "kind": "heading",
+      "text": "CVE-2023-27561 Podman Pre-Start TOCTOU",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2023-27561 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 18846,
+      "char_end": 18884,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57be46da0cf973ec463056390f61923a",
+      "kind": "paragraph",
+      "text": "CVE-2023-28642 runc Pre-Start Symlink",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2023-27561 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 18886,
+      "char_end": 18923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1024be5fd360b790d6f804387c26dc3a",
+      "kind": "heading",
+      "text": "CVE-2024-0132 NVIDIA Pre-Start TOCTOU",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2024-0132 NVIDIA Pre-Start TOCTOU"
+      ],
+      "char_start": 18925,
+      "char_end": 18962,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7879ee04ae74ad699d85a0a37fb7e25",
+      "kind": "heading",
+      "text": "CVE-2024-11218 Podman Pre-Start TOCTOU",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2024-11218 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 18964,
+      "char_end": 19002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e48b21d57186db5dfddf774c1a3aa679",
+      "kind": "paragraph",
+      "text": "CVE-2024-21626 runc Pre-Start Symlink",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2024-11218 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 19004,
+      "char_end": 19041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e5156a03e377e47e1af4ead5fdc60da",
+      "kind": "heading",
+      "text": "CVE-2024-23651 Docker Pre-Start TOCTOU",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2024-23651 Docker Pre-Start TOCTOU"
+      ],
+      "char_start": 19043,
+      "char_end": 19081,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f0eafc9d1e60ca3cf550dad36405cf1",
+      "kind": "heading",
+      "text": "CVE-2024-23652 Docker Runtime Symlink",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2024-23652 Docker Runtime Symlink"
+      ],
+      "char_start": 19083,
+      "char_end": 19120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3fe295c92a25ba260415c3e35011e242",
+      "kind": "heading",
+      "text": "CVE-2025-23267 NVIDIA Pre-Start Symlink",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-23267 NVIDIA Pre-Start Symlink"
+      ],
+      "char_start": 19122,
+      "char_end": 19161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a5793047357040071d342c9f1b061a3",
+      "kind": "heading",
+      "text": "CVE-2025-23359 NVIDIA Pre-Start TOCTOU",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-23359 NVIDIA Pre-Start TOCTOU"
+      ],
+      "char_start": 19163,
+      "char_end": 19201,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc3d266ba54c23fd3cbd7d03060dd93c",
+      "kind": "paragraph",
+      "text": "CVE-2025-31133 runc Pre-Start TOCTOU",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-23359 NVIDIA Pre-Start TOCTOU"
+      ],
+      "char_start": 19203,
+      "char_end": 19239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41ddab0803371c4f2a89993298a9303e",
+      "kind": "heading",
+      "text": "CVE-2025-47290 Containerd Pre-Start TOCTOU",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-47290 Containerd Pre-Start TOCTOU"
+      ],
+      "char_start": 19241,
+      "char_end": 19283,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:130578069c22e085519e38d858db3ed3",
+      "kind": "paragraph",
+      "text": "CVE-2025-52565 runc Pre-Start TOCTOU CVE-2025-52881 runc Pre-Start TOCTOU",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-47290 Containerd Pre-Start TOCTOU"
+      ],
+      "char_start": 19285,
+      "char_end": 19358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31bb70e6f81ea50ac567998118df1596",
+      "kind": "heading",
+      "text": "CVE-2025-8941 Linux Pre-Start TOCTOU",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-8941 Linux Pre-Start TOCTOU"
+      ],
+      "char_start": 19360,
+      "char_end": 19396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e7b0a75f782334715ce454abbc52742",
+      "kind": "heading",
+      "text": "CVE-2025-9566 Podman Pre-Start TOCTOU",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "CVE-2025-9566 Podman Pre-Start TOCTOU"
+      ],
+      "char_start": 19398,
+      "char_end": 19435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8b69d17fb0558da465296933c4e57e7",
+      "kind": "heading",
+      "text": "B. Evolution of PaTra Vulnerabilities",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities"
+      ],
+      "char_start": 19437,
+      "char_end": 19474,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c9945906a5f2204cd9ffe5f4960de0d",
+      "kind": "paragraph",
+      "text": "Insight 1: PaTra vulnerabilities have expanded into privileged ecosystem components beyond core container runtimes.Prior work characterized PaTra vulnerabilities in core container runtimes and established the main root causes as symlink traversal and TOCTOU in host-container path resolution [7]. Recent vulnerabilities indicate that PaTra has evolved beyond the scope of prior runtime-centric analyses and now manifests in a broader and less uniform ecosystem. The attack surface is no longer limited to a small set of runtime primitives. It now includes GPU container toolkits, build helpers, orchestration commands, and containerized workspaces that expose privileged filesystem operations to untrusted container content. These components reuse the same path semantics as runtimes, yet they are developed in separate codebases and often follow different security assumptions. The result is a wider ecosystem in which the same logical flaw can reappear in new forms. This evolution is visible in the newer CVEs collected in Table I. Early cases were dominated by classic runtime operations such as copy, mount, and container start. More recent cases appear in GPU-related initialization, multi-stage build flows, and resource sharing. In these settings, the privileged component does not merely inspect a path string. It often resolves a path across several layers of code, helper utilities, and system interfaces before the final filesystem operation occurs. Each layer may apply local checks, but none of them alone preserves the full security property. The vulnerability",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities"
+      ],
+      "char_start": 19476,
+      "char_end": 21051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be75937320818cf0b8995037737fec57",
+      "kind": "paragraph",
+      "text": "therefore emerges from the composition of individually reasonable steps. Insight 2: Security invariants break boundaries, turning PaTra from local into cross-component.Earlier vulnerabilities in container often centered on one component that checked a path and later used it unsafely [20], [21]. Recent vulnerabilities more often span a chain of components that jointly process a container-controlled path. A runtime may prepare the request, a helper utility may normalize or reopen the path, and a host-level operation may perform the final access. A security invariant must be preserved across all stages of the execution chain. When one component changes the representation of the path, or when another component resolves it again under different privileges, the original assumption is lost. This cross-component structure makes the vulnerability harder to recognize and harder to remediate. Moreover, the key issue is no longer only unsafe API use. The central problem is the loss of a stable invariant that binds the checked path to the object that is finally accessed. Once the path is handed from one component to another, its meaning may change. One component may see a containerlocal location, while another component later resolves the same text into a host-visible object. This mismatch turns path handling into a semantic problem rather than a local programming error. For this reason, recent PaTra cases are better understood as invariant violations across abstraction boundaries.",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities"
+      ],
+      "char_start": 21053,
+      "char_end": 22546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3df0963377f1295e0d1f434490ce2d32",
+      "kind": "heading",
+      "text": "Limitations of Existing Solutions",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities",
+        "Limitations of Existing Solutions"
+      ],
+      "char_start": 22548,
+      "char_end": 22581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b721c56acab1c9a4d515816ec788d54",
+      "kind": "paragraph",
+      "text": "The persistence of PaTra vulnerabilities shows that current defenses do not match the threat model. The most common remediation strategy for developers is to add more checks or move to a safer primitive. These changes often improve local correctness of a specific operation, yet they do not preserve the security invariant once the path crosses another component or another execution phase. A validation result can be correct at one step and irrelevant at the next step if the object is reopened, reinterpreted, or replaced in between. Insight 3: Existing strategies fail to ensure invariantpreserving detection and remediation across execution chains.On the one hand, kernel-level defenses can express strong isolation rules, yet they are so intrusive that can interfere with the normal operation of other functions. As a result, this strategy proposed in the previous work has not been accepted by the Linux mainline so far. Moreover, they also 4",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities",
+        "Limitations of Existing Solutions"
+      ],
+      "char_start": 22583,
+      "char_end": 23531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d25329b13fb60666981352477390439",
+      "kind": "paragraph",
+      "text": "tend to be tied to a specific kernel assumption, while PaTra vulnerabilities increasingly appear in user-space extensions and ecosystem tools that sit outside the kernel boundary. A kernel change may reduce one class of misuse, but it does not automatically provide a practical remediation path for the large number of container utilities that already exist in the wild. This creates a persistent gap between theoretical protection and practical remediation in real-world systems. On the other hand, case-by-case patching in the community remains fundamentally limited. The history of PaTra vulnerabilities shows that a patch applied to one component or one version can be bypassed or invalidated by subsequent changes in related code. For example, CVE-2019-19921 [22] exposed a race condition in volume mount handling, where concurrent operations could lead to unintended host filesystem access. Later, CVE-2021-30465 [23] prompted modifications to path resolution and validation logic in order to address symlinkbased traversal. These changes altered the mount handling workflow and unintentionally broke the assumptions that previously mitigated the race condition. As a result, the same class of vulnerability reappeared as CVE-2023-27561 [24], demonstrating a regression caused by incomplete preservation of security properties across patches. This process shows that patches often address specific attack vectors without maintaining a consistent invariant across code evolution. This pattern reflects a deeper limitation that existing approaches",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities",
+        "Limitations of Existing Solutions"
+      ],
+      "char_start": 23533,
+      "char_end": 25084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b76b6f660bc7ed1e1c80d300b9b4b553",
+      "kind": "paragraph",
+      "text": "do not provide a unified mechanism to reason about path semantics across components, lifecycle stages, and execution orders. They also do not provide a systematic way to verify that a repair preserves the intended invariant under adversarial interleavings, which leaves fixes local and difficult to validate at scale.",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities",
+        "Limitations of Existing Solutions"
+      ],
+      "char_start": 25086,
+      "char_end": 25403,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3613f152da94038741d223693fb9cde",
+      "kind": "heading",
+      "text": "DETECTIONPIPELINE",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Evolution of PaTra Vulnerabilities",
+        "DETECTIONPIPELINE"
+      ],
+      "char_start": 25405,
+      "char_end": 25422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b64fb36b94197e4b7cb257727448265",
+      "kind": "heading",
+      "text": "A. Overview",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 25424,
+      "char_end": 25435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa7ca9b54a6777be22eaf11df17501fd",
+      "kind": "paragraph",
+      "text": "Bulkhead implements a semantic-guided vulnerability detection pipeline that localizes the code responsible for privileged host-container filesystem interactions. Fig. 1 illustrates the detection pipeline in Bulkhead. The process begins with repository-level semantic analysis over project documentation and source code to identify features that perform privileged filesystem operations across the host-container boundary, such as volume mounting, file synchronization, and resource injection. Once such a feature is identified, Bulkhead maps it to its implementation entry point and extracts the corresponding call chain. Bulkhead then performs call-chain semantic analysis to locate the implementation where privileged host operations interact with containercontrolled filesystem objects. This step narrows the analysis from high-level feature logic to the code that enforces, transforms, or resolves container-derived paths. Finally, Bulkhead performs function-level semantic analysis on the identified implementation and evaluates its behavior against the security invariants of container isolation to determine whether it introduces vulnerabilities such as unsafe symlink resolution or nonatomic pathname handling. By narrowing the analysis from repository features to concrete path-handling logic, Bulkhead avoids exhaustive code inspection while maintaining high detection precision.",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 25437,
+      "char_end": 26826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:416ff3a527ba1bcd45fec1428f4a02df",
+      "kind": "heading",
+      "text": "B. Entry Function Identification",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Entry Function Identification"
+      ],
+      "char_start": 26828,
+      "char_end": 26860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa96a9499d9a9ef694ed441d93830197",
+      "kind": "paragraph",
+      "text": "This stage identifies externally reachable functions that implement high-risk operations and grounds them in concrete code locations.",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Entry Function Identification"
+      ],
+      "char_start": 26862,
+      "char_end": 26995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd728e974394dae92b6590b85ef732e7",
+      "kind": "heading",
+      "text": "High-Risk Functionality Pattern Summarization.We define",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define"
+      ],
+      "char_start": 26997,
+      "char_end": 27052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60f11f37452669e1c5df759987e58395",
+      "kind": "paragraph",
+      "text": "high-risk functionalities as functional primitives that inherently involve cross-boundary filesystem interactions which are prone to isolation breaches. We first summarize these functionalities into a knowledge base of semantic patterns derived from historical PaTra CVEs rather than searching for specific code flaws. Each pattern serves as a high-level abstraction of a vulnerable scenario that captures the functional intent such as volume mounting or log collection as well as the interaction vector describing how container-provided paths propagate to the host and the privilege context regarding security-critical operations performed by the host-side component. We leverage LLM to normalize diverse historical vulnerabilities into a structured schema that results in a repository of patterns grouping functions by their interaction semantics and risk profiles. This knowledge base provides the necessary context for LLM to understand the nature of a sensitive operation beyond simple keyword matching. Enrty Point Localization.For a given repository, we first collect repository-level context, including directory structures, README files, configuration files, and API definitions. Based on this information, we leverage LLM to map documented functions to their corresponding implementation points in the source code. Concretely, we utilize LLM to examine function signatures, parameter types, and interface definitions, and correlate them with file paths, function boundaries, and naming conventions to determine where each function is implemented.",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define"
+      ],
+      "char_start": 27054,
+      "char_end": 28610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f74e48658f857cdddd88c6fbc4b9f8bf",
+      "kind": "paragraph",
+      "text": "The analysis also uses API specifications and configuration entries to resolve indirect mappings between externally exposed interfaces and internal functions. We further distinguish exported interfaces from internal helpers by checking visibility, registration patterns, and invocation sites, which narrows the candidates to functions that can be externally triggered. The result is a set of entry functions together with their source locations and descriptive context. We then combine the identified functions, their associated code, and the corresponding function descriptions with the high-risk functionalities patterns. LLM evaluates whether each function represents a high-risk interaction by jointly considering the declared functionality and its concrete implementation. The evaluation inspects input sources, argument propagation, and the use of privileged operations to determine whether the function exhibits characteristics defined in highrisk functionalities patterns. It also checks consistency between documentation and implementation to filter cases where the described behavior is not realized in code. Functions that satisfy the high-risk functionalities criteria are marked as high- 5",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define"
+      ],
+      "char_start": 28612,
+      "char_end": 29814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:306ae87c916a5e9abe3474511c645dba",
+      "kind": "caption",
+      "text": "Fig. 1: Bulkhead Detection Pipeline.",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define"
+      ],
+      "char_start": 29816,
+      "char_end": 29852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d17a86ecd42330d6e4cf8dad1fc1aad1",
+      "kind": "paragraph",
+      "text": "risk, along with the relevant code regions and function-level context. We aggregate the identified high-risk functions, function entry in repository, and the corresponding function descriptions as the output of this stage. Functions that only perform intermediate processing, lack clear input interfaces, or are only transitively invoked without independent exposure are excluded. The resulting set forms a focused collection of highrisk entry functions with precise code grounding, which serves as the basis for subsequent analysis.",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define"
+      ],
+      "char_start": 29854,
+      "char_end": 30387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a850d8e565027546a4be4af9ebc35a4",
+      "kind": "heading",
+      "text": "Function Call-Chain Extraction",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define",
+        "Function Call-Chain Extraction"
+      ],
+      "char_start": 30389,
+      "char_end": 30419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05ad4a927708b6e660d42cbfb82d4107",
+      "kind": "paragraph",
+      "text": "This stage identifies path-related execution segments from full call chains and captures how container-controlled paths propagate to host-side filesystem operations. Call-Chain Pattern Summarization.Before extraction, we use LLM to summarize call-chain patterns from historical Pa- Tra CVEs by focusing on the recurring structure of containerhost path interactions. Specifically, each pattern should capture the lifecycle of a path variable originating from containercontrolled input and its propagation across multiple function boundaries until its eventual use in host-side filesystem operations. These patterns emphasize critical semantic stages such as parsing, normalization, and prefix concatenation where symlink handling frequently introduces vulnerabilities. We represent these patterns as unified natural language descriptions that encode shared characteristics of path-related data flow. This knowledge base directs LLM to focus on pathrelated semantics rather than general control flow and provides a concrete criterion for identifying relevant execution segments within complex call-chains. Interaction Related Call-Chain Extraction.We extract complete function call chains from each identified entry function using Joern [25]. The extracted call chains cover all reachable execution paths across files and modules and include argument passing, intermediate transformations, and auxiliary logic. These raw call chains contain a large amount of code that does not contribute to container-host path interaction.",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define",
+        "Function Call-Chain Extraction"
+      ],
+      "char_start": 30421,
+      "char_end": 31943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7b2b46091a29473ec19f4e691e713c4",
+      "kind": "paragraph",
+      "text": "We provide the full call chains together with the callchain patterns to LLM and require it to isolate the execution segments that involve path handling across the container-host boundary. LLM traces path variables from their input sources and follows their propagation through assignments, function calls, and return values. It identifies operations that modify path semantics, including normalization, prefix joining with host directories, and resolution steps that may dereference a symlink. It further examines whether validation logic is consistently enforced along the propagation path or becomes ineffective after subsequent transformations. Only the functions and statements that directly participate in these path interactions are retained. Code that operates on internal paths, performs unrelated computation, or does not affect the final path resolution is removed. The resulting callchain segment preserves the ordering of critical operations on the path variable and exposes the exact sequence that leads to host-side filesystem access. 6",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "High-Risk Functionality Pattern Summarization.We define",
+        "Function Call-Chain Extraction"
+      ],
+      "char_start": 31945,
+      "char_end": 32995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07b75617e7e7c6764d7624f274ee2519",
+      "kind": "heading",
+      "text": "D. PaTra Vulnerability Detection",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. PaTra Vulnerability Detection"
+      ],
+      "char_start": 32997,
+      "char_end": 33029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:854a15a0cc3ebf86289f0a479e0f5892",
+      "kind": "paragraph",
+      "text": "The refined code segments are provided to LLM for PaTra vulnerability detection. This stage performs semantic matching between concrete implementations and abstract vulnerability patterns. The framework integrates pattern knowledge derived from historical CVEs with code-level execution context. LLM receives both the reduced call-chain segments and the pattern templates, and it evaluates whether the observed behavior satisfies the invariant violation captured by each pattern. This design links high-level vulnerability semantics with lowlevel implementation details and enables consistent reasoning across different codebases. The detection stage also preserves traceability, since each decision is grounded in explicit pattern fields and concrete code locations. PaTra Pattern Summarization.By analyzing the commonalities among existing container vulnerabilities from both logical and semantic perspectives, we summarize the fundamental patterns of PaTra vulnerabilities. Bulkhead constructs these patterns through an offline synthesis stage over historical CVE reports. Each CVE is first normalized into a structured textual description that includes execution phase, involved components, path flow, validation logic, and exploitation conditions. The prompt used in this stage instructs LLM to extract invariant properties across multiple CVEs and to ignore implementation-specific details such as variable names or code structure. The prompt requires LLM to identify three elements: the origin of the path, the sequence of path processing across",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. PaTra Vulnerability Detection"
+      ],
+      "char_start": 33031,
+      "char_end": 34583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0338025c5fa58e288c52ae7062e12ea3",
+      "kind": "paragraph",
+      "text": "components, and the location where the security assumption fails. LLM then groups CVEs that share the same invariant violation and produces a generalized pattern description for each group. This process yields a compact set of stable vulnerability abstractions that capture the essential semantics of PaTra. We categorize historical PaTra vulnerabilities into four distinct classes based on two primary dimensions: the occurrence phase within the container lifecycle and the underlying root cause of the vulnerability. The lifecycle dimension separates operations into pre-start and runtime phases. The pre-start phase includes image building, container creation, volume mounting, and initialization. The runtime phase includes file copying, command execution, and volume exporting. The rootcause dimension distinguishes between direct path traversal by symlinks and TOCTOU race conditions. Direct path traversal appears when path resolution does not enforce boundary constraints. TOCTOU conditions appear when validation and use are separated and the path object changes between these steps. Combining these dimensions yields four specific vulnerability patterns: pre-start symlinks, pre-start TOCTOU, runtime symlinks, and runtime TOCTOU. Bulkhead formalizes these patterns into a structured JSON representation. Each pattern contains three fields: Object, Interaction, and Exploitation. The Object field defines the roles of host, container, and attacker, together with their capabilities and privilege levels. The In-",
+      "order": 83,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. PaTra Vulnerability Detection"
+      ],
+      "char_start": 34585,
+      "char_end": 36106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7950f48f015932bcbb3d90d8e8454f53",
+      "kind": "paragraph",
+      "text": "teraction field encodes the ordered execution steps and marks the locations of path validation, path resolution, and privilege boundary crossing. The Exploitation field specifies attacker actions such as symlink construction, directory replacement, or race triggering. The prompt enforces a fixed schema and requires each field to align with evidence extracted from CVE descriptions. The resulting patterns are stored as reusable templates and are directly used during detection. PaTra Vulnerability Detection.During the final detection phase, Bulkhead supplies LLM with the extracted function call chain and the formalized vulnerability patterns. The prompt defines a guided reasoning process based on the pattern structure. LLM first identifies candidate path variables that originate from container-controlled inputs and traces their propagation across functions. LLM then locates validation operations and resolution operations along the call chain and determines their relative order. LLM also evaluates the privilege context of each operation and identifies whether a path crosses from container scope to host scope. LLM then compares the extracted execution structure with each predefined pattern. The matching process checks whether the observed behavior aligns with the invariant violation encoded in the pattern, including path origin, interaction sequence, and privilege boundary. LLM produces a structured output that includes the matched pattern type, the corresponding code locations, and a reasoning trace that connects the call",
+      "order": 84,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. PaTra Vulnerability Detection"
+      ],
+      "char_start": 36108,
+      "char_end": 37651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0c04f916db3896505cfbee29e7c0fa9",
+      "kind": "paragraph",
+      "text": "chain to the pattern fields. Upon confirming a potential path traversal vulnerability, Bulkhead generates a formalized bug report. This report includes the vulnerability description, the matched pattern type, the precise code locations, and the inferred threat model. The framework synthesizes a proof of concept by instantiating the Exploitation field of the matched pattern with concrete parameters extracted from the code. LLM translates abstract exploitation conditions into executable steps that follow the interaction sequence identified in the call chain. These steps include file layout construction, symlink placement, and invocation of the target interface. The generated proofs of concept are executed in an isolated testing environment to validate exploitability. This validation step ensures that the detected issue satisfies both semantic correctness and practical impact.",
+      "order": 85,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. PaTra Vulnerability Detection"
+      ],
+      "char_start": 37653,
+      "char_end": 38539,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:054a67ffe4966439cb6d519467b06f8b",
+      "kind": "heading",
+      "text": "E. Detection Findings and Security Insights",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights"
+      ],
+      "char_start": 38541,
+      "char_end": 38584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db270d5a58017992c7a9ff916e87e33b",
+      "kind": "paragraph",
+      "text": "Target Collection.To evaluate the practical effectiveness of Bulkhead, we conducted a systematic exploration of GitHub to identify repositories related to the container ecosystem. We applied a hierarchical filtering process that first analyzed repository metadata, including README files, configuration files, and attached documentation, to determine the functionality and scope of each repository. We further performed targeted web searches using repository names to obtain supplementary technical descriptions and project context. We combined the collected repository information and provided it to LLM to determine whether the repository belonged to the container ecosystem. The collected targets covered a diverse range of architectures, including container runtimes 7",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights"
+      ],
+      "char_start": 38586,
+      "char_end": 39358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7b458171fb26bd67af01e79d501025b",
+      "kind": "paragraph",
+      "text": "such as Docker and Nerdctl, hardware support systems such as NVIDIA Container Toolkit and Intel Device Plugin, and container-based AI sandbox environments such as OpenHands. This process produced a dataset of 82 candidate repositories. We manually verified a stratified sample covering twenty percent of the dataset and confirmed that all selected repositories were within the intended research scope. Detection Results.Bulkhead was deployed on a diverse set of container runtimes, plugins, and sandbox environments to evaluate the prevalence of PaTra vulnerabilities in modern container ecosystems. The framework identified 9 previously undisclosed vulnerabilities that involve unsafe host-container path interactions. Bulkhead generated a functional PoC for each case to validate exploitability. The PoCs demonstrate complete attack paths from container-controlled inputs to privileged host resource access under realistic threat models. We submitted detailed reports to the corresponding maintainers, including root cause analysis and patch suggestions derived from the detection results. Insight I:Severity: There are still a number of PaTra vulnerabilities in modern container ecosystems. At the time of writing, 3 discovered vulnerabilities have been assigned CVE identifiers, while the remaining cases are under active review and patch development. The results show that path interaction vulnerabilities continue to affect widely used container components, including runtimes and auxiliary plugins. Existing defenses still fail to consistently enforce",
+      "order": 88,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights"
+      ],
+      "char_start": 39360,
+      "char_end": 40918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f111bb13daf6759350cfae80eb517508",
+      "kind": "paragraph",
+      "text": "filesystem boundary constraints during host-container path resolution and filesystem operations. These findings demonstrate that PaTra vulnerabilities remain an active security problem in real-world container systems. Case Study.We present two representative cases to illustrate the diversity and impact of the discovered vulnerabilities. The first case involves Nerdctl, which represents a widely used container engine. Bulkhead identifies a pre-start vulnerability in the volume mounting procedure. The issue resides in the ProcessFlagV function in mountutil.go, which resolves user-specified mount paths during container initialization. The function validates path existence but does not enforce path stability across resolution and use. In a scenario where multiple containers share a common volume, an attacker can manipulate the shared directory from a running container and replace a legitimate subpath with a symlink that targets a sensitive host location. When a new container is started with a bind mount that references this subpath, the resolution process follows the manipulated link and mounts the host path into the container. The attack enables unauthorized access to sensitive files on the host filesystem and leads to container escape. The vulnerability reflects a violation of the invariant that path validation must remain consistent with path usage under concurrent modifications. Insight II:Generalizability: In addition to being present in traditional container management tools, the PaTra vulnera-",
+      "order": 89,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights"
+      ],
+      "char_start": 40920,
+      "char_end": 42441,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fa428307cbba1fe505282933eeff5ec",
+      "kind": "paragraph",
+      "text": "bility has also emerged in container-based AI sandbox. The second case involves OpenHands, which represents a container-based AI sandbox environment that relies on container isolation to execute untrusted workloads. Bulkhead identifies a runtime vulnerability in the file transfer mechanism between the client and the sandboxed Action Execution Server. In the V0 rumtime, the vulnerability arises from insufficient path boundary enforcement in the copy from APIs. The server processes file operations using standard library functions that follow symlinks and do not restrict extraction paths to the intended workspace. An attacker with execution capability inside the sandbox can create a symlink that points to a sensitive directory outside the workspace. When the client invokes the download interface, the server traverses the symlink and packages the target files into an archive, which is then returned to the client. The attacker can extract the archive and access sensitive data. This vulnerability demonstrates that path traversal issues are not limited to traditional mount operations, and they also affect higher-level file interaction APIs in sandboxed environments.",
+      "order": 90,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights"
+      ],
+      "char_start": 42443,
+      "char_end": 43620,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a39a879619a63fe7626b2b12d9268ef0",
+      "kind": "heading",
+      "text": "REMEDIATIONPIPELINE",
+      "order": 91,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "E. Detection Findings and Security Insights",
+        "REMEDIATIONPIPELINE"
+      ],
+      "char_start": 43622,
+      "char_end": 43641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:416e21404695e23f4c8228a896c67e9f",
+      "kind": "heading",
+      "text": "A. Overview",
+      "order": 92,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 43643,
+      "char_end": 43654,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8428b5f144eddae602c424f437ddbb10",
+      "kind": "paragraph",
+      "text": "In this paper, remediation means generating a correct, verifiable patch for a detected PaTra vulnerability. To repair detected PaTra violations, we employ a model-checking-guided patch pipeline to construct a verifiable patch. A valid patch must satisfy the safety invariant identified during detection, compile within the affected codebase, and preserve normal container operations. The primary difficulty in enforcing this invariant lies in identifying the precise source location to apply the fix. For instance, repairing a TOCTOU path-resolution flaw requires placing the patch exactly where it can bind a privileged operation to a validated object before an attacker alters the filesystem state.",
+      "order": 93,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 43656,
+      "char_end": 44356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5b93036e706fa85f57eebc71b4c1d38",
+      "kind": "caption",
+      "text": "Fig. 2 illustrates the automated repair pipeline in Bulkhead.",
+      "order": 94,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 44358,
+      "char_end": 44419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:030082a76a442c54bae3a2ae0104213a",
+      "kind": "paragraph",
+      "text": "This pipeline begins by passing detection artifacts to an LLM to synthesize candidate patches. The LLM analyzes the proof-of-concept exploit, the vulnerable call chain, and the surrounding source code to locate the exact flaw and generate a concrete fix. A compilation filter then discards any proposed code that fails to build within the target repository. The verification backend processes the surviving patches by translating their repair logic into Promela code. An LLM maps the patched source code into a predefined model-checking template specific to the detected PaTra pattern. The system then executes the SPIN model checker on this instantiated Promela model to evaluate adversarial filesystem interleavings and verify the required safety invariant. A failed verification produces a counterexample that directly guides the next iteration of patch synthesis. The pipeline ultimately outputs a 8",
+      "order": 95,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 44421,
+      "char_end": 45324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b397940150c28979fd264b51a5d61f4a",
+      "kind": "paragraph",
+      "text": "deployable repair that integrates seamlessly into the codebase and defends against the modeled attacker.",
+      "order": 96,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "A. Overview"
+      ],
+      "char_start": 45326,
+      "char_end": 45430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cf92a81cc0e1456fe137ec5c7a8f74d",
+      "kind": "heading",
+      "text": "B. Candidate Patch Synthesis",
+      "order": 97,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Candidate Patch Synthesis"
+      ],
+      "char_start": 45432,
+      "char_end": 45460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b83c14660330483a0dd501f0eaf9514b",
+      "kind": "paragraph",
+      "text": "LLM Patch Generation.The repair pipeline first synthesis a candidate patch using an LLM. The synthesizer receives detection artifacts, including PoC exploits, vulnerable call chains, and surrounding source code. The LLM analyzes these artifacts to locate the vulnerable operation and synthesize a concrete patch for the affected repository. Unlike prior specification-guided LLM approaches that rely primarily on prompt-level constraints [26], Bulkhead enforces PaTraspecific safety invariants during backend verification. Sanity Filter.Before model checking, Bulkhead first applies a compilation and applicability filter to the synthesized patch. The filter rejects edits that cannot replace the vulnerable operation or fail to compile within the affected package. A passing result therefore indicates only that the candidate patch can be integrated into the target repository. The required PaTra safety invariant is enforced later by the verification backend during path-safety model checking. Failed applicability checks produce compilation and integration feedback for the next patch-synthesis iteration. These failures are resolved before verification and therefore do not enter the PaTra-specific model-checking stage. The verification backend can thus focus on validation-to-use binding, adversarial path mutations, and host-container boundary confinement rather than repository-level patch inconsistencies.",
+      "order": 98,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Candidate Patch Synthesis"
+      ],
+      "char_start": 45462,
+      "char_end": 46876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:285d3e7255afd5b40817f584e300f69c",
+      "kind": "heading",
+      "text": "Pattern-Template Model Checking",
+      "order": 99,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Candidate Patch Synthesis",
+        "Pattern-Template Model Checking"
+      ],
+      "char_start": 46878,
+      "char_end": 46909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76a296bbc9678d6df6d5005fb12382c2",
+      "kind": "paragraph",
+      "text": "Template Instantiation.At the model-checking stage, Bulkhead instantiates a PaTra verification template for the synthesized patch. Each template defines the attacker capability, the abstract state space, and the required path-safety invariant for the detected vulnerability class. The verification backend then evaluates the repaired logic under adversarial filesystem interleavings. For path-resolution vulnerabilities, the verifier checks three properties. Privileged operations must remain bound to validated objects. Attacker-controlled path mutations must not redirect operations outside the allowed host-container boundary. Legitimate in-boundary filesystem layouts must remain accessible after repair. Model Checking Verification and Feedback.The verification backend maps each repository-applicable candidate into this fixed abstraction. The LLM-assisted translator encodes how the candidate changes the modeled repair behavior. It cannot redefine the attacker, weaken the safety invariant, or reduce the checked state space. The PaTra pattern therefore acts as an executable security constraint rather than a descriptive vulnerability label. Bulkhead rejects candidates that apply cleanly to the repository but still permit unsafe path-resolution behavior. It then checks the instantiated Promela model with Spin [27]. When model checking detects a violation, the verification backend converts the counterexample into repair feedback for the next synthesis iteration. The counterexample exposes the missing path-safety relation in the repaired logic. Typical",
+      "order": 100,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Candidate Patch Synthesis",
+        "Pattern-Template Model Checking"
+      ],
+      "char_start": 46911,
+      "char_end": 48478,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ecc882e34f24796dc6f2d9ece8010c1",
+      "kind": "paragraph",
+      "text": "failures include validation that is not bound to the subsequent privileged operation, unchecked path-resolution targets, and repairs that block legitimate in-boundary container layouts. The next synthesis iteration therefore receives counterexampleguided evidence instead of a complete repair strategy embedded in the initial prompt.",
+      "order": 101,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Candidate Patch Synthesis",
+        "Pattern-Template Model Checking"
+      ],
+      "char_start": 48480,
+      "char_end": 48813,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63c8a73618d8ee58886d9ee25f4777f4",
+      "kind": "heading",
+      "text": "D. Patch Findings and Security Insights",
+      "order": 102,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 48815,
+      "char_end": 48854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a381c811df964c0d8b7f97115670033b",
+      "kind": "paragraph",
+      "text": "Runtime Validation Results.Runtime validation evaluates whether a generated patch blocks the concrete exploit while preserving legitimate container behavior. For each reproducible newly discovered vulnerability, Bulkhead reconstructs the affected repository version, runtime configuration, and PoC exploit. Before applying the generated patch, Bulkhead first confirms that the PoC reproduces the reported host-container boundary violation. After applying the patch, Bulkhead reruns the same PoC and checks that the exploit no longer reaches the unsafe host-side target. The exploit also exercises legitimate in-boundary path layouts to ensure that the repair does not reject benign container workflows. We performed runtime validation for eight of the nine newly discovered vulnerabilities. All eight validated patches blocked the corresponding PoC after repair while preserving the benign in-boundary cases covered by the harness. These validated patches provide the repair artifacts that we prepare for responsible disclosure and upstream submission. We exclude the OpenHands case from runtime validation because the vulnerable function was no longer present in the upstream version used for reconstruction. Runtime validation complements repository applicability and pattern-template model checking. Applicability checks whether a patch can be integrated into the target codebase, model checking verifies the PaTra invariant under the modeled attacker, and runtime validation exercises the repaired system against a concrete PoC execution.",
+      "order": 103,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 48856,
+      "char_end": 50398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e1fa28d4b96f1f4b723028f746864a1",
+      "kind": "paragraph",
+      "text": "Over-Restrictive Historical Fixes.Pattern-template model checking exposes over-restrictive repair behavior in historical CVE fixes. In three historical cases, the repair prevents boundary escape by rejecting symbolic links entirely. Insight III:Compatibility: Exploit-blocking patches may still be over-restrictive by rejecting legitimate in-boundary symbolic links. This strategy blocks symlink-based exploits, but it also rejects benign symbolic links whose resolved targets remain inside the intended workspace or host–container boundary. Such repairs satisfy a narrow exploit-blocking objective, but they fail to preserve legitimate in-boundary filesystem behavior. This finding shows that PaTra repair should enforce boundary confinement without disabling valid path layouts. Case Study.We use the Nerdctl shared-volume vulnerability to show why Bulkhead does not treat an LLM-generated patch 9",
+      "order": 104,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 50400,
+      "char_end": 51299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3074d2c39cd4fa2e5c272cac8e061bc",
+      "kind": "caption",
+      "text": "Fig. 2: Bulkhead Patch Pipeline.",
+      "order": 105,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 51301,
+      "char_end": 51333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b788d9f16ef91638adf0c1da3c06fdb",
+      "kind": "caption",
+      "text": "Fig. 3: Nerdctl repair failure pattern in pseudocode.",
+      "order": 106,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 51335,
+      "char_end": 51388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba5584312330a465716eebf0572e2d05",
+      "kind": "paragraph",
+      "text": "as a final repair. The detection stage classifies this case as a pre-start TOCTOU vulnerability in the bind-mount path. The vulnerable call chain reaches the mount utility code, where a user-controlled bind source is eventually passed into the privileged bind-mount operation. The repair challenge is not only to add a path check, but to ensure that the value validated by the patch remains bound to the value consumed by the later mount operation.",
+      "order": 107,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "D. Patch Findings and Security Insights"
+      ],
+      "char_start": 51390,
+      "char_end": 51838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1e1d15f36cfe930c26fafda776211c9",
+      "kind": "heading",
+      "text": "Insight IV:Soundness: Repository-applicable LLM patches",
+      "order": 108,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 51840,
+      "char_end": 51895,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fb3c556670ab0c108dce4cd52a2ca91",
+      "kind": "paragraph",
+      "text": "are not necessarily semantically safe under PaTra invariants.",
+      "order": 109,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 51897,
+      "char_end": 51958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbdf6f496e20516b5f2f8a8f6aa5f719",
+      "kind": "caption",
+      "text": "Fig. 3 illustrates this failure mode. Panel (a) shows the",
+      "order": 110,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 51960,
+      "char_end": 52017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f729735b87415672b0a5ec145e7dcade",
+      "kind": "paragraph",
+      "text": "vulnerable bind-source flow. The source path reaches the bindmount operation without a relation that prevents symlink redirection or later path mutation. Panel (b) shows a direct LLM repair that adds a plausible path-level check before the bind operation. This candidate is not merely a malformed patch. It survives the repository-level applicability stage and reaches model checking. However, the pattern-template verifier rejects it because the check and the privileged use remain separable under adversarial filesystem interleavings. The counterexample follows a simple sequence: the check observes a normal path, the attacker swaps the path to an escaping symlink, and the 10",
+      "order": 111,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 52019,
+      "char_end": 52698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f46c7fb7abd41393ab738c4a5853bb2c",
+      "kind": "paragraph",
+      "text": "bind operation later consumes the mutated target. This case demonstrates the limitation of LLM-only repair. The LLM can identify a relevant source location and insert security-looking code, but the generated edit may still miss the PaTra relation required by the vulnerability class. A compilation or applicability filter cannot expose this semantic gap because the patch is a valid source-level artifact. The model checker exposes the gap by evaluating the candidate under the attacker model encoded by the selected PaTra template. Bulkhead converts this counterexample into repair feedback for the next synthesis iteration. The feedback does not provide a complete repair recipe. It identifies the missing security relation: the repaired bind source must be validated in a way that remains connected to the later bind-mount use. Panel (c) shows the feedback-guided repair. The revised candidate passes the selected pattern-template model check because the modeled repair behavior no longer permits the attacker to redirect the validated bind source outside the allowed host–container boundary. This case supports Bulkhead’s verification-guided design. The LLM is useful for locating and editing complex source code, but model checking supplies the security judgment that the LLM cannot provide by itself. The static filter establishes that a candidate can be integrated into the repository. The PaTra template establishes whether the candidate satisfies the required path-safety invariant under the modeled attacker. Together, these stages turn LLM repair from a best-effort code",
+      "order": 112,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 52700,
+      "char_end": 54281,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbd29a736cac1c8cb78ad52ce8312075",
+      "kind": "paragraph",
+      "text": "generation step into an iterative and verifiable repair process.",
+      "order": 113,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches"
+      ],
+      "char_start": 54283,
+      "char_end": 54347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e2bb8ad954cc103da7f724b707e11f0",
+      "kind": "heading",
+      "text": "EVALUATION",
+      "order": 114,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches",
+        "EVALUATION"
+      ],
+      "char_start": 54349,
+      "char_end": 54359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24c4b36a0f21781dbcbf74fbc3074ff6",
+      "kind": "paragraph",
+      "text": "This section evaluates the effectiveness and robustness of the Bulkhead framework in detecting and repairing PaTra vulnerabilities, and the evaluation follows the threat model and vulnerability characteristics described in section III. The evaluation focuses on three aspects. It measures the end-toend capability of the framework on a comprehensive dataset that covers diverse vulnerability types and lifecycle phases. It verifies whether the generated patches preserve security invariants and remain consistent with real-world fixes. It analyzes the contribution of each core component through ablation experiments, which reveals how semantic patterns and structured reasoning improve detection precision and stability. A. Effectiveness of the Proposed Framework We first evaluate the effectiveness of Bulkhead from both detection and remediation perspectives through Claude Opus",
+      "order": 115,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches",
+        "EVALUATION"
+      ],
+      "char_start": 54361,
+      "char_end": 55242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62a4d027d35ddccd46bce5a71640bc29",
+      "kind": "heading",
+      "text": "[28]. The evaluation examines whether the framework can",
+      "order": 116,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches",
+        "[28]. The evaluation examines whether the framework can"
+      ],
+      "char_start": 55244,
+      "char_end": 55299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f944dc1c66322457d47575eba9852049",
+      "kind": "paragraph",
+      "text": "accurately identify vulnerabilities that span multiple components and execution stages, and whether it can generate correct patches that satisfy the security requirements of real-world systems. Dataset.The evaluation dataset consists of 36 PaTra vulnerabilities, which provide a representative benchmark for logic vulnerability analysis in container ecosystems. The dataset includes 27 publicly CVEs in Table I and 9 previously undisclosed PaTra vulnerabilities described in section IV-E. This combination ensures that the dataset captures both historical vulnerability and emerging attack surfaces, and it reflects the evolution of cross-boundary filesystem interactions in contemporary systems. Verification of the Pipeline.We execute the complete Bulkhead pipeline on the dataset to validate its detection and patching capabilities. The framework successfully detects all",
+      "order": 117,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Insight IV:Soundness: Repository-applicable LLM patches",
+        "[28]. The evaluation examines whether the framework can"
+      ],
+      "char_start": 55301,
+      "char_end": 56175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fc443e650e88ad88d9c34fb527afc1d",
+      "kind": "heading",
+      "text": "vulnerabilities, which demonstrates its ability to capture",
+      "order": 118,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "vulnerabilities, which demonstrates its ability to capture"
+      ],
+      "char_start": 56177,
+      "char_end": 56235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f67fd310139a02a889c6a7bef24a580",
+      "kind": "paragraph",
+      "text": "complex cross-component interaction patterns and invariant violations without manual intervention. Moreover, the detection process accurately identifies the origin of functionality entry, the sequence of path resolution operations, and the violation points where container and host interacts. For the 27 known CVEs, Bulkhead generates patches that are consistent with the final versions merged into the corresponding open-source projects. The generated patches enforce invariant-preserving strategies such as binding validation to use and avoiding unsafe path re-resolution. This consistency indicates that the framework can synthesize remediation strategies that align with practical development constraints and established security practices.",
+      "order": 119,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "vulnerabilities, which demonstrates its ability to capture"
+      ],
+      "char_start": 56237,
+      "char_end": 56981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b118767af3151e5a3b18bd10e514fc48",
+      "kind": "heading",
+      "text": "B. Ablation Study",
+      "order": 120,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Ablation Study"
+      ],
+      "char_start": 56983,
+      "char_end": 57000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e909b6a30b9d831202b7fe6b4b4f369",
+      "kind": "paragraph",
+      "text": "We conduct an ablation study to quantify the contribution of key components in the framework. The analysis is performed on the full dataset of 36 vulnerabilities. Each experiment removes one core design element while keeping the rest of the pipeline unchanged. The evaluation measures detection accuracy in terms of false negatives and false positives. This study demonstrates how structured knowledge and semantic constraints improve both completeness and reliability of the framework, and it highlights the necessity of each component in maintaining stable reasoning over complex call chains and cross-boundary interactions. Detection Pipeline.We analyze the ablation results by aligning each removed component with its role in the detection pipeline, including entry function identification, call-chain extraction, and pattern-guided reasoning. The LLM we use is Claude Opus 4.6. Removing high-risk function identification primarily affects entry point localization. The framework fails to consistently identify externally reachable functions that implement security-sensitive operations, which leads to incomplete coverage of relevant execution. As shown in Table II, this setting has detected 25 out of 36 vulnerabilities and introduces 11 false negatives (30.6%). The missed cases are concentrated in scenarios where vulnerable behaviors are exposed through indirect interfaces or require precise mapping from documentation to implementation. The relatively low false positive rate indicates that the analysis remains conservative, but it lacks",
+      "order": 121,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Ablation Study"
+      ],
+      "char_start": 57002,
+      "char_end": 58552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bb6a660703e462afdaf6d1e432387bb",
+      "kind": "paragraph",
+      "text": "sufficient recall due to missing entry points. Moreover, repository-level documentation provides essential constraints for interpreting the security assumptions of exposed functionalities and helps distinguish implementation flaws from intended design limitations. For example, the 11",
+      "order": 122,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "B. Ablation Study"
+      ],
+      "char_start": 58554,
+      "char_end": 58838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56d9edb1a3042f7b28658ae774835a6e",
+      "kind": "heading",
+      "text": "TABLE II: Ablation Study on Bulkhead’s Detection Pipeline Components",
+      "order": 123,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "TABLE II: Ablation Study on Bulkhead’s Detection Pipeline Components"
+      ],
+      "char_start": 58840,
+      "char_end": 58908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cbff21d505b542fee43dd4acc94e060",
+      "kind": "heading",
+      "text": "Configuration Total Pre-Sym Pre-TOCTOU Run-Sym Run-TOCTOU FN(%) FP(%)",
+      "order": 124,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Configuration Total Pre-Sym Pre-TOCTOU Run-Sym Run-TOCTOU FN(%) FP(%)"
+      ],
+      "char_start": 58910,
+      "char_end": 58979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07f65b5ec0a756fab2354c334f552e20",
+      "kind": "paragraph",
+      "text": "Bulkhead 36 11 15 4 6 0 (0.0%) 0 (0.0%) w/o High-Risk Functions 25 7 9 3 6 11 (30.6%) 2 (5.6%) w/o Related Call-Chain Extraction 19 6 6 2 5 10 (27.8%) 7 (19.4%) w/o PaTra Detection Patterns 11 3 4 2 2 12 (33.3%) 13 (36.1%) nerdctl cpoperation matches a typical PaTra interaction pattern in code, where container-controlled paths may affect host-side filesystem operations. However, the official documentation explicitly restricts this functionality to trusted and cooperative containers and does not guarantee protection under adversarial conditions[29]. Bulkhead therefore places this behavior outside the considered threat model and does not classify it as a vulnerability. Incorporating such repositorylevel constraints prevents unsafe-by-design functionality from being misidentified as a security issue and improves the precision of entry function identification. Removing related call-chain extraction impacts the semantic completeness of execution paths. The extracted call chains either omit critical transitions or include unrelated logic, which disrupts the consistency of path propagation analysis. this setting has detected 19 out of 36 vulnerabilities and produces",
+      "order": 125,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Configuration Total Pre-Sym Pre-TOCTOU Run-Sym Run-TOCTOU FN(%) FP(%)"
+      ],
+      "char_start": 58981,
+      "char_end": 60158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea55c289e30430a15ec0219d4a51e998",
+      "kind": "heading",
+      "text": "false positives (19.4%), which is significantly higher than",
+      "order": 126,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "false positives (19.4%), which is significantly higher than"
+      ],
+      "char_start": 60160,
+      "char_end": 60219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37c2113577306b16411165ddf9d6fcf0",
+      "kind": "paragraph",
+      "text": "other configurations. The increase in false positives reflects that incomplete or noisy call chains lead to incorrect associations between path operations and host-side effects. At the same time, 10 false negatives (27.8%) indicate that missing code prevents the framework from capturing full interaction semantics required for vulnerability identification. Removing PaTra detection patterns affects the final reasoning stage. Without structured pattern constraints, the analysis relies solely on LLM to interpret execution semantics, which leads to unstable and inconsistent decisions. This configuration has detected only 11 out of 36 vulnerabilities, with 12 false negatives (33.3%) and 13 false positives (36.1%). The simultaneous increase in both error types shows that pattern guidance is necessary to anchor the analysis to security invariants and to maintain alignment between path operations and boundarycrossing behaviors. These results show that each component contributes to a distinct aspect of the detection process. Entry function identification determines the coverage of analysis, call-chain extraction preserves semantic correctness across execution paths, and detection patterns provide constraints that stabilize reasoning. The degradation patterns observed in Table II are consistent with this decomposition and demonstrate that accurate detection requires the integration of all three components. Remediation Pipeline.We evaluate Bulkhead on a repairevaluable benchmark of 26 PaTra vulnerabilities, including",
+      "order": 127,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "false positives (19.4%), which is significantly higher than"
+      ],
+      "char_start": 60221,
+      "char_end": 61751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11f5ff654e18cfd99245d192c4cdd0ee",
+      "kind": "heading",
+      "text": "newly discovered cases and 18 historical CVEs. The his-",
+      "order": 128,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-"
+      ],
+      "char_start": 61753,
+      "char_end": 61808,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89f890793bd15946910c55f853b6b325",
+      "kind": "paragraph",
+      "text": "torical cases are selected from a broader pool of publicly disclosed container-runtime CVEs only when the vulnerable revision can be identified, the security-relevant source path can be localized, and the repair objective can be mapped to a PaTra pattern and evaluated by our verification oracle. Cases lacking source-level repair evidence, reproducible vulnerable revisions, or a clear PaTra repair objective are excluded. For the retained historical cases, we normalize the inputs by reconstructing vulnerable source windows and line-anchored call-chain context, while using ground-truth patches only for benchmark construction and not as model input. We compare direct LLM repair with the full Bulkhead pipeline across five contemporary frontier LLMs: Claude Opus",
+      "order": 129,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-"
+      ],
+      "char_start": 61810,
+      "char_end": 62576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1d76279eb0e007ae87eee1a3c03f00f",
+      "kind": "heading",
+      "text": "[30], GPT-5.5 [31], Gemini-3.1 Pro [32], Qwen 3.6-",
+      "order": 130,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-",
+        "[30], GPT-5.5 [31], Gemini-3.1 Pro [32], Qwen 3.6-"
+      ],
+      "char_start": 62578,
+      "char_end": 62628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcb9e91a7b7b78f86aabd697a3b1301e",
+      "kind": "paragraph",
+      "text": "Plus [33], and DeepSeek-V4-Pro [34]. Both settings receive the same vulnerability report, call-chain context, and vulnerable source window. The direct baseline generates a patch in a single pass and is evaluated by the same static patch sanity filter. Bulkhead additionally uses static diagnostics and PaTra-template model-checking counterexamples as feedback for iterative repair. The results show that repository applicability and semantic path-safety verification are complementary. Bulkhead improves the average Success Rate from 51.5% to",
+      "order": 131,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-",
+        "[30], GPT-5.5 [31], Gemini-3.1 Pro [32], Qwen 3.6-"
+      ],
+      "char_start": 62630,
+      "char_end": 63172,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63b278bca04a8681904e95c3c5494100",
+      "kind": "heading",
+      "text": "5%, a gain of 30.0 percentage points. This indicates",
+      "order": 132,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-",
+        "5%, a gain of 30.0 percentage points. This indicates"
+      ],
+      "char_start": 63174,
+      "char_end": 63226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fcfde7491919a94312b36a9e4796fd5b",
+      "kind": "paragraph",
+      "text": "that feedback-guided repair produces substantially more repository-applicable patches than direct one-shot LLM repair. At the same time, Bulkhead reduces the average Vulnerability Rate from 41.3% to 18.5%, a reduction of 22.8 percentage points. This gap shows that repository-applicable patches are not necessarily semantically safe under adversarial path-resolution behavior. The strongest example is GPT-5.5, whose Vulnerability Rate drops from 68.8% under direct repair to 4.2% under Bulkhead. This result is particularly informative because the patch-synthesis model is the same in both settings; the improvement comes from the static-feedback and model-checking-feedback loops rather than from changing the underlying LLM. Because Vulnerability Rate is conditioned on successful candidates, individual model-level changes should be interpreted together with the absolute number of verification-safe repairs. For example, Claude Opus 4.6 shows a slight increase in conditional Vulnerability Rate, from 9.1% to 13.0%, but Bulkhead also increases its number of successful patches from",
+      "order": 133,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "newly discovered cases and 18 historical CVEs. The his-",
+        "5%, a gain of 30.0 percentage points. This indicates"
+      ],
+      "char_start": 63228,
+      "char_end": 64314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20601bb9454f4e4c04d35e0529dea2b4",
+      "kind": "heading",
+      "text": "to 23. Overall, the results indicate that direct LLM repair",
+      "order": 134,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "to 23. Overall, the results indicate that direct LLM repair"
+      ],
+      "char_start": 64316,
+      "char_end": 64375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ffc782ca00bf7f40d01a6df36c093e3",
+      "kind": "paragraph",
+      "text": "often produces patches that are syntactically plausible but semantically unsafe, while Bulkhead improves both repository applicability and PaTra-level safety. 12",
+      "order": 135,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "to 23. Overall, the results indicate that direct LLM repair"
+      ],
+      "char_start": 64377,
+      "char_end": 64538,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7389ae898e81bcad3133d2eff5e14f6c",
+      "kind": "heading",
+      "text": "TABLE III: Effectiveness of Bulkhead Patching",
+      "order": 136,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "TABLE III: Effectiveness of Bulkhead Patching"
+      ],
+      "char_start": 64540,
+      "char_end": 64585,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c6a95e5c85275f675a02bc36e6a3d41",
+      "kind": "heading",
+      "text": "Metric Setting Claude Opus 4.6 GPT-5.5 Gemini-3.1 Pro Qwen 3.6-Plus DeepSeek-V4-Pro Average",
+      "order": 137,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Metric Setting Claude Opus 4.6 GPT-5.5 Gemini-3.1 Pro Qwen 3.6-Plus DeepSeek-V4-Pro Average"
+      ],
+      "char_start": 64587,
+      "char_end": 64678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1db6bbddf336d6436b8b495a88b92dc4",
+      "kind": "heading",
+      "text": "Success Rate↑",
+      "order": 138,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Success Rate↑"
+      ],
+      "char_start": 64680,
+      "char_end": 64693,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c4abd3f6e3af02e6bbdd6f9a1062937",
+      "kind": "equation",
+      "text": "Baseline 42.3% (11/26) 61.5% (16/26) 69.2% (18/26) 57.7% (15/26) 26.9% (7/26) 51.5% Bulkhead 88.5% (23/26) 92.3% (24/26) 88.5% (23/26) 84.6% (22/26) 53.8% (14/26) 81.5% ∆+46.2 pp +30.8 pp +19.3 pp +26.9 pp +26.9 pp +30.0 pp",
+      "order": 139,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Success Rate↑"
+      ],
+      "char_start": 64695,
+      "char_end": 64918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddaa2ba153317ffe0c253355a46d49b6",
+      "kind": "heading",
+      "text": "Vuln. Rate↓",
+      "order": 140,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Vuln. Rate↓"
+      ],
+      "char_start": 64920,
+      "char_end": 64931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff26f645f92773f7a7e5102f8716b362",
+      "kind": "paragraph",
+      "text": "Baseline 9.1% (1/11) 68.8% (11/16) 38.9% (7/18) 46.7% (7/15) 42.9% (3/7) 41.3% Bulkhead 13.0% (3/23) 4.2% (1/24) 26.1% (6/23) 13.6% (3/22) 35.7% (5/14) 18.5% ∆+3.9 pp -64.6 pp -12.8 pp -33.1 pp -7.2 pp -22.8 pp Averages are unweighted means over model-level rates, not pooled case counts. Vulnerability Rate is conditioned on candidates passing the static patch sanity filter; lower is better.",
+      "order": 141,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Vuln. Rate↓"
+      ],
+      "char_start": 64933,
+      "char_end": 65326,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7ab6d4363d1cbe79439aa5ca7685073",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 142,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Vuln. Rate↓",
+        "RELATEDWORK"
+      ],
+      "char_start": 65328,
+      "char_end": 65339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:789465f889bf1e855a1e75f9ef3d91f6",
+      "kind": "paragraph",
+      "text": "Container Isolation Security. To mitigate the container escape, researchers have focused on hardening the kernel’s logical boundaries. Li et al. [7] identified systematic pathmisresolution vulnerabilities and addressed them through Patrol, a kernel extension that enforces dentry-based access control during path lookups. Shifting from path logic to data integrity, Xu et al. [35] introduced Condo, which utilizes trusted execution environments to protect critical kernel permission structures. Unlike localized fixes, Condo provides a transparent, low-overhead scheme for safeguarding noncontrol flow data against unauthorized tampering. Beyond software-only defenses, leveraging hardware primitives has become a key trend for achieving strong isolation from untrusted hosts. Zhou et al. [36] leverage ARM CCA hardware primitives to minimize the trusted computing base. Their RContainer architecture employs per-container shims and a lightweight mini-OS to isolate workloads from untrusted hosts, effectively shifting the security boundary from kernel software to hardware-enforced realms. Marchand et al. [37] introduced sandbox-escape-bench to quantify the risk of LLMdriven exploits. Their evaluation reveals that frontier models can autonomously weaponize container misconfigurations and kernel flaws, highlighting an emerging threat vector that demands more resilient, automated defense mechanisms. LLM-Based Vulnerability Detection. Current research focuses on enhancing the reasoning capabilities of LLMs",
+      "order": 143,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Vuln. Rate↓",
+        "RELATEDWORK"
+      ],
+      "char_start": 65341,
+      "char_end": 66853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5818681bd86fc0d1807a6a4adb12f3c8",
+      "kind": "paragraph",
+      "text": "through external knowledge integration and hybrid analysis frameworks. Knowledge-augmented and specification-guided methods utilize historical security data to constrain LLM hallucinations and provide semantic ground truth. Du et al. [38] developed a retrieval-augmented framework that distills multi-dimensional knowledge from CVEs to help models distinguish between vulnerable and patched code. Zhu et al. [26] extracted reusable security specifications from historical patches to enable models to compare target code against expected safe behaviors. In domain-specific tasks, Li et al. [39] combined chain-of-thought prompting with specialized cryptographic knowledge bases to verify logic compliance. Hybrid analysis and agentic architectures integrate LLMs with traditional program analysis to address complex system interactions. Li et al. [40] enriched detection prompts with execution and data-flow contexts while employing an LLMas-a-judge mechanism to validate the generated rationales.",
+      "order": 144,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "Vuln. Rate↓",
+        "RELATEDWORK"
+      ],
+      "char_start": 66855,
+      "char_end": 67851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d1f13e3ac6613efd1a945bc4396726a",
+      "kind": "heading",
+      "text": "et al. [41] combined agentic planning with classic anal-",
+      "order": 145,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-"
+      ],
+      "char_start": 67853,
+      "char_end": 67909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85bf4f798aea5bd57cf7f9ac3ff26058",
+      "kind": "paragraph",
+      "text": "ysis primitives to achieve scalable exploration of privilege escalation flaws in microservices. Wei et al. [42] introduced a multi-agent conversational framework that identifies logic vulnerabilities through iterative collaboration and a specialized buffer-of-thought mechanism. LLM-Based Patch Generation. Researchers utilize specialized prompting strategies and iterative feedback loops to enhance the intrinsic reasoning capabilities of LLMs for program repair. Ahmed et al. [43] employed self-consistency techniques that identify optimal fixes by selecting the most frequent solutions across multiple reasoning paths. Kulsum [44] integrated chain-of-thought reasoning with execution feedback from compilers and security sanitizers to refine candidate patches iteratively. Nong et al. [45] developed an adaptive framework that extracts vulnerability semantics and employs multi-faceted validation to improve repair quality in real-world scenarios. Kim et al. [46] utilized tree-of-thought prompting to decompose the patching process into distinct stages that span from fault localization to fix strategy formulation. Hybrid frameworks combine the generative flexibility of LLMs with the rigor of formal methods to provide stronger security guarantees. Tihanyi et al. [47] integrated bounded model checking with LLMs to guide the repair process through counterexamples and stack traces. This approach ensures that the model checker verifies each repaired program before final output. Orvalho et al. [48] implemented a counterexample-",
+      "order": 146,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-"
+      ],
+      "char_start": 67911,
+      "char_end": 69446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9237a9145f44479cf726c805f65edce3",
+      "kind": "paragraph",
+      "text": "guided inductive synthesis loop that utilizes MaxSAT-based fault localization to generate program sketches. These sketches provide a structured template that guides LLMs toward synthesizing correct code while the system refines results through continuous test suite validation.",
+      "order": 147,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-"
+      ],
+      "char_start": 69448,
+      "char_end": 69725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86ec96dc241242d714c7f984abd8e6fe",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 148,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-",
+        "CONCLUSION"
+      ],
+      "char_start": 69727,
+      "char_end": 69737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:911f553bbfcdc29792956231d3cdfb09",
+      "kind": "paragraph",
+      "text": "In this paper, we present Bulkhead, an automated framework that integrates LLM with formal methods to detect and remediate PaTra vulnerabilities in container ecosystems. The framework generalizes multi-dimensional semantic patterns from historical PaTra vulnerabilities to locate high-risk crossboundary interactions, extract relevant call chains, and identify PaTra vulnerabilities. It further generates PoC exploits and produces patches that model checking verifies against safety invariants. Through systematic analysis of 82 container-related 13",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-",
+        "CONCLUSION"
+      ],
+      "char_start": 69739,
+      "char_end": 70288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa6bd23d13a965052bab6e1a1a71a119",
+      "kind": "paragraph",
+      "text": "repositories, Bulkhead uncovers nine previously undisclosed PaTra vulnerabilities, three of which have received CVE assignments. These contributions deepen the understanding of emerging container escape risks and provide a practical pathway toward stronger filesystem isolation in modern cloud and AI systems.",
+      "order": 150,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "et al. [41] combined agentic planning with classic anal-",
+        "CONCLUSION"
+      ],
+      "char_start": 70290,
+      "char_end": 70599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fec82dda7955af9fd904c29fdb304c6",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 151,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "REFERENCES"
+      ],
+      "char_start": 70601,
+      "char_end": 70611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0950536c943643d022b8ac3d0f18f2ee",
+      "kind": "reference",
+      "text": "[1] O. Jarkas, R. Ko, N. Dong, and R. Mahmud, “A container security survey: Exploits, attacks, and defenses,” ACM Computing Surveys, vol. 57, no. 7, pp. 1–36, 2025. [2] N. Zhou, Y . Yao, X. Liang, S. Yao, C. Yang, and W. Gui, “Optimization and evaluation of container-based ethercat communication in virtual plcs,” IEEE Transactions on Industrial Electronics, pp. 1–12, 2026. [3] “Build better software with autonomous cloud agent,” https://openhands. dev/product. [4] T. Zhang, X. Liu, B. Fan, and Y . Huang, “Container path mis-resolution escape detection method based on ebpf,” in 2025 3rd International Conference on Big Data and Privacy Computing. IEEE, 2025, pp. 60–69. [5] X. Yu, T. Xiong, W. Tang, Y . Jiang, Z. Wei, H. Wang, C. Chen, Y . Wang, B. Peng, and Z. Qi, “Wasc: Hardening webassembly sandboxes via system interface decoupling,” ACM Transactions on Architecture and Code Optimization, vol. 23, no. 1, pp. 1–23, 2026. [6] “CVE-2024-0132,” https://nvd.nist.gov/vuln/detail/cve-2024-0132. [7] Z. Li, W. Liu, X. Wang, B. Yuan, H. Tian, H. Jin, and S. Yan, “Lost along the way: Understanding and mitigating path-misresolution threats to container isolation,” in Proceedings of the 2023 ACM SIGSAC Conference on Computer and Communications Security, 2023, pp. 3063–3077. [8] “CVE-2018-15664,” https://nvd.nist.gov/vuln/detail/cve-2018-15664. [9] “CVE-2019-14271,” https://nvd.nist.gov/vuln/detail/CVE-2019-14271. [10] “Pouch Container Document,” https://pouchcontainer.io. [11] L. Chen, Y . Ma et al., “Research on mobile application local denial of",
+      "order": 152,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "REFERENCES"
+      ],
+      "char_start": 70613,
+      "char_end": 72173,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b0bbcc4efb1654af3d5b67a12a80f1b",
+      "kind": "paragraph",
+      "text": "service vulnerability detection technology based on rule matching,” in",
+      "order": 153,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "REFERENCES"
+      ],
+      "char_start": 72175,
+      "char_end": 72245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c8adc97083e07073071eeaa3b02240c",
+      "kind": "heading",
+      "text": "IEEE International Conference on Energy Internet. IEEE, 2019,",
+      "order": 154,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,"
+      ],
+      "char_start": 72247,
+      "char_end": 72308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2f3a1d626ea69a1a789d4fa2f3495ec",
+      "kind": "paragraph",
+      "text": "pp. 585–590. [12] P. Fiterau-Brostean, B. Jonsson, K. Sagonas, and F. T ˚aquist, “Automatabased automated detection of state machine bugs in protocol implementations.” in Proceedings of the 2023 Network and Distributed System Security Symposium, 2023. [13] E. W. Biederman and L. Networx, “Multiple instances of the global linux namespaces,” in Proceedings of the Linux Symposium, vol. 1, no. 1. Citeseer, 2006, pp. 101–112. [14] “cgroups(7) – Linux manual page,” https://www.man7.org/linux/ man-pages/man7/cgroups.7.html. [15] A. Chen, Z. Guo, Z. Jin, Z. Li, and Y . Chen, “Breaking the bulkhead: Demystifying cross-namespace reference vulnerabilities in kubernetes operators,” in Proceedings of the 2026 Network and Distributed System Security Symposium, 2026, pp. 1–20. [16] “NVIDIA Container Toolkit,” https://github.com/NVIDIA/ nvidia-container-toolkit. [17] T. Zheng, Q. Hou, H. Ren, X. Chen, G. Deng, T. Zhang, G. Xu, and H. Li, “kubesec: Automatic detection of takeover risks introduced by third-party apps in the kubernetes ecosystem,” IEEE Transactions on Dependable and Secure Computing, pp. 1–14, 2026. [18] J. Lin and D. Mohaisen, “From large to mammoth: A comparative evaluation of large language models in vulnerability detection.” in Proceedings of the 2025 Network and Distributed System Security Symposium, 2025. [19] H. Wu, C. Barrett, and N. Narodytska, “Lemur: Integrating large language models in automated program verification,” in International Conference on Learning Representations, vol. 2024, 2024, pp. 2968–",
+      "order": 155,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,"
+      ],
+      "char_start": 72310,
+      "char_end": 73845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b1376ed8427c6d76abb1eb844331258",
+      "kind": "paragraph",
+      "text": "2978. [20] Z. Li, J. Cheng, Q. Chen, E. Guan, Z. Bian, Y . Tao, B. Zha, Q. Wang, W. Han, and M. Guo, “{RunD}: A lightweight secure container runtime for high-density deployment and high-concurrency startup in serverless computing,” in 2022 USENIX Annual Technical Conference, 2022, pp. 53–68. [21] M. S. Haq, T. D. Nguyen, A. S ¸. Tosun, F. V ollmer, T. Korkmaz, and A.- R. Sadeghi, “Sok: A comprehensive analysis and evaluation of docker container attack and defense mechanisms,” in Proceedings of the 2024 IEEE Symposium on Security and Privacy. IEEE, 2024, pp. 4573–4590. [22] “CVE-2019-19921,” https://nvd.nist.gov/vuln/detail/cve-2019-19921. [23] “CVE-2021-30465,” https://nvd.nist.gov/vuln/detail/cve-2021-30465. [24] “CVE-2023-27561,” https://nvd.nist.gov/vuln/detail/cve-2023-27561. [25] “joern,” https://github.com/joernio/joern. [26] H. Zhu, J. Li, C. Gao, J. Qian, Y . Dong, H. Liu, L. Wang, Z. Wang,",
+      "order": 156,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,"
+      ],
+      "char_start": 73847,
+      "char_end": 74758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa52cd3396ca759dbec035994e8a956d",
+      "kind": "heading",
+      "text": "Hu, and G. Li, “Specification-guided vulnerability detection with",
+      "order": 157,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,",
+        "Hu, and G. Li, “Specification-guided vulnerability detection with"
+      ],
+      "char_start": 74760,
+      "char_end": 74825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5e2312931398cd33d077676e73ff18f",
+      "kind": "paragraph",
+      "text": "large language models,” arXiv preprint arXiv:2511.04014, 2025. [27] G. J. Holzmann, “The model checker SPIN,” IEEE Transactions on Software Engineering, vol. 23, no. 5, pp. 279–295, 1997. [28] Anthropic, “Claude Opus 4.6,” https://docs.anthropic.com/, 2026, [Online; accessed May 7, 2026]. [29] “Nerdctl cp,” https://github.com/containerd/nerdctl/blob/main/docs/ command-reference.md#whale-nerdctl-cp. [30] Anthropic, “Claude Opus 4.6,” https://www.anthropic.com/news/ claude-opus-4-6, 2026, accessed: 2026-05-07. [31] OpenAI, “GPT-5.5 Model,” https://developers.openai.com/api/docs/ models/gpt-5.5, 2026, [Online; accessed May 7, 2026]. [32] Google, “Gemini 3.1 Pro Preview,” https://ai.google.dev/gemini-api/ docs/models/gemini-3.1-pro-preview, 2026, [Online; accessed May 7, 2026]. [33] Qwen Team, Alibaba Group, “Qwen3.6,” https://github.com/QwenLM/ Qwen3.6, 2026, [Online; accessed May 7, 2026]. [34] DeepSeek-AI, “DeepSeek-V4-Pro,” https://huggingface.co/deepseek-ai/ DeepSeek-V4-Pro, 2026, [Online; accessed May 7, 2026]. [35] S. Xu, Y . Wang, L. Lei, K. Sun, J. Jing, S. Ma, J. Wang, and H. Huang, “Condo: enhancing container isolation through kernel permission data protection,” IEEE Transactions on Information Forensics and Security, vol. 19, pp. 6168–6183, 2024. [36] Q. Zhou, W. Cao, X. Jia, P. Liu, S. Zhang, J. Chen, S. Xu, and Z. Song, “Rcontainer: A secure container architecture through extending arm cca hardware primitives.” in Proceedings of the 2025 Network and Distributed System Security Symposium, 2025.",
+      "order": 158,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,",
+        "Hu, and G. Li, “Specification-guided vulnerability detection with"
+      ],
+      "char_start": 74827,
+      "char_end": 76355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8630c9377f149a7d96e5f2b10b5efe3",
+      "kind": "paragraph",
+      "text": "[37] R. Marchand, A. O. Cathain, J. Wynne, P. M. Giavridis, S. Deverett, J. Wilkinson, J. Gwartz, and H. Coppock, “Quantifying frontier llm capabilities for container sandbox escape,” arXiv preprint arXiv:2603.02277, 2026. [38] X. Du, G. Zheng, K. Wang, Y . Zou, Y . Wang, W. Deng, J. Feng, M. Liu, B. Chen, X. Peng, T. Ma, and Y . Lou, “Vul-rag: Enhancing llm-based vulnerability detection via knowledge-level rag,” ACM Transactions on Software Engineering and Methodology, 2026. [39] Z. Li, Z. Ji, T. Zheng, H. Ren, and X. Lan, “Cryptoscope: Utilizing large language models for automated cryptographic logic vulnerability detection,” arXiv preprint arXiv:2508.11599, 2025. [40] Y . Li, X. Li, H. Wu, M. Xu, Y . Zhang, X. Cheng, F. Xu, and S. Zhong, “Everything you wanted to know about llm-based vulnerability detection but were afraid to ask,” arXiv preprint arXiv:2504.13474, 2025. [41] P. Li, H. Y . Chong, Y . Cao, and J. Yang, “Detecting privilege escalation in polyglot microservices via agentic program analysis,” in Proceedings of the 2026 IEEE Symposium on Security and Privacy, 2026. [42] Z. Wei, J. Sun, Y . Sun, Y . Liu, D. Wu, Z. Zhang, X. Zhang, M. Li, Y . Liu, C. Li, M. Wan, J. Dong, and L. Zhu, “Advanced smart contract vulnerability detection via llm-powered multi-agent systems,” IEEE Transactions on Software Engineering, vol. 51, no. 10, pp. 2830–2846, 2025. [43] T. Ahmed and P. Devanbu, “Better patching using llm prompting, via self-consistency,” in 2023 38th IEEE/ACM International Conference on",
+      "order": 159,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,",
+        "Hu, and G. Li, “Specification-guided vulnerability detection with"
+      ],
+      "char_start": 76357,
+      "char_end": 77879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e75bfbc2c84cb2d98b45dcad9713a2fd",
+      "kind": "paragraph",
+      "text": "Automated Software Engineering, 2023, pp. 1742–1746. [44] U. Kulsum, H. Zhu, B. Xu, and M. d’Amorim, “A case study of llm for automated vulnerability repair: Assessing impact of reasoning and patch validation feedback,” in Proceedings of the 1st ACM International Conference on AI-Powered Software, 2024, pp. 103–111. [45] Y . Nong, H. Yang, L. Cheng, H. Hu, and H. Cai, “{APPATCH}: Automated adaptive prompting large language models for{Real-World} software vulnerability patching,” in Proceedings of the 34th USENIX Security Symposium, 2025, pp. 4481–4500. [46] Y . Kim, S. Shin, H. Kim, and J. Yoon, “Logs in, patches out: Automated vulnerability repair via{Tree-of-Thought}{LLM}analysis,” in Proceedings of the 34th USENIX Security Symposium, 2025, pp. 4401– 4419. 14",
+      "order": 160,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,",
+        "Hu, and G. Li, “Specification-guided vulnerability detection with"
+      ],
+      "char_start": 77881,
+      "char_end": 78652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f4e5596e47fce4c5f74ef5c5811d864",
+      "kind": "paragraph",
+      "text": "[47] N. Tihanyi, Y . Charalambous, R. Jain, M. A. Ferrag, and L. C. Cordeiro, “A new era in software security: Towards self-healing software via large language models and formal verification,” in 2025 IEEE/ACM International Conference on Automation of Software Test. IEEE, 2025, pp. 136–147. [48] P. Orvalho, M. Janota, and V . M. Manquinho, “Counterexample guided program repair using zero-shot learning and maxsat-based fault localization,” in Proceedings of the 2025 AAAI Conference on Artificial Intelligence, vol. 39, no. 1, 2025, pp. 649–657. 15",
+      "order": 161,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Bulkhead: Automated Semantic Detection and",
+        "IEEE International Conference on Energy Internet. IEEE, 2019,",
+        "Hu, and G. Li, “Specification-guided vulnerability detection with"
+      ],
+      "char_start": 78654,
+      "char_end": 79205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.12723",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

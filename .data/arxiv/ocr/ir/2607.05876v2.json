@@ -1,0 +1,3128 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "d06d205a8765e99c670268f53c5f0c7cadb214793f0069384008466c245ee8a5",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:bbe3392f76c27f837ff22eeff405bc9b",
+      "kind": "heading",
+      "text": "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving"
+      ],
+      "char_start": 0,
+      "char_end": 64,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5050424e65ca3cab0f5fb404cd4b5a62",
+      "kind": "heading",
+      "text": "Yihua Liu",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Yihua Liu"
+      ],
+      "char_start": 66,
+      "char_end": 75,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9abe2d4276b15da33d99b0b8da857117",
+      "kind": "heading",
+      "text": "Taikang Insurance Group",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Taikang Insurance Group"
+      ],
+      "char_start": 77,
+      "char_end": 100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:477f8e4ec14cac329b5b28799bbb0c8f",
+      "kind": "paragraph",
+      "text": "liuyihua1994@gmail.com July 2026",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Taikang Insurance Group"
+      ],
+      "char_start": 102,
+      "char_end": 134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:983ab853e00eeac36ec6c1dfa56edcd0",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Abstract"
+      ],
+      "char_start": 136,
+      "char_end": 144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b268bd1d2a63fdd634846746afe262f4",
+      "kind": "paragraph",
+      "text": "Production teams optimizing large language model (LLM) serving face a configuration space spanning parallelism layout, batching, quantization, sparse attention, and kernel-level work. The common operational response is to benchmark many configurations and open heavy profilers whenever a latency target is missed. This paper argues for a different workflow: build an analytical floor first, reconcile benchmarks against that floor, and escalate to profiling only when the residual justifies it.Estimation is the analytical layer of profiling: without it, optimization degenerates to grid search. We presentFloor First, a residual-driven triage methodology with a zero-dependency artifact: a floor calculator plus an agent skill that makes the discipline enforceable in agentic optimization loops. The account is compositional—new attention or state-space variants enter by declaring one module, not by rewriting the framework—so the workflow applies to any autoregressive transformer served on accelerators.Floor Firstmodels each decode step as a five-dimensional resource vector (HBM bytes, FLOPs, network bytes, network messages, KV capacity). Terms that use the same resource add; independent resources can overlap. This gives two numbers: an optimistic floor, max, and a no-overlap floor, sum. Where a measurement falls inside this [max,sum] interval is already a diagnostic: it tells us how much overlap the system is getting before any profiler is opened. Deployment alternatives are then compared bywall ordering—which resource wall binds first as load grows—rather than by point benchmarks.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Abstract"
+      ],
+      "char_start": 146,
+      "char_end": 1744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d58173bead2d2f9f828f6113beb7845",
+      "kind": "paragraph",
+      "text": "As a case study, we analyze a DeepSeek-V3.2-style 671B MoE/MLA model on 16 NVIDIA H20 GPUs, a hardware point whose ridge point of∼74 FLOP/byte (versus∼590 for H100) makes it an extreme decode-oriented part that no published analysis characterizes. The floors show that TP16 decoding at batch 64 and 8K context is KV-capacity-limited to∼70 concurrent requests, that DSA-style sparse attention removes the KV-bandwidth term but not the capacity wall, and that an EP16+DP-attention layout trades slightly worse same-batch weight traffic for an order-of-magnitude higher capacity wall (∼644 requests)—while, at cluster-calibrated communication constants, single-stream latency favors TP by 2.4×. The judgment between layouts is thus a computable function of the operating point, which explains why production deployments on identical hardware have shipped opposite attention layouts.",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Abstract"
+      ],
+      "char_start": 1746,
+      "char_end": 2625,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db7a2d86f6aaa4eadbebde8a26d0eab6",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Introduction"
+      ],
+      "char_start": 2627,
+      "char_end": 2639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e284e3c0139dc6df3aef90aa3eaa5a3",
+      "kind": "paragraph",
+      "text": "In 2025, production teams serving DeepSeek-family models made opposite parallelism choices on comparable hardware. The official DeepSeek deployment decodes with large-scale expert parallelism anddata-parallel attention [11]; vLLM’s default DeepSeek recipe now enables the same layout [36]; and a joint LMSYS– Ant Group deployment on the same 16×H20-96G configuration we study reached the same conclusion for decode [24]. Yet TP-sharded attention remains the serving frameworks’ historical default, and the production 2×8 H20 cluster whose deployment this paper models serves DeepSeek-V3.2 with plain TP16 attention. The Ant report states the qualitative rationale—H20 is memory-rich and compute-poor, so decode should exploit bandwidth—but none of these reports derives the choice from an explicit resource account, and none can say at what concurrency the answer flips. This paper’s position is that the disagreement was predictable from a small resource account—roughly five numbers per GPU plus the model dimensions—and that making this account systematic gives a general triage workflow for serving optimization. The operational problem is broader than one layout choice. Serving optimization spans model variants, hardware SKUs, tensor parallelism (TP), expert parallelism (EP), data-parallel (DP) attention, pre- 1",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Introduction"
+      ],
+      "char_start": 2641,
+      "char_end": 3961,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:380ddc16115385147068cdd47d92dd06",
+      "kind": "table",
+      "text": "arXiv:2607.05876v2  [cs.PF]  8 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Introduction"
+      ],
+      "char_start": 3963,
+      "char_end": 4002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8895cc1e9686bee770057addcc12cb5b",
+      "kind": "paragraph",
+      "text": "PROFILING — the controller (this paper)",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Introduction"
+      ],
+      "char_start": 4004,
+      "char_end": 4043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ab645c6f1a82faba9bfc60980b5796d",
+      "kind": "heading",
+      "text": "· SLO",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· SLO"
+      ],
+      "char_start": 4045,
+      "char_end": 4050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df2af4daa61518f054c7e114e51e4418",
+      "kind": "heading",
+      "text": "P99 TTFT / TPOT",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "P99 TTFT / TPOT"
+      ],
+      "char_start": 4052,
+      "char_end": 4067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1ae0343625c7b7af6c442575453b43d",
+      "kind": "list_item",
+      "text": "+ goodput",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "P99 TTFT / TPOT"
+      ],
+      "char_start": 4069,
+      "char_end": 4078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bac9c34df9c0cb74ffe872364562cace",
+      "kind": "heading",
+      "text": "· analytical floor",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· analytical floor"
+      ],
+      "char_start": 4080,
+      "char_end": 4098,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee8510cfc0791222a0d00d64a2417921",
+      "kind": "paragraph",
+      "text": "five-resource account [max, sum] · walls (floor.py)",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· analytical floor"
+      ],
+      "char_start": 4100,
+      "char_end": 4151,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b676df1c106629204b59a56209d1c87e",
+      "kind": "heading",
+      "text": "· benchmark",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· benchmark"
+      ],
+      "char_start": 4153,
+      "char_end": 4164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0d899805d1d468623577c75a4ad7437",
+      "kind": "paragraph",
+      "text": "open-loop · steady survivors only",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· benchmark"
+      ],
+      "char_start": 4166,
+      "char_end": 4199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ac29459a6c67e95635a753c367fedd7",
+      "kind": "heading",
+      "text": "· reconcile",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· reconcile"
+      ],
+      "char_start": 4201,
+      "char_end": 4212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:834ef4e3c4378b1e36923ceb3d4de266",
+      "kind": "paragraph",
+      "text": "residual vs floor interval position MBU / MFU verdict ship",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· reconcile"
+      ],
+      "char_start": 4214,
+      "char_end": 4272,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59ddf344058f651a0e9e6a0f06b7d195",
+      "kind": "heading",
+      "text": "· nsys — 3 questions",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· nsys — 3 questions"
+      ],
+      "char_start": 4274,
+      "char_end": 4294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f393756c63abb6ad76d0c9d104122d7f",
+      "kind": "paragraph",
+      "text": "gaps? exposed comm? kernel over budget? PIPELINE OPTIMIZATION — execution arm layout: TP / EP / DP-attn · DSA · quant · PD-disagg scheduling: CUDA graphs · overlap · batching KERNEL WRITING — execution arm",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· nsys — 3 questions"
+      ],
+      "char_start": 4296,
+      "char_end": 4501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5bdc2be7e41d428fe7365f70e3ce6889",
+      "kind": "heading",
+      "text": "· ncu on the indicted kernel class",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class"
+      ],
+      "char_start": 4503,
+      "char_end": 4537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a24a8b68aa3bb812f586bd25f0126e9a",
+      "kind": "paragraph",
+      "text": "fused / rewritten operators ≤1.3 × >1.3 × wall excludes target: change the account gaps / exposed comm: scheduling, not kernels budget overrun: only now does ncu fire re-enter at 2: re-benchmark",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class"
+      ],
+      "char_start": 4539,
+      "char_end": 4733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2141378630bfa4e78dd0e54026764487",
+      "kind": "caption",
+      "text": "Figure 1: The serving-optimization loop. The floor model decides whether the next action should be lay-",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class"
+      ],
+      "char_start": 4735,
+      "char_end": 4838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce5abc3a776f89ba773909466eaf2fc8",
+      "kind": "paragraph",
+      "text": "out/scheduling work, kernel work, or no profiling at all. Capacity and wall-ordering verdicts can rule out layouts before GPU time is spent. Nsight Systems is used only when the benchmark leaves a residual that the floor cannot explain; Nsight Compute is reserved for kernel classes that exceed their budget. Every change is re-measured and fed back into the loop. fill/decode disaggregation, continuous batching, sparse attention, quantization, CUDA graphs, communication libraries, and kernels. Trying combinations on production hardware is expensive, and a benchmark number alone is ambiguous: a slow TPOT can mean a fundamental bandwidth limit, an implementation gap, exposed communication, host overhead, or an underperforming kernel. Existing research offers increasingly accurate analytical models [4, 9, 27], simulators and configuration search [2, 39, 40], and serving systems [1, 26, 46]. What day-to-day performance engineering lacks is adecision procedure: when is a measured number close enough to the floor that profiling is wasted effort, and when it is not, where should the profiler look first? Floor Firstfills that gap. The workflow computes per-step floors from model dimensions, calibrated hardware rates, parallelism, and workload shape. It then reads a benchmark as aresidual: the gap between the measured time and the floor. If the residual is small, the investigation stops. If it is large, profiling has a specific job: check whether time is missing between kernels, whether communication is exposed, or whether",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class"
+      ],
+      "char_start": 4840,
+      "char_end": 6377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c16b8204d60b186ede712104b3f557a",
+      "kind": "paragraph",
+      "text": "a kernel class exceeded its analytical budget. The gap is sharpest for LLM coding agents, whose default optimization behavior is precisely the loop this paper’s title warns against; the workflow therefore ships as an enforceable agent skill as well as a human checklist. This draft makes five contributions:",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class"
+      ],
+      "char_start": 6379,
+      "char_end": 6686,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ecbcbd4c4863191f95cb485dbffae3b",
+      "kind": "heading",
+      "text": "A residual-driven triage workflowthat separates target definition, floor construction, benchmark",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A residual-driven triage workflowthat separates target definition, floor construction, benchmark"
+      ],
+      "char_start": 6688,
+      "char_end": 6784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f39e11da84330626b16b8a0bde1dbe01",
+      "kind": "paragraph",
+      "text": "reconciliation, and profiler escalation, with explicit stopping rules—and whose verdicts dispatch the two execution arms of optimization, pipeline work and kernel work (§2.3, Figure 1).",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A residual-driven triage workflowthat separates target definition, floor construction, benchmark"
+      ],
+      "char_start": 6786,
+      "char_end": 6971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c1ce32a7e9fc866100a03d3a2939029",
+      "kind": "heading",
+      "text": "A two-sided floor model.Summing contention within a hardware resource and maximizing across",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A two-sided floor model.Summing contention within a hardware resource and maximizing across"
+      ],
+      "char_start": 6973,
+      "char_end": 7064,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef5cfe72a1bc98ada0ea756bb26fbef1",
+      "kind": "paragraph",
+      "text": "resources gives an optimistic floor; the plain sum gives a pessimistic one. The measurement’s position inside [max,sum] is a zero-cost overlap diagnostic that existing analytical models discard by fixing an 2",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A two-sided floor model.Summing contention within a hardware resource and maximizing across"
+      ],
+      "char_start": 7066,
+      "char_end": 7274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e045c65d28f91675119980eaa4e7a35",
+      "kind": "paragraph",
+      "text": "overlap assumption (§3).",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A two-sided floor model.Summing contention within a hardware resource and maximizing across"
+      ],
+      "char_start": 7276,
+      "char_end": 7300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d862c68ab6c932028186d14a3a17e092",
+      "kind": "heading",
+      "text": "W all ordering as an output.Deployment alternatives are compared by which wall—KV capacity, KV",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "W all ordering as an output.Deployment alternatives are compared by which wall—KV capacity, KV"
+      ],
+      "char_start": 7302,
+      "char_end": 7396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d282b997279e3a8ac62c347248259d36",
+      "kind": "paragraph",
+      "text": "bandwidth, weight bandwidth, compute—binds first as load grows, rather than by same-batch latency alone. Capacity is a first-class resource, not a post-hoc memory check (§5.3).",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "W all ordering as an output.Deployment alternatives are compared by which wall—KV capacity, KV"
+      ],
+      "char_start": 7398,
+      "char_end": 7574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11ba99237b6cd82680b1c6f4951aec03",
+      "kind": "heading",
+      "text": "Metric discipline.A roofline identity (MFU/MBU =I work/Iridge) dictates which utilization metric is",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "Metric discipline.A roofline identity (MFU/MBU =I work/Iridge) dictates which utilization metric is"
+      ],
+      "char_start": 7576,
+      "char_end": 7675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f26bb430fb7b08dd44df429ef9bc9c9e",
+      "kind": "paragraph",
+      "text": "meaningful per phase; we systematize practitioner thresholds for triage verdicts and state their calibration protocol (§2.2,§2.4).",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "Metric discipline.A roofline identity (MFU/MBU =I work/Iridge) dictates which utilization metric is"
+      ],
+      "char_start": 7677,
+      "char_end": 7807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24886aff84eb4f6f7100c2163c5fef92",
+      "kind": "heading",
+      "text": "A worked case study and artifact.We give the first ridge-point characterization of the export-",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A worked case study and artifact.We give the first ridge-point characterization of the export-"
+      ],
+      "char_start": 7809,
+      "char_end": 7903,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b39535566ce27e289e4097a9dcc59384",
+      "kind": "paragraph",
+      "text": "grade H20 GPU and a complete decode account for a DeepSeek-V3.2-style model on 16 H20s, deriving the TP-versus-EP+DP judgment, single-stream physical bounds, and the effect of sparse attention—as executable, zero-dependency Python plus an agent-readable skill (§5). Status of this draft.Case-study numbers are analytical floors computed by the artifact; communication constants are cluster-calibrated (§4), GPU rates are datasheet unless marked otherwise. Section 8 states the measurement campaign required before submission; the residual sweep in particular is planned, not yet performed. A subsequent revision will fold that sweep back into§5: measured-versus-floor reconciliation plots with per-point [max,sum] intervals, the interval-position distribution, and an empirically grounded (or revised) escalation threshold.",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "· ncu on the indicted kernel class",
+        "A worked case study and artifact.We give the first ridge-point characterization of the export-"
+      ],
+      "char_start": 7905,
+      "char_end": 8728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e0134de3b7ce844262236d60ebe51dd",
+      "kind": "heading",
+      "text": "Background and Motivation",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Background and Motivation"
+      ],
+      "char_start": 8730,
+      "char_end": 8755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba6f08d4a1b8fc449b807365c56635f8",
+      "kind": "heading",
+      "text": "Serving Metrics and Benchmark Discipline",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Background and Motivation",
+        "Serving Metrics and Benchmark Discipline"
+      ],
+      "char_start": 8757,
+      "char_end": 8797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c46c3502c48992fbfe417214b828235b",
+      "kind": "paragraph",
+      "text": "LLM serving has at least three operational metrics: time to first token (TTFT), time per output token (TPOT), and goodput—throughput that satisfies a service-level objective (SLO), usually stated on tail latency.Floor Firstrequires an explicit target before any optimization: maximize goodput subject to P99 TTFT and P99 TPOT SLOs. Without it, benchmark numbers are not even partially ordered. Benchmarks that feed the workflow must obey four rules. (i)Open-loop load generation: closed-loop generators issue the next request only after the previous completes, so an overloaded system automatically receives less load and its tail latency looks healthy. This bias was formalized for classical systems by Schroeder et al. [30]; LLM serving evaluations rarely revisit the distinction, yet capacity claims are meaningless without it. (ii)Realistic length distributions, since the prefill:decode ratio and chunked-prefill interference depend on them. (iii)Steady state: before the KV pool fills, preemption never fires and prefix caches over-hit; the first minutes of a run are honeymoon numbers. (iv)Tail percentiles, because SLOs live at P99, not the mean.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Background and Motivation",
+        "Serving Metrics and Benchmark Discipline"
+      ],
+      "char_start": 8799,
+      "char_end": 9953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d3021bdd39d62f89e3280b4c19009c7",
+      "kind": "heading",
+      "text": "Prefill and Decode Have Different Bottlenecks",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Background and Motivation",
+        "Prefill and Decode Have Different Bottlenecks"
+      ],
+      "char_start": 9955,
+      "char_end": 10000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a1b171a17c4c10872cc1da3b5c90378",
+      "kind": "paragraph",
+      "text": "Prefill processes many prompt tokens in parallel at high arithmetic intensity and is usually compute-bound; decode streams weights and KV cache per generated token and is usually bandwidth-bound at realistic batch sizes. This asymmetry underlies phase-splitting systems [1, 26, 46] and is the basis for metric choice. Let workload arithmetic intensity beI work = FLOPs/bytes and the hardware ridge pointI ridge = Fpeak/BHBM [37]. With model FLOPs utilization MFU = FLOPs/(t Fpeak) and model bandwidth utilization MBU = bytes/(t BHBM) [8], MFU MBU = Iwork",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Background and Motivation",
+        "Prefill and Decode Have Different Bottlenecks"
+      ],
+      "char_start": 10002,
+      "char_end": 10556,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac3f7febf4e169a8c21df58127db2726",
+      "kind": "heading",
+      "text": "Iridge",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge"
+      ],
+      "char_start": 10558,
+      "char_end": 10564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4363d6bee3762391350f2587e5cd6c50",
+      "kind": "paragraph",
+      "text": "holds identically. The two utilizations are not independent; their ratio is fixed by the workload. For the case study of§5, decode at batch 64 hasI work ≈11 FLOP/byte against an H20 ridge of 74: when MBU reaches 80%, MFUequals12%. Low decode MFU is workload geometry, not a tensor-core bug. The metric-selection principle is:report the utilization whose ceiling is 100% for the binding resource—MBU for bandwidth-bound decode, MFU for compute-bound prefill. 3",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge"
+      ],
+      "char_start": 10566,
+      "char_end": 11025,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb6c9288048e05fc084d5728c0b0a22d",
+      "kind": "heading",
+      "text": "The Workflow: One Controller, Two Execution Arms",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "The Workflow: One Controller, Two Execution Arms"
+      ],
+      "char_start": 11027,
+      "char_end": 11075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9af3138a10d908146a64260994a8a443",
+      "kind": "paragraph",
+      "text": "Production inference optimization has three arms:profiling(knowing where time goes and how far from the limit it is),kernel writing(driving a single operator to the hardware limit), andpipeline optimization (parallelism layout, batching, overlap, scheduling). In this paper, profiling is not just “open Nsight.” It is the decision loop that decides whether kernel work or pipeline work is worth doing. Kernel work without that decision can optimize an operator that is not on the critical path; pipeline tuning without it becomes grid search. Figure 1 shows the loop. A capacity or wall-ordering verdict can send us directly to a new layout before we spend GPU time. A residual caused by poor overlap or scheduling sends us to the pipeline arm. Only a kernel class that exceeds its budget sends us to Nsight Compute and kernel work. After each change, we benchmark again and compare the new result with the floor. Within the controller,Floor Firsttreats instrumented profiling as exception handling, not as a pipeline stage:",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "The Workflow: One Controller, Two Execution Arms"
+      ],
+      "char_start": 11077,
+      "char_end": 12101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f77beb03a035809aafc7b68ffe7d484e",
+      "kind": "heading",
+      "text": "Define the objective: P99 TTFT, P99 TPOT, goodput.",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Define the objective: P99 TTFT, P99 TPOT, goodput."
+      ],
+      "char_start": 12103,
+      "char_end": 12153,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dde8bd11c9880de58440bd70ff10e427",
+      "kind": "heading",
+      "text": "Compute analytical floors and capacity walls for candidate configurations; discard configurations whose",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Compute analytical floors and capacity walls for candidate configurations; discard configurations whose"
+      ],
+      "char_start": 12155,
+      "char_end": 12258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56f1239d46430feb540acacf391fd0ed",
+      "kind": "paragraph",
+      "text": "walls exclude the target operating point.",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Compute analytical floors and capacity walls for candidate configurations; discard configurations whose"
+      ],
+      "char_start": 12260,
+      "char_end": 12301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:224a8a51c877bb1a4efce271cc6b900f",
+      "kind": "heading",
+      "text": "Benchmark the survivors under the discipline of§2.1.",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Benchmark the survivors under the discipline of§2.1."
+      ],
+      "char_start": 12303,
+      "char_end": 12355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:504324d42ea522bf38206294d6f36497",
+      "kind": "heading",
+      "text": "If the measurement is within the escalation threshold of the floor (1.3×in our practice), stop—or move",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "If the measurement is within the escalation threshold of the floor (1.3×in our practice), stop—or move"
+      ],
+      "char_start": 12357,
+      "char_end": 12459,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:284c6e38481e8776068fc81d8d165bbf",
+      "kind": "paragraph",
+      "text": "to a different optimization axis.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "If the measurement is within the escalation threshold of the floor (1.3×in our practice), stop—or move"
+      ],
+      "char_start": 12461,
+      "char_end": 12494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14c2dda0c93c4c5ef83188c50231e917",
+      "kind": "heading",
+      "text": "Otherwise open Nsight Systems and answer exactly three questions: are there gaps between kernels",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Otherwise open Nsight Systems and answer exactly three questions: are there gaps between kernels"
+      ],
+      "char_start": 12496,
+      "char_end": 12592,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1050351d7ecea41032a1b1c8d98a16c9",
+      "kind": "paragraph",
+      "text": "(host/scheduling/launch)? is communication exposed rather than overlapped? which kernel class exceeds its analytical budget?",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Otherwise open Nsight Systems and answer exactly three questions: are there gaps between kernels"
+      ],
+      "char_start": 12594,
+      "char_end": 12718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ed1070172fd2dce28c6336596face54",
+      "kind": "heading",
+      "text": "Open Nsight Compute only for the kernel class that the budget table indicts, after gap and overlap causes",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Open Nsight Compute only for the kernel class that the budget table indicts, after gap and overlap causes"
+      ],
+      "char_start": 12720,
+      "char_end": 12825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4ab7fbec4948dd8679a827f04c6dc20",
+      "kind": "paragraph",
+      "text": "are excluded.",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Open Nsight Compute only for the kernel class that the budget table indicts, after gap and overlap causes"
+      ],
+      "char_start": 12827,
+      "char_end": 12840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97b1db30bfc3386f3b2d97cd50b1f6cc",
+      "kind": "heading",
+      "text": "Triage Thresholds and Their Status",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Triage Thresholds and Their Status"
+      ],
+      "char_start": 12842,
+      "char_end": 12876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55562379d82daa29e88308931d1c6d45",
+      "kind": "paragraph",
+      "text": "Our operating rules: decode MBU>70% means the implementation is near the floor on the current axis; 40–70% suggests overlap or scheduling recovery, worth an Nsight Systems pass;<40% suggests a systemlevel defect (host-bound execution, missing CUDA-graph coverage, interference) that per-kernel work will not fix. For MoE prefill we lower the MFU bands to 50%/25% because all-to-all communication and expert imbalance are structural. These numbers systematize practitioner experience [8] rather than derive from first principles, and we state their epistemic status plainly: they arecalibration targets, not constants of nature. The calibration protocol is to collect (predicted floor, measured, post-hoc root cause) triples across configurations and check two properties: below the threshold, Nsight sessions should yield no actionable finding (no false negatives); above it, a root cause should be identifiable (no wasted escalations).§8 lists this as the first required experiment; until then the thresholds should be read as defaults that worked in our deployments, in the same spirit that Top-Down analysis shipped with fixed decision-tree cutoffs.",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Iridge",
+        "Triage Thresholds and Their Status"
+      ],
+      "char_start": 12878,
+      "char_end": 14030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eb91c9d28a7883a9d515c1132f96956",
+      "kind": "heading",
+      "text": "Analytical Model",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model"
+      ],
+      "char_start": 14032,
+      "char_end": 14048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f54540358fce75771ded1e038673e20",
+      "kind": "heading",
+      "text": "Resource Vector and the Two-Sided Floor",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Resource Vector and the Two-Sided Floor"
+      ],
+      "char_start": 14050,
+      "char_end": 14089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50c431d5a5b797ea3a50cbfc130dc5ea",
+      "kind": "paragraph",
+      "text": "Each decode step consumes a five-dimensional resource vector r= (HBM bytes,FLOPs,network bytes,network messages,KV capacity). The first four convert to time via calibrated rates; the fifth bounds feasible batch size and enters the goodput judgment (§3.5). Two aggregation rules follow from the hardware, not from convention: terms contending for thesameresource add (weight reads and KV reads share HBM; bandwidth cost and per-message latency 4",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Resource Vector and the Two-Sided Floor"
+      ],
+      "char_start": 14091,
+      "char_end": 14535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47f81d6613a0187906dc5ea19efc9c8d",
+      "kind": "paragraph",
+      "text": "share the NIC), whileindependentengines (HBM, SMs, NIC) run concurrently under perfect overlap, so only the slowest shows: topt = max(tHBM, tcompute, tnetwork), t sum =t HBM +t compute +t network. We keep both numbers because the gap between them is useful. If a measured step lands neart opt, the hardware engines are already overlapping well and the next gain must come from reducing the dominant account itself. If it lands neart sum, the system is behaving as if the engines were serialized, so scheduling and overlap are the first suspects. If it lands abovet sum, overlap cannot explain the measurement; time is leaking into costs outside the model, such as host gaps, preemption, or stragglers. Existing analytical models collapse this information by choosing an overlap assumption up front (e.g., compute hidden under memory with communication fully exposed [9]); the interval keeps overlap as something the benchmark can reveal. One caveat is structural: at batch 1 the layer-serial dependency chain leaves little to overlap, so the honest single-stream floor ist sum, nott opt (§5.6).",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Resource Vector and the Two-Sided Floor"
+      ],
+      "char_start": 14537,
+      "char_end": 15631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef70393516af721b0ffec66006132560",
+      "kind": "heading",
+      "text": "Decode FLOPs",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Decode FLOPs"
+      ],
+      "char_start": 15633,
+      "char_end": 15645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6d0b2b85109c426a3e76bd3a7e8a4c2",
+      "kind": "paragraph",
+      "text": "Per token, parameter GEMMs cost≈2P act FLOPs, whereP act is the activated parameter count (P act =P for dense models); attention score/value products add a term that depends on context length and attention architecture: FLOPsdecode ≈2P actB+ FLOPs attn(B, S). In the decode regimes we study, attention FLOPs matter for the compute row, but the attention path is still dominated by reading KV from HBM. The FLOP account is therefore used mainly to check whether compute can ever become the wall (§5.3).",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Decode FLOPs"
+      ],
+      "char_start": 15647,
+      "char_end": 16148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7083478da5a9dceface264edea225a3e",
+      "kind": "heading",
+      "text": "Decode Bytes: the MoE Union Correction",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Decode Bytes: the MoE Union Correction"
+      ],
+      "char_start": 16150,
+      "char_end": 16188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bae449a011baeb209e33a1aa91711e46",
+      "kind": "paragraph",
+      "text": "Decode HBM traffic per step is weight traffic plus KV-read traffic. For MoE models the two accounts diverge: FLOPs followactivatedparameters, but weight bytes follow theunionof experts activated across the batch, because a weight tile is read once per step regardless of how many tokens use it. Under uniform routing with Erouted experts and top-kselection, the expected distinct-expert fraction per layer is fexpert(B) = 1−",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Decode Bytes: the MoE Union Correction"
+      ],
+      "char_start": 16190,
+      "char_end": 16614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11c48a20e9de9b6ba94db152a6b425b3",
+      "kind": "paragraph",
+      "text": "1− k E B , f expert(B)≤min(1, kB/E), so a batch of 64 touches≈87% of experts forE=256,k=8, and the conservative min bound saturates. This closed form was previously employed to analyze speculative-decoding gains for MoE [18] and in-batch expert sharing [35]; we apply it to deployment-sizing byte accounts, where it corrects both the weightbandwidth wall and the compute-wall location by the MoE sparsity ratio (§5.3). Load imbalance makes the uniform-routing expectation optimistic;§7 discusses the failure mode. KV bytes depend on attention architecture and sharding. For GQA, the KV cache partitions across up to nkv heads under TP. For MLA-style latent attention the latent KV is shared byallheads: head-parallel TP cannot shard it, so every TP rank stores and reads the full cache—the observation first stated in engineering channels [31, 36] and in recent architecture work [25, 34, 43], whose responses are to redesign the attention or its sharding. We take the deployment-side view: given unmodified MLA, the replication cost makes DP attention the structurally favored high-concurrency layout, and§5 quantifies by how much.",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Decode Bytes: the MoE Union Correction"
+      ],
+      "char_start": 16616,
+      "char_end": 17748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac5a9036e9a34ee29a26a7e6f60a0511",
+      "kind": "heading",
+      "text": "Communication",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Communication"
+      ],
+      "char_start": 17750,
+      "char_end": 17763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d03e2ee0d91b6fe64b36fcf483c0821a",
+      "kind": "paragraph",
+      "text": "TP decode performs two all-reduces per layer; with ring all-reduce the per-op traffic is 2 n−1 n BHb act bytes, and per-op time is bandwidth plus a latency term that dominates at small batch: tAR =N AR",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Analytical Model",
+        "Communication"
+      ],
+      "char_start": 17765,
+      "char_end": 17966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11a18b9ca774f855df1306ab47620743",
+      "kind": "heading",
+      "text": "n−1",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "n−1"
+      ],
+      "char_start": 17968,
+      "char_end": 17971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3833464e146bd3ad09ea93852cb97759",
+      "kind": "paragraph",
+      "text": "n BHb act",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "n−1"
+      ],
+      "char_start": 17973,
+      "char_end": 17982,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d03b77ffddbfc70e7b1395a1b3236c6a",
+      "kind": "heading",
+      "text": "Bnet",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet"
+      ],
+      "char_start": 17984,
+      "char_end": 17988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bbb449eae430ef31171a4010c14ab0b",
+      "kind": "paragraph",
+      "text": "+ℓ",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet"
+      ],
+      "char_start": 17990,
+      "char_end": 17992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe01e752e5d4a17dd3c052dcf7b7ca29",
+      "kind": "paragraph",
+      "text": ". EP with DP attention replaces all-reduces with dispatch/combine all-to-alls per MoE layer, with traffic ≈BL MoE rH(b disp +b comb), wherer=n",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet"
+      ],
+      "char_start": 17994,
+      "char_end": 18136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c0bbb6612675466fa7e1bfd73b45df5",
+      "kind": "paragraph",
+      "text": "1−(1−1/n) k is the expected number of distinct expert ranks 5",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet"
+      ],
+      "char_start": 18138,
+      "char_end": 18199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37af62e11f22ba525e030357370226b7",
+      "kind": "paragraph",
+      "text": "touched by a token’s top-kselection (r≈6.5 atk=8,n=16)—the rank-level sibling of the expert-union expectation of§3.3. Dispatch sends one activation per touched rank; combine returns one partial sum per touched rank (an upper bound if the implementation aggregates in-network). The implementation constant is decisive: a low-latency RDMA all-to-all approaches the floor while a naive one can be several times slower. Floor Firsttherefore separates two questions that the literature usually merges:which route has the better ceiling, anddoes a near-ceiling implementation of that route exist? Comparisons are made at the ceiling level first; only routes that pass are checked for mature implementations (e.g., DeepEP-class all-to-all), and routes must never be eliminated by benchmarking a poor implementation of them.",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet"
+      ],
+      "char_start": 18201,
+      "char_end": 19017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:845063cbc1f86c258048b332841faabf",
+      "kind": "heading",
+      "text": "Capacity Wall",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet",
+        "Capacity Wall"
+      ],
+      "char_start": 19019,
+      "char_end": 19032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03ea1406a3c0aa2068de4a03294219cf",
+      "kind": "paragraph",
+      "text": "The KV capacity wall bounds concurrency: Bmax = (CHBM −C weights −C overhead)·s KV",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bnet",
+        "Capacity Wall"
+      ],
+      "char_start": 19034,
+      "char_end": 19116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9456ab63e9c56ead11f6b947ff331385",
+      "kind": "heading",
+      "text": "S·bytes KV/token",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "S·bytes KV/token"
+      ],
+      "char_start": 19118,
+      "char_end": 19134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c5eea301bed5bea153daae7dd726a75",
+      "kind": "paragraph",
+      "text": ", where the KV sharding factors KV is 1 for MLA under head-parallel TP (full replication), min(n, n kv) for GQA under TP, andnfor DP attention. Because decode goodput isB/t step under a TPOT SLO, a layout with slightly worse same-batcht step but an order-of-magnitude largerB max can dominate the goodput frontier. Treating capacity as a fifth resource dimension—rather than an afterthought OOM check—is what turns the account into a deployment judgment.",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "S·bytes KV/token"
+      ],
+      "char_start": 19136,
+      "char_end": 19590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:796355640a878a52f429c71b3935ca41",
+      "kind": "heading",
+      "text": "Compositionality: New Architectures Enter by One Module",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "S·bytes KV/token",
+        "Compositionality: New Architectures Enter by One Module"
+      ],
+      "char_start": 19592,
+      "char_end": 19647,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79735681e59cff89b302bc634fa1c0bc",
+      "kind": "paragraph",
+      "text": "The account is modular. Each layer type—attention, routed FFN, dense FFN, or a future state-space block—declares five things: weight bytes, state bytes, per-step state reads, FLOPs, and communication. These quantities are functions of workload (B, S) and of that module’s sharding plan. A model is then just a list of modules, and a step account is the per-resource sum over that list. This design has two consequences. First, adding an architecture does not require a new framework. DSA changes the attention module’s state-read function fromO(S) to approximatelyO(k) per query (§5.3); a state-space layer would declare a constant-size recurrent state instead of a growing KV cache, and the capacity wall of§3.5 would update automatically. Second, shardability belongs to the module. MLA’s latent KV declares itself unshardable across attention heads, so DP attention follows naturally for high-concurrency serving; architecture work that re-enables TP for latent attention [25, 34] is, in this language, changing that declaration. Parallelism plans are therefore per-module assignments rather than global labels. Production deployments already live in this space: the LMSYS–Ant system serves prefill with single-node TP8 attention and decode with DP attention plus EP16 on the same hardware [24]—a per-phase, per-module plan assignment. For standard families, the declarations are mostly data entry: the constants come from published model dimensions, as in the artifact’s specification file for dense, GQA, MLA, and MoE models. The current artifact hard-codes the",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "S·bytes KV/token",
+        "Compositionality: New Architectures Enter by One Module"
+      ],
+      "char_start": 19649,
+      "char_end": 21215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d386ac168f3261c2e781277ed910be98",
+      "kind": "paragraph",
+      "text": "two layouts in the case study; the per-module plan interface is staged as the next revision (§7).",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "S·bytes KV/token",
+        "Compositionality: New Architectures Enter by One Module"
+      ],
+      "char_start": 21217,
+      "char_end": 21314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51b0cc52c049928855f519556de477f4",
+      "kind": "heading",
+      "text": "Artifact",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Artifact"
+      ],
+      "char_start": 21316,
+      "char_end": 21324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46adbf17c11b403174dc1a555acb743b",
+      "kind": "paragraph",
+      "text": "The artifact is deliberately small: a specification module (specs.py) holding model, GPU, and cluster constants with datasheet and calibrated rates kept separate; a floor calculator (floor.py) producing the resource table, [max,sum] floors, capacity wall, single-stream bound, and prefill floor; a reconciliation tool (mbu mfu.py) converting measured TPOT/TTFT into MBU/MFU with a triage verdict; and an agentreadable workflow document (SKILL.md). The implementation is pure Python with no runtime dependencies; Appendix A gives the commands used to reproduce the case-study tables. Calibration is outside the model by design. The chain is: HBM bandwidth vianvbandwidth; GEMM rates via the production serving shapes; communication vianccl-testsand the production all-to-all’s own benchmark. Datasheet floors prune the design space; calibrated floors make residuals meaningful. We executed this chain on the target cluster (fallback tools where installation was constrained: a torchlevel device copy for HBM, production DeepGEMM kernels for FP8). GPU-side rates landed near expectations (81% of datasheet HBM bandwidth under the fallback tool, 89% of FP8 peak), but calibration moved 6",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Artifact"
+      ],
+      "char_start": 21326,
+      "char_end": 22510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26468b5ba34cc2b790349a807ad6687a",
+      "kind": "caption",
+      "text": "Table 1: Datasheet portrait (Figure 2 renders the geometry). The H20 trades compute for nothing else; its",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Artifact"
+      ],
+      "char_start": 22512,
+      "char_end": 22617,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9301f75d2e000f552871b36f467817c",
+      "kind": "paragraph",
+      "text": "ridge point is 8×lower than H100’s, widening the memory-bound comfort zone by the same factor. HBM BW FP8 dense Ridge (FLOP/B) H100 SXM 80 GB 3.35 TB/s 1979 T∼590 H800 80 GB 3.35 TB/s 1979 T∼590 H20 96 GB 4.00 TB/s 296 T∼74 everycommunication constant: the effective all-reduce rate at decode message sizes is 43 GB/s against a",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Artifact"
+      ],
+      "char_start": 22619,
+      "char_end": 22946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e7736a4408263a980bca11607613bfd",
+      "kind": "heading",
+      "text": "GB/s per-node line rate; small-message latency is≈33µs and equal within noise across and within",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "GB/s per-node line rate; small-message latency is≈33µs and equal within noise across and within"
+      ],
+      "char_start": 22948,
+      "char_end": 23043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2338d58ce88f15f7f49d92e67cc4a72f",
+      "kind": "paragraph",
+      "text": "nodes, indicting NCCL launch overhead rather than the wire; and DeepEP’s op-level dispatch latency is 60 µs against a∼30µs pure-transport bound. A raw-NCCL all-to-all on the same fabric measured 12.6 GB/s where DeepEP approaches line rate—a concrete example of the ceiling-versus-implementation distinction in §3.4. One accounting rule emerged: the bandwidth constant must be the latency-excludedslope, not any single message size’s effective bus bandwidth, or the latency term is double-counted. Fully calibrated floors are 15–24% looser than datasheet ones and serve as the reconciliation baseline for§8. Notably, although calibration moved every communication constant—one by 8×—no optimistic floor and no deployment judgment of§5 changed: on this hardware the HBM account and the capacity wall carry the verdicts, so they are insensitive to precisely the inputs that are hardest to know in advance. This robustness is a property of wall ordering, not luck: a judgment carried by the first wall survives errors in the accounts of walls never reached. TheSKILL.mdcomponent addresses a distinct failure mode: coding agents, like humans, reflexively reach for benchmarks and profilers. Encoding the workflow as an agent skill makes the floor-first discipline enforceable in agentic optimization loops [14, 22], where the artifact serves as the deterministic arithmetic layer beneath model-driven judgment: a triggered agent must produce the floor account before proposing any benchmark, and profiler use must cite a residual above threshold. This is not speculative: the cali-",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "GB/s per-node line rate; small-message latency is≈33µs and equal within noise across and within"
+      ],
+      "char_start": 23045,
+      "char_end": 24621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b590dad5cd7c9c61c186cb03e184d911",
+      "kind": "paragraph",
+      "text": "bration campaign of§8-(1) was executed on the production cluster by a coding agent operating under this skill—following the measurement protocol, hitting the documented fallback paths when tooling was unavailable, and returning the spec-keyed calibration file this paper consumes. The artifact, calibration data, and measurement scripts will be released with the next revision of this draft.",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "GB/s per-node line rate; small-message latency is≈33µs and equal within noise across and within"
+      ],
+      "char_start": 24623,
+      "char_end": 25014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1c613c2e0b8ca41c88b328d0f25aa53",
+      "kind": "heading",
+      "text": "Case Study: DeepSeek-V3.2-Style MoE on 16×H20",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Case Study: DeepSeek-V3.2-Style MoE on 16×H20"
+      ],
+      "char_start": 25016,
+      "char_end": 25061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0977944ac77a798f76305f052c9d5f48",
+      "kind": "heading",
+      "text": "Hardware Portrait: the H20 Ridge Point",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Case Study: DeepSeek-V3.2-Style MoE on 16×H20",
+        "Hardware Portrait: the H20 Ridge Point"
+      ],
+      "char_start": 25063,
+      "char_end": 25101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7783837059eda32de070709ed840c9d",
+      "kind": "paragraph",
+      "text": "The H20 is the export-compliant Hopper variant: compute is cut to∼15% of H100 while memory bandwidth is comparable or higher (Table 1). The consequence is a ridge point of 296/4.0≈74 FLOP/byte versus≈590 for H100:the H20’s memory-bound region is8×wider. A workload below 74 FLOP/byte is memory-bound on H20, so the compute cut is mostly hidden. Above 74, H20 starts to pay for its weaker tensor throughput; beyond the H100 ridge, both GPUs are compute-bound and the full compute gap appears. Decode at realistic batch sizes sits below the H20 ridge, while prefill sits far above it—so the H20 is naturally suited to decode and weak for prefill. This single number reframes deployment: deployment reports observe that H20 serves memory-bound decode at flagship-class rates and reason qualitatively from that fact [24], and kernel work targets its weak tensor throughput [13], but to our knowledge no published account derives the deployment consequences from the ridge geometry.",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Case Study: DeepSeek-V3.2-Style MoE on 16×H20",
+        "Hardware Portrait: the H20 Ridge Point"
+      ],
+      "char_start": 25103,
+      "char_end": 26080,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe64020408cbe68e69454f114cef5476",
+      "kind": "heading",
+      "text": "Setup",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Case Study: DeepSeek-V3.2-Style MoE on 16×H20",
+        "Setup"
+      ],
+      "char_start": 26082,
+      "char_end": 26087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bae73d646fdec936e223d3f467079d8f",
+      "kind": "paragraph",
+      "text": "We analyze a DeepSeek-V3.2-style model—671B total / 37B activated parameters, FP8 weights, MLA latent KV (70 KB per token across 61 layers), 58 MoE layers with 256 routed experts and top-8 routing—following the public V3-family dimensions [10, 45] and the DSA sparse-attention direction of V3.2 [12]. Deployment:",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Case Study: DeepSeek-V3.2-Style MoE on 16×H20",
+        "Setup"
+      ],
+      "char_start": 26089,
+      "char_end": 26401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ed504d21d1a1a05206050ea28a6f468",
+      "kind": "heading",
+      "text": "nodes×8 H20, 4×200 Gb HDR InfiniBand per node (≈100 GB/s unidirectional aggregate). Commu-",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "nodes×8 H20, 4×200 Gb HDR InfiniBand per node (≈100 GB/s unidirectional aggregate). Commu-"
+      ],
+      "char_start": 26403,
+      "char_end": 26493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fa6df8e08946f07e53bc61a9d588d65",
+      "kind": "paragraph",
+      "text": "nication constants are calibrated on this cluster (§4); GPU-side rates in Table 2 stay at datasheet values 7",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "nodes×8 H20, 4×200 Gb HDR InfiniBand per node (≈100 GB/s unidirectional aggregate). Commu-"
+      ],
+      "char_start": 26495,
+      "char_end": 26603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7a55c1f51de5e5367f4fbf811fb44e1",
+      "kind": "heading",
+      "text": "101 102 103",
+      "order": 98,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102 103"
+      ],
+      "char_start": 26605,
+      "char_end": 26616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b1c11a1d80a5a165f0115667a411581",
+      "kind": "paragraph",
+      "text": "arithmetic intensity (FLOP/byte) 100 101 102 103 attainable FP8 (TFLOP/s) H20 ridge 74 H100 ridge 590 decode B = 64, I ≈ 11 prefill",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102 103"
+      ],
+      "char_start": 26618,
+      "char_end": 26749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1a09499b456e6c20ffd032a685b6b10",
+      "kind": "heading",
+      "text": "∼ 103",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 26751,
+      "char_end": 26756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e4e21f56265c54b79947eef08c8535c",
+      "kind": "paragraph",
+      "text": "8× wider memory-bound zone H20 H100",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 26758,
+      "char_end": 26793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e69293e3467008f1ae6ccf9dc4a2e31c",
+      "kind": "caption",
+      "text": "Figure 2: FP8 rooflines of H20 and H100 with the case study’s operating points. Decode atB=64 (I≈11",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 26795,
+      "char_end": 26894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5a3c9e6cf0027f9d48737453aa3fa6e",
+      "kind": "paragraph",
+      "text": "for the TP16 account) sits below the H20 ridge, so it is governed by memory traffic rather than tensor peak. Prefill (I∼10 3) sits past both ridges, where the H20 pays its compute cut. The 8×ridge gap is the geometric content of “a decode part.”",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 26896,
+      "char_end": 27141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:427ec89bde11eb80757e58440148dc7c",
+      "kind": "caption",
+      "text": "Table 2: Analytical decode floors, DeepSeek-V3.2-style MoE on 16×H20,B=64,S=8192 (ms per step; con-",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 27143,
+      "char_end": 27242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc2a67fa1c75daefde87842a77d99f9e",
+      "kind": "paragraph",
+      "text": "servative expert union; GPU rates at datasheet, collective rates cluster-calibrated—no meaningful datasheet exists for effective collective bandwidth). The union expectation (§3.3) tightens weight terms by∼13% at this batch.",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "∼ 103"
+      ],
+      "char_start": 27244,
+      "char_end": 27468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4189bbb51563de41646b80a1cc9fc1b8",
+      "kind": "heading",
+      "text": "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max"
+      ],
+      "char_start": 27470,
+      "char_end": 27536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:335268235b65fa38ec470fd7c410bbbf",
+      "kind": "paragraph",
+      "text": "TP16 10.48 9.21 19.70 2.99 8.91 [19.7, 31.6] 70 TP16 + DSA-style sparse 10.48 2.30 12.79 1.50 8.91 [12.8, 23.2] 70 EP16 + DP attention 14.70 0.58 15.28 2.99 10.66 [15.3, 28.9] 644 for reproducibility, with fully calibrated floors 15–24% looser (§4). The workload is steady-state decode at B=64,S=8192. Table 2 gives the floors; all values reproduce from the artifact.",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max"
+      ],
+      "char_start": 27538,
+      "char_end": 27905,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18c5cbebdab9d067f35f5785121fae24",
+      "kind": "heading",
+      "text": "Wall Ordering",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max",
+        "Wall Ordering"
+      ],
+      "char_start": 27907,
+      "char_end": 27920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d327177e11877ef89cadc4682f7f474b",
+      "kind": "paragraph",
+      "text": "The account in Table 2 is best read not row-by-row but as an ordering of the walls a deployment hits as load grows (Table 3). Two structural facts fall out. First, the compute wall is not the next wall. If we compare only parameter GEMMs with full-expert weight reads, the dense rule of thumb 2B≥I ridge would put the knee atB≈37. For MoE decode, however, each full weight read supports only the activated fraction of the model, so the GEMM-only knee shifts by the sparsity ratio 671/37≈18×toB ∗ GEMM ≈670. Including the 8K MLA attention FLOPs lowers the compute-vs-weight knee to roughlyB≈225 (roughly 450 with DSA), but this still lies beyond the TP16 capacity wall atB≈70. Once KV bytes are included, the HBM account grows at least as fast as the compute account, so the feasible TP16 region ends before compute can bind. Chasing decode MFU here is optimizing a wall the deployment cannot reach. Second, walls are removed in order or not at all: DSA removes the KV-bandwidth wall (row 2) but not the capacity wall (row 1), because top-kselection reducesreads, notresidency—the full KV must remain addressable for future steps. 8",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max",
+        "Wall Ordering"
+      ],
+      "char_start": 27922,
+      "char_end": 29053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f57b63828457a31c8645ed1d4f74054",
+      "kind": "caption",
+      "text": "Table 3: Wall ordering for TP16 at 8K context. Each wall is quantified by the floor account; each removal",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max",
+        "Wall Ordering"
+      ],
+      "char_start": 29055,
+      "char_end": 29160,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2884e50ac38b2d64f58f1626521e9ad4",
+      "kind": "paragraph",
+      "text": "reshuffles the remaining order. The compute wall is unreachable in the feasible region: the capacity wall capsBat 70, before even the attention-aware compute knee (roughlyB≈225 at 8K, and higher after DSA). The GEMM-only MoE-corrected knee isB ∗ ≈670. # Wall Binds when Removed by",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Configuration Weight KV HBM Σ Compute Network Floor [max,sum]B max",
+        "Wall Ordering"
+      ],
+      "char_start": 29162,
+      "char_end": 29442,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86de517d3cffa21dd010707b3a78a309",
+      "kind": "heading",
+      "text": "KV capacityB≳70 DP attention (→644)",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "KV capacityB≳70 DP attention (→644)"
+      ],
+      "char_start": 29444,
+      "char_end": 29479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e4b7050100681858a2da936acce26ea",
+      "kind": "heading",
+      "text": "KV bandwidth longS(9.2 ms @8K) DSA (→2.3 ms)",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "KV bandwidth longS(9.2 ms @8K) DSA (→2.3 ms)"
+      ],
+      "char_start": 29481,
+      "char_end": 29525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:edcd3aeb013dcb2972f104ca69c87d8f",
+      "kind": "heading",
+      "text": "Weight bandwidthB≳32 (union sat.) quantization; EP scale-out",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Weight bandwidthB≳32 (union sat.) quantization; EP scale-out"
+      ],
+      "char_start": 29527,
+      "char_end": 29587,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9088ed0f533fd84304424d63dc69591",
+      "kind": "heading",
+      "text": "ComputeB ∗",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗"
+      ],
+      "char_start": 29589,
+      "char_end": 29599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3623224fb6d96b9bf3712d6f05654540",
+      "kind": "paragraph",
+      "text": "GEMM ≈670; incl. 8K MLA∼225capacity comes first (The account models DSA’s dominant effect, the KV-read reduction. Its lightning indexer still has anO(S) scoring path; we treat it as second-order at 8K but expose it as a module that must be added for long-context accounting [12, 48].) After DSA, the exposed wall is routed-weight bandwidth, which is why quantization and EP-style weight sharding, not more attention work, are the next levers on this hardware.",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗"
+      ],
+      "char_start": 29601,
+      "char_end": 30060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcd73e65bd9477c0dc2752fdb8640d66",
+      "kind": "heading",
+      "text": "TP16: Both KV Terms Replicate",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "TP16: Both KV Terms Replicate"
+      ],
+      "char_start": 30062,
+      "char_end": 30091,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7a384e640ea7b3e69268ff00af24515",
+      "kind": "paragraph",
+      "text": "TP16 shards all weights 16 ways (∼42 GB/GPU at full expert union) but MLA replicates KV: each GPU reads theentire36.8 GB of active KV per step (§3.3). The HBM account is 19.7 ms—weight and KV reads add on the same resource—dominating compute (3.0 ms, of which 9.4 of the 14.2 TFLOP is per-layer MLA attention) and network (8.9 ms: 4.9 ms of traffic at the calibrated 43 GB/s effective all-reduce rate, plus",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "TP16: Both KV Terms Replicate"
+      ],
+      "char_start": 30093,
+      "char_end": 30499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f46eabfaba03d1290609bc2dec557711",
+      "kind": "heading",
+      "text": "ms of latency, 122×33µs). The latency constant is itself a calibration finding: cross-node and intra-",
+      "order": 119,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "ms of latency, 122×33µs). The latency constant is itself a calibration finding: cross-node and intra-"
+      ],
+      "char_start": 30501,
+      "char_end": 30602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe7f3414611dad79920f0e7f5ade4e44",
+      "kind": "paragraph",
+      "text": "node small-message latency measure equal within noise (≈33 vs. 32.7µs), identifying ungraphed NCCL launch overhead—not wire time—as the per-op cost, with CUDA-graphed production paths reaching∼10 µs. Sparse attention cuts the KV term to 2.3 ms, but the capacity wall stays atB max ≈70 for 8K contexts: DSA changes what is read, not what is stored.",
+      "order": 120,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "ms of latency, 122×33µs). The latency constant is itself a calibration finding: cross-node and intra-"
+      ],
+      "char_start": 30604,
+      "char_end": 30951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee894e05eb54272491a174511d9a3dbc",
+      "kind": "heading",
+      "text": "EP16 + DP Attention: Trading Bandwidth for Capacity",
+      "order": 121,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "EP16 + DP Attention: Trading Bandwidth for Capacity"
+      ],
+      "char_start": 30953,
+      "char_end": 31004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06989df04ea3c3326d32d20c5480cd3d",
+      "kind": "paragraph",
+      "text": "EP16 shards routed experts but replicates the non-routed∼18 GB on every GPU, raising per-GPU weight traffic to 58.8 GB (14.7 ms)—worse than TP16’s 10.5 ms at equal batch. DP attention, however, shards both KVreads(0.58 ms) and KVresidency: the capacity wall moves from 70 to≈644 concurrent 8K requests, an order of magnitude. Under a TPOT SLO, goodput isB/t step along the feasible region; the layout with the higher wall wins the frontier even where its same-batch step time is worse. This is the quantitative content of the deployment folklore “attention should go DP for MLA serving” [11, 31]: the judgment follows from rows 1–3 of the wall table, needs no benchmark to reach, and—as the next subsection shows—reverses at low concurrency.",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "EP16 + DP Attention: Trading Bandwidth for Capacity"
+      ],
+      "char_start": 31006,
+      "char_end": 31747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:100e39fa806c6700e207cf7dee881ff4",
+      "kind": "heading",
+      "text": "Single-Stream Bounds: the Judgment Inverts",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "Single-Stream Bounds: the Judgment Inverts"
+      ],
+      "char_start": 31749,
+      "char_end": 31791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7866c0f136a2d5b04db686f434bc48f4",
+      "kind": "paragraph",
+      "text": "AtB=1 the layer-serial chain removes overlap opportunity, so the honest floor is the sum (§3.1). For TP16: weight reads shrink to the touched-expert union (∼2.4 GB, 0.6 ms) but 122 all-reduce latencies cost 4.0 ms at the measured 33µs/op—latency, not bandwidth, is the single-stream wall—giving TPOT≥4.9 ms, i.e. ≲205 tok/s. For EP16+DP: atB=1, the active attention rank reads the replicated non-routed block plus the touched routed experts (∼19.3 GB total, 4.8–4.9 ms), and the step still pays 116 all-to-all latencies at the measured 60µs (7.0 ms). The resulting bound is TPOT≥11.8 ms, or≲85 tok/s—TP wins the single-stream regime by2.4×, the mirror image of the high-concurrency judgment. Adding GPUs helps neither: because the calibration shows the 33µs is launch-dominated (§5), the levers are CUDA-graph launch elimination, fewer inter-layer synchronizations, or a faster interconnect—in that order of accessibility. Two framing notes. These are physical bounds, not achievable expectations: recent measurements show batch-1 decode on high-bandwidth parts reaching only∼27% of its analytic floor due to kernel-launch overheads [7], so single-stream floors bound feasibility studies (“can this SLO ever be met?”) rather than predict 9",
+      "order": 124,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "Single-Stream Bounds: the Judgment Inverts"
+      ],
+      "char_start": 31793,
+      "char_end": 33032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dabd032ca10a5be9ba7505719d3b4a47",
+      "kind": "paragraph",
+      "text": "101 TPOT floor (ms)",
+      "order": 125,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "ComputeB ∗",
+        "Single-Stream Bounds: the Judgment Inverts"
+      ],
+      "char_start": 33034,
+      "char_end": 33053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdb5e517520e43858dc779f8c319169c",
+      "kind": "heading",
+      "text": "Bmax≈70 Bmax≈644",
+      "order": 126,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bmax≈70 Bmax≈644"
+      ],
+      "char_start": 33055,
+      "char_end": 33071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eea7ff46c8e60b0a4ce1d483594fd8ee",
+      "kind": "paragraph",
+      "text": "TPOT SLO 50 ms single-stream (B = 1): TP wins 2.4× TP16",
+      "order": 127,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Bmax≈70 Bmax≈644"
+      ],
+      "char_start": 33073,
+      "char_end": 33128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f03f2908d11bc0f78bc6864f0a255044",
+      "kind": "heading",
+      "text": "TP16 + DSA",
+      "order": 128,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "TP16 + DSA"
+      ],
+      "char_start": 33130,
+      "char_end": 33140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd01866f73585732d0dd15b6c524f53c",
+      "kind": "paragraph",
+      "text": "EP16 + DP attn",
+      "order": 129,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "TP16 + DSA"
+      ],
+      "char_start": 33142,
+      "char_end": 33156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27faa4930579edd1f6d43d3685f181db",
+      "kind": "heading",
+      "text": "101 102",
+      "order": 130,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102"
+      ],
+      "char_start": 33158,
+      "char_end": 33165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:111c234d1533b310dfe6ca110696dba1",
+      "kind": "paragraph",
+      "text": "concurrency B (8K context) 103 104 goodput ceiling (tok/s)",
+      "order": 131,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102"
+      ],
+      "char_start": 33167,
+      "char_end": 33225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1b1812c74f54e25abc15a3c40a2b8bd",
+      "kind": "caption",
+      "text": "Figure 3: Analytical TPOT floors (top) and goodput ceilings (bottom) versus concurrency at 8K context,",
+      "order": 132,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102"
+      ],
+      "char_start": 33227,
+      "char_end": 33329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b09a35bff772bc5188dcc374601f101",
+      "kind": "paragraph",
+      "text": "computed by the artifact. The KV-capacity walls (dashed) terminate each layout’s feasible region: TP16 variants end atB≈70 while EP16+DP attention continues toB≈644, dominating the high-concurrency frontier—yet atB=1 the ordering inverts and TP16 leads by nearly 2×. The deployment judgment is a function of the operating point. production numbers. And the regime dependence of the TP-vs-DP judgment—TP at low concurrency, DP at high—is exactly the shape of the production disagreement in§1: the cluster we model (TP16 attention) and the official DeepSeek and LMSYS–Ant deployments (DP attention) sit at different operating points on the same frontier. The account does not say one team erred; it says the choice is a computable function of the target concurrency, and computes it.",
+      "order": 133,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102"
+      ],
+      "char_start": 33331,
+      "char_end": 34112,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b80518847d2200c148b04b994afa7b55",
+      "kind": "heading",
+      "text": "Reconciliation: Reading Residuals",
+      "order": 134,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102",
+        "Reconciliation: Reading Residuals"
+      ],
+      "char_start": 34114,
+      "char_end": 34147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e88c95e1ff33d35ee391df1d87e709b",
+      "kind": "paragraph",
+      "text": "Reconciliation compares floors against steady-stateservice time(P50 TPOT), not tail latency: queueing delay is real but lives outside the resource account (§7), so P99 validates the SLO while P50 diagnoses the engine—conflating them reads tail queueing as kernel residual. Suppose TP16 (no sparse attention) measures 25 ms P50 TPOT at this workload. The artifact reports MBU = (41.9 + 36.8) GB/(25 ms×4.0 TB/s) = 78.8%; the residual is 1.27×the optimistic floor—below the escalation threshold—and the position inside [19.7,31.6] is 0.45. The two signals say different things, which is why both exist: the residual saysstop—no profiler session is warranted, and the next win must come from 10",
+      "order": 135,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102",
+        "Reconciliation: Reading Residuals"
+      ],
+      "char_start": 34149,
+      "char_end": 34840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68a82c4ec90341822be66449144126de",
+      "kind": "paragraph",
+      "text": "changing the account itself (DSA, quantization, or layout)—while the mid-interval position bounds what better overlap could ever recover (∼5 ms here) if that axis were pursued anyway. Had the measurement been 45 ms (MBU = 44%, 1.42×thepessimisticfloor), it would sit outside the interval entirely: no overlap explanation is arithmetically possible, and the tool escalates to Nsight Systems with the three-question reading list, because something outside the resource account (host gaps, stragglers, preemption) is consuming time. For prefill, the identity of§2.2 selects MFU: an 8K prompt costs 2·37B·8192≈606 TFLOP of parameter GEMMs, so 16 H20s at 50% MFU bound TTFT at 256 ms—a GEMM-only lower bound (the causal-attention term adds up to∼25 ms at this length); H100s would bound the same GEMM account at∼38 ms, the prefill face of the ridge portrait. A measured 400 ms implies 32% MFU, within the MoE prefill band (§2.4); the timeline-level suspects (all-to-all exposure, expert imbalance) are checked before any kernel is blamed.",
+      "order": 136,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "101 102",
+        "Reconciliation: Reading Residuals"
+      ],
+      "char_start": 34842,
+      "char_end": 35875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:538bd0d250b2fd13d9ebbf6e902e5d71",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 137,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Related Work"
+      ],
+      "char_start": 35877,
+      "char_end": 35889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:032842f4d8c2ef8df8f3ab7bc4944f44",
+      "kind": "paragraph",
+      "text": "Analytical models and limit studies.Pope et al. [27] founded the genre: closed-form partitioning selection for dense Transformers on TPUs. GenZ [4] maps use cases to platform requirements with a resource decomposition close to ours; LLMCompass [44] and Calculon-style co-design models [20] serve hardware DSE; roofline treatments cover the single-device [41] and edge [5, 6] settings. Closest to our decode account, LIMINAL [9] derives single-user decode limits from bandwidth, compute, capacity, and synchronization, and Erdil [15] derives token-economics frontiers including a speed∝BW 1/3 scaling; both fix overlap assumptions and target hardware-evolution questions, whereFloor Firstkeeps overlap observable via the [max,sum] interval and targets deployment triage. Yun et al. [42] analyze MLA/MoE arithmetic intensity at the operator level, concluding MLA core-attention trends compute-bound; this is consistent with our step-level account— operator intensity and step-level byte totals answer different questions, and after DSA the step is weightbandwidth-dominated regardless of the attention operator’s intensity. AIC++ [38] explores the same V3.2 deployment space (including attention–FFN disaggregation, which we do not model) via measured kernel databases plus network simulation on B200;Floor Firsttrades its fidelity for closed forms, interpretable wall ordering, and hardware it has no database for—the two are complementary stages of the same pipeline. Simulators and configuration search.Vidur [2] and KernelSight-LM [40] predict serving performance",
+      "order": 138,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Related Work"
+      ],
+      "char_start": 35891,
+      "char_end": 37456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f74c21e6e40bb6b58b11373c23b5f72f",
+      "kind": "paragraph",
+      "text": "from profiled operators; LLM-Pilot [21] learns black-box cost models across GPUs; AIConfigurator [39] searches configurations against a measured-kernel database in seconds. These tools accelerate the grid search;Floor First’s position is that the floor account should shrink the gridbeforeany search, look-up, or simulation—and, unlike a kernel database, closed forms transfer to hardware and models nobody has profiled yet. When scheduler dynamics or caching dominate, simulators are the correct escalation target, exactly as profilers are for kernel questions. Serving systems and the DP-attention judgment.Phase splitting and scheduling [1, 26, 28, 46], module-level disaggregation [49], hybrid MoE parallelism [47], and model–system co-design [32] define the layout space our accounts judge. For the MLA replication problem specifically, the engineering record states the mechanism [11, 31, 36] and architecture papers confirm it while responding by redesigning attention or its sharding [25, 34, 43]; reverse-engineering analyses quantify official H800 deployments [16]. None derives the capacity-first judgment for unmodified MLA: the Ant deployment states the memory-bound intuition without quantifying where it binds [24], and TP16-attention deployments remain in production (§5)—the gap this case study fills. H20-specific work exists at the kernel level [13] and as empirical throughput reports; the ridge-geometry account of§5.1 appears to be new. MoE metrics and sparsity accounting.MoE-CAP [19] corrects MBU/MFU for per-token activated",
+      "order": 139,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Related Work"
+      ],
+      "char_start": 37458,
+      "char_end": 39006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43f7e1b0a17de2c1e57338613fb6ceef",
+      "kind": "paragraph",
+      "text": "parameters; our union correction (§3.3) additionally captures batch-aggregated weight traffic, using a closed form shared with speculative-decoding and expert-sharing analyses [18, 35]. Empirical characterizations [3, 7, 29] document bandwidth saturation, capacity traps, and floor-attainment gaps that our workflow is designed to triage—and that its failure modes (§7) must respect. 11",
+      "order": 140,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Related Work"
+      ],
+      "char_start": 39008,
+      "char_end": 39394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db7a418c954fc9ddd266eeba11e82de3",
+      "kind": "paragraph",
+      "text": "Benchmark discipline and agentic optimization.Open-versus-closed-loop bias was formalized by Schroeder et al. [30]; LLM serving evaluation work has begun rebuilding measurement discipline, and§2.1 applies the classical distinction to serving capacity claims. Agentic optimization systems increasingly wrap profilers and roofline reasoning in LLM agents [14, 17, 22, 23, 33];Floor First’s skill artifact is the complementary piece—a deterministic floor layer that disciplines when such agents may escalate to expensive tools.",
+      "order": 141,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Related Work"
+      ],
+      "char_start": 39396,
+      "char_end": 39920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78e13f61e82c4fb248863129d992bf83",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 142,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Discussion"
+      ],
+      "char_start": 39922,
+      "char_end": 39932,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74c742f0e7cb29ad967c950cec6b92ec",
+      "kind": "paragraph",
+      "text": "Why not always simulate?Because many bad deployments can be ruled out with one page of arithmetic. If TP16 cannot hold the required concurrency at the target context, no scheduler search fixes that. If a benchmark already sits at 1.27×the optimistic floor, kernel work cannot return a large factor. Simulators and profilers remain important, but they are stage-2 tools for residuals that survive the floor check. What generalizes.The mental model is not specific to this case study. The five-dimensional account, the two-sided floor, wall ordering, and the ridge-identity metric discipline apply to any autoregressive transformer served on accelerators: hardware enters through five numbers per device (§5.1), the model through permodule declarations (§3.6), and the deployment through per-module sharding. Nothing in the workflow references H20, MLA, or MoE specifically—the case study was chosen because it exercises the account’s hardest current instance (extreme ridge asymmetry, unshardable latent KV, batch-dependent expert traffic), not because it marks a boundary. What doesnottransfer automatically: calibration constants (per cluster), the module library (per architecture family), and the blind spots below. Training-side estimation follows the same resource-vector structure but is out of scope here. When the floor model fails.The account has known blind spots, and stating them is part of the method. (i)Continuous batching:Bvaries within a window, so floors should bracket the batch distribution rather",
+      "order": 143,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Discussion"
+      ],
+      "char_start": 39934,
+      "char_end": 41451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4128e0310865cd15a83a7a6e16ed07a",
+      "kind": "paragraph",
+      "text": "than assume a stationary point. (ii)Expert imbalance: the union expectation assumes uniform routing; hot experts push per-GPU weight traffic above the account (EPLB-style balancing restores it), and the sum floor loses meaning when stragglers, not resources, set step time. (iii)Open-loop overload: past saturation, sojourn time is queueing-dominated; floors bound service time only, and queueing-theoretic capacity models take over. (iv)Host-bound regimes: Python and scheduler overheads are outside the resource vector by construction—the<40% MBU band plus kernel-gap inspection exists precisely to catch what the account cannot express. (v)Batch-1 attainment: launch overheads leave measured single-stream latency far above the floor on high-end parts [7]; single-stream floors answer feasibility, not prediction. (vi)Calibration drift: per-shape GEMM efficiency varies widely; the calibration chain must use production shapes or residuals inherit the error. Scope.The artifact currently models pure TP and EP+DP-attention decode plus compute-bound prefill. The compositional structure of§3.6 defines the extension path: a per-module plan interface admits mixed TP×EP and the production hybrid layouts of§1; new attention or state-space modules enter by declaring their state and shardability; prefill/decode disaggregation, chunked-prefill interference, speculative decoding, and attention–FFN disaggregation [38] are account extensions on the same interface. All are staged behind validation of the core loop—the framework does not change, the module list grows.",
+      "order": 144,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Discussion"
+      ],
+      "char_start": 41453,
+      "char_end": 43020,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:178da22fef8f4e35bc5c2034f1867bff",
+      "kind": "heading",
+      "text": "Required Measurement Campaign",
+      "order": 145,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Required Measurement Campaign"
+      ],
+      "char_start": 43022,
+      "char_end": 43051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fa08b7533a42325355ddbc99630dbdf",
+      "kind": "paragraph",
+      "text": "The workflow’s claims are calibratable, and this section is the paper’s own stage-2 escalation plan. (1)Calibration chainon the target cluster—executed(§4): production-shape GEMM rates, all-reduce bandwidth/latency sweeps, DeepEP all-to-all benchmarks; the HBM point should be re-taken withnvbandwidthin place of the torch fallback. (2)Residual calibration: an open-loop, steady-state sweep over{TP16, TP16+DSA, EP16+DPA} ×B×S(≥12 points), each reconciled against its floor, yielding the residual distribution that grounds (or revises) the 1.3×threshold and the MBU bands. (3)Triage traces: one near-floor and one 12",
+      "order": 146,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Required Measurement Campaign"
+      ],
+      "char_start": 43053,
+      "char_end": 43669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecd74e38e1bac5872557cdffec7f6f7d",
+      "kind": "paragraph",
+      "text": "high-residual configuration instrumented with Nsight Systems, demonstrating the three-question reading list and the budget-table indictment of a kernel class. (4)Cross-platform replicationof the workflow on a dense model and a second GPU generation, testing that the method—not the case study—is the contribution. (5)Judgment validation: the TP16-attention versus DP-attention goodput frontiers measured on the same 16×H20 system, closing the loop on§5.6’s claim that the production disagreement is an operating-point question.",
+      "order": 147,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Required Measurement Campaign"
+      ],
+      "char_start": 43671,
+      "char_end": 44198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c042ab006e3c985a7200742b3eb69e8",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 148,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Conclusion"
+      ],
+      "char_start": 44200,
+      "char_end": 44210,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4a4893ae5805400334aa2e0640f7a5f",
+      "kind": "paragraph",
+      "text": "Floor Firstreframes LLM serving optimization as residual-driven triage: compute two-sided floors from a five-dimensional resource account, benchmark only the configurations whose walls permit the target, read the [max,sum] position as a free overlap diagnostic, and open profilers only when the residual points to time the account cannot explain. The H20 case study shows the method’s reach: a ridge-point portrait that explains why an export-constrained part is a natural decode engine, a wall ordering that shows its compute ceiling is unreachable behind the KV-capacity wall, a capacity-first derivation of the DP-attention judgment together with its single-stream inversion—and, throughout, arithmetic that fits on a page and reproduces from a dependency-free artifact. The measurement campaign of§8 is the remaining step from analytical draft to validated systems paper.",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Conclusion"
+      ],
+      "char_start": 44212,
+      "char_end": 45087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38aa7c268c9794b31a09e152a70d3162",
+      "kind": "heading",
+      "text": "References",
+      "order": 150,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "References"
+      ],
+      "char_start": 45089,
+      "char_end": 45099,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eb65c323d0b03c9dc86fd73e3da5525",
+      "kind": "reference",
+      "text": "[1] Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav S. Gulavani, Alexey Tumanov, and Ramachandran Ramjee. Taming throughput-latency tradeoff in llm inference with sarathi-serve.arXiv preprint arXiv:2403.02310, 2024. [2] Amey Agrawal et al. Vidur: A large-scale simulation framework for llm inference.arXiv preprint arXiv:2405.05465, 2024. [3] Moiz Arif, Avinash Maurya, Sudharshan Vazhkudai, and Bogdan Nicolae. Understanding inference scaling for llms: Bottlenecks, trade-offs, and performance principles.arXiv preprint arXiv:2605.19775, 2026.",
+      "order": 151,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "References"
+      ],
+      "char_start": 45101,
+      "char_end": 45678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7ae61cc7b89f4aa0502f2831a67b513",
+      "kind": "heading",
+      "text": "[4] Abhimanyu Bambhaniya, Ritik Raj, Geonhwa Jeong, Souvik Kundu, Sudarshan Srinivasan, Suvinay",
+      "order": 152,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[4] Abhimanyu Bambhaniya, Ritik Raj, Geonhwa Jeong, Souvik Kundu, Sudarshan Srinivasan, Suvinay"
+      ],
+      "char_start": 45680,
+      "char_end": 45775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b01f0189948cc69f411590ecbacbada9",
+      "kind": "paragraph",
+      "text": "Subramanian, Midhilesh Elavazhagan, Madhu Kumar, and Tushar Krishna. Demystifying ai platform design for distributed inference of next-generation llm models.arXiv preprint arXiv:2406.01698, 2024. [5] Zhen Bi, Xueshu Chen, Luoyang Sun, Yuhang Yao, Qing Shen, Jungang Lou, and Cheng Deng. Rooflinebench: A benchmarking framework for on-device llms via roofline analysis.arXiv preprint arXiv:2602.11506, 2026. [6] Hao Chen, Cong Tian, Zixuan He, Bin Yu, Yepang Liu, and Jialun Cao. Inference performance evaluation for llms on edge devices with a novel benchmarking framework and metric.arXiv preprint arXiv:2508.11269, 2025. [7] Josef Chen. Memory-bound but not bandwidth-limited: The physical ai inference gap in batch-1 llm decode.arXiv preprint arXiv:2605.30571, 2026. [8] Databricks Engineering. Llm inference performance engineering: Best practices.https://www. databricks.com/blog/llm-inference-performance-engineering-best-practices, 2023. Introduces the model bandwidth utilization (MBU) metric.",
+      "order": 153,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[4] Abhimanyu Bambhaniya, Ritik Raj, Geonhwa Jeong, Souvik Kundu, Sudarshan Srinivasan, Suvinay"
+      ],
+      "char_start": 45777,
+      "char_end": 46778,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe7ac184a0bc4bf7306c676aa077d964",
+      "kind": "heading",
+      "text": "[9] Michael Davies, Neal Crago, Karthikeyan Sankaralingam, and Christos Kozyrakis. Liminal: Exploring",
+      "order": 154,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[9] Michael Davies, Neal Crago, Karthikeyan Sankaralingam, and Christos Kozyrakis. Liminal: Exploring"
+      ],
+      "char_start": 46780,
+      "char_end": 46881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:081e2d4a840bc8bc6991538e1efd54bc",
+      "kind": "paragraph",
+      "text": "the frontiers of llm decode performance.arXiv preprint arXiv:2507.14397, 2025. [10] DeepSeek-AI. Deepseek-v3 technical report.arXiv preprint arXiv:2412.19437, 2024. 13",
+      "order": 155,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[9] Michael Davies, Neal Crago, Karthikeyan Sankaralingam, and Christos Kozyrakis. Liminal: Exploring"
+      ],
+      "char_start": 46883,
+      "char_end": 47050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61cfe271e0962a32b284996a0e0543c0",
+      "kind": "paragraph",
+      "text": "[11] DeepSeek-AI. Deepseek-v3/r1 inference system overview and profiling data.https://github.com/ deepseek-ai/profile-data, 2025. Production deployment: prefill EP32, decode EP144 with dataparallel attention on H800. [12] DeepSeek-AI. Deepseek-v3.2: Pushing the frontier of open large language models.arXiv preprint arXiv:2512.02556, 2025. [13] Pengcuo Dege, Qiuming Luo, Rui Mao, and Chang Kong. Flashmla-etap: Efficient transpose attention pipeline for accelerating mla inference on nvidia h20 gpus.arXiv preprint arXiv:2506.01969, 2025. [14] Yuran Ding, Xinwei Chen, Xiaofan Zhang, and Zongwei Zhou. Asap: an agentic solution to autooptimize performance of large-scale llm training.arXiv preprint arXiv:2511.03844, 2025. [15] Ege Erdil. Inference economics of language models.arXiv preprint arXiv:2506.04645, 2025. [16] Jiarui Fang. Deepseek v3/r1 inference efficiency analysis (in chinese). https://zhuanlan.zhihu.com/p/16445683081, 2025. Reverse-engineered roofline account of the official H800 deployment; companion tool LLMRoofline. [17] Jiading Gai, Shuai Zhang, Kaj Bostrom, Jin Huang, Vihang Patil, Haoyang Fang, Bernie Wang, Huzefa Rangwala, and George Karypis. Optimizing cuda like a human: Micro-profiling tools as expert surrogates for llm-based gpu kernel optimization.arXiv preprint arXiv:2606.26453, 2026. [18] Zongle Huang, Lei Zhu, Zongyuan Zhan, Ting Hu, Weikai Mao, Xianzhi Yu, Yongpan Liu, and Tianyu Zhang. Moesd: Unveil speculative decoding’s potential for accelerating sparse moe.arXiv preprint",
+      "order": 156,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[9] Michael Davies, Neal Crago, Karthikeyan Sankaralingam, and Christos Kozyrakis. Liminal: Exploring"
+      ],
+      "char_start": 47052,
+      "char_end": 48571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27064a489c2e1592cd4f3476d5323afc",
+      "kind": "paragraph",
+      "text": "arXiv:2505.19645, 2025. [19] Yinsicheng Jiang, Yao Fu, Yeqi Huang, Ping Nie, Zhan Lu, Leyang Xue, Congjie He, Man-Kit Sit, Jilong Xue, Li Dong, et al. Moe-cap: Benchmarking cost, accuracy and performance of sparse mixtureof-experts systems.arXiv preprint arXiv:2412.07067, 2024. [20] Joyjit Kundu, Wenzhe Guo, Ali BanaGozar, Udari De Alwis, Sourav Sengupta, Puneet Gupta, and Arindam Mallik. Performance modeling and workload analysis of distributed large language model training and inference.arXiv preprint arXiv:2407.14645, 2024. [21] Ma lgorzata  Lazuka, Andreea Anghel, and Thomas Parnell. Llm-pilot: Characterize and optimize performance of your llm inference services.arXiv preprint arXiv:2410.02425, 2024. [22] Jiajie Li, Erwei Wang, Zhiru Zhang, and Samuel Bayliss. From human guidance to autonomy: Agent skill system for end-to-end llm deployment on spatial npus.arXiv preprint arXiv:2606.07586, 2026. [23] Zhanlin Liu, Yitao Li, and Munirathnam Srikanth. Epoch: An agentic protocol for multi-round system optimization.arXiv preprint arXiv:2603.09049, 2026. [24] LMSYS Org and Ant Group. Serving deepseek-r1 on h20-96g.https://www.lmsys.org/blog/",
+      "order": 157,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[9] Michael Davies, Neal Crago, Karthikeyan Sankaralingam, and Christos Kozyrakis. Liminal: Exploring"
+      ],
+      "char_start": 48573,
+      "char_end": 49729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8610c392c5d0d7e651f42b9a60fd6a",
+      "kind": "heading",
+      "text": "09-26-sglang-ant-group/, 2025. Decode uses TP16 attention with EP16 MoE on 2×8 H20-96G.",
+      "order": 158,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "09-26-sglang-ant-group/, 2025. Decode uses TP16 attention with EP16 MoE on 2×8 H20-96G."
+      ],
+      "char_start": 49731,
+      "char_end": 49818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d54baecf58367424dcfc51ec558deea",
+      "kind": "paragraph",
+      "text": "[25] Fanxu Meng. Gqla: Group-query latent attention for hardware-adaptive large language model decoding. arXiv preprint arXiv:2605.15250, 2026. [26] Pratyush Patel, Esha Choukse, Chaojie Zhang, Aashaka Shah, Inigo Goiri, Saeed Maleki, and Ricardo Bianchini. Splitwise: Efficient generative llm inference using phase splitting.arXiv preprint arXiv:2311.18677, 2023. [27] Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, and Jeff Dean. Efficiently scaling transformer inference. arXiv preprint arXiv:2211.05102, 2022. [28] Ruoyu Qin, Zheming Li, Weiran He, Mingxing Zhang, Yongwei Wu, Weimin Zheng, and Xinran Xu. Mooncake: A kvcache-centric disaggregated architecture for llm serving.arXiv preprint arXiv:2407.00079, 2024. 14",
+      "order": 159,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "09-26-sglang-ant-group/, 2025. Decode uses TP16 attention with EP16 MoE on 2×8 H20-96G."
+      ],
+      "char_start": 49820,
+      "char_end": 50636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:459b80d77e46d85ed9ad84812cfecba0",
+      "kind": "paragraph",
+      "text": "[29] Pol G. Recasens, Ferran Agullo, Yue Zhu, Chen Wang, Eun Kyung Lee, Olivier Tardieu, Jordi Torres, and Josep Ll. Berral. Mind the memory gap: Unveiling gpu bottlenecks in large-batch llm inference. arXiv preprint arXiv:2503.08311, 2025. [30] Bianca Schroeder, Adam Wierman, and Mor Harchol-Balter. Open versus closed: A cautionary tale. In 3rd Symposium on Networked Systems Design and Implementation (NSDI 06), 2006. [31] SGLang Team. Sglang v0.4: Zero-overhead batch scheduler, cache-aware load balancer, faster structured outputs.https://lmsys.org/blog/2024-12-04-sglang-v0-4/, 2024. Introduces data-parallel attention for MLA: head-parallel TP duplicates the latent KV cache. [32] StepFun. Step-3 is large yet affordable: Model-system co-design for cost-effective decoding.arXiv preprint arXiv:2507.19427, 2025. [33] Qitong Sun, Jun Han, Tianlin Li, Zhe Tang, Sheng Chen, Fei Yang, Aishan Liu, Xianglong Liu, and Yang Liu. Kernelskill: A multi-agent framework for gpu kernel optimization.arXiv preprint arXiv:2603.10085, 2026. [34] Xiaojuan Tang, Fanxu Meng, Pingzhi Tang, Yuxuan Wang, Di Yin, Xing Sun, and Muhan Zhang. Tpla: Tensor parallel latent attention for efficient disaggregated prefill and decode inference.arXiv preprint arXiv:2508.15881, 2025. [35] Daniil Vankov, Nikita Ivkin, Kyle Ulrich, Xiang Song, Ashish Khetan, and George Karypis. Xshare: Collaborative in-batch expert sharing for faster moe inference.arXiv preprint arXiv:2602.07265, 2026. [36] vLLM Project. RFC: Data parallel attention and expert parallel moes.https://github.com/",
+      "order": 160,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "09-26-sglang-ant-group/, 2025. Decode uses TP16 attention with EP16 MoE on 2×8 H20-96G."
+      ],
+      "char_start": 50638,
+      "char_end": 52198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58ebae8156a0768ee6f5fd264ddf1eeb",
+      "kind": "paragraph",
+      "text": "vllm-project/vllm/issues/16037, 2025. [37] Samuel Williams, Andrew Waterman, and David Patterson. Roofline: An insightful visual performance model for multicore architectures.Communications of the ACM, 52(4):65–76, 2009.",
+      "order": 161,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "09-26-sglang-ant-group/, 2025. Decode uses TP16 attention with EP16 MoE on 2×8 H20-96G."
+      ],
+      "char_start": 52200,
+      "char_end": 52420,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:388f5ba8373c466735ff258ed9798de9",
+      "kind": "heading",
+      "text": "[38] Hanjiang Wu, Abhimanyu Rajeshkumar Bambhaniya, Sarbartha Banerjee, Tuhin Khare, Sudarshan",
+      "order": 162,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "[38] Hanjiang Wu, Abhimanyu Rajeshkumar Bambhaniya, Sarbartha Banerjee, Tuhin Khare, Sudarshan"
+      ],
+      "char_start": 52422,
+      "char_end": 52516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b87d11f682e4163b1de867031c5ff98",
+      "kind": "heading",
+      "text": "Srinivasan, Suvinay Subramanian, Souvik Kundu, Madhu Kumar, Midhilesh Elavazhagan, William",
+      "order": 163,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Srinivasan, Suvinay Subramanian, Souvik Kundu, Madhu Kumar, Midhilesh Elavazhagan, William"
+      ],
+      "char_start": 52518,
+      "char_end": 52608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfa1631ddbf82cc8f470281129ffdf50",
+      "kind": "paragraph",
+      "text": "Won, Amir Yazdanbakhsh, and Tushar Krishna. How far can disaggregation go? a design-space exploration of attention-ffn disaggregation for efficient moe llm serving.arXiv preprint arXiv:2605.28302, 2026. [39] Tianhao Xu, Yiming Liu, Xianglong Lu, Yijia Zhao, Xuting Zhou, Aichen Feng, Yiyi Chen, Yi Shen, Qin Zhou, Xumeng Chen, et al. Aiconfigurator: Lightning-fast configuration optimization for multiframework llm serving.arXiv preprint arXiv:2601.06288, 2026. [40] Xiteng Yao, Taeho Kim, Hengzhi Pei, Xinle Liu, Kyle Ulrich, Leonard Lausen, Ashish Khetan, Xiang Song, George Karypis, and Martin Herbordt. Kernelsight-lm: A kernel-level llm inference simulator. arXiv preprint arXiv:2606.28565, 2026. [41] Zhihang Yuan, Yuzhang Shang, Yang Zhou, Zhen Dong, Zhe Zhou, Chenhao Xue, Bingzhe Wu, Zhikai Li, Qingyi Gu, Yong Jae Lee, et al. Llm inference unveiled: Survey and roofline model insights.arXiv preprint arXiv:2402.16363, 2024. [42] Sungmin Yun, Seonyong Park, Hwayong Nam, Younjoo Lee, Gunjun Lee, Kwanhee Kyung, Sangpyo Kim, Nam Sung Kim, Jongmin Kim, Hyungyo Kim, et al. Rethinking llm inference bottlenecks: Insights from latent attention and mixture-of-experts.arXiv preprint arXiv:2507.15465, 2025. [43] Ted Zadouri, Hubert Strauss, and Tri Dao. Hardware-efficient attention for fast decoding.arXiv preprint arXiv:2505.21487, 2025. [44] Hengrui Zhang, August Ning, Rohan Prabhakar, and David Wentzlaff. A hardware evaluation framework for large language model inference.arXiv preprint arXiv:2312.03134, 2023.",
+      "order": 164,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Srinivasan, Suvinay Subramanian, Souvik Kundu, Madhu Kumar, Midhilesh Elavazhagan, William"
+      ],
+      "char_start": 52610,
+      "char_end": 54130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab0b597f9d3887faca5b2a68fd922257",
+      "kind": "paragraph",
+      "text": "15",
+      "order": 165,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Srinivasan, Suvinay Subramanian, Souvik Kundu, Madhu Kumar, Midhilesh Elavazhagan, William"
+      ],
+      "char_start": 54132,
+      "char_end": 54134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55c1ee0c359eb5de960ececbe76e21a0",
+      "kind": "paragraph",
+      "text": "[45] Chenggang Zhao, Chengqi Deng, Chong Ruan, Damai Dai, Huazuo Gao, Jiashi Li, Liyue Zhang, Panpan Huang, Shangyan Zhou, Shirong Ma, et al. Insights into deepseek-v3: Scaling challenges and reflections on hardware for ai architectures.arXiv preprint arXiv:2505.09343, 2025. [46] Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang. Distserve: Disaggregating prefill and decoding for goodput-optimized large language model serving.arXiv preprint arXiv:2401.09670, 2024. [47] Bowen Zhou, Jinrui Jia, Wenhao He, Yong Zhang, and Fang Dong. Mixserve: An automatic distributed serving system for moe models with hybrid parallelism based on fused communication algorithm.arXiv preprint arXiv:2601.08800, 2026. [48] Ruijie Zhou, Fanxu Meng, Yufei Xu, Tongxuan Liu, Guangming Lu, Muhan Zhang, and Wenjie Pei. Misa: Mixture of indexer sparse attention for long-context llm inference.arXiv preprint arXiv:2605.07363, 2026. [49] Ruidong Zhu, Ziheng Jiang, Chao Jin, Peng Wu, Cesar A. Stuardo, Dongyang Wang, Xinlei Zhang, Huaping Zhou, Haoran Wei, Yang Cheng, et al. Megascale-infer: Serving mixture-of-experts at scale with disaggregated expert parallelism.arXiv preprint arXiv:2504.02263, 2025.",
+      "order": 166,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "Srinivasan, Suvinay Subramanian, Souvik Kundu, Madhu Kumar, Midhilesh Elavazhagan, William"
+      ],
+      "char_start": 54136,
+      "char_end": 55366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94c6c146279a2a2e2730897422b4702e",
+      "kind": "heading",
+      "text": "A Artifact Commands",
+      "order": 167,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "A Artifact Commands"
+      ],
+      "char_start": 55368,
+      "char_end": 55387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b053d68ab6eb271feb3aaa702bb015e6",
+      "kind": "paragraph",
+      "text": "The following commands reproduce Table 2 (add--full-expertsfor the conservative union bound shown; omit it for the expectation account): cd scripts/ python3 floor.py --model deepseek-v3.2 --gpu h20 \\ --nodes 2 --gpus-per-node 8 --parallel tp16 \\ -B 64 -S 8192 --full-experts python3 floor.py --model deepseek-v3.2 --gpu h20 \\ --nodes 2 --gpus-per-node 8 --parallel tp16 \\ -B 64 -S 8192 --full-experts --dsa python3 floor.py --model deepseek-v3.2 --gpu h20 \\ --nodes 2 --gpus-per-node 8 --parallel ep16-dpa \\ -B 64 -S 8192 --full-experts Single-stream bounds (§5.6) are printed by the same invocations at-B 1; reconciliation examples: python3 mbu_mfu.py decode --model deepseek-v3.2 --gpu h20 \\ --parallel tp16 -B 64 -S 8192 --tpot-ms 25 --full-experts python3 mbu_mfu.py prefill --model deepseek-v3.2 --gpu h20 \\ --ngpus 16 --prompt 8192 --ttft-ms 400 16",
+      "order": 168,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Think Before You Grid-Search: Floor-First Triage for LLM Serving",
+        "A Artifact Commands"
+      ],
+      "char_start": 55389,
+      "char_end": 56243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 16,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 16
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.05876",
+    "arxiv_version": 2,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 16,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

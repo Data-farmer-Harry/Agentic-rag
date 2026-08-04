@@ -1,0 +1,5012 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "760a39a1d9a7918206dcb520c0fbe703d80330a7a471e4e53ff35e86748a16ad",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:064ed67cc5a228ad4905193c3a4405d3",
+      "kind": "paragraph",
+      "text": "Joanna Roy 1 Sven H¨olzel 1",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 27,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae98a87093064a67f0006646117b8b9b",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 29,
+      "char_end": 37,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37609b50358b65e332faa4c168e0c4c7",
+      "kind": "paragraph",
+      "text": "Trustworthy deployment of LLM-based agents in software systems requires evaluating how they perform on application-specific workflows, with enough granularity to localize where they succeed and fail. Yet existing agent evaluation mechanisms are limited: benchmarks have low construct validity for application-specific workflows and environments, and replica evaluation environments are expensive and prone to drift. We propose Copy-on-Write (CoW) Scoring1, a framework that evaluates agent operations directly within application environments using a PostgreSQL-level Copy-on-Write mechanism to isolate agent writes. CoW Scoring produces session- and operationlevel scores that highlight where agents’ database write operations succeed and fail in a given application environment, enabling inexpensive evaluation and iteration on agent harnesses and tool surfaces. We demonstrate the framework on Plane, an open-source project-management platform, where analysis surfaced specific issues in the tool surface, and corresponding fixes produced measurable improvements on affected models.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 39,
+      "char_end": 1123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd2cd0259f15b3557bbb0898ad3d7e3b",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1125,
+      "char_end": 1137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e65a270a1570617a4ccf72ed8903015f",
+      "kind": "paragraph",
+      "text": "Large Language Model (LLM)-based agents are increasingly deployed in production software systems, from enterprise tooling (e.g., ServiceNow, Salesforce, Notion) to MCP integrations across a wide range of consumer applications.2 Many of these applications are relied upon by a wide range of organizations and end-users, underpinning core business operations across large segments of the economy. Agent unreliability and errors — such as accidental deletion or overwriting of data, misuse of tooling, or incorrect changes to critical records — could have substantial ripple 1trail-ml, Munich, Germany. Correspondence to: Joanna Roy <joanna@trail-ml.com>, Sven H¨olzel<sven@trail-ml.com>. Published at the Second Workshop on Agents in the Wild: Safety, Security, and Beyond (AIWILD) at ICML 2026. Copyright 2026 by the author(s). 1Python library:agent-cow 2Gartner (2025); BCG (2025); Deloitte (2026) effects, yet are difficult to identify and prevent in practice, particularly when agent writes are interleaved with the prior database state. Evaluating agents in software contexts remains an underdeveloped area. Benchmarks are the most common means of assessing performance, but strong benchmark results do not guarantee strong performance in real systems or on realworld tasks (Mohammadi et al., 2025; Raji et al., 2021; Liao & Xiao, 2025; Deng et al., 2023). Existing benchmarks tend to have lowconstruct validity(Bean et al., 2025) for the environments in which software agents are deployed. Some benchmarks have attempted to close this gap by sit-",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1139,
+      "char_end": 2689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27a6448033fed73c11be3b8cf4a51c69",
+      "kind": "paragraph",
+      "text": "uating agents in replicas of common applications (Drouin et al., 2024; Zhou et al., 2024b; Xu et al., 2025) or in simulated domains with API access (Yao et al., 2024). While these partly address the construct validity gap, two main limitations remain: (a) replicas and simulations are timeand resource-expensive to produce, and can quickly drift from the live state of the application; and (b) evaluating performance on aspecificsoftware is still not necessarily predictive of performance in others — for example, one with different tooling, system prompts, and workflows. Since no single benchmark can predict agent performance for arbitrary applications, teams need complementary evaluation methods that work directly in their application environment, on representative workflows. We proposeCopy-on-Write (CoW) Scoring, a framework to develop and safely conduct use-case-specific agent evaluations in software applications. The CoW mechanism allows agents to operate directly within the application environment, avoiding the cost and drift of replicas while keeping sessions isolated and setup easy to reuse across runs. This work assumes a PostgreSQL database, although the CoW pattern could similarly be extended to other data stores, which would enable scoring a broader range of agent operations. The scoring framework provides session- and operation-level scores that surface where agent writes succeed and fail when interacting with a given tool surface. We demonstrate an evaluation loop on Plane, 3 an open-",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 2691,
+      "char_end": 4208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c339dd020b93b2332b4429ad782d43a",
+      "kind": "paragraph",
+      "text": "source project-management platform, where scoring surfaces multiple failure modes specific to the deployed agents 3plane.so 1",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4210,
+      "char_end": 4335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3476ef75b4cb98235a4af7e427b9dc7",
+      "kind": "table",
+      "text": "arXiv:2607.14336v1  [cs.SE]  15 Jul 2026",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4337,
+      "char_end": 4377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d540ffc110b1ec5e253147eb9709dbd",
+      "kind": "paragraph",
+      "text": "task_id title status tasks (view) T-101 Fix login bug in_progress T-102 Update API docs todo T-103 Deploy v2.1 done T-106 Audit deps todo task_id title status tasks_base T-101 Fix login bug in_progress T-102 Update API docs todo T-103 Deploy v2.1 review T-104 Old feature flag blocked task_id title status session_id operation_id _cow_deleted _cow_updated_at tasks_changes T-103 Deploy v2.1 done 5a3f… 7b2c… false 14:02:18 T-104 Old feature flag blocked 5a3f… 9d1a… true 14:02:31 T-106 Audit deps todo 5a3f… 3f8e… false 14:03:07 = + view = base + changes Legend: updated deleted inserted",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4379,
+      "char_end": 4966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eeae8c6fcc7b6b229be297444cb621af",
+      "kind": "caption",
+      "text": "Figure 1.Copy-on-Write (CoW) mechanism in agent evalua-",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4968,
+      "char_end": 5023,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b64905110105e0b18a547d8fdf3a1e0b",
+      "kind": "paragraph",
+      "text": "tion.The agent reads and writes through aview, which merges the base table(production data) with thechanges table(per-session using the operation/session metadata). Agent writes are intercepted and written to the changes table, leaving base data untouched. and tool surface, and a corresponding fix produces measurable improvement on the affected models. The same score-diagnose-fix procedure applies to any application using CoW Scoring, enabling low-cost iteration on the model, prompt, retrieval, or system prompt in a given deployment.",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 5025,
+      "char_end": 5564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b089802572c4f0afcb93aa987d9ee276",
+      "kind": "heading",
+      "text": "Copy-on-Write (CoW) Scoring",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring"
+      ],
+      "char_start": 5566,
+      "char_end": 5593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ed53dc3eb033309fb3c05e10f0f5056",
+      "kind": "paragraph",
+      "text": "This section describes the CoWmechanism, which isolates agent database changes, and the CoWScoring framework, which compares a ground-truth (GT) execution of a given workflow with a corresponding agent execution at the session and operation level. Both components are implemented in the open-sourceagent-cowlibrary.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring"
+      ],
+      "char_start": 5595,
+      "char_end": 5910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c30f9215966231cb1d210ece9e3aee26",
+      "kind": "heading",
+      "text": "CoW Mechanism",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "CoW Mechanism"
+      ],
+      "char_start": 5912,
+      "char_end": 5925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:248b23f29bcfb931369c613099559fb7",
+      "kind": "paragraph",
+      "text": "Copy-on-Write (CoW) is a resource-management technique that lets processes share underlying data without creating copies upfront. Rather, reads go to the shared data and writes trigger creation of a copy such that only the writing process observes the change (Silberschatz et al., 2018). Applied to agent operations on databases, CoW prevents agents from writing directly to the underlying production data. To enable CoW on a database, each original table is split into abasetable (contains the underlying production data), changestable (contains agent writes), and corresponding view(defined by a query merging base and changes table data). All application operations are sent to the view, since it takes the name of the original table. View triggers redirect CoW write operations to the changes table, with associated CoW metadata columns (session id, operation id, cow updated at, cow deleted) appended. Actions from a given session can then be queried using the respective session id. The components are visualized in Figure 1, and more details are described in Appendix A. The agent-cow library handles database setup — creating base tables, changes tables, views, and deploying triggers (Algorithm 1, Appendix A), and the application is responsible for passing session id and operation id with each agent operation. For Plane, CoW integration required ∼250 lines of code for CoW functionality, and an additional ∼540 lines specific to our recording infrastructure and portable to a testing harness (Appendix C.1). We have",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "CoW Mechanism"
+      ],
+      "char_start": 5927,
+      "char_end": 7454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4e953ada303d627da752e4d76c35080",
+      "kind": "paragraph",
+      "text": "separately integrated CoW Scoring into a closed-source production application, with comparable effort.",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "CoW Mechanism"
+      ],
+      "char_start": 7456,
+      "char_end": 7558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2766a11dc413f4c8e2e40638c6d001e2",
+      "kind": "heading",
+      "text": "Scoring",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "Scoring"
+      ],
+      "char_start": 7560,
+      "char_end": 7567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d0d50dddf06c840516dd405cf76afd5",
+      "kind": "paragraph",
+      "text": "Scoring takes two CoW sessions as input: a ground-truth (GT) session and an agent session. The GT session is recorded by a human performing the ideal sequence of actions for a given workflow with CoW enabled. The human also writes a prompt describing the workflow such that they would expect an agent to be able to reproduce their actions. The agent is then given this prompt and executes its own sequence of actions with CoW enabled. CoW Scoring happens along two dimensions and at two levels of granularity. The two dimensions are structural (which tables, rows, columns, and relationships were written) and content (what values were written). The two levels of granularity are session-level (evaluates the session as a whole) and operation-level (evaluates each operation). Users can supply their own comparators and overall scoring functions; Appendix B.1 describes the library architecture.",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "Scoring"
+      ],
+      "char_start": 7569,
+      "char_end": 8464,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5fd87cf7336eecada11d3748a8cd2a18",
+      "kind": "heading",
+      "text": "SESSION-LEVEL COMPARISON",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "Scoring",
+        "SESSION-LEVEL COMPARISON"
+      ],
+      "char_start": 8466,
+      "char_end": 8490,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:127cada26a0b65454fe2f116b4ed3687",
+      "kind": "paragraph",
+      "text": "For session-level scoring, we keep the most recent written row state for each primary key. Changed rows are classified as:matched( Nmatched — rows present in both GT and agent sessions, under UUID mapping),missing( Nmissing — GT rows the agent never produced), orextra( Nextra — agent rows with no GT counterpart). Session-level structural score, sstruct:The fraction of matchedrows relative to the total number of rows changed. sstruct = Nmatched Nmatched +N missing +N extra (1) Session-level content score, scontent:The mean per-field similarity over all matched rows. scontent = 1",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Copy-on-Write (CoW) Scoring",
+        "Scoring",
+        "SESSION-LEVEL COMPARISON"
+      ],
+      "char_start": 8492,
+      "char_end": 9076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b348447fb04452bc9aabf3f4b48333a6",
+      "kind": "heading",
+      "text": "Nmatched",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Nmatched"
+      ],
+      "char_start": 9078,
+      "char_end": 9086,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fcd79e947d19001efb5c51dfa5c58e7",
+      "kind": "paragraph",
+      "text": "X (g,a)∈matched sim(g, a)(2) where sim(g, a)∈[0,1] is the similarity calculation per row between g (GT) and a (agent). Each column has a default similarity comparator according to its data type, but custom comparators can be provided as described in Appendix B.1.1. 2",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched"
+      ],
+      "char_start": 9088,
+      "char_end": 9355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df7ce6ba79168b85473220f9245e9a6c",
+      "kind": "paragraph",
+      "text": "Notably, CoW Scoring compares final database states rather than action sequences, so the session-level scores are invariant to the path the agent took.",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched"
+      ],
+      "char_start": 9357,
+      "char_end": 9508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f12d082aeffac319befe3c1965bb15b",
+      "kind": "heading",
+      "text": "OPERATION-LEVEL COMPARISON",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "OPERATION-LEVEL COMPARISON"
+      ],
+      "char_start": 9510,
+      "char_end": 9536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95b53b71294b2378c6b265cf9ae06da7",
+      "kind": "paragraph",
+      "text": "While the session-level scores evaluate whether the agent reached the desired GT world state, the operation-level scores quantify how useful each operation was in getting there. We first sort operations in topological order, then calculate the following for each operation. Op-level structural utility,ustruct(oi):The change in the session-level structural score before and aftero i is applied. ustruct(oi) =s struct(G≤i)−s struct(G<i)(3) Where G<i denotes the world state prior to applying oi, and G≤i denotes the state aftero i is applied. Op-level content utility ucontent(oi):The mean per-field content similarity over operation rows. ucontent(oi) = 1",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "OPERATION-LEVEL COMPARISON"
+      ],
+      "char_start": 9538,
+      "char_end": 10193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39e14702a2cbd3262959bab0b2031f91",
+      "kind": "table",
+      "text": "|Mi|",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "OPERATION-LEVEL COMPARISON"
+      ],
+      "char_start": 10195,
+      "char_end": 10199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de458b5558d6842cea4d84310ed0731f",
+      "kind": "paragraph",
+      "text": "X (g,a)∈Mi sim(g, a)(4) where Mi is the subset of matched rows whose agent-session write originated ino i.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "OPERATION-LEVEL COMPARISON"
+      ],
+      "char_start": 10201,
+      "char_end": 10307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b4f2ce0b7bcc98c608624a898c1230c",
+      "kind": "heading",
+      "text": "Methods",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Methods"
+      ],
+      "char_start": 10309,
+      "char_end": 10316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bba5b70eeec6476b76c17584d42c70f",
+      "kind": "paragraph",
+      "text": "Because the framework targets application-specific evaluation rather than a universal benchmark, our empirical validation will not compare against an external ground truth. The preliminary study below aims to show that (a) the CoW mechanism and scoring framework can be implemented in a PostgreSQL application, and (b) resulting scores surface useful information about agent behaviour, which can inform improvements to the tool surface in subsequent iterations.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Methods"
+      ],
+      "char_start": 10318,
+      "char_end": 10779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f20b628cd96f33b92416ad6345d19a1b",
+      "kind": "heading",
+      "text": "Preliminary Study: Application in Plane",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Methods",
+        "Preliminary Study: Application in Plane"
+      ],
+      "char_start": 10781,
+      "char_end": 10820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75f26c1e1f46ecfca411c1e1b24dab5d",
+      "kind": "paragraph",
+      "text": "We apply CoW Scoring toPlane, an open-source projectmanagement platform, as a concrete demonstration of the evaluation workflow. To produce a diverse set of groundtruth (GT) sessions without spending excessive author effort, Claude Opus 4.6 with access to the Plane codebase was prompted to execute realistic workflows against the seeded data, and each workflow manually reviewed and validated by the authors (details in Appendix C). We developed a testing harness, which embeds Plane’s OpenAPI specification into a vector store, and exposes them to the agent through two tools: a discover tool for querying relevant endpoints, and an execute tool for making the corresponding requests. Overall (soverall) Structural (sstruct) Content (scontent)",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Methods",
+        "Preliminary Study: Application in Plane"
+      ],
+      "char_start": 10822,
+      "char_end": 11567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bbd22a5295d00765b4e440d8a8eb30c",
+      "kind": "heading",
+      "text": "0",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "0"
+      ],
+      "char_start": 11569,
+      "char_end": 11570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5f7951e150a88c22489ec3ac96afb03",
+      "kind": "heading",
+      "text": "2",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "2"
+      ],
+      "char_start": 11572,
+      "char_end": 11573,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8b786d6a48a259e9b125e0d7bd9da94",
+      "kind": "heading",
+      "text": "4",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "4"
+      ],
+      "char_start": 11575,
+      "char_end": 11576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9563c00ae9fbbcf1eb81232a6f975ca2",
+      "kind": "heading",
+      "text": "6",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "6"
+      ],
+      "char_start": 11578,
+      "char_end": 11579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8348de2843e5f580b4a58dfe4064ff62",
+      "kind": "heading",
+      "text": "8",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "8"
+      ],
+      "char_start": 11581,
+      "char_end": 11582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e642a85902030e48d2f3cba50fdb7864",
+      "kind": "heading",
+      "text": "0Score",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "0Score"
+      ],
+      "char_start": 11584,
+      "char_end": 11590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f63bbc6ff8130ae521e19794b7d67eb",
+      "kind": "table",
+      "text": "Bars: mean across completed trials.  Whiskers: bootstrap 95% CI of the mean. Trials per model  gpt-4.1: n=40, gemini-2.5-pro: n=40, gemini-3.1-flash-lite-preview: n=40, gpt-5: n=40, gemini-3.1-pro-preview: n=40 Session-level score by dimension gpt-4.1 gemini-2.5-pro gemini-3.1-flash-lite-preview gpt-5 gemini-3.1-pro-preview",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "0Score"
+      ],
+      "char_start": 11592,
+      "char_end": 11917,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da37658b2d1c1505db6836b651742d83",
+      "kind": "caption",
+      "text": "Figure 2.Score breakdownby dimension per model, for runs 1",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "0Score"
+      ],
+      "char_start": 11919,
+      "char_end": 11977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d42ab80aeb2b17fcc98449bd956cff2",
+      "kind": "paragraph",
+      "text": "and 2. Since CoW sessions are isolated, each GT and agent session started with the same application state. For each GT session, an agent was given the associated prompt and access to the Plane API via the harness execute and discover tools, with a 50-operation limit per session. Five language models were evaluated twice per prompt: GPT-5, GPT-4.1, Gemini-",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "0Score"
+      ],
+      "char_start": 11979,
+      "char_end": 12336,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4523f303387a49f6428dad02ba0dfbe",
+      "kind": "heading",
+      "text": "Pro, Gemini-3.1-Flash-Lite, and Gemini-2.5-Pro. In",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Pro, Gemini-3.1-Flash-Lite, and Gemini-2.5-Pro. In"
+      ],
+      "char_start": 12338,
+      "char_end": 12388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65789afc65d934c601c74def5bb0f28b",
+      "kind": "paragraph",
+      "text": "total, 5×2×20 = 200 agent sessions were scored against their corresponding GT sessions using CoW Scoring. A third trial per model was run after updating the tool surface (Section 4.3), for a total of 300 sessions.",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Pro, Gemini-3.1-Flash-Lite, and Gemini-2.5-Pro. In"
+      ],
+      "char_start": 12390,
+      "char_end": 12603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca83cd90468da7abf0c8f04961ec551b",
+      "kind": "heading",
+      "text": "Preliminary Results",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Preliminary Results"
+      ],
+      "char_start": 12605,
+      "char_end": 12624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af7c83ec83777776cbce5188c07941f5",
+      "kind": "heading",
+      "text": "Initial scores across models",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Preliminary Results",
+        "Initial scores across models"
+      ],
+      "char_start": 12626,
+      "char_end": 12654,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b886e4c915c20c61c7e316bfaf61ddb",
+      "kind": "caption",
+      "text": "Figure 2 shows CoW scores along each dimension, averaged",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Preliminary Results",
+        "Initial scores across models"
+      ],
+      "char_start": 12656,
+      "char_end": 12712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d48a8b4a074a36b3a4c6901e177f277",
+      "kind": "paragraph",
+      "text": "between the two runs per (model, workflow) pair, with permodel summaries in Appendix D (Tables 5 and 6). These are early results from a single application and 20 workflows, with two trials per (model, workflow) pair, so broader claims would benefit from more samples. Two initial observations serve as a sanity check on the scoring functions: within each model family, the ordering matches public benchmarks (Gemini-3.1-Pro > Gemini-",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Preliminary Results",
+        "Initial scores across models"
+      ],
+      "char_start": 12714,
+      "char_end": 13147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c6da2ac79e7244e505a05445097a121",
+      "kind": "heading",
+      "text": "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall"
+      ],
+      "char_start": 13149,
+      "char_end": 13200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:656f95432fd3fbf0a47578ea45085a45",
+      "kind": "paragraph",
+      "text": "scores differ by at most 0.03 between trials, suggesting the means are representative rather than single-run artefacts.",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall"
+      ],
+      "char_start": 13202,
+      "char_end": 13321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd4df678b0fe550c968b0d922f8c70f0",
+      "kind": "heading",
+      "text": "Diagnosing failure modes",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Diagnosing failure modes"
+      ],
+      "char_start": 13323,
+      "char_end": 13347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93ef8aa44b7902cfbf929a56aec74204",
+      "kind": "paragraph",
+      "text": "Vocabulary mismatch.Plane uses “work item” to describe tasks within projects, while the session prompts use the term “issue”, which is also commonly used to describe these items (the database tables still use “issues”, suggesting an artefact of a previous naming convention), so an agent that searched for “issue” would not immediately find relevant operations.Gemini-2.5-Prorepeatedly gave up rather 3",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Diagnosing failure modes"
+      ],
+      "char_start": 13349,
+      "char_end": 13751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8c3ddb3ed30358494bf6620860be001",
+      "kind": "caption",
+      "text": "Table 1.Run 3 vs. runs 1 & 2 mean overall score.Run 3 used an",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Diagnosing failure modes"
+      ],
+      "char_start": 13753,
+      "char_end": 13814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:397735e7d8d39075f7389a5d6eb498dd",
+      "kind": "paragraph",
+      "text": "updated tool surface based off the analysis of runs 1 and 2. Model Avg(1,2) Run 3n∆ GPT-4.10.32 0.79 20+0.47 Gemini 2.5 Pro0.43 0.98 20+0.54 Gemini 3.1 Flash-Lite0.80 0.83 20 +0.03 GPT-50.95 0.97 20 +0.02 Gemini 3.1 Pro0.96 0.98 20 +0.01 than rephrasing or reading endpoint descriptions closely enough to recognise the equivalence (Appendix E, Figure 6). GPT-4.1executed several discover calls before finding search work items. It executed one search using an incorrect search string, then wrongly concluded no relevant issues existed when several did (Appendix E, Figure 7). It tookGemini-3.1-Flash-Litefifteen discover calls to find the correct operation, causing it to ultimately exceed the 50-operation session limit (Appendix E, Figure 8). Importantly, this vocabulary mismatch challenge is wellknown in information-retrieval (Furnas et al., 1987) and not specific to Plane: any application is likely to have multiple terms in circulation for the same concept. Hallucination and extra writes. GPT-4.1occasionally hallucinated incorrect parameters and operation names, by guessing operations before first calling the discover tool to ensure accuracy (Appendix E, Figures 9, 10, 11). In these sessions, the hallucinations were benign: the invalid operations failed and left application state unchanged, but the same failure mode could be damaging if the agent invoked a valid operation with an incorrect name or parameters, leading to unintended side effects.Gemini-3.1-Flash-Lite hallucinated extra writes, producing label and assignee up-",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Diagnosing failure modes"
+      ],
+      "char_start": 13816,
+      "char_end": 15359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23f4f4c536d21e839fa9c2c0913bb9ea",
+      "kind": "paragraph",
+      "text": "dates outside the scope of the prompted task (e.g., 47 extra rows in Campaign Push, 44 in Q3 Feature Prep). This is especially easy to miss outside a CoW session: an agent can satisfy the prompt while modifying unrelated application state in incorrect or harmful ways.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Diagnosing failure modes"
+      ],
+      "char_start": 15361,
+      "char_end": 15629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54d3b40da137ca03b3f966885aa523d9",
+      "kind": "heading",
+      "text": "Improving the tool surface",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Improving the tool surface"
+      ],
+      "char_start": 15631,
+      "char_end": 15657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17a86bb22fb9ccd47a2de066a39cd5df",
+      "kind": "paragraph",
+      "text": "We updated the tool surface to address the findings, in particular to ensure “issues” was also used to describe operations related to “work items”. We ran one additional trial per model; score deltas are reported in Table 1. Models most affected by the vocabulary mismatch saw the largest gains: Gemini-2.5-Pro improved by 54%, and GPT-4.1 by 47%. While Gemini-3.1-Flash-Lite improved by just 3%, it had no failed sessions in run 3 compared to at least one per iteration previously. This loop — CoW Scoring, localising the points of failure, and iterating or flagging known weak areas to users — can be applied to analyze any tool surface using CoW Scoring.",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Flash-Lite, GPT-5 > GPT-4.1), and per-model overall",
+        "Improving the tool surface"
+      ],
+      "char_start": 15659,
+      "char_end": 16316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8aef16e0151169af0a4488653a6d753",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Limitations"
+      ],
+      "char_start": 16318,
+      "char_end": 16329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04a985d541a2d1a947514453b03c07c0",
+      "kind": "paragraph",
+      "text": "GT sessions are created manually.This step takes time, but we believe the effort is comparable to building any application-specific dataset — some investment is needed to address the construct-validity gap that motivates this work. Evaluation assumes prompts that fully specify the intended outcome.Real users often send underspecified prompts where multiple final states are reasonable, which CoW Scoring would conflate with failure — custom comparators, vocabulary variation, and analyzing structural and content scores separately could partially mitigate this. Scoring covers only write operations.Agents also issue reads, and the volume and pattern of those reads carries diagnostic signal — failing models in our runs often issued many redundant discover calls without affecting structural or content scores, but these calls in fact surfaced the work-item/issue mismatch. Incorporating read-operation signals could help diagnose these failure modes directly.",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Limitations"
+      ],
+      "char_start": 16331,
+      "char_end": 17294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d807c44422d873be61134bb66a0e81b4",
+      "kind": "heading",
+      "text": "Future Work",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Future Work"
+      ],
+      "char_start": 17296,
+      "char_end": 17307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc6b76dbdb57ed04238c3884a4adf80d",
+      "kind": "paragraph",
+      "text": "Input to optimization loops.The low computational cost of CoW Scoring suggests it could also serve as a signal in optimization loops — for example, to iteratively improve tool interfaces via GEPA (Agrawal et al., 2026), or as a dense reward for model fine-tuning via GRPO-style approaches (Shao et al., 2024). Operation-level scores are particularly well-suited to this: they assign credit to partial progress towards the final world state, so optimization need not depend on the discovery of complete, successful trajectories. Automated GT generation and coverage.GT sessions are manually generated, which is inherently limited in scale and may not give uniform coverage of the API surface. Automated discovery methods — e.g. MCTS-style (Kocsis & Szepesv´ari, 2006; Zhou et al., 2024a) exploration with LLM-guided candidate selection — could generate candidate sessions, with human review reserved for auditing.",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Nmatched",
+        "Future Work"
+      ],
+      "char_start": 17309,
+      "char_end": 18221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23fd6bdb0759d65bccb5de2062d1f9c0",
+      "kind": "heading",
+      "text": "Impact Statement",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Impact Statement"
+      ],
+      "char_start": 18223,
+      "char_end": 18239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9103f645f37ec3cc1ce619073fbd5633",
+      "kind": "paragraph",
+      "text": "CoW Scoring aims to support safer agent deployments by making evaluations possible directly in application environments. The framework risks giving false confidence if GT sessions are unrepresentative of real usage: strong performance on a narrow set of evaluated workflows does not guarantee correct behaviour on others. Though not the focus of this paper, the CoW mechanism can also be used as a general runtime safeguard against unintended agent writes. 4",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Impact Statement"
+      ],
+      "char_start": 18241,
+      "char_end": 18699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa7805623f5b0ae2c8e4dea4ad7374be",
+      "kind": "heading",
+      "text": "References",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 18701,
+      "char_end": 18711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49340504bd6ba92f73453064d783c95e",
+      "kind": "reference",
+      "text": "Agrawal, L. A., Tan, S., Soylu, D., Ziems, N., Khare, R., Opsahl-Ong, K., Singhvi, A., Shandilya, H., Ryan, M. J., Jiang, M., Potts, C., Sen, K., Dimakis, A. G., Stoica, I.,",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 18713,
+      "char_end": 18886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efe7fb03e85b5ddf55d0f37a11119c9b",
+      "kind": "heading",
+      "text": "Klein, D., Zaharia, M., and Khattab, O. GEPA: Reflec-",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Klein, D., Zaharia, M., and Khattab, O. GEPA: Reflec-"
+      ],
+      "char_start": 18888,
+      "char_end": 18941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:570071b7def53642dd33e72bc98aa8a8",
+      "kind": "heading",
+      "text": "tive Prompt Evolution Can Outperform Reinforcement",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement"
+      ],
+      "char_start": 18943,
+      "char_end": 18993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:582dbc1dec7d8f2ec12263013a30a38e",
+      "kind": "paragraph",
+      "text": "Learning, February 2026. Bean, A. M., Kearns, R. O., Romanou, A., Hafner, F. S., Mayne, H., Batzner, J., Foroutan, N., Schmitz, C., Korgul, K., Batra, H., Deb, O., Beharry, E., Emde, C., Foster, T., Gausen, A., Grandury, M., Han, S., Hofmann, V ., Ibrahim,",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement"
+      ],
+      "char_start": 18995,
+      "char_end": 19251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20b5eaed3f12cc5a810f194225782d3a",
+      "kind": "heading",
+      "text": ", Kim, H., Kirk, H. R., Lin, F., Liu, G. K.-M., Luettgau,",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement",
+        ", Kim, H., Kirk, H. R., Lin, F., Liu, G. K.-M., Luettgau,"
+      ],
+      "char_start": 19253,
+      "char_end": 19310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a65361e5c7dfefd59205f9cca60a558f",
+      "kind": "heading",
+      "text": ", Magomere, J., Rystrøm, J., Sotnikova, A., Yang, Y .,",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement",
+        ", Magomere, J., Rystrøm, J., Sotnikova, A., Yang, Y .,"
+      ],
+      "char_start": 19312,
+      "char_end": 19366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5339062b3ea81d3a4a5ee2eb040af55",
+      "kind": "paragraph",
+      "text": "Zhao, Y ., Bibi, A., Bosselut, A., Clark, R., Cohan, A., Foerster, J., Gal, Y ., Hale, S. A., Raji, I. D., Summerfield,",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement",
+        ", Magomere, J., Rystrøm, J., Sotnikova, A., Yang, Y .,"
+      ],
+      "char_start": 19368,
+      "char_end": 19487,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d47d12990bd43b4c3be987bcbef9c2e",
+      "kind": "heading",
+      "text": ", Torr, P. H. S., Ududec, C., Rocher, L., and Mahdi,",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement",
+        ", Torr, P. H. S., Ududec, C., Rocher, L., and Mahdi,"
+      ],
+      "char_start": 19489,
+      "char_end": 19541,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b80744144ddaaf6551ab3bd76e2fe835",
+      "kind": "paragraph",
+      "text": "A. Measuring what Matters: Construct Validity in Large Language Model Benchmarks, November 2025.",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "tive Prompt Evolution Can Outperform Reinforcement",
+        ", Torr, P. H. S., Ududec, C., Rocher, L., and Mahdi,"
+      ],
+      "char_start": 19543,
+      "char_end": 19639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3df53f60042c45b017bf08b88e8a938",
+      "kind": "heading",
+      "text": "Deng, C., Zhao, Y ., Tang, X., Gerstein, M., and",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Deng, C., Zhao, Y ., Tang, X., Gerstein, M., and"
+      ],
+      "char_start": 19641,
+      "char_end": 19689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20c5c1e667e1eeaa1dec30b6a2a3a78f",
+      "kind": "heading",
+      "text": "Cohan, A. Investigating Data Contamination in",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Cohan, A. Investigating Data Contamination in"
+      ],
+      "char_start": 19691,
+      "char_end": 19736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:629f3cbdbcacbaa71b3d9674d5837038",
+      "kind": "paragraph",
+      "text": "Modern Benchmarks for Large Language Models. https://arxiv.org/abs/2311.09783v2, November 2023. Drouin, A., Gasse, M., Caccia, M., Laradji, I. H., Verme, M. D., Marty, T., Vazquez, D., Chapados, N., and Lacoste, A. WorkArena: How Capable are Web Agents at Solving Common Knowledge Work Tasks? InProceedings of the 41st International Conference on Machine Learning, pp. 11642–11662. PMLR, July 2024. Furnas, G. W., Landauer, T. K., Gomez, L. M., and Dumais, S. T. The vocabulary problem in human-system communication.Commun. ACM, 30(11):964–971, November",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Cohan, A. Investigating Data Contamination in"
+      ],
+      "char_start": 19738,
+      "char_end": 20291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7682c3a94ee33c024f3e18fa3a2e4905",
+      "kind": "heading",
+      "text": "ISSN 0001-0782. doi: 10.1145/32206.32212.",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Cohan, A. Investigating Data Contamination in",
+        "ISSN 0001-0782. doi: 10.1145/32206.32212."
+      ],
+      "char_start": 20293,
+      "char_end": 20334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c77fca7603027a116f3f693eb2943a20",
+      "kind": "heading",
+      "text": "Garcia-Molina, H., Ullman, J. D., and Widom, J.Database",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Garcia-Molina, H., Ullman, J. D., and Widom, J.Database"
+      ],
+      "char_start": 20336,
+      "char_end": 20391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0841089a49de129f763fe03ef0767642",
+      "kind": "heading",
+      "text": "Systems: The Complete Book (2nd Edition). Prentice Hall",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Systems: The Complete Book (2nd Edition). Prentice Hall"
+      ],
+      "char_start": 20393,
+      "char_end": 20448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d87542714e3a230ead0e004561d3bf21",
+      "kind": "heading",
+      "text": "Press, One Lake Street Upper Saddle River, NJ, United",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Press, One Lake Street Upper Saddle River, NJ, United"
+      ],
+      "char_start": 20450,
+      "char_end": 20503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b525c83a87e88d6ddd3133564af90fb1",
+      "kind": "paragraph",
+      "text": "States, 2 edition, June 2008. ISBN 978-0-13-187325-4.",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Press, One Lake Street Upper Saddle River, NJ, United"
+      ],
+      "char_start": 20505,
+      "char_end": 20558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42b08d6c2f82507ca8ff4b14785f8e9b",
+      "kind": "heading",
+      "text": "Kocsis, L. and Szepesv´ari, C. Bandit Based Monte-Carlo",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Kocsis, L. and Szepesv´ari, C. Bandit Based Monte-Carlo"
+      ],
+      "char_start": 20560,
+      "char_end": 20615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:222b0573ff8ea79a6b277a44c7e246d1",
+      "kind": "heading",
+      "text": "Planning. In Hutchison, D., Kanade, T., Kittler, J., Klein-",
+      "order": 80,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Planning. In Hutchison, D., Kanade, T., Kittler, J., Klein-"
+      ],
+      "char_start": 20617,
+      "char_end": 20676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87555fe864ee46323c866b6d9065b153",
+      "kind": "heading",
+      "text": "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-",
+      "order": 81,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-"
+      ],
+      "char_start": 20678,
+      "char_end": 20736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6592b80795a1455007f454ab7b7a4dcc",
+      "kind": "paragraph",
+      "text": "strasz, O., Pandu Rangan, C., Steffen, B., Sudan, M., Terzopoulos, D., Tygar, D., Vardi, M. Y ., Weikum, G., F¨urnkranz, J., Scheffer, T., and Spiliopoulou, M. (eds.), Machine Learning: ECML 2006, volume 4212, pp. 282–",
+      "order": 82,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-"
+      ],
+      "char_start": 20738,
+      "char_end": 20956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f811ff011c09c0668e5b57402a46163c",
+      "kind": "heading",
+      "text": "Springer Berlin Heidelberg, Berlin, Heidelberg,",
+      "order": 83,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-",
+        "Springer Berlin Heidelberg, Berlin, Heidelberg,"
+      ],
+      "char_start": 20958,
+      "char_end": 21005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3411ceb3284e499173a68e6a8c4fc76f",
+      "kind": "heading",
+      "text": "ISBN 978-3-540-45375-8 978-3-540-46056-5. doi",
+      "order": 84,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-",
+        "ISBN 978-3-540-45375-8 978-3-540-46056-5. doi"
+      ],
+      "char_start": 21007,
+      "char_end": 21052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99a68710c271fc95a20a385ed27b741f",
+      "kind": "heading",
+      "text": "1007/11871842 29.",
+      "order": 85,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-",
+        "1007/11871842 29."
+      ],
+      "char_start": 21054,
+      "char_end": 21071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6114d9e2a659fdd623ff74228d3e261c",
+      "kind": "paragraph",
+      "text": "Liao, Q. V . and Xiao, Z. Rethinking Model Evaluation as Narrowing the Socio-Technical Gap, January 2025. Mohammadi, M., Li, Y ., Lo, J., and Yip, W. Evaluation and",
+      "order": 86,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "berg, J. M., Mattern, F., Mitchell, J. C., Naor, M., Nier-",
+        "1007/11871842 29."
+      ],
+      "char_start": 21073,
+      "char_end": 21237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc900b52b29deb95b069f1fc17b8d238",
+      "kind": "heading",
+      "text": "Benchmarking of LLM Agents: A Survey. InProceed-",
+      "order": 87,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Benchmarking of LLM Agents: A Survey. InProceed-"
+      ],
+      "char_start": 21239,
+      "char_end": 21287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81e28d68c3f985649c76f3072a83c9f5",
+      "kind": "paragraph",
+      "text": "ings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2, pp. 6129–6139, August",
+      "order": 88,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Benchmarking of LLM Agents: A Survey. InProceed-"
+      ],
+      "char_start": 21289,
+      "char_end": 21393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4d3c78a1c7b9bf8ea87b48af6cd919f",
+      "kind": "heading",
+      "text": "doi: 10.1145/3711896.3736570.",
+      "order": 89,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Benchmarking of LLM Agents: A Survey. InProceed-",
+        "doi: 10.1145/3711896.3736570."
+      ],
+      "char_start": 21395,
+      "char_end": 21424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4ba6fcf5071141074c972973775280f",
+      "kind": "paragraph",
+      "text": "Raji, D., Denton, E., Bender, E. M., Hanna, A., and Paullada, A. AI and the Everything in the Whole Wide World Benchmark.Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks, 1, December 2021. Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Bi, X., Zhang, H., Zhang, M., Li, Y . K., Wu, Y ., and Guo, D. DeepSeek- Math: Pushing the Limits of Mathematical Reasoning in Open Language Models, April 2024.",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Benchmarking of LLM Agents: A Survey. InProceed-",
+        "doi: 10.1145/3711896.3736570."
+      ],
+      "char_start": 21426,
+      "char_end": 21863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7747fed13049c1e232f0e64b731c74d8",
+      "kind": "heading",
+      "text": "Silberschatz, A., Galvin, P. B., and Gagne, G.Operating",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Silberschatz, A., Galvin, P. B., and Gagne, G.Operating"
+      ],
+      "char_start": 21865,
+      "char_end": 21920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15beff3749b4998148b8819fae31d65d",
+      "kind": "paragraph",
+      "text": "System Concepts. Wiley, 10th edition, 2018. ISBN 978-",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Silberschatz, A., Galvin, P. B., and Gagne, G.Operating"
+      ],
+      "char_start": 21922,
+      "char_end": 21975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6daa6659d370b3f5fa97b892be4f0cb",
+      "kind": "heading",
+      "text": "119-32091-3.",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "119-32091-3."
+      ],
+      "char_start": 21977,
+      "char_end": 21989,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71cb2d95e512dd1b62663fae82d51c7f",
+      "kind": "paragraph",
+      "text": "Xu, F. F., Song, Y ., Li, B., Tang, Y ., Jain, K., Bao, M., Wang, Z. Z., Zhou, X., Guo, Z., Cao, M., Yang, M., Lu, H. Y ., Martin, A., Su, Z., Maben, L., Mehta, R., Chi, W., Jang,",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "119-32091-3."
+      ],
+      "char_start": 21991,
+      "char_end": 22170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b7b372e9dff496b9b56030d950ad49b",
+      "kind": "heading",
+      "text": ", Xie, Y ., Zhou, S., and Neubig, G. TheAgentCom-",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "119-32091-3.",
+        ", Xie, Y ., Zhou, S., and Neubig, G. TheAgentCom-"
+      ],
+      "char_start": 22172,
+      "char_end": 22221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cf99e7399d5d6757804936065930db2",
+      "kind": "paragraph",
+      "text": "pany: Benchmarking LLM Agents on Consequential Real",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "119-32091-3.",
+        ", Xie, Y ., Zhou, S., and Neubig, G. TheAgentCom-"
+      ],
+      "char_start": 22223,
+      "char_end": 22274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96d36e9a12adf74bf2d211d3bde43e96",
+      "kind": "heading",
+      "text": "World Tasks. InAdvances in Neural Information Process-",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "World Tasks. InAdvances in Neural Information Process-"
+      ],
+      "char_start": 22276,
+      "char_end": 22330,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:115d413e4196eb97da291a5799aa29c2",
+      "kind": "paragraph",
+      "text": "ing Systems, 2025. doi: 10.48550/ARXIV.2412.14161. Yao, S., Shinn, N., Razavi, P., and Narasimhan, K. $ τ$bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains, June 2024. Zhou, A., Yan, K., Shlapentokh-Rothman, M., Wang, H., and Wang, Y .-X. Language Agent Tree Search Unifies Reasoning Acting and Planning in Language Models, June 2024a. Zhou, S., Xu, F. F., Zhu, H., Zhou, X., Lo, R., Sridhar, A.,",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "World Tasks. InAdvances in Neural Information Process-"
+      ],
+      "char_start": 22332,
+      "char_end": 22751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d767c77f437874f1cb6c01913b42f74b",
+      "kind": "heading",
+      "text": "Cheng, X., Ou, T., Bisk, Y ., Fried, D., Alon, U., and",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Cheng, X., Ou, T., Bisk, Y ., Fried, D., Alon, U., and"
+      ],
+      "char_start": 22753,
+      "char_end": 22807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a10d9e3f2926dd718be1520a3bde2c9",
+      "kind": "heading",
+      "text": "Neubig, G. WebArena: A Realistic Web Environment for",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for"
+      ],
+      "char_start": 22809,
+      "char_end": 22861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f44b6da11824c035fae27e78de14b13",
+      "kind": "paragraph",
+      "text": "Building Autonomous Agents, April 2024b. 5",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for"
+      ],
+      "char_start": 22863,
+      "char_end": 22905,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d197e6ce573e7174effe8c76ab5d6d7",
+      "kind": "paragraph",
+      "text": "A. Copy-on-Write (CoW) Mechanism This appendix expands on the CoW mechanism summarised in Section 2.1, detailing the four database-level components that together intercept and isolate agent writes without modifying production data:",
+      "order": 102,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for"
+      ],
+      "char_start": 22907,
+      "char_end": 23138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8ab214630939bb954edb0ef5c0148f9",
+      "kind": "heading",
+      "text": "Base tables: These tables contain the underlying (base) production data, and follow the schema definitions specified in",
+      "order": 103,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Base tables: These tables contain the underlying (base) production data, and follow the schema definitions specified in"
+      ],
+      "char_start": 23140,
+      "char_end": 23259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2206ab9b650e2a85549f1ba71ae55f6",
+      "kind": "paragraph",
+      "text": "the application.",
+      "order": 104,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Base tables: These tables contain the underlying (base) production data, and follow the schema definitions specified in"
+      ],
+      "char_start": 23261,
+      "char_end": 23277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04213f1537c958d3a57e6519953eeff3",
+      "kind": "heading",
+      "text": "Changes tables: Each base table has a corresponding changes table. Changes tables are structurally identical to base",
+      "order": 105,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Changes tables: Each base table has a corresponding changes table. Changes tables are structurally identical to base"
+      ],
+      "char_start": 23279,
+      "char_end": 23395,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:683b2ae68f3bc003cb4b94e8cd2bc101",
+      "kind": "paragraph",
+      "text": "tables (with four additional columns: session id, operation id, cow updated at, cow deleted) but only contain rows that were written to during the agent session.",
+      "order": 106,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Changes tables: Each base table has a corresponding changes table. Changes tables are structurally identical to base"
+      ],
+      "char_start": 23397,
+      "char_end": 23558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78ddd0fa668d0a9dbabf58ec75855412",
+      "kind": "heading",
+      "text": "Views (Garcia-Molina et al., 2008): A SQL view is a query stored under a name. A view can be queried in the same",
+      "order": 107,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Views (Garcia-Molina et al., 2008): A SQL view is a query stored under a name. A view can be queried in the same"
+      ],
+      "char_start": 23560,
+      "char_end": 23672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6f3ce45c431bb466165078b02f2c455",
+      "kind": "paragraph",
+      "text": "way as a table, although no physical table exists — querying a view instead executes the underlying query (the view definition) and returns its results, so it can be read from like a table. In the CoW mechanism, views are used to merge each base table with its corresponding changes table, so that reads during an agent session return rows from the base table, with any rows that the agent has modified in the current session replaced by their changes-table versions.",
+      "order": 108,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Views (Garcia-Molina et al., 2008): A SQL view is a query stored under a name. A view can be queried in the same"
+      ],
+      "char_start": 23674,
+      "char_end": 24141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ed4248a97d1045c80301a3fd737612d",
+      "kind": "heading",
+      "text": "Triggers (Garcia-Molina et al., 2008): INSTEAD OF triggers can be defined on views, and define how a given",
+      "order": 109,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Triggers (Garcia-Molina et al., 2008): INSTEAD OF triggers can be defined on views, and define how a given"
+      ],
+      "char_start": 24143,
+      "char_end": 24249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:300cee0854e067d8797a652acb1450c4",
+      "kind": "paragraph",
+      "text": "operation (in this case, a database write) should be carried out. For CoW, writes should be forwarded to the changes table.",
+      "order": 110,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Triggers (Garcia-Molina et al., 2008): INSTEAD OF triggers can be defined on views, and define how a given"
+      ],
+      "char_start": 24251,
+      "char_end": 24374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd15102a26284fe3de0968cd28207d92",
+      "kind": "heading",
+      "text": "Create copies of the affected row(s);",
+      "order": 111,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Create copies of the affected row(s);"
+      ],
+      "char_start": 24376,
+      "char_end": 24413,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a41beb0911e65404ebd5dfb54bfdff49",
+      "kind": "heading",
+      "text": "Apply the write to the row(s);",
+      "order": 112,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Apply the write to the row(s);"
+      ],
+      "char_start": 24415,
+      "char_end": 24445,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c37f15032db43177fcc7afcf05a95953",
+      "kind": "heading",
+      "text": "Append the session id, operation id, cow updated at (the current time), and cow deleted",
+      "order": 113,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Append the session id, operation id, cow updated at (the current time), and cow deleted"
+      ],
+      "char_start": 24447,
+      "char_end": 24534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0d07ae3b9627a44118d8881165ba227",
+      "kind": "paragraph",
+      "text": "(Trueif the write is aDELETEoperation);",
+      "order": 114,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Append the session id, operation id, cow updated at (the current time), and cow deleted"
+      ],
+      "char_start": 24536,
+      "char_end": 24575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa283f37db82f7191e254e97e0fc225d",
+      "kind": "heading",
+      "text": "Write the row(s) to the corresponding changes table.",
+      "order": 115,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Write the row(s) to the corresponding changes table."
+      ],
+      "char_start": 24577,
+      "char_end": 24629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d11c95d86247851366dec5cb7ae5232e",
+      "kind": "paragraph",
+      "text": "Notably, the handling of complex trigger configurations such as cascade triggers and PostgreSQL-specific triggers should be explored in future work to extend the real-world portability of the CoW mechanism. Enabling CoW on a database creates each of these components, and deploys the necessary trigger functions – following",
+      "order": 116,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Write the row(s) to the corresponding changes table."
+      ],
+      "char_start": 24631,
+      "char_end": 24954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d786ecb6ff990efd2ba582b89c903e6",
+      "kind": "caption",
+      "text": "Algorithm 1 below.",
+      "order": 117,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Write the row(s) to the corresponding changes table."
+      ],
+      "char_start": 24956,
+      "char_end": 24974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e09a0c46a0339c039ae5858e1da47d3",
+      "kind": "paragraph",
+      "text": "Algorithm 1Enabling CoW on a database",
+      "order": 118,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Neubig, G. WebArena: A Realistic Web Environment for",
+        "Write the row(s) to the corresponding changes table."
+      ],
+      "char_start": 24976,
+      "char_end": 25013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4841cf6629944f3e666b83cdcd772dd7",
+      "kind": "heading",
+      "text": "foreach tableTin the schemado",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "foreach tableTin the schemado"
+      ],
+      "char_start": 25015,
+      "char_end": 25044,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cad695e36a316d064c129d27bd12f74a",
+      "kind": "heading",
+      "text": "RenameT→T base",
+      "order": 120,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "RenameT→T base"
+      ],
+      "char_start": 25046,
+      "char_end": 25060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c89bb9c2c04527a45d6f65496c2c274",
+      "kind": "heading",
+      "text": "CreateT changeswithT’s columns plus CoW metadata",
+      "order": 121,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "CreateT changeswithT’s columns plus CoW metadata"
+      ],
+      "char_start": 25062,
+      "char_end": 25110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4669b1b15b78ed4e0c8002457e73867c",
+      "kind": "heading",
+      "text": "Create viewTmergingT baseandT changes",
+      "order": 122,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Create viewTmergingT baseandT changes"
+      ],
+      "char_start": 25112,
+      "char_end": 25149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33edb67c8f73dc0a145881e5e18cfe22",
+      "kind": "heading",
+      "text": "AttachINSTEAD OFtriggers to viewT",
+      "order": 123,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "AttachINSTEAD OFtriggers to viewT"
+      ],
+      "char_start": 25151,
+      "char_end": 25184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c63546f87a501623deb7b0659818308",
+      "kind": "heading",
+      "text": "end for",
+      "order": 124,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "end for"
+      ],
+      "char_start": 25186,
+      "char_end": 25193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9860506be048573642ce18d199510f19",
+      "kind": "heading",
+      "text": "Deploy CoW trigger functions to the database",
+      "order": 125,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Deploy CoW trigger functions to the database"
+      ],
+      "char_start": 25195,
+      "char_end": 25239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81282c3d33d481312863e9e49da44367",
+      "kind": "heading",
+      "text": "B. CoW Scoring",
+      "order": 126,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "B. CoW Scoring"
+      ],
+      "char_start": 25241,
+      "char_end": 25255,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f989bba550a0a7a6cb5309037549aaa",
+      "kind": "caption",
+      "text": "Figure 3 provides a worked example of the scoring procedure described in Section 2.2, illustrating how the session- and",
+      "order": 127,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B. CoW Scoring"
+      ],
+      "char_start": 25257,
+      "char_end": 25376,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:848b3aeeea1e69fac9b848f9fcb59e5f",
+      "kind": "paragraph",
+      "text": "operation-level scores are computed from a paired GT and agent session. On the left, rows are colour-coded as matched, missing, and extra – which is used to compute sstruct and scontent. On the right, each agent operation oi is attributed a structural utility ustruct(oi) from the change in session-level structural score, and a content utility ucontent(oi) from the similarity of the rows it wrote.",
+      "order": 128,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B. CoW Scoring"
+      ],
+      "char_start": 25378,
+      "char_end": 25777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f187ee0996d46f3e9210932f624fd9e",
+      "kind": "heading",
+      "text": "B.1.agent-cowScoring Library",
+      "order": 129,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "B.1.agent-cowScoring Library"
+      ],
+      "char_start": 25779,
+      "char_end": 25807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb3eb69df8c1ee6b70e1d01bfe09bcdc",
+      "kind": "paragraph",
+      "text": "The agent-cow scoring module (visualized in Figure 4) scores an agent’s CoW session against a ground-truth recording via the API entry pointscore cow sessions. The pipeline has five stages: 6",
+      "order": 130,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B.1.agent-cowScoring Library"
+      ],
+      "char_start": 25809,
+      "char_end": 26000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13baa88dd9b537a9031802faa3b2e4ea",
+      "kind": "paragraph",
+      "text": "task id status op tasks changes(GT) T-103 done op 01 T-106 todo op 02 T-108 todo op 04 comment id task id op comments changes(GT)",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B.1.agent-cowScoring Library"
+      ],
+      "char_start": 26002,
+      "char_end": 26131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d8937dbdf9c6fd09a03771b388a1614",
+      "kind": "heading",
+      "text": "201 T-106 op 03",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "201 T-106 op 03"
+      ],
+      "char_start": 26133,
+      "char_end": 26148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b826f2c8893b46f67f01035fab0f0fd",
+      "kind": "paragraph",
+      "text": "task id status op tasks changes(agent) T-103 done op 03 T-106 todo op 01 T-107 todo op 04 comment id task id op comments changes(agent)",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "201 T-106 op 03"
+      ],
+      "char_start": 26150,
+      "char_end": 26285,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59e4726c439b407bbd725b06eded0144",
+      "kind": "heading",
+      "text": "201 T-106 op 02",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "201 T-106 op 02"
+      ],
+      "char_start": 26287,
+      "char_end": 26302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a55466997d18683f20cee3a7092ac53",
+      "kind": "heading",
+      "text": "202 T-107 op 05",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "202 T-107 op 05"
+      ],
+      "char_start": 26304,
+      "char_end": 26319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9908b3b83c47a15598cbcfe04e22988",
+      "kind": "paragraph",
+      "text": "Ground-truth session session start op 01",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "202 T-107 op 05"
+      ],
+      "char_start": 26321,
+      "char_end": 26361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f33902e5a0f03abd3ad63ae2b42e34e2",
+      "kind": "heading",
+      "text": "UPDATEtasks T-103",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "UPDATEtasks T-103"
+      ],
+      "char_start": 26363,
+      "char_end": 26380,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c56eacb1eb70dc6f55e1376d1c3865ee",
+      "kind": "paragraph",
+      "text": "op 02",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "UPDATEtasks T-103"
+      ],
+      "char_start": 26382,
+      "char_end": 26387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61ac1d1f141d74738213695a26535cd4",
+      "kind": "heading",
+      "text": "INSERTtasks T-106",
+      "order": 139,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-106"
+      ],
+      "char_start": 26389,
+      "char_end": 26406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fedd00f2997aec3a6cdbf34241b5a16",
+      "kind": "paragraph",
+      "text": "op 04",
+      "order": 140,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-106"
+      ],
+      "char_start": 26408,
+      "char_end": 26413,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acef909c8bd03ea198cd804ab48362ef",
+      "kind": "heading",
+      "text": "INSERTtasks T-108",
+      "order": 141,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-108"
+      ],
+      "char_start": 26415,
+      "char_end": 26432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2774f43c349481185ddaacd6c6e658c8",
+      "kind": "paragraph",
+      "text": "op 03",
+      "order": 142,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-108"
+      ],
+      "char_start": 26434,
+      "char_end": 26439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42ec136dad544b6cb5b15a8b70211761",
+      "kind": "heading",
+      "text": "INSERTcomments C-201FK→T-106",
+      "order": 143,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-201FK→T-106"
+      ],
+      "char_start": 26441,
+      "char_end": 26469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2836db1e056e8ce14e329d5cca520b1",
+      "kind": "paragraph",
+      "text": "Agent session session start op 01",
+      "order": 144,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-201FK→T-106"
+      ],
+      "char_start": 26471,
+      "char_end": 26504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fc7bdac6b88478ad942d07b138c1f8c",
+      "kind": "heading",
+      "text": "INSERTtasks T-106",
+      "order": 145,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-106"
+      ],
+      "char_start": 26506,
+      "char_end": 26523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53851df4b9c4aa563c3edf2f66a1d684",
+      "kind": "equation",
+      "text": "ustruct = + 1 4 op 03",
+      "order": 146,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-106"
+      ],
+      "char_start": 26525,
+      "char_end": 26546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65d355e462ef033dd3b0d1064216ccaf",
+      "kind": "heading",
+      "text": "UPDATEtasks T-103",
+      "order": 147,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "UPDATEtasks T-103"
+      ],
+      "char_start": 26548,
+      "char_end": 26565,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99ff38072d10bf8fbd4dcc26ac993511",
+      "kind": "equation",
+      "text": "ustruct = + 1 4 op 04",
+      "order": 148,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "UPDATEtasks T-103"
+      ],
+      "char_start": 26567,
+      "char_end": 26588,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48b6c09610affbff0083dfd9be8d9c7f",
+      "kind": "heading",
+      "text": "INSERTtasks T-107",
+      "order": 149,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-107"
+      ],
+      "char_start": 26590,
+      "char_end": 26607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c706ae8e0c08aa9ce2d44e7cb922fd38",
+      "kind": "paragraph",
+      "text": "ustruct =− 3 20 op 02",
+      "order": 150,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTtasks T-107"
+      ],
+      "char_start": 26609,
+      "char_end": 26630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd3f838a3a9cdee0e76aa66e046a4e8f",
+      "kind": "heading",
+      "text": "INSERTcomments C-201",
+      "order": 151,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-201"
+      ],
+      "char_start": 26632,
+      "char_end": 26652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4c5838cc7c782bccd39159d77d36ecf",
+      "kind": "equation",
+      "text": "ustruct = + 1 4 FK→T-106 op 05",
+      "order": 152,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-201"
+      ],
+      "char_start": 26654,
+      "char_end": 26684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bf412b3a9368844fc1177d1773d0494",
+      "kind": "heading",
+      "text": "INSERTcomments C-202",
+      "order": 153,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202"
+      ],
+      "char_start": 26686,
+      "char_end": 26706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:557729657c48752943e86760e9275f23",
+      "kind": "paragraph",
+      "text": "ustruct =− 1 10 FK→T-107 Session-level— final-state rows compared row-by-row Op-level— ops as graph nodes; arrows are FK dependencies Session:s struct =0.50s content =1.00 Overall:s overall =0.71precision =0.60recall =0.75F 1 =0.67 PROMPT“Mark task T-103 as done. Create two new backlog tasks — one for the API refactor (T-106) and one for the test suite (T-108) — and leave a comment on the API refactor task.” LEGEND matched missing extra",
+      "order": 154,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202"
+      ],
+      "char_start": 26708,
+      "char_end": 27148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd829f93fcdb48a8c51c750b6a625bb3",
+      "kind": "caption",
+      "text": "Figure 3.Worked example of CoW scoring.Session-level scores ( sstruct, scontent) are calculated by comparing all rows changed for a",
+      "order": 155,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202"
+      ],
+      "char_start": 27150,
+      "char_end": 27281,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41531aea23df6bf8c92e5e25a284100b",
+      "kind": "paragraph",
+      "text": "given GT and agent session pair (left); and operation-level scores (ustruct(oi), ucontent(oi)) are calculated using the ∆ in session-level structural score, and the content similarity of the rows written by each operation in the agent session (right).",
+      "order": 156,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202"
+      ],
+      "char_start": 27283,
+      "char_end": 27534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39403f5836f060abbf8cdcebd9190863",
+      "kind": "heading",
+      "text": "Extraction( extraction.py) — rows are read from * changes tables, grouped by operation id, and sorted",
+      "order": 157,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Extraction( extraction.py) — rows are read from * changes tables, grouped by operation id, and sorted"
+      ],
+      "char_start": 27536,
+      "char_end": 27637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:829e89d0a6b9c98316884b7a614a26ef",
+      "kind": "paragraph",
+      "text": "by cow updated at.",
+      "order": 158,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Extraction( extraction.py) — rows are read from * changes tables, grouped by operation id, and sorted"
+      ],
+      "char_start": 27639,
+      "char_end": 27657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f12e33712099a9b14979409ef6d2133f",
+      "kind": "heading",
+      "text": "Matching( matching.py) — both sides are reduced to one row per (table, pk) (last write wins). Each ground-",
+      "order": 159,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Matching( matching.py) — both sides are reduced to one row per (table, pk) (last write wins). Each ground-"
+      ],
+      "char_start": 27659,
+      "char_end": 27765,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f11aa363315455dc7450389391e1c51",
+      "kind": "paragraph",
+      "text": "truth entity greedily picks the best matching agent entity in the same table; a UUID mapping bridges the different primary keys created by each side.",
+      "order": 160,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Matching( matching.py) — both sides are reduced to one row per (table, pk) (last write wins). Each ground-"
+      ],
+      "char_start": 27767,
+      "char_end": 27916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64f3ddd126557d9a92d15b19a5b812e2",
+      "kind": "heading",
+      "text": "Field comparison( compare.py) — each field is compared by SQL type: text uses",
+      "order": 161,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Field comparison( compare.py) — each field is compared by SQL type: text uses"
+      ],
+      "char_start": 27918,
+      "char_end": 27995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02b9765ad07ff3a4013a62837d4a243a",
+      "kind": "paragraph",
+      "text": "SequenceMatcher.ratio(), JSON is deep-equal, everything else is exact. PKs, FKs (remapped via the UUID mapping), timestamps, and configuredignored fieldsare excluded from content scoring.",
+      "order": 162,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Field comparison( compare.py) — each field is compared by SQL type: text uses"
+      ],
+      "char_start": 27997,
+      "char_end": 28184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82166229a69964d40704e9d70176805d",
+      "kind": "heading",
+      "text": "Per-op scoring( scorer.py) — for each agent operation in topological order the cumulative agent rows are re-scored",
+      "order": 163,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Per-op scoring( scorer.py) — for each agent operation in topological order the cumulative agent rows are re-scored"
+      ],
+      "char_start": 28186,
+      "char_end": 28300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8bbb5ffec2e59879c9f4752902f9477",
+      "kind": "paragraph",
+      "text": "against ground truth, recording the delta inop struct scores. op content scores is computed independently from the final matching.",
+      "order": 164,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Per-op scoring( scorer.py) — for each agent operation in topological order the cumulative agent rows are re-scored"
+      ],
+      "char_start": 28302,
+      "char_end": 28432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e12dddaf38b8df65967933c9b181e42",
+      "kind": "heading",
+      "text": "Reduce( scores.py) — registered score fns reduce the ScoringResult to scalar entries on",
+      "order": 165,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Reduce( scores.py) — registered score fns reduce the ScoringResult to scalar entries on"
+      ],
+      "char_start": 28434,
+      "char_end": 28521,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:790308fdee6c6ce7e4518e435f9f57ae",
+      "kind": "paragraph",
+      "text": "result.scores.",
+      "order": 166,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INSERTcomments C-202",
+        "Reduce( scores.py) — registered score fns reduce the ScoringResult to scalar entries on"
+      ],
+      "char_start": 28523,
+      "char_end": 28537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50bd894745d847523fd0fe25067d20f9",
+      "kind": "heading",
+      "text": "B.1.1. SCORINGCUSTOMIZATION",
+      "order": 167,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "B.1.1. SCORINGCUSTOMIZATION"
+      ],
+      "char_start": 28539,
+      "char_end": 28566,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d4fe24e25045ccf1d89b7f0b2090290",
+      "kind": "paragraph",
+      "text": "Comparators.The default content similarity uses one comparator per SQL column data type. To override comparison for a specific table, callers can supply either a row-level function — which receives the GT and agent rows as plain dicts (with FK UUIDs already remapped into GT space), returns a bool or float in [0,1] — or a WriteComparator, which additionally exposes the row’s CoW metadata, the table’s column-type metadata, and the cross-session UUID mapping for full control. Additionally, passing collapse=True drops entities the agent created and later deleted within the session before scoring, reflecting only the agent’s net intent. 7",
+      "order": 168,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B.1.1. SCORINGCUSTOMIZATION"
+      ],
+      "char_start": 28568,
+      "char_end": 29209,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e0d10d0be2a656763c374508ba155f3",
+      "kind": "paragraph",
+      "text": "Ground-truth session CoW changes graph Agent session CoW changes graph",
+      "order": 169,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "B.1.1. SCORINGCUSTOMIZATION"
+      ],
+      "char_start": 29211,
+      "char_end": 29281,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0db417abb711959a204d207b8b3b3206",
+      "kind": "heading",
+      "text": "INPUTS",
+      "order": 170,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "INPUTS"
+      ],
+      "char_start": 29283,
+      "char_end": 29289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff338cabbe314d222d3a1db05bf03d2a",
+      "kind": "paragraph",
+      "text": "extraction pull rows + metadata matching UUID align; wasted ops compare⋆",
+      "order": 171,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "INPUTS"
+      ],
+      "char_start": 29291,
+      "char_end": 29363,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e041c18c641d1e8a1cffdbf1926d26c7",
+      "kind": "heading",
+      "text": "WriteComparator",
+      "order": 172,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "WriteComparator"
+      ],
+      "char_start": 29365,
+      "char_end": 29380,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0983d99542af9b78b3066adbe2799681",
+      "kind": "paragraph",
+      "text": "content score struct score efficiency scorer per-op and session-level calculations sample evaluators ⋆ default,precision, recall,f1 (ScoreFnprotocol) agentcow.scoring",
+      "order": 173,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "WriteComparator"
+      ],
+      "char_start": 29382,
+      "char_end": 29548,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa799a62b919971a56e929f26837cfd3",
+      "kind": "heading",
+      "text": "ScoringResult",
+      "order": 174,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ScoringResult"
+      ],
+      "char_start": 29550,
+      "char_end": 29563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fcefd05bd5532d3349f535349499423",
+      "kind": "paragraph",
+      "text": "session-level scores per-op utilities score-fn outputs",
+      "order": 175,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ScoringResult"
+      ],
+      "char_start": 29565,
+      "char_end": 29619,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:721cd68799f7b8ad834ce5734d937730",
+      "kind": "heading",
+      "text": "OUTPUTS",
+      "order": 176,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS"
+      ],
+      "char_start": 29621,
+      "char_end": 29628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5cb2f2c2f514ec7cad3206f7e3c410ad",
+      "kind": "paragraph",
+      "text": "User extension points(⋆): plug in custom comparators viaWriteComparator, or custom score functions viaScoreFn.",
+      "order": 177,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS"
+      ],
+      "char_start": 29630,
+      "char_end": 29740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03c572602356bdb891bc90a378470763",
+      "kind": "caption",
+      "text": "Figure 4.Copy-on-Write (CoW) scoring library architecture.",
+      "order": 178,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS"
+      ],
+      "char_start": 29742,
+      "char_end": 29800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3d02cd54b2d5a77592f75421b4fa1a6",
+      "kind": "paragraph",
+      "text": "Score functions.Any callable mapping the raw scoring terms to a float can be registered as an overall score. The agent-cow library includes sample scoring functions, each mapping a ScoringResult to a single float, which can be passed via thescore fnskwarg, and their outputs are written toresult.scoresunder the names below. Default overall score.An average of the two session-level signals: soverall = 0.5·s struct + 0.5·s content (5) Precision.Of the rows the agent wrote, the fraction that matched a GT entity: precision = Nmatched Nmatched +N extra (6) Recall.Of the rows GT session wrote, the fraction the agent reproduced: recall = Nmatched Nmatched +N missing (7) F1.Harmonic mean of precision and recall: F1 = 2·precision·recall precision + recall (8)",
+      "order": 179,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS"
+      ],
+      "char_start": 29802,
+      "char_end": 30561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5028fae7db1b773637cb8832422e6f99",
+      "kind": "heading",
+      "text": "Plane Integration and Experimental Setup",
+      "order": 180,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "Plane Integration and Experimental Setup"
+      ],
+      "char_start": 30563,
+      "char_end": 30603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b22ebba3bb1614a947cbe051bee1da8a",
+      "kind": "heading",
+      "text": "1. CoW Integration in Plane",
+      "order": 181,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "1. CoW Integration in Plane"
+      ],
+      "char_start": 30605,
+      "char_end": 30632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c55e7b634aae8bfacafe5bf760205113",
+      "kind": "paragraph",
+      "text": "The full implementation of CoW into Plane can be found in the following GitHub repository: Plane (with CoW), which also includes the raw scoring results (results.zip). The breakdown of application-side additions is shown in Table 2. The far-right column indicates whether that portion of code could be ported to the harness if the user wanted to simplify their implementation. Notably, the recording API and CoW scoring metadata (session IDs, scores, API versions, prompts) were included in the Plane application for this experiment, but could be stored in the harness for a simpler, less-invasive implementation. Only the CoW mechanism (using theagent-cow-pythonlibrary) and associated deployment commands are necessary. 8",
+      "order": 182,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "1. CoW Integration in Plane"
+      ],
+      "char_start": 30634,
+      "char_end": 31357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c0004f67a19a35910d09bd56c35175b",
+      "kind": "paragraph",
+      "text": "Category Lines Contents Portable? (a) Core CoW machinery ˜250 Middleware that activates a CoW session by reading thesession idand operation idheaders on every agent request. Endpoints to commit or discard a session’s writes, check whether CoW is enabled, and return the operation IDs of a session (the endpoint the harness queries to retrieve session state for scoring). Plane-specific list of tables to exclude from the CoW mechanism. No (b) Deployment commands ˜180 One-time installation of the SQL functions, views, and triggers described in Section 2 into the application database. Commands that enable, disable, and re-enable CoW. No (c) Recording API — GT & agent session tracking ˜680 CRUD endpoints for GT recordings and agent runs (their prompts, model metadata, and links between the two). Plane-specific scoring configuration — which tables and fields to ignore when comparing sessions — together with helpers for writing scoring results to CSV / JSONL. Yes Total ˜790",
+      "order": 183,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "1. CoW Integration in Plane"
+      ],
+      "char_start": 31359,
+      "char_end": 32338,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cf555c7301e203005a58fbe054a81f5",
+      "kind": "caption",
+      "text": "Table 2.Application-side additions required to integrate agent-cow into Plane. Category (a) is the minimum any Django project would",
+      "order": 184,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "1. CoW Integration in Plane"
+      ],
+      "char_start": 32340,
+      "char_end": 32471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ceff302936df6cc25f0f877ae294e42c",
+      "kind": "paragraph",
+      "text": "need to replicate; categories (b) and (c) are specific to our evaluation setup and could move into the eval harness.",
+      "order": 185,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "1. CoW Integration in Plane"
+      ],
+      "char_start": 32473,
+      "char_end": 32589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9448bd6c3a22154e7a6d012090a336ae",
+      "kind": "heading",
+      "text": "2. Workspace Initial Data Seeding",
+      "order": 186,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "2. Workspace Initial Data Seeding"
+      ],
+      "char_start": 32591,
+      "char_end": 32624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5424c9a8aca60b359ec918109e69141",
+      "kind": "paragraph",
+      "text": "The Plane workspace was seeded with the entities summarised in Table 3 prior to any agent runs. Ground-truth CoW recordings were then captured against this fixed initial state.",
+      "order": 187,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "OUTPUTS",
+        "2. Workspace Initial Data Seeding"
+      ],
+      "char_start": 32626,
+      "char_end": 32802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23c53194aa0708294e1902319acf2096",
+      "kind": "heading",
+      "text": "Entity Description PSP PE GS Total",
+      "order": 188,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Entity Description PSP PE GS Total"
+      ],
+      "char_start": 32804,
+      "char_end": 32838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14751132238a86f29b70b4b199653747",
+      "kind": "paragraph",
+      "text": "Projects Top-level Plane projects covering distinct organisational domains. — — — 3 Members Workspace users (one admin agent plus six personas with role-aligned profiles). — — — 7 States Per-project workflow states (Backlog,Todo,In Progress,Done, Cancelled).",
+      "order": 189,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Entity Description PSP PE GS Total"
+      ],
+      "char_start": 32840,
+      "char_end": 33098,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17e3f273888ba4395bec94e8b926629d",
+      "kind": "heading",
+      "text": "5 5 15",
+      "order": 190,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "5 5 15"
+      ],
+      "char_start": 33100,
+      "char_end": 33106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c87c055fe84294de651c29e41d7ac55a",
+      "kind": "paragraph",
+      "text": "Labels Per-project tag taxonomy (e.g.bug,security,urgent). 10 8 8 26 Work items Seeded issues with assignees, priorities, labels, and descriptions. 32 16 15 63",
+      "order": 191,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "5 5 15"
+      ],
+      "char_start": 33108,
+      "char_end": 33267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23be42625272d7c45a984ad60052b676",
+      "kind": "caption",
+      "text": "Table 3.Entities seeded into the Plane workspace before any agent runs. Project-level resources are reported per project (PSP = Paper",
+      "order": 192,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "5 5 15"
+      ],
+      "char_start": 33269,
+      "char_end": 33402,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58683a7d60f342e935ac28101817bc37",
+      "kind": "paragraph",
+      "text": "Streets Press, PE = Platform Engineering, GS = Growth and Subscriptions); workspace-level resources only have a workspace total.",
+      "order": 193,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "5 5 15"
+      ],
+      "char_start": 33404,
+      "char_end": 33532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5774188dc1294edd335a8397def0af61",
+      "kind": "heading",
+      "text": "3. Ground-Truth Session Setup",
+      "order": 194,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "5 5 15",
+        "3. Ground-Truth Session Setup"
+      ],
+      "char_start": 33534,
+      "char_end": 33563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8097fb876d77e4428c08bd8c1cccad28",
+      "kind": "paragraph",
+      "text": "To produce a realistic and diverse set of ground-truth (GT) workflows without spending excessive author effort, an LLM agent (Claude Opus 4.6) under human supervision was used. The agent was given read access to the plane-cow codebase — including the Plane data model, the seeded workspace dump (Appendix C.2), and the CoW recording API — so it could ground its workflows in the actual entities present in the codebase and database. We provided the agent with short workflow themes (e.g.sprint kickoff,security incident response,stale backlog cleanup) drawn from the kinds of bulk operations someone might be expected to perform in a project management tool. The agent then started a CoW recording, and executed the corresponding sequence of API writes against the seeded workspace, and drafted a natural-language prompt expressing the workflow. Each candidate session was then reviewed. We checked that (i) the prompt was unambiguous and self-contained, (ii) every recorded operation was justified by the prompt, (iii) no operation was missing relative to a literal reading of the prompt. 9",
+      "order": 195,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "5 5 15",
+        "3. Ground-Truth Session Setup"
+      ],
+      "char_start": 33565,
+      "char_end": 34656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69fa203f38b4c8c1776538dfcbc2f10a",
+      "kind": "heading",
+      "text": "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32",
+      "order": 196,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 34658,
+      "char_end": 34734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:895d91fe60b266a9836d7f22ae81357b",
+      "kind": "paragraph",
+      "text": "Operations per recording 0 1 2 3 4Number of recordings",
+      "order": 197,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 34736,
+      "char_end": 34790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7e74bafa5fa94ca254b634dddebdd9",
+      "kind": "caption",
+      "text": "Figure 5.Distribution of write operations per ground-truth (GT) session across the 20 workflows.",
+      "order": 198,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 34792,
+      "char_end": 34888,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0873897e0f5448ca08e4d6d1230b7d4",
+      "kind": "paragraph",
+      "text": "In a real application, the product team would likely have some key workflows they would be interested in having the agent execute and perform well on, which would then be recorded manually.",
+      "order": 199,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 34890,
+      "char_end": 35079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89b9efa5354e0f004d7b0cbb08560ad3",
+      "kind": "caption",
+      "text": "Table 4.Ground-truth CoW recordings used in evaluation.Opsis the number of mutating API calls captured in the recording. Projects:",
+      "order": 200,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 35081,
+      "char_end": 35211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:333acacafcc8bfe81c8f689c205176b7",
+      "kind": "paragraph",
+      "text": "PSP = Paper Streets Press, PE = Platform Engineering, GS = Growth and Subscriptions. # Recording name Project Ops Prompt",
+      "order": 201,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+      ],
+      "char_start": 35213,
+      "char_end": 35333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ee6fd72b2e6cf2e3a93297299f064b8",
+      "kind": "heading",
+      "text": "Sprint Kickoff PSP 12 In project ’Paper Streets Press’, move every issue in state ’Todo’ to state ’In",
+      "order": 202,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Sprint Kickoff PSP 12 In project ’Paper Streets Press’, move every issue in state ’Todo’ to state ’In"
+      ],
+      "char_start": 35335,
+      "char_end": 35436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2af431b91198209476d5df1902e24b47",
+      "kind": "paragraph",
+      "text": "Progress’. For each that is currently unassigned, assign @alice (user id: 2d02e7e3-e5be-4687-8fbf-32a133b3b271). For each that is currently assigned to @blub (user id: fad82a69-23ed-4260-83f6-cae2caf466a5), reassign to @bob (user id: 617f222e-9879-4436-a1e6-11654e24cffb).",
+      "order": 203,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Sprint Kickoff PSP 12 In project ’Paper Streets Press’, move every issue in state ’Todo’ to state ’In"
+      ],
+      "char_start": 35438,
+      "char_end": 35710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2944cbcf37cb6c7bef56aa6b0984023",
+      "kind": "heading",
+      "text": "Security Incident Response PE 13 In project ’Platform Engineering’, find every issue with label ’security’ that",
+      "order": 204,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Security Incident Response PE 13 In project ’Platform Engineering’, find every issue with label ’security’ that"
+      ],
+      "char_start": 35712,
+      "char_end": 35823,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc4131931753d47d946b4221dc321117",
+      "kind": "paragraph",
+      "text": "is in state ’Backlog’ or ’Todo’. Move each to state ’In Progress’. Add label ’blocker’ if it does not already have it. Set priority to ’urgent’ if not already urgent. Assign @dave (user id: ebdd01a5-b565-4b36-ba28-11f11ecf5dbd) if currently unassigned.",
+      "order": 205,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Security Incident Response PE 13 In project ’Platform Engineering’, find every issue with label ’security’ that"
+      ],
+      "char_start": 35825,
+      "char_end": 36077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ea053f258a404fbe61690a19fdaac5d",
+      "kind": "heading",
+      "text": "Bug Escalation GS 15 In project ’Growth and Subscriptions’, find every issue with label ’bug’",
+      "order": 206,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Bug Escalation GS 15 In project ’Growth and Subscriptions’, find every issue with label ’bug’"
+      ],
+      "char_start": 36079,
+      "char_end": 36172,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c38fb86c65d02b3e9cb0ca99bbf8479a",
+      "kind": "paragraph",
+      "text": "currently in state ’Backlog’. Move each to state ’Todo’. Add label ’blocker’ to each. Assign @frank (user id: 806c8c73-23e7-42f9-9ed4-b9e3cb8c7bfd) to each.",
+      "order": 207,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Bug Escalation GS 15 In project ’Growth and Subscriptions’, find every issue with label ’bug’"
+      ],
+      "char_start": 36174,
+      "char_end": 36330,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aefc2ae57ec5b6f653c8d1d467ebae71",
+      "kind": "heading",
+      "text": "Stale Backlog Cleanup PSP 10 In project ’Paper Streets Press’, find every issue in state ’Backlog’ that is",
+      "order": 208,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Stale Backlog Cleanup PSP 10 In project ’Paper Streets Press’, find every issue in state ’Backlog’ that is"
+      ],
+      "char_start": 36332,
+      "char_end": 36438,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ad7b1e7ae0a6d91ea33fed751f9dc6b",
+      "kind": "paragraph",
+      "text": "unassigned and has priority ’low’ or ’none’. Add label ’stale’ to each and transition it to state ’Cancelled’.",
+      "order": 209,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Stale Backlog Cleanup PSP 10 In project ’Paper Streets Press’, find every issue in state ’Backlog’ that is"
+      ],
+      "char_start": 36440,
+      "char_end": 36550,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e33156b997457b941302c04daf59f37",
+      "kind": "heading",
+      "text": "Triage Unassigned",
+      "order": 210,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Triage Unassigned"
+      ],
+      "char_start": 36552,
+      "char_end": 36569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf4c42544782802b1b15b97541313b5e",
+      "kind": "heading",
+      "text": "Backlog",
+      "order": 211,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Backlog"
+      ],
+      "char_start": 36571,
+      "char_end": 36578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a96a732dd0f793e689f5022d6d531513",
+      "kind": "paragraph",
+      "text": "GS 11 In project ’Growth and Subscriptions’, find every issue in state ’Backlog’ with no assignee. Assign @eve (45a64208-112f-4bd4-a284-481cab326106) to issues with priority ’high’ or ’urgent’. Assign @frank (806c8c73-23e7-42f9-9ed4-b9e3cb8c7bfd) to issues with priority ’medium’. For issues with priority ’low’ or ’none’, set priority to ’medium’ and assign @frank.",
+      "order": 212,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Backlog"
+      ],
+      "char_start": 36580,
+      "char_end": 36946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d61320271a425f973a3e3bd474fc491",
+      "kind": "heading",
+      "text": "Stale Backlog Cancel PE 10 In project ’Platform Engineering’, find every issue in state ’Backlog’ with",
+      "order": 213,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Stale Backlog Cancel PE 10 In project ’Platform Engineering’, find every issue in state ’Backlog’ with"
+      ],
+      "char_start": 36948,
+      "char_end": 37050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd0635979eca410895ebde4503159ecd",
+      "kind": "paragraph",
+      "text": "no assignee, priority ’low’ or ’medium’, and without label ’security’. Add label ’stale’ to each and transition it to state ’Cancelled’.",
+      "order": 214,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Stale Backlog Cancel PE 10 In project ’Platform Engineering’, find every issue in state ’Backlog’ with"
+      ],
+      "char_start": 37052,
+      "char_end": 37188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7209201447662f0b1828224dc1190a02",
+      "kind": "heading",
+      "text": "Assign Backlog by",
+      "order": 215,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Assign Backlog by"
+      ],
+      "char_start": 37190,
+      "char_end": 37207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84e53048b326073bf879c457b15120f5",
+      "kind": "heading",
+      "text": "Specialty",
+      "order": 216,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Specialty"
+      ],
+      "char_start": 37209,
+      "char_end": 37218,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:457f31b96ea7d8fbf81cabc8e202c1c5",
+      "kind": "paragraph",
+      "text": "PE 14 In project ’Platform Engineering’, find every issue in state ’Backlog’ with no assignee. Assign @dave (ebdd01a5) to issues with label ’security’. Assign @bob (617f222e) to issues with label ’bug’. Assign @carol (71bb681c) to all other unassigned Backlog issues. For each newly assigned issue with priority ’medium’ or lower, also set priority to ’high’. continued on next page 10",
+      "order": 217,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialty"
+      ],
+      "char_start": 37220,
+      "char_end": 37605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30e82200c010066698ba837e0200a9d4",
+      "kind": "caption",
+      "text": "Table 4 – continued from previous page",
+      "order": 218,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialty"
+      ],
+      "char_start": 37607,
+      "char_end": 37645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa4140ff817d4764976b1a615857cd7f",
+      "kind": "paragraph",
+      "text": "# Recording name Project Ops Prompt",
+      "order": 219,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialty"
+      ],
+      "char_start": 37647,
+      "char_end": 37682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3485956fb0417b7c7a4c70da614ad887",
+      "kind": "heading",
+      "text": "Deprioritize Stale Medium",
+      "order": 220,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Deprioritize Stale Medium"
+      ],
+      "char_start": 37684,
+      "char_end": 37709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ed6af1dcf44fc87302780042954d116",
+      "kind": "heading",
+      "text": "Backlog",
+      "order": 221,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Backlog"
+      ],
+      "char_start": 37711,
+      "char_end": 37718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3144aeca81e895a70e91e5eb06df2204",
+      "kind": "paragraph",
+      "text": "PSP 10 In project ’Paper Streets Press’, find every issue in state ’Backlog’ with priority ’medium’ and no assignee. Set each to priority ’low’ and add label ’stale’.",
+      "order": 222,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Backlog"
+      ],
+      "char_start": 37720,
+      "char_end": 37886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:749b2597f0e1eb5d49effe8d5988b426",
+      "kind": "heading",
+      "text": "Escalate High to Urgent PE 11 In project ’Platform Engineering’, find every issue with priority ’high’ in",
+      "order": 223,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Escalate High to Urgent PE 11 In project ’Platform Engineering’, find every issue with priority ’high’ in"
+      ],
+      "char_start": 37888,
+      "char_end": 37993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b04ed2429550beb270e86384c615c5d",
+      "kind": "paragraph",
+      "text": "any open state (Backlog, Todo, In Progress). Set each to priority ’urgent’. For those in state ’Backlog’, also add label ’urgent’.",
+      "order": 224,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Escalate High to Urgent PE 11 In project ’Platform Engineering’, find every issue with priority ’high’ in"
+      ],
+      "char_start": 37995,
+      "char_end": 38125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50205ca5d95e3b415097c0319cd86023",
+      "kind": "heading",
+      "text": "Assign Backlog by Role PSP 15 In project ’Paper Streets Press’, find every issue in state ’Backlog’ with no",
+      "order": 225,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Assign Backlog by Role PSP 15 In project ’Paper Streets Press’, find every issue in state ’Backlog’ with no"
+      ],
+      "char_start": 38127,
+      "char_end": 38234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93099c1be5b8feb01e952acf192cc338",
+      "kind": "paragraph",
+      "text": "assignee. Assign @alice (2d02e7e3) to issues with label ’bug’. Assign @carol (71bb681c) to issues with label ’security’. Assign @bob (617f222e) to all other unassigned Backlog issues.",
+      "order": 226,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Assign Backlog by Role PSP 15 In project ’Paper Streets Press’, find every issue in state ’Backlog’ with no"
+      ],
+      "char_start": 38236,
+      "char_end": 38419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29e314c888f15aed252ce37b03281e3d",
+      "kind": "heading",
+      "text": "Q3 Feature Prep GS 24 In project ’Growth and Subscriptions’, create a label ’q3-target-v2’ with",
+      "order": 227,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Q3 Feature Prep GS 24 In project ’Growth and Subscriptions’, create a label ’q3-target-v2’ with"
+      ],
+      "char_start": 38421,
+      "char_end": 38516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c601d5eee6089796b27ab5b513856fa",
+      "kind": "paragraph",
+      "text": "color #8b5cf6. Find every issue with label ’growth’ or ’experiment’ that is not in state Done or Cancelled. Add the ’q3-target-v2’ label to each (preserving existing labels). Move each from Backlog to Todo if currently in Backlog. Assign @eve (45a64208-112f-4bd4-a284-481cab326106) to any that are unassigned. Set priority to ’high’ for any with priority none, low, or medium.",
+      "order": 228,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Q3 Feature Prep GS 24 In project ’Growth and Subscriptions’, create a label ’q3-target-v2’ with"
+      ],
+      "char_start": 38518,
+      "char_end": 38894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e594f5df5f2058ee4d504da69515fc8",
+      "kind": "heading",
+      "text": "Infra Sprint Kickoff PE 23 In project ’Platform Engineering’, create a label ’infra-sprint-v2’ with color",
+      "order": 229,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Infra Sprint Kickoff PE 23 In project ’Platform Engineering’, create a label ’infra-sprint-v2’ with color"
+      ],
+      "char_start": 38896,
+      "char_end": 39001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09ef737704b3ac1a1a185ded6eeab8ca",
+      "kind": "paragraph",
+      "text": "#0284c7. Find every issue with label ’infra’ that is not in state Done or Cancelled. Add the ’infra-sprint-v2’ label to each (preserving existing labels). Move each from Backlog to Todo if currently in Backlog. Assign @dave (ebdd01a5-b565-4b36-ba28-11f11ecf5dbd) to any that are unassigned. Set priority to ’high’ for any with priority none, low, or medium.",
+      "order": 230,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Infra Sprint Kickoff PE 23 In project ’Platform Engineering’, create a label ’infra-sprint-v2’ with color"
+      ],
+      "char_start": 39003,
+      "char_end": 39360,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f24bda0a77c892e272f260525e9c543",
+      "kind": "heading",
+      "text": "Bug Triage Round 2 GS 16 In project ’Growth and Subscriptions’, create a label ’bug-sprint-v2’ with",
+      "order": 231,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Bug Triage Round 2 GS 16 In project ’Growth and Subscriptions’, create a label ’bug-sprint-v2’ with"
+      ],
+      "char_start": 39362,
+      "char_end": 39461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb73b40866fc2e59ac60230ed0076cfb",
+      "kind": "paragraph",
+      "text": "color #dc2626. Find every issue with label ’bug’ that is not in state Done or Cancelled. Add the ’bug-sprint-v2’ label to each (preserving existing labels). Also add the ’blocker’ label if not already present. Set priority to ’high’ for any with priority none, low, or medium. Assign @frank (806c8c73-23e7-42f9-9ed4-b9e3cb8c7bfd) to any that are unassigned.",
+      "order": 232,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Bug Triage Round 2 GS 16 In project ’Growth and Subscriptions’, create a label ’bug-sprint-v2’ with"
+      ],
+      "char_start": 39463,
+      "char_end": 39820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35bd67cf2bb99b5acfbb1582d8074e8a",
+      "kind": "heading",
+      "text": "Campaign Push GS 5 In project ’Growth and Subscriptions’, create a label ’campaign-active-v2’",
+      "order": 233,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Campaign Push GS 5 In project ’Growth and Subscriptions’, create a label ’campaign-active-v2’"
+      ],
+      "char_start": 39822,
+      "char_end": 39915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:865d0ffd19b64ae5632a94fa80b084e5",
+      "kind": "paragraph",
+      "text": "with color #db2777. Find every issue with label ’campaign’ that is not in state Done or Cancelled. Add the ’campaign-active-v2’ label to each (preserving existing labels). Move each from Backlog to Todo if currently in Backlog. For issues with priority ’high’, set priority to ’urgent’. Assign @eve (45a64208-112f-4bd4-a284-481cab326106) to any that are unassigned.",
+      "order": 234,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Campaign Push GS 5 In project ’Growth and Subscriptions’, create a label ’campaign-active-v2’"
+      ],
+      "char_start": 39917,
+      "char_end": 40282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6cbb90ad777b47850296a79fe386c200",
+      "kind": "heading",
+      "text": "In Progress Ownership",
+      "order": 235,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "In Progress Ownership"
+      ],
+      "char_start": 40284,
+      "char_end": 40305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23a50a31ccf678a13aa5b9b736b46c99",
+      "kind": "heading",
+      "text": "Audit",
+      "order": 236,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Audit"
+      ],
+      "char_start": 40307,
+      "char_end": 40312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7a92f1939dd57eca7243c25e85388ce",
+      "kind": "paragraph",
+      "text": "PSP 10 In project ’Paper Streets Press’, create a label ’active-sprint-v2’ with color #2563eb. Find every issue currently in state ’In Progress’. Add the ’active-sprint-v2’ label to each (preserving existing labels, but removing the ’stale’ label if present since in-progress work is no longer stale). Assign @alice (2d02e7e3-e5be-4687-8fbf-32a133b3b271) to any that are unassigned. Set priority to ’high’ for any with priority none, low, or medium.",
+      "order": 237,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Audit"
+      ],
+      "char_start": 40314,
+      "char_end": 40763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b9bdbbedecff1f33133ac74324901d7",
+      "kind": "heading",
+      "text": "Editorial Sprint PSP 13 In project ’Paper Streets Press’, create a label ’editorial-sprint-v2’ with",
+      "order": 238,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Editorial Sprint PSP 13 In project ’Paper Streets Press’, create a label ’editorial-sprint-v2’ with"
+      ],
+      "char_start": 40765,
+      "char_end": 40864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e08b8c7f7cdb76cd8940e6543d538e6d",
+      "kind": "paragraph",
+      "text": "color #f59e0b. Find every issue with label ’editorial’ that is not in state Done or Cancelled. Add the ’editorial-sprint-v2’ label to each (preserving existing labels). Move each from Backlog to Todo if currently in Backlog. Assign @alice (2d02e7e3-e5be-4687-8fbf-32a133b3b271) to any that are unassigned. Set priority to ’high’ for any with priority none, low, or medium.",
+      "order": 239,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Editorial Sprint PSP 13 In project ’Paper Streets Press’, create a label ’editorial-sprint-v2’ with"
+      ],
+      "char_start": 40866,
+      "char_end": 41238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:564bcc1698a82f8151eecce5ffaa7afa",
+      "kind": "heading",
+      "text": "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color",
+      "order": 240,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 41240,
+      "char_end": 41348,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0804f75d4f0743ccebc24b447e69fab",
+      "kind": "paragraph",
+      "text": "#7c3aed. Find every issue with label ’performance’ that is in state Backlog or Todo. Add the ’perf-sprint-v2’ label to each (preserving existing labels). Set priority to ’high’ for any with priority none, low, or medium. Assign @carol (71bb681c-bace-4ff8-834c-9b169cd6bfc9) to any that are unassigned. Move each from Backlog to Todo if currently in Backlog. continued on next page 11",
+      "order": 241,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 41350,
+      "char_end": 41733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbcf4560aa1da72f57236c2346fb0310",
+      "kind": "caption",
+      "text": "Table 5.Per-model summary across trials per model.Overall ( soverall) score as defined in Appendix B.1.1. Precision, recall, and F1",
+      "order": 242,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 41735,
+      "char_end": 41866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f7cbe3c632e4df71c4e51b0f9a18ad9",
+      "kind": "paragraph",
+      "text": "are computed from row-level matched/missing/extra counts. Model Completion Overall (s overall ) Precision Recall F1 Average Run 1 Run 2 gpt-4.140/40 0.32 0.31 0.33 0.92 0.16 0.28 gemini-2.5-pro40/40 0.43 0.45 0.42 0.98 0.21 0.35 gemini-3.1-flash-lite38/40 0.80 0.83 0.77 0.78 0.83 0.81 gpt-540/40 0.95 0.97 0.92 0.98 0.98 0.98 gemini-3.1-pro40/40 0.96 0.96 0.97 0.96 1.00 0.98",
+      "order": 243,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 41868,
+      "char_end": 42244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fd0a08b1e7dffe7c456fa9521472bd8",
+      "kind": "caption",
+      "text": "Table 4 – continued from previous page",
+      "order": 244,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 42246,
+      "char_end": 42284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba296c5a83e7f2a7439fd69bd6d9fefb",
+      "kind": "paragraph",
+      "text": "# Recording name Project Ops Prompt",
+      "order": 245,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Performance Backlog Push PE 13 In project ’Platform Engineering’, create a label ’perf-sprint-v2’ with color"
+      ],
+      "char_start": 42286,
+      "char_end": 42321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86433c1de11b9dab60a45a7ee54b2946",
+      "kind": "heading",
+      "text": "Bug Fix Sprint PSP 21 In project ’Paper Streets Press’, create a label ’bug-fix-sprint-v2’ with color",
+      "order": 246,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Bug Fix Sprint PSP 21 In project ’Paper Streets Press’, create a label ’bug-fix-sprint-v2’ with color"
+      ],
+      "char_start": 42323,
+      "char_end": 42424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a867d49f90c8574a491c520a9a62ba1",
+      "kind": "paragraph",
+      "text": "#b91c1c. Find every issue with label ’bug’ that is not in state Done or Cancelled. Add the ’bug-fix-sprint-v2’ label to each (preserving existing labels). Set priority to ’high’ for any with priority none, low, or medium. Move each from Backlog to Todo if currently in Backlog. Assign @bob (617f222e-9879-4436-a1e6-11654e24cffb) to any that are unassigned.",
+      "order": 247,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Bug Fix Sprint PSP 21 In project ’Paper Streets Press’, create a label ’bug-fix-sprint-v2’ with color"
+      ],
+      "char_start": 42426,
+      "char_end": 42782,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:884948fbc18729790bdd24babb7675e0",
+      "kind": "heading",
+      "text": "Security Hardening Sprint PE 14 In project ’Platform Engineering’, create a label ’security-sprint-v2’ with",
+      "order": 248,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Security Hardening Sprint PE 14 In project ’Platform Engineering’, create a label ’security-sprint-v2’ with"
+      ],
+      "char_start": 42784,
+      "char_end": 42891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13b63f5c250c30eedbcc25f2c4bcd9d7",
+      "kind": "paragraph",
+      "text": "color #991b1b. Find every issue with label ’security’ that is not in state Done or Cancelled. Add the ’security-sprint-v2’ label to each (preserving existing labels). Also ensure the ’blocker’ label is present on each. Set priority to ’urgent’ for any not already urgent. Move each from Backlog to Todo if currently in Backlog. Assign @dave (ebdd01a5-b565-4b36-ba28-11f11ecf5dbd) to any that are unassigned.",
+      "order": 249,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Security Hardening Sprint PE 14 In project ’Platform Engineering’, create a label ’security-sprint-v2’ with"
+      ],
+      "char_start": 42893,
+      "char_end": 43300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9caf9ffb2c71c8d3f3c92e88e6992e5f",
+      "kind": "heading",
+      "text": "Backlog Ownership",
+      "order": 250,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Backlog Ownership"
+      ],
+      "char_start": 43302,
+      "char_end": 43319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:426b1b4abbb9dbb21d3576c84d00016c",
+      "kind": "heading",
+      "text": "Assignment",
+      "order": 251,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Assignment"
+      ],
+      "char_start": 43321,
+      "char_end": 43331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b4cd0c928ccfe8945662d44f273045c",
+      "kind": "paragraph",
+      "text": "GS 32 In project ’Growth and Subscriptions’, create a label ’needs-owner’ with color #d97706. Find every issue in state Backlog with no assignee. Add the ’needs-owner’ label to each (preserving existing labels). Assign @eve (45a64208-112f-4bd4-a284-481cab326106) to those with priority ’high’ or ’urgent’. Assign @frank (806c8c73-23e7-42f9-9ed4-b9e3cb8c7bfd) to those with priority ’medium’. For issues with priority ’none’ or ’low’, set priority to ’medium’ then assign @frank. Move each issue to Todo state. Total 292",
+      "order": 252,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Assignment"
+      ],
+      "char_start": 43333,
+      "char_end": 43852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d0e5eee1d561b8e61f8c58176ec470b",
+      "kind": "heading",
+      "text": "D. Results Summary",
+      "order": 253,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "D. Results Summary"
+      ],
+      "char_start": 43854,
+      "char_end": 43872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3744a404d029483f0ec5b9a1a3668be4",
+      "kind": "paragraph",
+      "text": "This appendix collects per-model summaries from the preliminary study (Section 4). The raw scoring data for all 300 sessions is available at results.zip. Table 5 reports the overall score soverall (Appendix B.1.1) for each model averaged across the first two trials, alongside per-trial scores and row-level precision, recall, and F1 derived from the matched/missing/extra counts. Table 6 lists the five lowest-scoring (model, workflow) pairs per model; these are the sessions inspected in Section 4 to surface the failure modes discussed in the main text and illustrated in Appendix E. GPT-4.1 Gemini 2.5 Pro Gemini 3.1 Flash Lite GPT-5 Gemini 3.1 Pro # Session % Session % Session % Session % Session % 1 Bug Escalation 0.0 Sprint Kickoff 0.0 Stale Backlog Cleanup 56.7 Stale Backlog Cancel 50.0 Security Hardening Sprint 87.52 Stale Backlog Cleanup 0.0 Bug Escalation 0.0 Stale Backlog Cancel 59.0 Security Incident Response 84.5 Security Incident Response 89.13 Security Incident Response 0.0 Security Incident Response 0.0 Q3 Feature Prep 63.0 Deprioritize Stale Med. Backlog 95.8 Bug Triage Round 2 91.54 Stale Backlog Cancel 0.0 Assign Backlog by Role 0.0 Bug Fix Sprint 66.7 Assign Backlog by Specialty 95.8 Bug Fix Sprint 93.25 Triage Unassigned Backlog 0.0 Escalate High to Urgent 23.8 Editorial Sprint 69.6 Q3 Feature Prep 96.2 Performance Backlog Push 95.7",
+      "order": 254,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "D. Results Summary"
+      ],
+      "char_start": 43874,
+      "char_end": 45242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f94da13e2b1be6811d6f92392043341f",
+      "kind": "caption",
+      "text": "Table 6.Five lowest-scoring sessions per model (s overall averaged across two runs).",
+      "order": 255,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "D. Results Summary"
+      ],
+      "char_start": 45244,
+      "char_end": 45328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e80477a21e8295d1ca909e9f8b5d65ca",
+      "kind": "paragraph",
+      "text": "12",
+      "order": 256,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "D. Results Summary"
+      ],
+      "char_start": 45330,
+      "char_end": 45332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7e91688cf5c16f64f40b58871e5452a",
+      "kind": "heading",
+      "text": "E. Sample Sessions",
+      "order": 257,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 45334,
+      "char_end": 45352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9229de5fccbf1a2405ce4cc0d12b7e28",
+      "kind": "paragraph",
+      "text": "This appendix contains tool-call traces from representative low-scoring sessions identified in Table 6, which illustrate the failure modes discussed in Section 4: vocabulary mismatch between prompt terminology and the API surface (Figures 6, 7, and 8), and operations issued without a prior discover call to obtain the correct argument format (Figures 9, 10 and 11). Despite the overall improvement from runs 1 and 2 to run 3, two model-specific failure modes persisted across iterations: • GPT-4.1:Occasionally executes an operation without first calling discover to obtain the correct argument format, producing API errors (Appendix E, Figures 9 and 11) and one failed session in run 3. • Gemini-3.1-Flash-Lite:Continued to write extra rows. For example, in the sessions: Sprint Kickoff (8 extra work items and assignees), Deprioritize Stale Medium Backlog (5 extra labels), and Infra Sprint Kickoff (18 extra labels and assignees), none of which were prompted.",
+      "order": 258,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 45354,
+      "char_end": 46317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5c72a50b41e4e7a1d43938856aab346",
+      "kind": "caption",
+      "text": "Figure 6.Gemini-2.5-Pro tool calls for the Sprint Kickoff task. The",
+      "order": 259,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46319,
+      "char_end": 46386,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8203c54c5d3740179eee15b4d068a3fa",
+      "kind": "paragraph",
+      "text": "model gives up after its first discover call returns no matching endpoints for “issues”.",
+      "order": 260,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46388,
+      "char_end": 46476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9ef655e22efe1955f71420cd2a7b3f0",
+      "kind": "caption",
+      "text": "Figure 7.GPT-4.1 tool calls for the Security Incident Response",
+      "order": 261,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46478,
+      "char_end": 46540,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b5468ee372f170802a117230a09060e",
+      "kind": "paragraph",
+      "text": "task. The model issues several discover calls before finding search work items, then queries with an unsupported search string format, receives an empty result, and concludes no relevant issues exist. 13",
+      "order": 262,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46542,
+      "char_end": 46745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2928d3451e69b2a3c2227498d62d062a",
+      "kind": "caption",
+      "text": "Figure 8.Gemini-3.1-Flash-Lite tool calls for the Bug Triage",
+      "order": 263,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46747,
+      "char_end": 46807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8020cd943095739a0964faf302fc36dd",
+      "kind": "paragraph",
+      "text": "Round 2 task. The model issues over fifteen discover calls before finding the correct endpoint, exhausting the 50-operation limit.",
+      "order": 264,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46809,
+      "char_end": 46939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b98126ae04729eeb3bd29e4241af76cf",
+      "kind": "caption",
+      "text": "Figure 9.GPT-4.1 tool calls for the Assign Backlog by Specialty",
+      "order": 265,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 46941,
+      "char_end": 47004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16ea3988ccc4dbf873298f26f162aa3c",
+      "kind": "paragraph",
+      "text": "task. The model executes update work item without first calling discover, passing id as an argument; the API rejects it since the valid parameter ispk. 14",
+      "order": 266,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 47006,
+      "char_end": 47160,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d090f0784634594dc6d1be9bc785b4e3",
+      "kind": "caption",
+      "text": "Figure 10.GPT-4.1 tool calls for the Security Incident Response",
+      "order": 267,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 47162,
+      "char_end": 47225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90f2303594f35a9b07c2e8acc85cd5ae",
+      "kind": "paragraph",
+      "text": "task. The model executes update workspace work item without first calling discover, guessing an operation id that does not exist in the API.",
+      "order": 268,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 47227,
+      "char_end": 47367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fb00276d69640162a42481a0208e849",
+      "kind": "caption",
+      "text": "Figure 11.GPT-4.1 tool calls for the In-Progress Ownership Audit",
+      "order": 269,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 47369,
+      "char_end": 47433,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:863b5d5e4da7a872c7510c8e5472b0f8",
+      "kind": "paragraph",
+      "text": "task. The model calls update work item with an extra slug field not accepted by the API, resulting in anextra forbidden validation error. 15",
+      "order": 270,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "E. Sample Sessions"
+      ],
+      "char_start": 47435,
+      "char_end": 47575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 15,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.14336",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

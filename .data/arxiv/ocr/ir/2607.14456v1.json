@@ -1,0 +1,4664 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "f3f81db565e60f7fb783a997f49f3d0763140109da01d099a44f70a30af97662",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:63eaf5b6139b987f99e114c66ded937a",
+      "kind": "heading",
+      "text": "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code"
+      ],
+      "char_start": 0,
+      "char_end": 70,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:886107ffd65678961a77ef4c2b7d03c4",
+      "kind": "heading",
+      "text": "Workflow Execution",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Workflow Execution"
+      ],
+      "char_start": 72,
+      "char_end": 90,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c0356a04b718889d40389f4ecca806e",
+      "kind": "paragraph",
+      "text": "Harris Borman * 1 Herman Wandabwa * 1 Fusun Yu1 Sandeepa Kannangara 1 Justin Liu 1 Anna Leontjeva 1 Ritchie Ng 1",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Workflow Execution"
+      ],
+      "char_start": 92,
+      "char_end": 204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77573fbe545222114ecfef28d0b46252",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract"
+      ],
+      "char_start": 206,
+      "char_end": 214,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:545a992efbc56360dd7eb99e5b5fc96a",
+      "kind": "paragraph",
+      "text": "Large Language Models (LLMs) have accelerated the adoption of software development agents, now widely available as Integrated Development Environment (IDE) extensions and standalone applications. While these agents are typically general-purpose, it remains unclear whether specialist agents justify their additional development effort. We investigate this question in the context of business process automation, focusing on the transformation of Business Process Model and Notation (BPMN) diagrams into executable agentic workflows. Since BPMN specifies explicit control-flow semantics, we focus on deterministic workflows in which a fixed process model and inputs uniquely determine the executed path. We introduce a specialist workflow for this task and compare it against generalist agents such as Roo and Cline. Our results show that the specialist solution produces agents that outperform generalist baselines by approximately 9–20 percentage points in tool-use exactness, 2–4 × in penaltyadjusted latency, and 3 × fewer tool-call errors, while reducing generation token cost by over 95% and eliminating repair iterations. We also find that generalist agents generate code inconsistently in both functionality and quality, limiting their suitability for industrial settings where reliability and maintainability are essential.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract"
+      ],
+      "char_start": 216,
+      "char_end": 1547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c985e22af56d11fb866d93dcd4f09f6",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1549,
+      "char_end": 1561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dea188db22fa1d97d26870070e344ef",
+      "kind": "paragraph",
+      "text": "The emergence of LLMs has accelerated the rise of autonomous software agents (Ferrag et al., 2025). These AIdriven agents now appear as IDE extensions and stand-alone 1Commonwealth Bank of Australia, Sydney, Australia. Correspondence to: Harris Borman <harris.borman@cba.com.au>, Herman Wandabwa<herman.wandabwa@cba.com.au>. Proceedings of the 43 rd International Conference on Machine Learning, Seoul, South Korea. PMLR 306, 2026. Copyright 2026 by the author(s). no-code assistants, enabling even non-programmers to build simple applications within minutes (He et al., 2025). Most operate as generalists, leveraging foundational LLMs to perform a wide range of tasks. For example, an open-source coding assistant like Roo Code can plan, write, and debug code across domains directly in a developer’s editor (Sapkota et al., 2025). Similarly, multi-agent frameworks such as FLOW, AFLOW, AutoGen, or MetaGPT coordinate several LLM agents with predefined roles to solve complex problems in a general way (Niu et al., 2025; Zhang et al., 2025b; Wu et al., 2024; Hong et al., 2024). These systems have been applied to tasks ranging from web browsing and data analysis to game design and UI creation (Fourney et al.,",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1563,
+      "char_end": 2775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c272ca88ef6957852af6e44e4dc942a",
+      "kind": "heading",
+      "text": "Prior work has largely focused on what we define",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract",
+        "Prior work has largely focused on what we define"
+      ],
+      "char_start": 2777,
+      "char_end": 2825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16e50d6094d099a94df4ce3bf828abc5",
+      "kind": "paragraph",
+      "text": "as “generalist systems”, a system of agents that are able to complete a wide range of tasks, with architectures suited to free exploration of various ideas to complete a task in an unspecified manner (Sapkota et al., 2026). This adaptability has driven adoption, including IDE extensions such as Roo and Cline (Sapkota et al., 2025; Cline, 2025). These systems are useful because they can create a complete system from a single prompt with minimal user intervention, allowing users with limited technical knowledge to build a functioning system from a simple idea (Sapkota et al.,",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Abstract",
+        "Prior work has largely focused on what we define"
+      ],
+      "char_start": 2827,
+      "char_end": 3407,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a870425f31986de783489d00fa7208a",
+      "kind": "heading",
+      "text": ".",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 3409,
+      "char_end": 3410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3e00f904622c8d481e72f43c788dfda",
+      "kind": "paragraph",
+      "text": "However, these systems have drawbacks. Their generalist design often demands extensive planning and increases token and cost overhead, especially during rapid or repeated development. They may also lack awareness of companyspecific best practices, such as style guides or preferred methods. While experienced users can impose constraints and refine outputs, this remains imperfect and does not guarantee consistency across many generations, as discussed in Section 3. This inconsistency can increase technology debt and complicate future updates and maintenance (Aljohani & Do, 2025). An alternative paradigm is what we define as a “specialist system”. These systems use a well-defined and constrained agentic workflow designed for a specific class of tasks. Rather than asking an LLM to generate solutions from scratch, specialist systems encode expert knowledge into a templated workflow. Within this scaffold, the LLM per- 1",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 3412,
+      "char_end": 4339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:559233bc57e840383e8c568ec8fb2e39",
+      "kind": "table",
+      "text": "arXiv:2607.14456v1  [cs.SE]  16 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 4341,
+      "char_end": 4381,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b199a890f48a68c1d623044ae96d59f4",
+      "kind": "paragraph",
+      "text": "forms localised reasoning, making small, context-sensitive adjustments within predefined steps rather than constructing the full solution from first principles. These systems usually require greater upfront effort because the workflow must be manually designed and validated. This makes them less suitable for short-lived use cases such as demos or proof-of-concept experiments. However, they are better suited to repeated or large-scale deployment. By producing more consistent outputs, they can reduce technical debt and simplify debugging and integration with external systems. Their structured design also enables tighter context management, allowing developers to control what information is exposed to the LLM, reduce unnecessary token usage, and improve performance at scale. Recent studies show that although LLMs are increasingly equipped with extended context windows, their utilisation of this capacity remains uneven (An et al., 2025). Empirical evidence also suggests that performance tends to degrade as more of the context window is consumed (Modarressi et al., 2025; Laban et al., 2025). To address this, we propose a context management strategy that restricts the active context to the minimum information required for each subtask. In generalist systems, this is difficult because it requires prior knowledge of the information needed for each subtask during workflow construction, and such designs are often task-specific and do not transfer easily across domains. Restricting context in this way can reduce redundancy and",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 4383,
+      "char_end": 5924,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34f1eab6b64cf60c206ca33b9aefe010",
+      "kind": "paragraph",
+      "text": "improve model performance relative to systems that retain excess context indiscriminately, as shown in Section 4.3. Given that business processes can scale well beyond the complexity of our benchmark workflows, effective context management is critical for maintaining performance in largescale deployments. Efficient context management also offers potential cost benefits. This is especially important in business environments where standard operating procedures may evolve frequently during development and post-deployment phases and agentic workflow generation tools may be executed repeatedly for the same task. Under these conditions, reducing token volume can yield substantial savings (Mei et al., 2025; Laban et al., 2025). While the per-instance reduction may seem small, the cumulative impact at scale can be significant. This creates value for specialist workflows that use manually constructed context management to minimise the information exposed to the LLM in a targeted way while maintaining performance and reducing cost. To operationalise these specialist workflows and the scoped context they enable, we adopt a modular code generation approach in which the source of decomposition is external to the model. Rather than discovering plans through prompts, roles, or library modules as in prior multiagent systems (e.g., AutoGen, MetaGPT, DSPy, SWE-agent) (Wu et al., 2024; Hong et al., 2024; Khattab et al., 2024; Yang et al., 2024), we compile an industry standard BPMN 2.0 process model into a ReAct style control graph. Each BPMN node provides",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 5926,
+      "char_end": 7489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44e7e03a7e96c13f04c885ee686228c3",
+      "kind": "paragraph",
+      "text": "a typed tool contract and a node local policy, while the control plane enforces branches and joins, scopes context per node, and applies contract derived runtime validation with targeted retries. This specifications-to-agent compilation yields an auditable workflow structure, minimises unnecessary context exposure, and avoids rediscovering plans at runtime. The design is motivated by three principles: constrained execution via BPMN-derived control flow, targeted context management that limits irrelevant information exposure, and modular decomposition that supports more reliable tool-level reasoning. Against this background, our study examines whether a specialist BPMN-grounded workflow can offer practical advantages over more generalist agentic systems. The following sections describe how this design is instantiated using BPMNs, outline the experimental methodology and benchmark design, and present results comparing specialist and generalist agentic workflows.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "."
+      ],
+      "char_start": 7491,
+      "char_end": 8465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7adf684575dcc992341fa731dae3cccf",
+      "kind": "heading",
+      "text": "Business Processes",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Business Processes"
+      ],
+      "char_start": 8467,
+      "char_end": 8485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae3db014dd6ee65928653070955c6e72",
+      "kind": "paragraph",
+      "text": "To ground our study, we focus on business process automation and adopt BPMN as the structural representation of workflows. BPMN is widely used in enterprise modelling and provides a practical interface through which nontechnical users can specify process logic in a standardised form (K¨opke & Safan, 2024; Nour Eldin et al., 2025; Toxtli & Li, 2025; Berti et al., 2024). This makes it a suitable domain for studying how LLM-based agentic systems can transform human-authored process specifications into executable workflows. In this work, we consider the task of converting BPMNdefined workflows into operational agentic pipelines. This setting is appropriate for our comparison between specialist and generalist systems because BPMN provides an explicit and auditable representation of process structure, allowing us to assess how effectively each approach preserves intended workflow logic while supporting executable automation.",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Business Processes"
+      ],
+      "char_start": 8487,
+      "char_end": 9419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c0273b3c80c6ed754a62dead4b75523",
+      "kind": "heading",
+      "text": "Literature Review",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Literature Review"
+      ],
+      "char_start": 9421,
+      "char_end": 9438,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee5c6ce44a2351c6da9ae6381fe9443a",
+      "kind": "heading",
+      "text": "BPMN and Traditional Workflow Execution",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Literature Review",
+        "BPMN and Traditional Workflow Execution"
+      ],
+      "char_start": 9440,
+      "char_end": 9479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:deb60a13cfa162e0936f22dc1457e9c3",
+      "kind": "paragraph",
+      "text": "Business Process Model and Notation (BPMN) is a standard for modelling structured business workflows. Its graphical notation is both human-readable and machine-executable, which enables organisations to define, automate, and monitor processes effectively (White, 2004; Chinosi & Trombetta, 2012; Dumas et al., 2018). Traditional BPMN engines operate in deterministic, rule-based settings involving human tasks, service calls, and decision gateways (Weske, 2019). 2",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Literature Review",
+        "BPMN and Traditional Workflow Execution"
+      ],
+      "char_start": 9481,
+      "char_end": 9945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d7f3d3b4d082d5135851d74d68f65b9",
+      "kind": "paragraph",
+      "text": "While robust in predictable environments, they provide limited support for dynamic or context-sensitive decisionmaking (Van Der Aalst et al., 2020). Prior work has tried to address this through agent-based automation (Wooldridge & Jennings, 1995), adaptive workflow systems (Reichert & Weber, 2012), context-aware frameworks (Rosemann et al.,",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ".",
+        "Literature Review",
+        "BPMN and Traditional Workflow Execution"
+      ],
+      "char_start": 9947,
+      "char_end": 10289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfd6214ce24d0dd0bfc602c12630adc0",
+      "kind": "heading",
+      "text": ", and decision-centric models (Batoulis et al., 2015).",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015)."
+      ],
+      "char_start": 10291,
+      "char_end": 10345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e377b49e6471db348aedb4e1c3f7748",
+      "kind": "paragraph",
+      "text": "BPMN extensions have also been proposed to support more adaptive workflows (Braun et al., 2014), but execution remains largely constrained by static semantics (Mendling et al., 2018). As a result, traditional BPMN execution still struggles with unstructured data, runtime variability, and ambiguous decision logic (Marrella, 2019).",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015)."
+      ],
+      "char_start": 10347,
+      "char_end": 10678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:630ca1ee08b403ddfd06a7a48686001c",
+      "kind": "heading",
+      "text": "LLMs and Agentic Workflows",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "LLMs and Agentic Workflows"
+      ],
+      "char_start": 10680,
+      "char_end": 10706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e8abaf389b46e37d2440b20622f6caf",
+      "kind": "paragraph",
+      "text": "Recent advances in Large Language Models (LLMs) have expanded their role from passive predictors to agents capable of reasoning, planning, and executing tasks from natural language instructions (Wei et al., 2022). Agentic workflows build on this by combining reasoning with tool use to enable autonomous task completion with limited human oversight (Schick et al., 2023). Architectures such as ReAct (Yao et al., 2023b), Tree-of-Thoughts (Yao et al., 2023a), and PAL (Gao et al., 2023) illustrate this shift toward adaptive task coordination and decision-making (Yang et al., 2023). Research has also explored external memory, planning modules, and tool integration (Wu et al., 2024). Systems such as AFLOW (Zhang et al., 2025b) and MaAS (Zhang et al., 2025a) further show the promise of agentic AI for complex tasks such as retrieval, analysis, and decision-making (Singhal et al., 2023). However, these systems also raise challenges around traceability, control, and integration with structured workflow representations such as BPMN (Mialon et al., 2023; Deng et al., 2023). Most remain generalpurpose frameworks, with less attention given to specialist workflows for narrowly defined structured automation tasks.",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "LLMs and Agentic Workflows"
+      ],
+      "char_start": 10708,
+      "char_end": 11923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9557d0451a6f32913660825f313436d3",
+      "kind": "heading",
+      "text": "BPMN and LLM Integration",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "LLMs and Agentic Workflows",
+        "BPMN and LLM Integration"
+      ],
+      "char_start": 11925,
+      "char_end": 11949,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01d00e026c981c3d0ce0c0f914a3095d",
+      "kind": "paragraph",
+      "text": "Initial work on BPMN and LLM integration has focused mainly on modelling rather than execution. Representative directions include generating BPMN diagrams from text, conversational refinement of process models, and workflow mining (K ¨opke & Safan, 2024; Nour Eldin et al., 2025; Toxtli & Li, 2025; Berti et al., 2024). These approaches improve accessibility for non-experts, but they generally treat BPMN as a static artefact rather than a basis for executable agentic behaviour. More recent work has moved toward agentic automation, where LLMs synthesise workflows and execute tasks across tools and APIs (Jain et al., 2024; Zeng et al., 2023; Ye et al.,",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "LLMs and Agentic Workflows",
+        "BPMN and LLM Integration"
+      ],
+      "char_start": 11951,
+      "char_end": 12607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:906920ed8eccda4871d1e5c6ca73d5a7",
+      "kind": "heading",
+      "text": "Despite this progress, a key gap remains in combin-",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Despite this progress, a key gap remains in combin-"
+      ],
+      "char_start": 12609,
+      "char_end": 12660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a79570fe5673e13c2abf9d2b6b5db27a",
+      "kind": "paragraph",
+      "text": "ing BPMN’s formal process structure with the flexibility of LLM-driven agents. In particular, reliably executing BPMN-defined workflows while preserving semantic rigour and handling unstructured inputs remains an open challenge.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Despite this progress, a key gap remains in combin-"
+      ],
+      "char_start": 12662,
+      "char_end": 12890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:684bd5f9cf6ede04b132f1c5419a3331",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology"
+      ],
+      "char_start": 12892,
+      "char_end": 12903,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:843632fea35782d98b36b2500ad13c6f",
+      "kind": "paragraph",
+      "text": "To evaluate the efficiency and performance gains of a specialist agent, we designed one for converting BPMNspecified workflows into ReAct agents. We evaluated each system using metrics that capture both the agent generation process and the performance of the generated agents, enabling comparison of system efficiency and output quality.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology"
+      ],
+      "char_start": 12905,
+      "char_end": 13242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:615c5353a554ee97d8c4e112598f5490",
+      "kind": "heading",
+      "text": "Workflow Selection",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Workflow Selection"
+      ],
+      "char_start": 13244,
+      "char_end": 13262,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2051042a3b30a819d9a5651340da0818",
+      "kind": "paragraph",
+      "text": "We evaluated our approach using ten deterministic workflows of varying complexity. The workflows were manually constructed by the authors to reflect business process automation tasks across multiple domains, including e-commerce, cost optimisation, risk, and information retrieval. Although this workflow set was not derived from an established benchmark, its construction was informed by foundational business process modelling research. Specifically, we drew on research on business process families and variants (Rosa et al., 2017; Delgado et al., 2022), process model quality and comprehension (Mendling et al., 2010; Figl, 2017), and representative BPMN model generation (Skouradaki et al., 2016) to guide workflow diversity and structural complexity. The workflows were manually designed because we are not aware of an established benchmark for evaluating the conversion of BPMN-style workflows into executable agentic systems. Existing workflow datasets and benchmark resources generally focus on process discovery, conformance checking, event logs, or model analysis rather than end-to-end evaluation of workflow-to-agent translation and execution fidelity (van der Aalst & Carmona, 2022; IEEE Task Force on Process Mining, 2025; Burattin, 2016). Table 1 in the Appendix summarises each workflow, including the number of nodes (tasks, gateways, and events) and edges (sequence flows), which we use as indicators of structural complexity. The workflows were selected according to two criteria. First, they span a broad range of structural complexity, from 9",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Workflow Selection"
+      ],
+      "char_start": 13264,
+      "char_end": 14828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5cfff5d98ad4eacdb2efe7f6282230f6",
+      "kind": "paragraph",
+      "text": "to 52 nodes, allowing evaluation across processes of different sizes and control-flow depth. Second, all workflows are deterministic, in the sense that each execution path is governed by predefined labels and conditions and yields a directly specifiable expected outcome. This design lets us isolate the core capability studied in this paper and evaluate it systematically through exhaustive path coverage. We acknowledge that author-constructed workflows may introduce design bias and that restricting the evaluation to deterministic processes limits generalisability, particularly 3",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Workflow Selection"
+      ],
+      "char_start": 14830,
+      "char_end": 15414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c51d7ff878b300fe53412785d567eecc",
+      "kind": "paragraph",
+      "text": "to settings involving ambiguity, stochasticity, or open-ended human decision making. The results should therefore be interpreted as evidence for structured, deterministic process settings rather than as a claim of universal representativeness.",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Workflow Selection"
+      ],
+      "char_start": 15416,
+      "char_end": 15659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1925befa6ab072357b2bb9a0499a166",
+      "kind": "heading",
+      "text": "Agentic System Design",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Agentic System Design"
+      ],
+      "char_start": 15661,
+      "char_end": 15682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a67300900c171747027b1ebfdf648a12",
+      "kind": "paragraph",
+      "text": "Although these workflows could be executed using a fixed Directed Acyclic Graph (DAG), and loops can be achieved via LangGraph, we instead evaluate the ability of our system to construct a ReAct-based solution (Yao et al., 2023b). A ReAct agent conventionally plans actions and calls tools through an interactive loop rather than following a strictly predefined execution path. We chose this formulation for three reasons:",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Methodology",
+        "Agentic System Design"
+      ],
+      "char_start": 15684,
+      "char_end": 16106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d99baf2c76edbdbaf3223c04f7b68d87",
+      "kind": "heading",
+      "text": "Adaptability beyond fixed execution:ReAct agents",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Adaptability beyond fixed execution:ReAct agents"
+      ],
+      "char_start": 16108,
+      "char_end": 16156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2e5e3aad5db2e0e0a6c2717a9b6befb",
+      "kind": "paragraph",
+      "text": "can generalise across a broader range of tasks and respond more flexibly to changing execution conditions. In practical settings such as customer service chatbots, workflows may require extracting information from user messages, calling multiple tools, handling corrected inputs, or revising earlier decisions. These scenarios benefit from an agent that can re-plan during execution rather than follow a rigid script (Leoc ´adio et al., 2024).",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Adaptability beyond fixed execution:ReAct agents"
+      ],
+      "char_start": 16158,
+      "char_end": 16601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f56afccd98774bfe06e6c6893551ca3",
+      "kind": "heading",
+      "text": "Scalability to realistic workflows:Compared with",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Scalability to realistic workflows:Compared with"
+      ],
+      "char_start": 16603,
+      "char_end": 16651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e67c2ddb76130fb7f419b3a58c413a5",
+      "kind": "paragraph",
+      "text": "static DAG execution, agent-based control is better suited to workflows that extend beyond fixed linear paths, particularly when user inputs, state changes, or partial task completion require dynamic coordination across steps.",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Scalability to realistic workflows:Compared with"
+      ],
+      "char_start": 16653,
+      "char_end": 16879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b74db49aa15219a63e5744b9ffa695d3",
+      "kind": "heading",
+      "text": "Ease of authoring:The logic of a ReAct agent",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Ease of authoring:The logic of a ReAct agent"
+      ],
+      "char_start": 16881,
+      "char_end": 16925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f6686dad797e077020ae52f6fa5d1a4",
+      "kind": "paragraph",
+      "text": "is expressed in natural language through prompt instructions, which can make workflows easier for nontechnical subject matter experts to understand and modify. Minor changes to behaviour can therefore be made by editing instructions rather than altering code, which can speed up iteration and development.",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Ease of authoring:The logic of a ReAct agent"
+      ],
+      "char_start": 16927,
+      "char_end": 17232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a86cf2c7d22319313af2f9b9f7bc494",
+      "kind": "heading",
+      "text": "Proposed System",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Ease of authoring:The logic of a ReAct agent",
+        "Proposed System"
+      ],
+      "char_start": 17234,
+      "char_end": 17249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7d4712538f721939a9dd29bb7e424c",
+      "kind": "paragraph",
+      "text": "Our proposed system (Figure 1) takes a BPMN-defined workflow and API specifications and automatically generates a working ReAct-style agent through the following steps:",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Ease of authoring:The logic of a ReAct agent",
+        "Proposed System"
+      ],
+      "char_start": 17251,
+      "char_end": 17419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6829287c8772d9b828ff2002655afda7",
+      "kind": "heading",
+      "text": "Workflow Parsing:The BPMN diagram is parsed into",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Workflow Parsing:The BPMN diagram is parsed into"
+      ],
+      "char_start": 17421,
+      "char_end": 17469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb96cf37f7c9e6ce7d776194915bcc2d",
+      "kind": "paragraph",
+      "text": "discrete steps, identifying tasks, decision nodes, and required API calls. This yields a structured representation of the workflow logic (including branches and conditions) that the language model can reason about.",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Workflow Parsing:The BPMN diagram is parsed into"
+      ],
+      "char_start": 17471,
+      "char_end": 17685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29616715716faccb27195d0dee71c596",
+      "kind": "heading",
+      "text": "API Service Generation:From the provided API spec-",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "API Service Generation:From the provided API spec-"
+      ],
+      "char_start": 17687,
+      "char_end": 17737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c61705f9e3a883d620aad59a35e3b07",
+      "kind": "paragraph",
+      "text": "ification, the system generates a reusable client module that wraps external calls and abstracts low-level details, reducing tool implementation complexity and code duplication.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "API Service Generation:From the provided API spec-"
+      ],
+      "char_start": 17739,
+      "char_end": 17916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d333b2d962a7d4e3494b999d112df1bb",
+      "kind": "heading",
+      "text": "Tool/Context Creation:Using the parsed workflow",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Tool/Context Creation:Using the parsed workflow"
+      ],
+      "char_start": 17918,
+      "char_end": 17965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c6acbedf4ad583c40141187eb525483",
+      "kind": "paragraph",
+      "text": "steps and the API service, the system generates code for each tool corresponding to a workflow node.",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Tool/Context Creation:Using the parsed workflow"
+      ],
+      "char_start": 17967,
+      "char_end": 18067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bac415ca3d4ceb0f7970a97e74dc6732",
+      "kind": "heading",
+      "text": "Iterative Refinement (Agent Self-Verification):Gen-",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Iterative Refinement (Agent Self-Verification):Gen-"
+      ],
+      "char_start": 18069,
+      "char_end": 18120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:babb7a4053e81050bfc2dd5700e7c2ad",
+      "kind": "paragraph",
+      "text": "erated tool code is executed and validated against expected behaviour. On failure, the system enters a refinement loop: the language model analyses the error and revises the implementation. This loop continues until execution succeeds or successive iterations cease to make substantive progress. Each component is thereby either validated or identified as unresolved.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Iterative Refinement (Agent Self-Verification):Gen-"
+      ],
+      "char_start": 18122,
+      "char_end": 18489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf290d76053165f8f157bba3c6106a12",
+      "kind": "heading",
+      "text": "Agent Assembly and Deployment:Once all tools",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Agent Assembly and Deployment:Once all tools"
+      ],
+      "char_start": 18491,
+      "char_end": 18535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daf3e481bec5778b20b683e3b1dd6d79",
+      "kind": "paragraph",
+      "text": "are verified, the system composes a natural language prompt encoding the workflow logic and generates a main function that instantiates the ReAct agent behind a FastAPI service. The resulting system—prompts, tools, and API endpoints—is then ready for end-to-end testing.",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Agent Assembly and Deployment:Once all tools"
+      ],
+      "char_start": 18537,
+      "char_end": 18807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6720fa6eb63c1535cb6a8c5ebdcc24f1",
+      "kind": "heading",
+      "text": "Evaluations and Results",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results"
+      ],
+      "char_start": 18809,
+      "char_end": 18832,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:869265259b9c4c9c86a35c49b8505679",
+      "kind": "heading",
+      "text": "Baseline Systems and Experimental Setup",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Baseline Systems and Experimental Setup"
+      ],
+      "char_start": 18834,
+      "char_end": 18873,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9915333cb557e01a4520aef20b338562",
+      "kind": "paragraph",
+      "text": "We evaluated our system against two automated coding agents,RooandCline, available as Visual Studio Code extensions (Microsoft). All systems received identical BPMN workflows, API specifications, and backend LLM. Roo and Cline were allowed to operate unconstrained with their default approaches, as preliminary experiments showed that imposing additional design constraints degraded output quality. The base prompt is shown in Figure 5, where the <BPMN> tags contain the raw BPMN 2.0 XML for each workflow. After each system declared completion, we conducted endto-end verification on sample inputs covering all workflow branches. If an agent failed, we fed the error back and allowed iterative self-repair until the issue was resolved or the system could no longer make progress. Our system’s agents passed all end-to-end tests on the first attempt without manual intervention (Section 4.3.1), unlike those generated by Roo and Cline. We also evaluated AutoGen, MetaGPT, and FLOW (Wu et al., 2024; Hong et al., 2024; Niu et al., 2025), but none produced functional solutions for any workflow. MetaGPT’s outputs were typically incomplete (e.g., generating only prompts and tools but not the full agent). AutoGen, even 4",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Baseline Systems and Experimental Setup"
+      ],
+      "char_start": 18875,
+      "char_end": 20094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b722f76cd9300910ffbbf980c80461ee",
+      "kind": "caption",
+      "text": "Figure 1.Proposed System Architecture",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Baseline Systems and Experimental Setup"
+      ],
+      "char_start": 20096,
+      "char_end": 20133,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d416b4752e65a76150fa34519387244",
+      "kind": "paragraph",
+      "text": "with its GraphFlow controller, failed to autonomously generate the required files without manual agent wiring. FLOW produced high-level task decompositions but not complete, executable code. As none completed even a single workflow end-to-end, we excluded them from the comparative evaluation, focusing on Roo and Cline as the only baselines that successfully completed the tasks.",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Baseline Systems and Experimental Setup"
+      ],
+      "char_start": 20135,
+      "char_end": 20515,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:468dd60abba4e2fb3a80da28f721663c",
+      "kind": "heading",
+      "text": "Evaluation Metrics",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Evaluation Metrics"
+      ],
+      "char_start": 20517,
+      "char_end": 20535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6285310504c7dc5a962f1630ef80d28",
+      "kind": "paragraph",
+      "text": "We evaluate each system across two tasks:",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "Evaluations and Results",
+        "Evaluation Metrics"
+      ],
+      "char_start": 20537,
+      "char_end": 20578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00dd90f123e97090ee3c057b14fd2b2a",
+      "kind": "heading",
+      "text": "the agent generation process, and",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "the agent generation process, and"
+      ],
+      "char_start": 20580,
+      "char_end": 20613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a585be3653d668fd6e7c6fee47cfeda",
+      "kind": "heading",
+      "text": "the functional performance of the generated agents.",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "the functional performance of the generated agents."
+      ],
+      "char_start": 20615,
+      "char_end": 20666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44b6f82fc2e386eccda21c8abbf7a11f",
+      "kind": "paragraph",
+      "text": "For each system under comparison (Roo, Cline and our system), we generated at least 10 agents that successfully compiled and executed according to the BPMN-defined specifications for each of the ten workflows. Each of the 10 agents was then evaluated on a dataset comprising all possible combinations of control-flow flags, yielding comprehensive test coverage across all execution paths. As summarised in Table 1, the workflows vary in structural complexity from",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        ", and decision-centric models (Batoulis et al., 2015).",
+        "the functional performance of the generated agents."
+      ],
+      "char_start": 20668,
+      "char_end": 21131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f6fce26eef75594bb8f65fcead69cf6",
+      "kind": "heading",
+      "text": "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges"
+      ],
+      "char_start": 21133,
+      "char_end": 21186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6cb0e4161d4475bce1cd358838b2223",
+      "kind": "paragraph",
+      "text": "(Cart), spanning diverse business domains. This diversity ensures that our evaluation captures a wide range of realworld scenarios, providing a robust testbed for assessing the capabilities of each system in generating functional agents from BPMN specifications. Achieving the target of 10 successful agents per workflow per system required a total of 371 generation attempts across all three systems, of which 300 succeeded and 71 failed outright. Our system and Cline each needed 117 attempts to obtain their 100 successful agents (85.5% success rate), while Roo required 137 attempts (73.0% success rate). The 300 successful agents were collectively evaluated on 30,543 individual test cases (approximately 102 per run), covering all possible control-flow paths in each workflow. A generation attempt was classified as afailurewhen the coding agent was unable to produce a functional agent at all, for example due to API errors, empty output, or code that could not be executed end-to-end. This is distinct fromrepair iterations(discussed in Section 4.2.1), where the agent initially produced failing code but self-corrected after receiving error feedback. Failure rates varied across workflows: simpler workflows such as Social, Spam, and News were completed without any failures by all three systems, whereas Weather (46.4% failure rate; 56 attempts for 30 successes) and Tournament (42.3%; 52 attempts) proved most challenging. To assess cross-run consistency, we computed the coefficient of variation (CV) of the Tool-Use Exactness score across",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges"
+      ],
+      "char_start": 21188,
+      "char_end": 22739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0958a4cd2938db8503d521069cf2130a",
+      "kind": "paragraph",
+      "text": "the 10 independent runs per workflow: our system exhibited the lowest variability (CV = 0.63), followed by Cline (0.86) and Roo (1.05), indicating that our approach produces more consistent agents across independent generations.",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges"
+      ],
+      "char_start": 22741,
+      "char_end": 22969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d96e5384ec1993105dd443d28e8b8a3",
+      "kind": "heading",
+      "text": "AGENTGENERATIONEVALUATION",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": 5,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "AGENTGENERATIONEVALUATION"
+      ],
+      "char_start": 22971,
+      "char_end": 22996,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b34b9e4727a81698ddacdfaa862499e4",
+      "kind": "paragraph",
+      "text": "The efficiency of the agent generation process was assessed using two primary metrics: the number ofrepair iterations andtoken usage.",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "AGENTGENERATIONEVALUATION"
+      ],
+      "char_start": 22998,
+      "char_end": 23131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef68fb7b181e96264c57c70da72428f6",
+      "kind": "heading",
+      "text": "Repair Iterations:We measured the number of re-",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Repair Iterations:We measured the number of re-"
+      ],
+      "char_start": 23133,
+      "char_end": 23180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d98455fa1647c240806aae3c632987b7",
+      "kind": "paragraph",
+      "text": "finement loops required to produce a valid agent. For our system, this corresponds to the number of toolrefinement cycles needed to achieve successful execution. For Roo and Cline, this includes code errors and errors in the FastAPI service generated to invoke the agent. Notably, our system’s templated approach to developing a FastAPI service that wraps the agent resulted in no errors in this category. We report this as the average number of repair iterations required to complete a single successful generation. Repairs performed in generations where the task was not successfully completed were not included.",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Repair Iterations:We measured the number of re-"
+      ],
+      "char_start": 23182,
+      "char_end": 23796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3d507c908b5ae83bf2aed0bf13c94cd",
+      "kind": "heading",
+      "text": "Token Usage and Cost:We tracked the total num-",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:We tracked the total num-"
+      ],
+      "char_start": 23798,
+      "char_end": 23844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecb873d1361df84b57d435fba7255288",
+      "kind": "paragraph",
+      "text": "ber of tokens consumed from the initial invocation 5",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:We tracked the total num-"
+      ],
+      "char_start": 23846,
+      "char_end": 23898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbfa68d29055f03679396c6f5ecbfef7",
+      "kind": "paragraph",
+      "text": "through the successful generation of a complete agent, recording input, output, and total token counts. Our system’s token usage was measured using Langfuse tracing, while Roo and Cline reported their own token consumption.",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:We tracked the total num-"
+      ],
+      "char_start": 23900,
+      "char_end": 24123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f4c9410b69debd4a67c34f55a626f98",
+      "kind": "heading",
+      "text": "AGENTRUNEVALUATIONS",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": 5,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:We tracked the total num-",
+        "AGENTRUNEVALUATIONS"
+      ],
+      "char_start": 24125,
+      "char_end": 24144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2d088257cd90a1859d9fb5e81081529",
+      "kind": "paragraph",
+      "text": "Each generated agent was evaluated on the following metrics using GPT-4.1 for consistency.",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:We tracked the total num-",
+        "AGENTRUNEVALUATIONS"
+      ],
+      "char_start": 24146,
+      "char_end": 24236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17b5b0b22db224a9ec43e80c05d0405a",
+      "kind": "heading",
+      "text": "Process Adherence:Assessed via an LLM-as-a-judge",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Process Adherence:Assessed via an LLM-as-a-judge"
+      ],
+      "char_start": 24238,
+      "char_end": 24286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22b9855fe750f899ecd0139ed6356052",
+      "kind": "paragraph",
+      "text": "evaluation. The judge received (i) the workflow specification defining the expected tool-call sequence, (ii) the input request, and (iii) the agent’s execution trace. Each tool call was categorised ascorrect,missed(required but not called),excess(called but not required), orout-of-sequence. The judge returned a binary adherence verdict (deviation: true/false ) with a step-by-step reasoning trace.",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Process Adherence:Assessed via an LLM-as-a-judge"
+      ],
+      "char_start": 24288,
+      "char_end": 24687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c7e174f0f4786a33fc6f80c9320656d",
+      "kind": "heading",
+      "text": "Tool-Use Exactness (TUE) Score:TUE is a binary",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Tool-Use Exactness (TUE) Score:TUE is a binary"
+      ],
+      "char_start": 24689,
+      "char_end": 24735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fbcd4de46f1d0471e53cc1e011e5768",
+      "kind": "paragraph",
+      "text": "per-run indicator equal to 1 when the agent invokes exactly the prescribed tools with zero missed, excess, or out-of-sequence calls, and 0 otherwise. The aggregate TUE score is the percentage of runs achieving a perfect score.",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Tool-Use Exactness (TUE) Score:TUE is a binary"
+      ],
+      "char_start": 24737,
+      "char_end": 24963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8a32dd4b023bc800e1aa8fedd385696",
+      "kind": "heading",
+      "text": "Penalty-Adjusted Latency:We define latency as the",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Penalty-Adjusted Latency:We define latency as the"
+      ],
+      "char_start": 24965,
+      "char_end": 25014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:538a250775e6b16c7b6840d845e11689",
+      "kind": "paragraph",
+      "text": "time required per unit ofnet-correct workflow progress, penalising runs that spend time on incorrect tool usage. Let T denote total execution time, C the number of correct tool calls, and M, E, O the counts of missed, excess, and out-of-sequence calls. The effective steps are P= max(ε, C−(M+E+O)),(1) where ε= 1 avoids division by zero. The penaltyadjusted latency is then: Latency = T P (2) Lower values indicate faster, more accurate execution.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Penalty-Adjusted Latency:We define latency as the"
+      ],
+      "char_start": 25016,
+      "char_end": 25463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e50ae5b95496ae4c740c476bccb2e19",
+      "kind": "heading",
+      "text": "Results",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": 4,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Penalty-Adjusted Latency:We define latency as the",
+        "Results"
+      ],
+      "char_start": 25465,
+      "char_end": 25472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1385c2f7ece9d9b24600f8f5fbb8e9bf",
+      "kind": "heading",
+      "text": "AGENTGENERATIONRESULTS",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": 5,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Penalty-Adjusted Latency:We define latency as the",
+        "Results",
+        "AGENTGENERATIONRESULTS"
+      ],
+      "char_start": 25474,
+      "char_end": 25496,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32fa6c2b3a199cbf9a77954cc103d116",
+      "kind": "heading",
+      "text": "Repair Iterations:As shown in Figure 2, the spe-",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Repair Iterations:As shown in Figure 2, the spe-"
+      ],
+      "char_start": 25498,
+      "char_end": 25546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdeede8c0cd78644db5661318bdbe10b",
+      "kind": "paragraph",
+      "text": "cialist system required zero repair iterations across all successful generations, compared to averages of 2.08 for Roo and 1.89 for Cline, reflecting their reliance on iterative refinement loops to achieve functional outputs.",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Repair Iterations:As shown in Figure 2, the spe-"
+      ],
+      "char_start": 25548,
+      "char_end": 25773,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8dfd917d3533fb20ea840984f7cfc55",
+      "kind": "heading",
+      "text": "Token Usage and Cost:The specialist system aver-",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-"
+      ],
+      "char_start": 25775,
+      "char_end": 25823,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79a1ec27f49030208118aa52dc1b7582",
+      "kind": "paragraph",
+      "text": "aged 49.24k input and 5.82k output tokens per agent, versus 1,484.46k/17.40k for Roo and 1,029.27k/15.36k for Cline (a 2,915%/199% and 1,990%/164% increase respectively), as shown in Figure 2. Combined with zero repair iterations, the specialist system produces a correct agent in a single pass at ≈55k total tokens, compared to over 1,500k for Roo and 1,044k for Cline before accounting for additional tokens consumed in repair cycles. This order-of-magnitude difference makes specialist pipelines substantially more cost-effective at scale.",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-"
+      ],
+      "char_start": 25825,
+      "char_end": 26367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2b7521bb7ca055b5c45c8603d220879",
+      "kind": "heading",
+      "text": "AGENTRUNEVALUATIONRESULTS",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": 5,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-",
+        "AGENTRUNEVALUATIONRESULTS"
+      ],
+      "char_start": 26369,
+      "char_end": 26394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd6c15a212ba1ffd4b4f84cd0be377ec",
+      "kind": "paragraph",
+      "text": "• Tool-Use Exactness (TUE):Our specialist system achieved the highest TUE score at 57.69%, compared to 48.62% for Cline (+9.1 pp) and 38.11% for Roo (+19.6 pp) (Figure 4(a)). The per-workflow breakdown in Figure 3(a) confirms this advantage holds consistently across all ten workflows regardless of complexity. • Tool-Call Errors:The specialist system averaged 1.27 total errors per run versus 3.19 for Cline and 3.22 for Roo (both 2.5× higher; Figure 4(b)). The dominant error mode was missed tool calls (0.86 specialist, 2.05 Cline, 1.76 Roo), reflecting generalist agents’ tendency to return an output once sufficient information was gathered rather than completing the full prescribed sequence. Excess calls were less frequent but still elevated (0.95/Cline, 1.13/Roo vs. 0.37/specialist), and out-of-sequence calls were low across all approaches (≤0.33). These patterns are consistent across workflows (Figure 3(b)). • Process Adherence:The specialist system achieved the highest adherence rate at 54.68%, versus 51.57% for Cline (+3.1 pp) and 42.43% for Roo (+12.2 pp) (Figure 4(d)). The gap widens on more complex workflows (Figure 3(d)), suggesting that generalist systems’ tendency to omit tool calls compounds into lower process conformance as workflow complexity increases. • Penalty-Adjusted Latency:The specialist system achieved the lowest latency at 2.49 s per effective step, versus 6.59 for Cline (2.6×) and 9.08 for Roo (3.6×) (Figures 4(c), 3(c)). The elevated generalist latency reflects both longer raw execution times and a higher",
+      "order": 90,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-",
+        "AGENTRUNEVALUATIONRESULTS"
+      ],
+      "char_start": 26396,
+      "char_end": 27948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:033408c9569d3e73fa631629eb15dd35",
+      "kind": "paragraph",
+      "text": "incidence of tool-call errors, both of which inflate the metric. Taken together, the specialist system outperforms both baselines on all four metrics, demonstrating the benefits of structured, specification-driven agent generation over generalpurpose coding frameworks. These gains likely stem from 6",
+      "order": 91,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-",
+        "AGENTRUNEVALUATIONRESULTS"
+      ],
+      "char_start": 27950,
+      "char_end": 28250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:709c6a0c8ed7f7b37f33d4ba98d6f98e",
+      "kind": "caption",
+      "text": "Figure 2.Agent Generation Metrics: Repair Iterations, Token Usage (Input and Output) for the Specialist System(Custom), Roo, and",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-",
+        "AGENTRUNEVALUATIONRESULTS"
+      ],
+      "char_start": 28252,
+      "char_end": 28380,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fa29ebb37b88bde5786cf9426fa2a4f",
+      "kind": "paragraph",
+      "text": "Cline. the design principles outlined earlier in the paper: constrained execution via externally specified workflow structure, targeted context management, and modular decomposition. Together, these reduce search space and planning overhead, which in turn contributes to fewer tool-call errors and more consistent execution across runs.",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Token Usage and Cost:The specialist system aver-",
+        "AGENTRUNEVALUATIONRESULTS"
+      ],
+      "char_start": 28382,
+      "char_end": 28718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01279467a2c597e3238d3339dff06a4f",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Conclusion"
+      ],
+      "char_start": 28720,
+      "char_end": 28730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7d1119e28081b5350d0a590c4e46697",
+      "kind": "paragraph",
+      "text": "We presented a specialist agentic system for converting BPMN-defined workflows into executable ReAct agents and evaluated it against Cline and Roo across ten workflows under the same foundation model. The specialist system outperformed both baselines on all four evaluation metrics, achieving higher tool-use exactness and process adherence, substantially lower penalty-adjusted latency, and fewer toolcall errors. It also reduced token consumption by more than 95% relative to the generalist baselines and required no repair iterations. These gains stem from decomposing each workflow into modular prompt, tool, and orchestration components, enabling constrained execution and targeted context management rather than iterative trial-and-error generation. These improvements are particularly valuable in enterprise settings, where reliability, maintainability, and cost efficiency are critical for large-scale deployment. By externalising workflow structure and reducing unnecessary context exposure, specialist systems can offer a more predictable and operationally manageable alternative to general-purpose agentic coding assistants for structured automation tasks. The evaluation is scoped to deterministic workflows under realistic low-configuration usage. Although prompt engineering or iterative tuning could improve generalist performance, doing so would require additional user effort and expertise. Future work will examine more heavily optimised baseline configurations and conduct component-level ablations to determine how each structural element contributes",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Conclusion"
+      ],
+      "char_start": 28732,
+      "char_end": 30302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b884bbc85dcf55f1c5ba024c02657aff",
+      "kind": "paragraph",
+      "text": "to performance, and whether these components can be selectively incorporated into generalist assistants. 7",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "Conclusion"
+      ],
+      "char_start": 30304,
+      "char_end": 30410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d05727055f80c0ab7877597e1a56adc0",
+      "kind": "heading",
+      "text": "GenAI Usage Disclosure",
+      "order": 97,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "GenAI Usage Disclosure"
+      ],
+      "char_start": 30412,
+      "char_end": 30434,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c41e008127545a83b0f7763e89fe58c",
+      "kind": "paragraph",
+      "text": "In line with our experimental design, LLMs and LLMpowered systems were used to generate and execute the agentic workflows evaluated in this paper. We also used LLMs to enhance our text through light editing tasks such as grammar correction, and sentence restructuring.",
+      "order": 98,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "nodes and 10 edges (Weather) to 52 nodes and 60 edges",
+        "GenAI Usage Disclosure"
+      ],
+      "char_start": 30436,
+      "char_end": 30704,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:307a6407a1ad1c46486d505797b9197f",
+      "kind": "heading",
+      "text": "References",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "References"
+      ],
+      "char_start": 30706,
+      "char_end": 30716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:910e6f0fb3bf58245fa8fd1efb362c0f",
+      "kind": "reference",
+      "text": "Aljohani, A. and Do, H. Promptdebt: A comprehensive study of technical debt across llm projects. InProceedings of the 29th International Conference on Evaluation and Assessment in Software Engineering, EASE ’25, pp. 371–382, New York, NY , USA, 2025. Association for Computing Machinery. ISBN 9798400713859. doi: 10.1145/3756681.3756976. URL https://doi. org/10.1145/3756681.3756976. An, C., Zhang, J., Zhong, M., Li, L., Gong, S., Luo, Y ., Xu, J., and Kong, L. Why does the effective context length of LLMs fall short? InThe Thirteenth International Conference on Learning Representations, 2025. URL https: //openreview.net/forum?id=eoln5WgrPx.",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "References"
+      ],
+      "char_start": 30718,
+      "char_end": 31364,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c883a100cbf5076778222f7128cadfd5",
+      "kind": "heading",
+      "text": "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and"
+      ],
+      "char_start": 31366,
+      "char_end": 31421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c0f61fb43e6802cd753534b4cadf4cf",
+      "kind": "paragraph",
+      "text": "Weske, M. Extracting decision logic from process models. InInternational conference on advanced information systems engineering, pp. 349–366, 2015. Berti, A., Kourani, H., and van der Aalst, W. M. P. PM- LLM-benchmark: Evaluating large language models on process mining tasks.arXiv preprint arXiv:2407.13244,",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and"
+      ],
+      "char_start": 31423,
+      "char_end": 31731,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9d6040b5e0c60e0963054ecca6fe6c2",
+      "kind": "heading",
+      "text": "doi: 10.48550/arXiv.2407.13244. URL https",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and",
+        "doi: 10.48550/arXiv.2407.13244. URL https"
+      ],
+      "char_start": 31733,
+      "char_end": 31774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:643dc29e1e1b4975244947de82af4713",
+      "kind": "paragraph",
+      "text": "//arxiv.org/abs/2407.13244. Braun, R., Schlieter, H., Burwitz, M., and Esswein, W. Bpmn4cp: Design and implementation of a bpmn extension for clinical pathways. In2014 IEEE international conference on bioinformatics and biomedicine (BIBM), pp. 9–16, 2014. Burattin, A. Plg2: Multiperspective process randomization with online and offline simulations. InProceedings of the BPM 2016 Demo Track, volume 1789 of CEUR Workshop Proceedings, pp. 1–6. CEUR-WS.org,",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and",
+        "doi: 10.48550/arXiv.2407.13244. URL https"
+      ],
+      "char_start": 31776,
+      "char_end": 32232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10964f0364b1715e3619adab5f9c1919",
+      "kind": "heading",
+      "text": "URL https://ceur-ws.org/Vol-1789/",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and",
+        "URL https://ceur-ws.org/Vol-1789/"
+      ],
+      "char_start": 32234,
+      "char_end": 32267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c937a2a68cb86746fb09501c9aee6b2",
+      "kind": "paragraph",
+      "text": "bpm-demo-2016-paper1.pdf. Chinosi, M. and Trombetta, A. Bpmn: An introduction to the standard.Computer Standards & Interfaces, 34(1): 124–134, 2012. Cline. Cline, 2025. URL https://docs.cline.bot/ getting-started/what-is-cline.",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Batoulis, K., Meyer, A., Bazhenova, E., Decker, G., and",
+        "URL https://ceur-ws.org/Vol-1789/"
+      ],
+      "char_start": 32269,
+      "char_end": 32496,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0b58dc9a7681386c77e01dd45b741ab",
+      "kind": "heading",
+      "text": "Delgado, A., Calegari, D., Garc´ıa, F., and Weber, B. Model-",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Delgado, A., Calegari, D., Garc´ıa, F., and Weber, B. Model-"
+      ],
+      "char_start": 32498,
+      "char_end": 32558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73f2bc3c5eae4445b6ac6efd9bad1ea1",
+      "kind": "paragraph",
+      "text": "driven management of bpmn-based business process families.Software and Systems Modeling, 21:2517–2553,",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Delgado, A., Calegari, D., Garc´ıa, F., and Weber, B. Model-"
+      ],
+      "char_start": 32560,
+      "char_end": 32662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3672f35de67b47927e3944a756502c45",
+      "kind": "heading",
+      "text": "doi: 10.1007/s10270-022-00985-3.",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Delgado, A., Calegari, D., Garc´ıa, F., and Weber, B. Model-",
+        "doi: 10.1007/s10270-022-00985-3."
+      ],
+      "char_start": 32664,
+      "char_end": 32696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2951e871e0fb2512f63d86958b68f1f7",
+      "kind": "paragraph",
+      "text": "Deng, X., Gu, Y ., Zheng, B., Chen, S., Stevens, S., Wang, B., Sun, H., and Su, Y . Mind2web: Towards a generalist agent for the web. InNeurIPS 2023 Datasets and Benchmarks Track, 2023. URL https://arxiv. org/abs/2306.06070. Dumas, M., Rosa, L. M., Mendling, J., and Reijers, A. H. Fundamentals of business process management. Springer, 2018.",
+      "order": 110,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Delgado, A., Calegari, D., Garc´ıa, F., and Weber, B. Model-",
+        "doi: 10.1007/s10270-022-00985-3."
+      ],
+      "char_start": 32698,
+      "char_end": 33040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:278188694156a9584197d77f83163e8c",
+      "kind": "heading",
+      "text": "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm",
+      "order": 111,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm"
+      ],
+      "char_start": 33042,
+      "char_end": 33093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67bbb8542d33791ce66a78f3a1842233",
+      "kind": "paragraph",
+      "text": "reasoning to autonomous ai agents: A comprehensive review, 2025. URL https://arxiv.org/abs/",
+      "order": 112,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm"
+      ],
+      "char_start": 33095,
+      "char_end": 33186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8035fec1ce54d02532b904e7caa52ee",
+      "kind": "heading",
+      "text": "19678.",
+      "order": 113,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm",
+        "19678."
+      ],
+      "char_start": 33188,
+      "char_end": 33194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:147cdf93414a8c75b68e6673cabb4967",
+      "kind": "paragraph",
+      "text": "Figl, K. Comprehension of procedural visual business process models: A literature review.Business & Information Systems Engineering, 59(1):41–67, 2017. doi:",
+      "order": 114,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm",
+        "19678."
+      ],
+      "char_start": 33196,
+      "char_end": 33352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17a5afdd5d7e014adeb3d3171e47f2ac",
+      "kind": "heading",
+      "text": "1007/s12599-016-0460-2.",
+      "order": 115,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm",
+        "1007/s12599-016-0460-2."
+      ],
+      "char_start": 33354,
+      "char_end": 33377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea775ff321ddbf1eea5ba61254fa3013",
+      "kind": "paragraph",
+      "text": "Fourney, A., Bansal, G., Mozannar, H., Tan, C., Salinas, E., Erkang, Zhu, Niedtner, F., Proebsting, G., Bassman, G., Gerrits, J., Alber, J., Chang, P., Loynd, R., West,",
+      "order": 116,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Ferrag, M. A., Tihanyi, N., and Debbah, M. From llm",
+        "1007/s12599-016-0460-2."
+      ],
+      "char_start": 33379,
+      "char_end": 33547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68b0e6639254d3d57e3d47d0f2cb82dc",
+      "kind": "heading",
+      "text": "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+      "order": 117,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and"
+      ],
+      "char_start": 33549,
+      "char_end": 33604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8c4a650ca38c63c90f6b1c730b3e8e9",
+      "kind": "paragraph",
+      "text": "Amershi, S. Magentic-one: A generalist multi-agent system for solving complex tasks, 2024. URL https: //arxiv.org/abs/2411.04468. Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y ., Callan, J., and Neubig, G. Pal: Program-aided language models. InProceedings of the 40th International Conference on Machine Learning (ICML), volume 202 of Proceedings of Machine Learning Research, pp. 10764–",
+      "order": 118,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and"
+      ],
+      "char_start": 33606,
+      "char_end": 34005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:634a554152d30c905943d43c4055c39b",
+      "kind": "heading",
+      "text": "PMLR, 2023. URL https://proceedings.",
+      "order": 119,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "PMLR, 2023. URL https://proceedings."
+      ],
+      "char_start": 34007,
+      "char_end": 34043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:413aaee885b818b88f289b0a3649df12",
+      "kind": "paragraph",
+      "text": "mlr.press/v202/gao23f.html. He, J., Treude, C., and Lo, D. Llm-based multi-agent systems for software engineering: Literature review, vision, and the road ahead.ACM Trans. Softw. Eng. Methodol., 34(5), May 2025. ISSN 1049-331X. doi:",
+      "order": 120,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "PMLR, 2023. URL https://proceedings."
+      ],
+      "char_start": 34045,
+      "char_end": 34277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16d5f2cb37412c0db71e44278c004751",
+      "kind": "heading",
+      "text": "1145/3712003. URL https://doi.org/10.",
+      "order": 121,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "1145/3712003. URL https://doi.org/10."
+      ],
+      "char_start": 34279,
+      "char_end": 34316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f4af4ba2916645fb2ae0ce948a7812c",
+      "kind": "paragraph",
+      "text": "1145/3712003. Hong, S., Zhuge, M., Chen, J., Zheng, X., Cheng, Y ., Wang, J., Zhang, C., Wang, Z., Yau, S. K. S., Lin, Z., Zhou, L., Ran, C., Xiao, L., Wu, C., and Schmidhuber, J. MetaGPT: Meta programming for a multi-agent collaborative framework. InThe Twelfth International Conference on Learning Representations, 2024. URL https: //openreview.net/forum?id=VtmBAGCN7o. 8",
+      "order": 122,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "1145/3712003. URL https://doi.org/10."
+      ],
+      "char_start": 34318,
+      "char_end": 34691,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d9f5c8695b44ec5417ca01d86ec7663",
+      "kind": "paragraph",
+      "text": "IEEE Task Force on Process Mining. Process mining event logs. https://www.tf-pm.org/resources/ logs, 2025. Accessed 2026-04-21. Jain, A., Paliwal, S., Sharma, M., Vig, L., and Shroff, G. Smartflow: Robotic process automation using LLMs.arXiv preprint arXiv:2405.12842, 2024. doi:",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "1145/3712003. URL https://doi.org/10."
+      ],
+      "char_start": 34693,
+      "char_end": 34972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75128f7c8c1e41f759bd7ac36fc289f1",
+      "kind": "heading",
+      "text": "48550/arXiv.2405.12842. URL https://arxiv.",
+      "order": 124,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "48550/arXiv.2405.12842. URL https://arxiv."
+      ],
+      "char_start": 34974,
+      "char_end": 35016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0338204c412752445c672ab94f6eb5c5",
+      "kind": "equation",
+      "text": "org/abs/2405.12842.",
+      "order": 125,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "R., Dibia, V ., Awadallah, A., Kamar, E., Hosn, R., and",
+        "48550/arXiv.2405.12842. URL https://arxiv."
+      ],
+      "char_start": 35018,
+      "char_end": 35037,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6265cbf13291fa4515c6265bde2c5b89",
+      "kind": "heading",
+      "text": "Khattab, O., Singhvi, A., Maheshwari, P., Zhang, Z., San-",
+      "order": 126,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Khattab, O., Singhvi, A., Maheshwari, P., Zhang, Z., San-"
+      ],
+      "char_start": 35039,
+      "char_end": 35096,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:818721dc396676dfe3e65bb2aac667ea",
+      "kind": "paragraph",
+      "text": "thanam, K., Vardhamanan, S., Haq, S., Sharma, A., Joshi, T. T., Moazam, H., Miller, H., Zaharia, M., and Potts, C. Dspy: Compiling declarative language model calls into self-improving pipelines. 2024. K¨opke, J. and Safan, A. Introducing the BPMN-chatbot for efficient LLM-based process modeling. InProceedings of the Best BPM Dissertation Award, Doctoral Consortium, and Demonstrations & Resources Forum co-located with the 22nd International Conference on Business Process Management (BPM 2024), volume",
+      "order": 127,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Khattab, O., Singhvi, A., Maheshwari, P., Zhang, Z., San-"
+      ],
+      "char_start": 35098,
+      "char_end": 35602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b09654a7fef04d6c69422cd36ef966be",
+      "kind": "heading",
+      "text": "ofCEUR Workshop Proceedings, Krak ´ow, Poland,",
+      "order": 128,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "ofCEUR Workshop Proceedings, Krak ´ow, Poland,"
+      ],
+      "char_start": 35604,
+      "char_end": 35650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b754bf74d9de7ee34828be6703d32509",
+      "kind": "heading",
+      "text": "CEUR-WS.org. URL https://ceur-ws.",
+      "order": 129,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "ofCEUR Workshop Proceedings, Krak ´ow, Poland,",
+        "CEUR-WS.org. URL https://ceur-ws."
+      ],
+      "char_start": 35652,
+      "char_end": 35685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d476445f2c959173cc17b3c4a58ead8b",
+      "kind": "equation",
+      "text": "org/Vol-3758/paper-15.pdf.",
+      "order": 130,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "ofCEUR Workshop Proceedings, Krak ´ow, Poland,",
+        "CEUR-WS.org. URL https://ceur-ws."
+      ],
+      "char_start": 35687,
+      "char_end": 35713,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d71a2842000f56d0c0c688c92c682a10",
+      "kind": "heading",
+      "text": "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms",
+      "order": 131,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms"
+      ],
+      "char_start": 35715,
+      "char_end": 35770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaada5eace234f301fd0c4a1c8f1f383",
+      "kind": "paragraph",
+      "text": "get lost in multi-turn conversation.arXiv preprint arXiv:2505.06120, 2025. Leoc´adio, D., Guedes, L., Oliveira, J., Reis, J., and Mel˜ao, N. Customer service with ai-powered human-robot collaboration (hrc): A literature review.Procedia Computer Science, 232:1222–1232, 2024. ISSN 1877-",
+      "order": 132,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms"
+      ],
+      "char_start": 35772,
+      "char_end": 36057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa60d59338a6364075359bffa5dc3a96",
+      "kind": "heading",
+      "text": "doi: https://doi.org/10.1016/j.procs.2024.01.120.",
+      "order": 133,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms",
+        "doi: https://doi.org/10.1016/j.procs.2024.01.120."
+      ],
+      "char_start": 36059,
+      "char_end": 36108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20404b5c40bc62a46e3e88de304f2f77",
+      "kind": "paragraph",
+      "text": "URL https://www.sciencedirect.com/ science/article/pii/S1877050924001200. 5th International Conference on Industry 4.0 and Smart Manufacturing (ISM 2023). Marrella, A. Automated planning for business process management.Journal on data semantics, 8(2):79–98, 2019. Mei, L., Yao, J., Ge, Y ., Wang, Y ., Bi, B., Cai, Y ., Liu, J., Li, M., Li, Z.-Z., Zhang, D., Zhou, C., Mao, J., Xia, T., Guo, J., and Liu, S. A survey of context engineering for large language models, 2025. URL https://arxiv. org/abs/2507.13334. Mendling, J., Reijers, H. A., and van der Aalst, W. M. P. Seven process modeling guidelines (7pmg).Information and Software Technology, 52(2):127–136, 2010. doi:",
+      "order": 134,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms",
+        "doi: https://doi.org/10.1016/j.procs.2024.01.120."
+      ],
+      "char_start": 36110,
+      "char_end": 36783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e3462dde0baf3f55c6a84b1c7fa3735",
+      "kind": "heading",
+      "text": "1016/j.infsof.2009.08.004.",
+      "order": 135,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms",
+        "1016/j.infsof.2009.08.004."
+      ],
+      "char_start": 36785,
+      "char_end": 36811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8963ea0243b72f3be60893dd701604b8",
+      "kind": "paragraph",
+      "text": "Mendling, J., Weber, I., Aalst, W. V . D., Brocke, J. V ., Cabanillas, C., Daniel, F., Debois, S., Ciccio, C. D., Dumas, M., Dustdar, S., et al. Blockchains for business process management-challenges and opportunities.ACM Transactions on Management Information Systems (TMIS), 9 (1):1–16, 2018.",
+      "order": 136,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Laban, P., Hayashi, H., Zhou, Y ., and Neville, J. Llms",
+        "1016/j.infsof.2009.08.004."
+      ],
+      "char_start": 36813,
+      "char_end": 37107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27296c180dc3109dd83cb53e875e3077",
+      "kind": "heading",
+      "text": "Mialon, G., Dess `ı, R., Lomeli, M., Nalmpantis, C., Pa-",
+      "order": 137,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Mialon, G., Dess `ı, R., Lomeli, M., Nalmpantis, C., Pa-"
+      ],
+      "char_start": 37109,
+      "char_end": 37165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd366d8d5c783f984de157cca873802d",
+      "kind": "heading",
+      "text": "sunuru, R., Raileanu, R., Rozi`ere, B., Schick, T., Dwivedi-",
+      "order": 138,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "sunuru, R., Raileanu, R., Rozi`ere, B., Schick, T., Dwivedi-"
+      ],
+      "char_start": 37167,
+      "char_end": 37227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46c2b18758442d72c81e2ba4a194d626",
+      "kind": "paragraph",
+      "text": "Yu, J., Celikyilmaz, A., et al. Augmented language models: a survey.arXiv preprint arXiv:2302.07842, 2023. Microsoft. Visual studio code. https://code. visualstudio.com/. Accessed: 2025-09-17. Modarressi, A., Deilamsalehy, H., Dernoncourt, F., Bui, T.,",
+      "order": 139,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "sunuru, R., Raileanu, R., Rozi`ere, B., Schick, T., Dwivedi-"
+      ],
+      "char_start": 37229,
+      "char_end": 37481,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44c0dc15cd30fe0bf413165db18e8840",
+      "kind": "heading",
+      "text": "Rossi, R. A., Yoon, S., and Sch¨utze, H. Nolima: Long-",
+      "order": 140,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Rossi, R. A., Yoon, S., and Sch¨utze, H. Nolima: Long-"
+      ],
+      "char_start": 37483,
+      "char_end": 37537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f095c8555f02f846f5e3a4e1fbad0b01",
+      "kind": "paragraph",
+      "text": "context evaluation beyond literal matching, 2025. URL https://arxiv.org/abs/2502.05167. Niu, B., Song, Y ., Lian, K., Shen, Y ., Yao, Y ., Zhang, K., and Liu, T. Flow: Modularized agentic workflow automation.",
+      "order": 141,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Rossi, R. A., Yoon, S., and Sch¨utze, H. Nolima: Long-"
+      ],
+      "char_start": 37539,
+      "char_end": 37747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60bafcab6c87d295499cc8405de61223",
+      "kind": "heading",
+      "text": "InThe Thirteenth International Conference on Learning",
+      "order": 142,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InThe Thirteenth International Conference on Learning"
+      ],
+      "char_start": 37749,
+      "char_end": 37802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77da4e8d4ebfc80ce744b64b4e7a23f7",
+      "kind": "paragraph",
+      "text": "Representations, 2025. URL https://openreview. net/forum?id=sLKDbuyq99.",
+      "order": 143,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InThe Thirteenth International Conference on Learning"
+      ],
+      "char_start": 37804,
+      "char_end": 37875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8fd3cf8e0bded17487f5c6f6e3380ad",
+      "kind": "heading",
+      "text": "Nour Eldin, A., Assy, N., Anesini, O., Dalmas, B., and",
+      "order": 144,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Nour Eldin, A., Assy, N., Anesini, O., Dalmas, B., and"
+      ],
+      "char_start": 37877,
+      "char_end": 37931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9421e4cf2b7c4f958f96fae4f687dbe7",
+      "kind": "heading",
+      "text": "Gaaloul, W. Nala2bpmn: Automating BPMN model",
+      "order": 145,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Gaaloul, W. Nala2bpmn: Automating BPMN model"
+      ],
+      "char_start": 37933,
+      "char_end": 37977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:092e7d1af13764b15f22a02e0ae81b6e",
+      "kind": "paragraph",
+      "text": "generation with large language models. In Comuzzi, M., Grigori, D., Sellami, M., and Zhou, X. (eds.),Cooperative Information Systems, volume 15506 ofLecture Notes in Computer Science, pp. 398–404. Springer, Cham, 2025. doi: 10.1007/978-3-031-81375-7 27. URL https://link.springer.com/chapter/",
+      "order": 146,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Gaaloul, W. Nala2bpmn: Automating BPMN model"
+      ],
+      "char_start": 37979,
+      "char_end": 38271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26ed67b5541abd3f90930bbf4642cf34",
+      "kind": "heading",
+      "text": "1007/978-3-031-81375-7_27.",
+      "order": 147,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Gaaloul, W. Nala2bpmn: Automating BPMN model",
+        "1007/978-3-031-81375-7_27."
+      ],
+      "char_start": 38273,
+      "char_end": 38299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7d2492fdd4c3fa617821d9010b5d9c1",
+      "kind": "paragraph",
+      "text": "Reichert, M. and Weber, B.Enabling flexibility in processaware information systems: challenges, methods, technologies, volume 54. Springer, 2012. Rosa, M. L., van der Aalst, W. M. P., Dumas, M., and Milani, F. P. Business process variability modeling: A survey.ACM Computing Surveys, 50(1), 2017. doi:",
+      "order": 148,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Gaaloul, W. Nala2bpmn: Automating BPMN model",
+        "1007/978-3-031-81375-7_27."
+      ],
+      "char_start": 38301,
+      "char_end": 38602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45a5e490611e542c018ed510470f2024",
+      "kind": "heading",
+      "text": "1145/3041957.",
+      "order": 149,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Gaaloul, W. Nala2bpmn: Automating BPMN model",
+        "1145/3041957."
+      ],
+      "char_start": 38604,
+      "char_end": 38617,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9deba1284c6ba3d2b6584ce343ef2be6",
+      "kind": "heading",
+      "text": "Rosemann, M., Recker, J., and Flender, C. Contextualisation",
+      "order": 150,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Rosemann, M., Recker, J., and Flender, C. Contextualisation"
+      ],
+      "char_start": 38619,
+      "char_end": 38678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:025f836c0a93dcf3ddfd439a098f7459",
+      "kind": "paragraph",
+      "text": "of business processes.International Journal of Business Process Integration and Management, 3(1):47–60, 2008.",
+      "order": 151,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Rosemann, M., Recker, J., and Flender, C. Contextualisation"
+      ],
+      "char_start": 38680,
+      "char_end": 38789,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8b82eaa3c3eb19a165881d4b75bf967",
+      "kind": "heading",
+      "text": "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Vibe",
+      "order": 152,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Vibe"
+      ],
+      "char_start": 38791,
+      "char_end": 38843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed4487d14aabd979cc9d2ebc8ec3b3fd",
+      "kind": "paragraph",
+      "text": "coding vs. agentic coding: Fundamentals and practical implications of agentic ai, 2025. URL https: //arxiv.org/abs/2505.19443.",
+      "order": 153,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Vibe"
+      ],
+      "char_start": 38845,
+      "char_end": 38971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b5fe8ad106bd4370bbd1e958c66bae2",
+      "kind": "heading",
+      "text": "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents",
+      "order": 154,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents"
+      ],
+      "char_start": 38973,
+      "char_end": 39030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:726f899c6675d3de9c1eb24fe0c5f251",
+      "kind": "paragraph",
+      "text": "vs. agentic ai: A conceptual taxonomy, applications and challenges.Information Fusion, 126:103599, February",
+      "order": 155,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents"
+      ],
+      "char_start": 39032,
+      "char_end": 39139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35efd584d92636b1bda1dbba3b0ce057",
+      "kind": "heading",
+      "text": "ISSN 1566-2535. doi: 10.1016/j.inffus.2025.",
+      "order": 156,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents",
+        "ISSN 1566-2535. doi: 10.1016/j.inffus.2025."
+      ],
+      "char_start": 39141,
+      "char_end": 39184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a83870d3ad2116e467d78100b6fdd83",
+      "kind": "heading",
+      "text": "URL http://dx.doi.org/10.1016/j.",
+      "order": 157,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents",
+        "URL http://dx.doi.org/10.1016/j."
+      ],
+      "char_start": 39186,
+      "char_end": 39218,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ba96bd26f7ece6774006d3796df31b5",
+      "kind": "paragraph",
+      "text": "inffus.2025.103599. 9",
+      "order": 158,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents",
+        "URL http://dx.doi.org/10.1016/j."
+      ],
+      "char_start": 39220,
+      "char_end": 39241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:086974619df9fdb83dd87730fbab6e63",
+      "kind": "paragraph",
+      "text": "Schick, T., Dwivedi-Yu, J., Dessi, R., Raileanu, R., Lomeli,",
+      "order": 159,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Sapkota, R., Roumeliotis, K. I., and Karkee, M. Ai agents",
+        "URL http://dx.doi.org/10.1016/j."
+      ],
+      "char_start": 39243,
+      "char_end": 39303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:505d048c7fa99d470a72af3f1aadcb58",
+      "kind": "heading",
+      "text": "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+      "order": 160,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and"
+      ],
+      "char_start": 39305,
+      "char_end": 39355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d2dd4f7ba041725283d70e37d93aae0",
+      "kind": "paragraph",
+      "text": "Scialom, T. Toolformer: Language models can teach themselves to use tools. InAdvances in Neural Information Processing Systems (NeurIPS), 2023. URL https://arxiv.org/abs/2302.04761. Singhal, K., Azizi, S., Tu, T., Mahdavi, S. S., Wei, J., Chung, H. W., Scales, N., Tanwani, A., Cole-Lewis, H., Pfohl, S., et al. Large language models encode clinical knowledge. Nature, 620(7972):172–180, 2023. Skouradaki, M., Andrikopoulos, V ., and Leymann, F. Representative bpmn 2.0 process model generation from recurring structures. InProceedings of the 23rd IEEE International Conference on Web Services (ICWS), pp. 468–475. IEEE, 2016. Toxtli, C. and Li, W. Automating automation: Using LLMs to generate BPMN workflows for RPA integration. InComputational Science and Computational Intelligence. Springer, Cham,",
+      "order": 161,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and"
+      ],
+      "char_start": 39357,
+      "char_end": 40159,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca37a23820da8e937e45f8920927d05c",
+      "kind": "heading",
+      "text": "doi: 10.1007/978-3-031-86623-4 18. URL",
+      "order": 162,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "doi: 10.1007/978-3-031-86623-4 18. URL"
+      ],
+      "char_start": 40161,
+      "char_end": 40199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c55c70e87f370b2776ab59770c2e2a9",
+      "kind": "paragraph",
+      "text": "https://link.springer.com/chapter/10. 1007/978-3-031-86623-4_18. van der Aalst, W. M. P. and Carmona, J. (eds.).Process Mining Handbook, volume 448 ofLecture Notes in Business Information Processing. Springer, Cham, 2022. doi:",
+      "order": 163,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "doi: 10.1007/978-3-031-86623-4 18. URL"
+      ],
+      "char_start": 40201,
+      "char_end": 40427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69fbf4cff59f52042b301c013edd2fdf",
+      "kind": "heading",
+      "text": "1007/978-3-031-08848-3.",
+      "order": 164,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "1007/978-3-031-08848-3."
+      ],
+      "char_start": 40429,
+      "char_end": 40452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09308ea6f21fe9016374b89375fef353",
+      "kind": "heading",
+      "text": "Van Der Aalst, W. M. P., Bichler, M., and Heinzl, A. Chal-",
+      "order": 165,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Van Der Aalst, W. M. P., Bichler, M., and Heinzl, A. Chal-"
+      ],
+      "char_start": 40454,
+      "char_end": 40512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90281e74c5dde294e4eff9b76eceefb0",
+      "kind": "paragraph",
+      "text": "lenges in business process intelligence.Business & Information Systems Engineering, 62(6):535–536, 2020. Wei, J., Wang, X., Schuurmans, D., Bosma, M., Xia, F., Chi, E., Le, Q. V ., Zhou, D., et al. Chain-of-thought prompting elicits reasoning in large language models.Advances in neural information processing systems, 35:24824–24837, 2022.",
+      "order": 166,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Van Der Aalst, W. M. P., Bichler, M., and Heinzl, A. Chal-"
+      ],
+      "char_start": 40514,
+      "char_end": 40854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23b5d1eb75fcce04ece8d7eceb6a2ecf",
+      "kind": "heading",
+      "text": "Weske, M.Business Process Management: Concepts, Lan-",
+      "order": 167,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Weske, M.Business Process Management: Concepts, Lan-"
+      ],
+      "char_start": 40856,
+      "char_end": 40908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ebc48a8a1f084547482f85b6fe72323",
+      "kind": "paragraph",
+      "text": "guages, Architectures. Springer, Berlin, Heidelberg, 3rd edition, 2019. White, S. A. Introduction to bpmn.Ibm Cooperation, 2(0): 0, 2004. Wooldridge, M. and Jennings, N. R. Intelligent agents: Theory and practice.The knowledge engineering review, 10(2):115–152, 1995. Wu, Q., Bansal, G., Zhang, J., Wu, Y ., Li, B., Zhu, E., Jiang,",
+      "order": 168,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Weske, M.Business Process Management: Concepts, Lan-"
+      ],
+      "char_start": 40910,
+      "char_end": 41241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:550db5c22c96a6e4fbb45ac46e0eea56",
+      "kind": "heading",
+      "text": ", Zhang, X., Zhang, S., Liu, J., et al. Autogen: Enabling",
+      "order": 169,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Weske, M.Business Process Management: Concepts, Lan-",
+        ", Zhang, X., Zhang, S., Liu, J., et al. Autogen: Enabling"
+      ],
+      "char_start": 41243,
+      "char_end": 41300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3151660d8920683c21048781ca008a3",
+      "kind": "paragraph",
+      "text": "next-gen llm applications via multi-agent conversations. InFirst Conference on Language Modeling, 2024. Yang, J., Jimenez, C. E., Wettig, A., Lieret, K., Yao,",
+      "order": 170,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Weske, M.Business Process Management: Concepts, Lan-",
+        ", Zhang, X., Zhang, S., Liu, J., et al. Autogen: Enabling"
+      ],
+      "char_start": 41302,
+      "char_end": 41460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88d42cbf6c7ca6b358f127c43fcc4ffb",
+      "kind": "heading",
+      "text": "S., Narasimhan, K., and Press, O. Swe-agent: Agent-",
+      "order": 171,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Narasimhan, K., and Press, O. Swe-agent: Agent-"
+      ],
+      "char_start": 41462,
+      "char_end": 41513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c8dceac32ee6ab2fe50902be83c400e",
+      "kind": "paragraph",
+      "text": "computer interfaces enable automated software engineering, 2024. URL https://arxiv.org/abs/2405. 15793.",
+      "order": 172,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Narasimhan, K., and Press, O. Swe-agent: Agent-"
+      ],
+      "char_start": 41515,
+      "char_end": 41618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9808a0c472af3b9f3670301b8c9a852a",
+      "kind": "heading",
+      "text": "Yang, S., Nachum, O., Du, Y ., Wei, J., Abbeel, P., and",
+      "order": 173,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Yang, S., Nachum, O., Du, Y ., Wei, J., Abbeel, P., and"
+      ],
+      "char_start": 41620,
+      "char_end": 41675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f5f4a1a54864993ea19fa388a159ed2",
+      "kind": "paragraph",
+      "text": "Schuurmans, D. Foundation models for decision making: Problems, methods, and opportunities.arXiv preprint arXiv:2303.04129, 2023. Yao, S., Yu, D., Zhao, J., Shafran, I., Griffiths, T. L., Cao, Y ., and Narasimhan, K. Tree of thoughts: Deliberate problem solving with large language models.",
+      "order": 174,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Yang, S., Nachum, O., Du, Y ., Wei, J., Abbeel, P., and"
+      ],
+      "char_start": 41677,
+      "char_end": 41966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:853cd7e560dc78ea1d06c104cacba2fb",
+      "kind": "heading",
+      "text": "InAdvances in Neural Information Processing Systems",
+      "order": 175,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InAdvances in Neural Information Processing Systems"
+      ],
+      "char_start": 41968,
+      "char_end": 42019,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9313c1508153cc82af72dc959f82dc1d",
+      "kind": "paragraph",
+      "text": "(NeurIPS 2023), 2023a. URL https://arxiv.org/ abs/2305.10601. Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., and Cao, Y . React: Synergizing reasoning and acting in language models. InInternational Conference on Learning Representations (ICLR), 2023b. URL https: //openreview.net/forum?id=WE_vluYUL-X. Ye, Y ., Cong, X., Tian, S., Cao, J., Wang, H., Qin, Y ., Lu, Y ., Yu, H., Wang, H., Lin, Y ., Liu, Z., and Sun, M. Proagent: From robotic process automation to agentic process automation.arXiv preprint arXiv:2311.10751,",
+      "order": 176,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InAdvances in Neural Information Processing Systems"
+      ],
+      "char_start": 42021,
+      "char_end": 42560,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daa98d58a5026f7dbe35857a55699c79",
+      "kind": "heading",
+      "text": "doi: 10.48550/arXiv.2311.10751. URL https",
+      "order": 177,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InAdvances in Neural Information Processing Systems",
+        "doi: 10.48550/arXiv.2311.10751. URL https"
+      ],
+      "char_start": 42562,
+      "char_end": 42603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc031aeef3f37cab578fb0b3dbaf6f9e",
+      "kind": "paragraph",
+      "text": "//arxiv.org/abs/2311.10751. Zeng, Z., Watson, W., Cho, N., Rahimi, S., Reynolds,",
+      "order": 178,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "InAdvances in Neural Information Processing Systems",
+        "doi: 10.48550/arXiv.2311.10751. URL https"
+      ],
+      "char_start": 42605,
+      "char_end": 42685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d035ef3a4e91baaf92bf570ce1c361f",
+      "kind": "heading",
+      "text": "S., Balch, T., and Veloso, M. Flowmind: Automatic",
+      "order": 179,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic"
+      ],
+      "char_start": 42687,
+      "char_end": 42736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ec06e621bc58d1cc036cfcadc95722a",
+      "kind": "paragraph",
+      "text": "workflow generation with LLMs. InProceedings of the 4th ACM International Conference on AI in Finance (ICAIF ’23), New York, NY , USA, 2023. ACM. doi:",
+      "order": 180,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic"
+      ],
+      "char_start": 42738,
+      "char_end": 42888,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c2fc0de2142312875c10453ac586cb4",
+      "kind": "heading",
+      "text": "1145/3604237.3626908. URL https://arxiv.",
+      "order": 181,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic",
+        "1145/3604237.3626908. URL https://arxiv."
+      ],
+      "char_start": 42890,
+      "char_end": 42930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b692e03c11c0c82624a54db2d1316db",
+      "kind": "paragraph",
+      "text": "org/pdf/2404.13050. Zhang, G., Niu, L., Fang, J., Wang, K., BAI, L., and Wang,",
+      "order": 182,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic",
+        "1145/3604237.3626908. URL https://arxiv."
+      ],
+      "char_start": 42932,
+      "char_end": 43010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:384e88b297cc86a46d7dd9f1e9aa3d09",
+      "kind": "heading",
+      "text": "Multi-agent architecture search via agentic super-",
+      "order": 183,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic",
+        "Multi-agent architecture search via agentic super-"
+      ],
+      "char_start": 43012,
+      "char_end": 43062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a689119bc493a26b86a701517dc9a057",
+      "kind": "paragraph",
+      "text": "net. InForty-second International Conference on Machine Learning, 2025a. URL https://openreview. net/forum?id=imcyVlzpXh. Zhang, J., Xiang, J., Yu, Z., Teng, F., Chen, X.-H., Chen, J., Zhuge, M., Cheng, X., Hong, S., Wang, J., Zheng,",
+      "order": 184,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "S., Balch, T., and Veloso, M. Flowmind: Automatic",
+        "Multi-agent architecture search via agentic super-"
+      ],
+      "char_start": 43064,
+      "char_end": 43297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7a9d3f96d3ca6decc071b7d28677d1c",
+      "kind": "heading",
+      "text": "B., Liu, B., Luo, Y ., and Wu, C. AFlow: Automat-",
+      "order": 185,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "B., Liu, B., Luo, Y ., and Wu, C. AFlow: Automat-"
+      ],
+      "char_start": 43299,
+      "char_end": 43348,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad7584738d9100a3135e58b708c6ed93",
+      "kind": "paragraph",
+      "text": "ing agentic workflow generation. InThe Thirteenth International Conference on Learning Representations, 2025b. URL https://openreview.net/forum? id=z5uVAKwmjf. 10",
+      "order": 186,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "B., Liu, B., Luo, Y ., and Wu, C. AFlow: Automat-"
+      ],
+      "char_start": 43350,
+      "char_end": 43512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bb86a0a13da10861c366a3afc14fd3b",
+      "kind": "heading",
+      "text": "A. Appendix",
+      "order": 187,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A. Appendix"
+      ],
+      "char_start": 43514,
+      "char_end": 43525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fc92a01e871b944e93b6428f057bb38",
+      "kind": "heading",
+      "text": "A.1. Workflow Agent Runs",
+      "order": 188,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.1. Workflow Agent Runs"
+      ],
+      "char_start": 43527,
+      "char_end": 43551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc530b713b80584d17eadaf14dcc0259",
+      "kind": "caption",
+      "text": "Figure 3.Per Workflow Agent Run Evaluation Metrics: Tool-Use Exactness, Tool-Call Errors, Latency and Process Adherence for the",
+      "order": 189,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.1. Workflow Agent Runs"
+      ],
+      "char_start": 43553,
+      "char_end": 43680,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7286a7d5631ae60fbb323a31b0bc1740",
+      "kind": "heading",
+      "text": "Specialist System",
+      "order": 190,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Specialist System"
+      ],
+      "char_start": 43682,
+      "char_end": 43699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa5ce3c7c1c02e5c201bf34b61545a20",
+      "kind": "paragraph",
+      "text": "11",
+      "order": 191,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Specialist System"
+      ],
+      "char_start": 43701,
+      "char_end": 43703,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9de826d01d64f55d96e9dd69c8d19349",
+      "kind": "heading",
+      "text": "A.2. Workflow Summary Table",
+      "order": 192,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.2. Workflow Summary Table"
+      ],
+      "char_start": 43705,
+      "char_end": 43732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fbf14deac5c5ba61f4be984d791f910",
+      "kind": "heading",
+      "text": "Workflow Brief Overview Nodes Edges",
+      "order": 193,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Workflow Brief Overview Nodes Edges"
+      ],
+      "char_start": 43734,
+      "char_end": 43769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbdf43c439ef73c68dfc6098db050d97",
+      "kind": "paragraph",
+      "text": "Cart Online retail order fulfillment process covering cart validation, payment authorisation, inventory reservation, shipping, delivery monitoring, and refund/reorder handling.",
+      "order": 194,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "Workflow Brief Overview Nodes Edges"
+      ],
+      "char_start": 43771,
+      "char_end": 43947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86bc2c14ab1dc3241ce09487083ff174",
+      "kind": "heading",
+      "text": "60",
+      "order": 195,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "60"
+      ],
+      "char_start": 43949,
+      "char_end": 43951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a9f6a6f7be255a124d9de19c3293882",
+      "kind": "paragraph",
+      "text": "Cost Fraud cost optimisation workflow that evaluates rules, checks fraud flags, payment status, and recoverability to compute operational costs and penalties.",
+      "order": 196,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "60"
+      ],
+      "char_start": 43953,
+      "char_end": 44111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98c0667b05cf6e5d1ace9a4efd01942b",
+      "kind": "heading",
+      "text": "15",
+      "order": 197,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "15"
+      ],
+      "char_start": 44113,
+      "char_end": 44115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3ce40be69439944d8477755c464e4b2",
+      "kind": "paragraph",
+      "text": "Deal Black Friday deal locator that routes based on user preferences (online/instore), fetches deals, filters by relevance, and presents ranked results.",
+      "order": 198,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "15"
+      ],
+      "char_start": 44117,
+      "char_end": 44269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77d5fb0aa2454fae0ce38a5532683c10",
+      "kind": "heading",
+      "text": "13",
+      "order": 199,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "13"
+      ],
+      "char_start": 44271,
+      "char_end": 44273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19c0ee849aa40ed3e0099a9796ccd8b7",
+      "kind": "paragraph",
+      "text": "Labelling User disengagement classification workflow that checks eligibility, funding status, and account closure to assign “Disengaged” or “Exclude” labels.",
+      "order": 200,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "13"
+      ],
+      "char_start": 44275,
+      "char_end": 44432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9ec96de764728222f5f98c2bbe506b8",
+      "kind": "heading",
+      "text": "16",
+      "order": 201,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "16"
+      ],
+      "char_start": 44434,
+      "char_end": 44436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be8b50d361415769f42e18a4c0a22f53",
+      "kind": "paragraph",
+      "text": "News News article collection pipeline that queries multiple providers, validates responses, applies filters, and aggregates results with run metrics.",
+      "order": 202,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "16"
+      ],
+      "char_start": 44438,
+      "char_end": 44587,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4ca2d1ca48a6d2d791c5a176276d38f",
+      "kind": "heading",
+      "text": "38",
+      "order": 203,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "38"
+      ],
+      "char_start": 44589,
+      "char_end": 44591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:baff66254c48e99e00781d8d2839b5d7",
+      "kind": "paragraph",
+      "text": "Risk Risk and opportunity classifier that computes risk/opportunity scores, applies threshold checks, assigns priority levels, and persists classification records.",
+      "order": 204,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "38"
+      ],
+      "char_start": 44593,
+      "char_end": 44756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb1d6230f29b1887e23d32189b562891",
+      "kind": "heading",
+      "text": "25",
+      "order": 205,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "25"
+      ],
+      "char_start": 44758,
+      "char_end": 44760,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea62dfa484957677eac80dd6789227b6",
+      "kind": "paragraph",
+      "text": "Social Media Social media signal collector that fetches posts across platforms, normalises fields, filters by language/region/content type, and builds aggregated datasets.",
+      "order": 206,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "25"
+      ],
+      "char_start": 44762,
+      "char_end": 44933,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d094b1427789eafcab33a68f45abeed7",
+      "kind": "heading",
+      "text": "29",
+      "order": 207,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "29"
+      ],
+      "char_start": 44935,
+      "char_end": 44937,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b96238b137207ec54947e65332fb8e32",
+      "kind": "paragraph",
+      "text": "Promotion Customer promotion workflow that fetches profiles, validates eligibility, retrieves order history and loyalty points, segments customers by value tier, calculates discounts, generates recommendations, and sends notifications based on urgency.",
+      "order": 208,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "29"
+      ],
+      "char_start": 44939,
+      "char_end": 45191,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76af67db8ca8141768cf4ec476a90ffb",
+      "kind": "heading",
+      "text": "19",
+      "order": 209,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "19"
+      ],
+      "char_start": 45193,
+      "char_end": 45195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f99befede6855638d2f181c2fc8fdbac",
+      "kind": "paragraph",
+      "text": "Tournament Tournament registration process that validates player eligibility, checks slot availability, submits registration, and confirms or rejects enrollment.",
+      "order": 210,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "19"
+      ],
+      "char_start": 45197,
+      "char_end": 45358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ee9e185f3d7c53510537d9ad468a39c",
+      "kind": "heading",
+      "text": "17",
+      "order": 211,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "17"
+      ],
+      "char_start": 45360,
+      "char_end": 45362,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:baf59722bc5c4d383790f75a3a90733d",
+      "kind": "paragraph",
+      "text": "Weather Weather forecast workflow that fetches weather data, validates retrieval, parses conditions, and displays either severe alerts or regular forecasts.",
+      "order": 212,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "17"
+      ],
+      "char_start": 45364,
+      "char_end": 45520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6587de238f4c596338c13174bc9b5011",
+      "kind": "heading",
+      "text": "10",
+      "order": 213,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "10"
+      ],
+      "char_start": 45522,
+      "char_end": 45524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec2e33f3c78a8fa810a01fff75c2739e",
+      "kind": "caption",
+      "text": "Table 1.Summary of the ten deterministic BPMN workflows used for evaluation. Nodes include tasks, gateways, and start/end events;",
+      "order": 214,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "10"
+      ],
+      "char_start": 45526,
+      "char_end": 45655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9012f1ffc1c3b63478128f8d4f4a903c",
+      "kind": "paragraph",
+      "text": "edges represent sequence flows between nodes. 12",
+      "order": 215,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "10"
+      ],
+      "char_start": 45657,
+      "char_end": 45705,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c020659d92bc3e2e2cade095274e0371",
+      "kind": "heading",
+      "text": "A.3. Key Metrics by Approach",
+      "order": 216,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.3. Key Metrics by Approach"
+      ],
+      "char_start": 45707,
+      "char_end": 45735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9330350b482ed747d9c4646f6ee67775",
+      "kind": "caption",
+      "text": "Figure 4.Key metrics by approach.Comparison of key metrics across different approaches in agent run evaluation.",
+      "order": 217,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.3. Key Metrics by Approach"
+      ],
+      "char_start": 45737,
+      "char_end": 45848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:092790152d22c886ac342b71fac7b347",
+      "kind": "paragraph",
+      "text": "13",
+      "order": 218,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.3. Key Metrics by Approach"
+      ],
+      "char_start": 45850,
+      "char_end": 45852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7c6aee0f8060e5c6e3dfee8a4dea11a",
+      "kind": "heading",
+      "text": "A.4. Base Prompt for Agent Generation",
+      "order": 219,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation"
+      ],
+      "char_start": 45854,
+      "char_end": 45891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:effe80a52646a8c0352a62a0df4f7c6e",
+      "kind": "paragraph",
+      "text": "Create a GenAI powered ReAct agent in a new folder called {framework} agent experiment {num}. Do not create a state machine, hardcoded implementation or any other implementation, your agent should be a GenAI powered ReAct agent that uses tool calls to complete the task. Do not ask any questions about what implementation to use -- you should make all of these decisions yourself. Your agent folder needs at least 3 files:",
+      "order": 220,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation"
+      ],
+      "char_start": 45893,
+      "char_end": 46315,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec38b15b5b364358cb882cca360b744a",
+      "kind": "heading",
+      "text": "agent.py-- a FastAPI service on localhost:7860 with two endpoints: /chat",
+      "order": 221,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "agent.py-- a FastAPI service on localhost:7860 with two endpoints: /chat"
+      ],
+      "char_start": 46317,
+      "char_end": 46389,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98782f3789a9aeb5c19b4a2028694f0a",
+      "kind": "paragraph",
+      "text": "(accepts conversation id, cif, and message; if no message is required it can accept an empty string; returns the end result of the GenAI powered ReAct agent designed to execute the workflow) and /get history (accepts conversation id; returns the complete conversation history and all tools called by the agent including tool name & tool output, i.e.{\"conversation\": [], \"tool calls\": []}). It should adhere to the provided API spec. Ensure this file has a main function that uses uvicorn to run the app.",
+      "order": 222,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "agent.py-- a FastAPI service on localhost:7860 with two endpoints: /chat"
+      ],
+      "char_start": 46391,
+      "char_end": 46894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89f089546c2761096bf0742c474c3194",
+      "kind": "heading",
+      "text": "tools.py-- contains all tools for the agent.",
+      "order": 223,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "tools.py-- contains all tools for the agent."
+      ],
+      "char_start": 46896,
+      "char_end": 46940,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d36f8937f38a1c19bedc22ed46dcbcb2",
+      "kind": "heading",
+      "text": "prompts/agent prompt.md-- contains the prompt for the agent.",
+      "order": 224,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "prompts/agent prompt.md-- contains the prompt for the agent."
+      ],
+      "char_start": 46942,
+      "char_end": 47002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa321d4d1c07b83f39bd169fa1a9db12",
+      "kind": "paragraph",
+      "text": "Use the following to get the necessary API details for the LLM calls for your ReAct agent: openai base url = os.environ.get(\"OPENAI BASE URL\") openai api key = os.environ.get(\"OPENAI API KEY\") model name = os.environ.get(\"AGENT LLM\") Your agent should be based on the provided BPMN specification (passed in the <BPMN> block). You are not permitted to read any other files to complete this task. Use the venv stored at YOUR VENV HERE. Do not examine this venv or try to install new libraries -- if needed they will be automatically installed for you. Do not attempt to execute your code after completing it; manual testing will be performed and any errors will be passed directly to you.",
+      "order": 225,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "prompts/agent prompt.md-- contains the prompt for the agent."
+      ],
+      "char_start": 47004,
+      "char_end": 47690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7e8e4f6e5760fd9c5ecfcb0d39609f1",
+      "kind": "caption",
+      "text": "Figure 5.Base prompt provided to Roo and Cline for each agent generation attempt. The {num} placeholder was incremented per attempt,",
+      "order": 226,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "prompts/agent prompt.md-- contains the prompt for the agent."
+      ],
+      "char_start": 47692,
+      "char_end": 47824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63a182b59a9b48cd8305221558f3d9e8",
+      "kind": "paragraph",
+      "text": "and the <API SPEC> and <BPMN> blocks were populated with the actual API specification and BPMN workflow for each experiment. 14",
+      "order": 227,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.4. Base Prompt for Agent Generation",
+        "prompts/agent prompt.md-- contains the prompt for the agent."
+      ],
+      "char_start": 47826,
+      "char_end": 47953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73b37e88e9488e344393de883f377c79",
+      "kind": "heading",
+      "text": "A.5. BPMN Specifications for Each Workflow",
+      "order": 228,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 47955,
+      "char_end": 47997,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:080b26f88e8dd8077ca7cc44bcbb5dc5",
+      "kind": "caption",
+      "text": "Figure 6.Online retail cart/order fulfillment workflow.The process validates the cart, authorises payment, reserves inventory, and",
+      "order": 229,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 47999,
+      "char_end": 48129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b7bfaa8e77616c5a1563353137d0d35",
+      "kind": "paragraph",
+      "text": "routes to either fulfillment/shipping or cancellation/backorder handling depending on payment and stock decisions. After shipping, it monitors delivery and branches into delayed/lost handling, ending in either delivery confirmation, refund, or reorder. 15",
+      "order": 230,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48131,
+      "char_end": 48386,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8d20b14d30998ed8af19ed7fc18eab",
+      "kind": "caption",
+      "text": "Figure 7.Costing/estimation workflow.A deterministic sequence of data-gathering and calculation tasks with decision gateways that",
+      "order": 231,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48388,
+      "char_end": 48517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a330efcda3c2b02aecd29c3e4885f629",
+      "kind": "paragraph",
+      "text": "select which cost components to apply, followed by aggregation into a final cost/price output. 16",
+      "order": 232,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48519,
+      "char_end": 48616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:afeb51fa0e4a8dc13bc23b877410922e",
+      "kind": "caption",
+      "text": "Figure 8.Deal assessment workflow.The workflow evaluates a candidate deal through staged checks and scoring steps, using decision",
+      "order": 233,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48618,
+      "char_end": 48747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a76ca932c303d29663d8bf2ca9ae8b6f",
+      "kind": "paragraph",
+      "text": "gateways to route to accept/reject/escalate outcomes based on thresholds and validation checks. 17",
+      "order": 234,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48749,
+      "char_end": 48847,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd6f1e3948646d5446d4876af383b575",
+      "kind": "caption",
+      "text": "Figure 9.Labelling/classification workflow.A rules/criteria-driven labelling pipeline that applies sequential checks and uses gateways to",
+      "order": 235,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48849,
+      "char_end": 48986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce2055a1c1c929e917a0b1be3e2f6173",
+      "kind": "paragraph",
+      "text": "assign labels and/or exclude items, terminating once a label decision is reached. 18",
+      "order": 236,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 48988,
+      "char_end": 49072,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d605c6697c0bac3c5ff39db62992f79",
+      "kind": "caption",
+      "text": "Figure 10.News processing workflow.The process ingests an item, performs validation and enrichment steps, then routes through",
+      "order": 237,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49074,
+      "char_end": 49199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:468fc4e0f035e7d78a85191fe16439b5",
+      "kind": "paragraph",
+      "text": "conditional branches (e.g., eligibility/quality thresholds) to produce a final categorisation/output or a discard/escalation outcome. 19",
+      "order": 238,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49201,
+      "char_end": 49337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9431d6908e4f9c6ee0ea11b34abfc92a",
+      "kind": "caption",
+      "text": "Figure 11.Risk & opportunity classifier workflow.The workflow computes risk/opportunity signals, derives a final label",
+      "order": 239,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49339,
+      "char_end": 49457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dff070f21601f74b8936de3db89c57f1",
+      "kind": "paragraph",
+      "text": "(risk/opportunity/mixed/neutral), then routes by a decision gateway into different priority/handling paths (e.g., high/medium vs low) before completing. 20",
+      "order": 240,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49459,
+      "char_end": 49614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1cb577e1224fec7779a41c21112c163",
+      "kind": "caption",
+      "text": "Figure 12.Social media workflow.A multi-step pipeline that performs content/user/context checks and then uses decision gateways to",
+      "order": 241,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49616,
+      "char_end": 49746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cec6d004cc32e450f92603ee7391b21",
+      "kind": "paragraph",
+      "text": "choose an action path (e.g., allow, flag, or escalate), ending once an action outcome is produced. 21",
+      "order": 242,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49748,
+      "char_end": 49849,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b9f26a54785e47f8eb6e029db7c6674",
+      "kind": "caption",
+      "text": "Figure 13.Customer promotion workflow.The process fetches and validates customer profiles, retrieves order history and loyalty",
+      "order": 243,
+      "page_number": 22,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49851,
+      "char_end": 49977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:520ba40471d95ae41cf25456575afdf7",
+      "kind": "paragraph",
+      "text": "points, checks promotion eligibility, segments customers into value tiers (high/low), calculates tier-appropriate discounts, generates recommendations, and routes notifications based on promotion urgency. 22",
+      "order": 244,
+      "page_number": 22,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 49979,
+      "char_end": 50186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5d72429b47988e640d404057138671b",
+      "kind": "caption",
+      "text": "Figure 14.Tournament/bracket workflow.The workflow advances items/participants through staged rounds, using decision gateways to",
+      "order": 245,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 50188,
+      "char_end": 50316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05f4ebdb747cb3c7a712fac5cfa4d2c8",
+      "kind": "paragraph",
+      "text": "determine advancement and termination once a final winner/outcome is determined. 23",
+      "order": 246,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 50318,
+      "char_end": 50401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dd8a2822db1ee0364a9cca230ba6559",
+      "kind": "caption",
+      "text": "Figure 15.Weather workflow.A deterministic sequence of data retrieval and transformation steps with conditional branches (e.g., data",
+      "order": 247,
+      "page_number": 24,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 50403,
+      "char_end": 50535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4710372282696185925905fa71c389e",
+      "kind": "paragraph",
+      "text": "availability/threshold checks), culminating in a final forecast/decision output. 24",
+      "order": 248,
+      "page_number": 24,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Generalist LLMs: Specialist Agentic Systems for Structured Code",
+        "A.5. BPMN Specifications for Each Workflow"
+      ],
+      "char_start": 50537,
+      "char_end": 50620,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 24,
+    "removed_repeated_edge_lines": 23,
+    "extraction_method_counts": {
+      "native_text": 24
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.14456",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 24,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

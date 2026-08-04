@@ -1,0 +1,2198 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "3b8d6b6b2eeb7f678ddc95c55a6bfeacfecaba2c6aebe85a4ef94a4a5e490152",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:1ddaf707553b769b5f481008d00c3adc",
+      "kind": "heading",
+      "text": "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate"
+      ],
+      "char_start": 0,
+      "char_end": 61,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b6d136698fdb350f355f1bf4c3828fa",
+      "kind": "paragraph",
+      "text": "Training (SIFT) for Dynamic Document Classification",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate"
+      ],
+      "char_start": 63,
+      "char_end": 114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:def3f99227c47fa38807145d76ed22b7",
+      "kind": "table",
+      "text": "Bogdan Răduță  ·  Horia Velicu  ·  Alexandru Preda  ·  Șerban Chiricescu",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate"
+      ],
+      "char_start": 116,
+      "char_end": 188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:856f533ac96998abc9a3bbd7646d153a",
+      "kind": "heading",
+      "text": "FlowX.AI",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "FlowX.AI"
+      ],
+      "char_start": 190,
+      "char_end": 198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9af2bc6db14c2e74df38b2a47803ce3",
+      "kind": "paragraph",
+      "text": "bogdan.raduta@flowx.ai Abstract— Document classification is a solved problem in the laboratory and an unsolved one in the enterprise. The blocker is rarely model architecture; it is the labeling project that must precede a model and the institutional fear of letting a model retrain itself once one exists. We present  SIFT (Self-Improving, Frozen-gate Training), a dynamic classifier service, which attacks both. SIFT serves classification from a deliberately cheap, CPU-bound pipeline, a SPLADE sparse encoder feeding a LightGBM head[5], [6], and escalates only the low-confidence minority of pages to an LLM judge. The judge's verdicts are written back into a labeled corpus, so the expensive model continuously teaches the cheap one: the escalation rate falls, the corpus grows from production traffic rather than from an up-front annotation effort, and accuracy compounds with use. Onboarding a new document family requires only a declarative bundle, label space, anchor phrases, and a judge glossary, not a labeling project. The harder problem is safety: an autonomously retraining classifier can silently regress. SIFT resolves this with a two-part promote gate, a critical-label F1 regression check plus a frozen golden regression set the model is never trained on, either of which vetoes promotion. This turns “retrain monthly without a human” from reckless into routine. We describe the architecture, the self-feeding corpus loop, the frozen-gate promotion mechanism, and an illustrative multidomain deployment, and we discuss the economics of a classifier whose marginal labeling cost trends",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "FlowX.AI"
+      ],
+      "char_start": 200,
+      "char_end": 1802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b75a50925f372290c0b7922f63f512a2",
+      "kind": "paragraph",
+      "text": "toward zero. Keywords: document classification, continuous learning, LLM-as-judge, weak supervision, model cascade, active learning, eval-gated promotion, drift detection",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "FlowX.AI"
+      ],
+      "char_start": 1804,
+      "char_end": 1974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e8714a474452bb6af2ef8fbc0ab9e13",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction"
+      ],
+      "char_start": 1976,
+      "char_end": 1988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1cb5e16589f928477579368547fcb998",
+      "kind": "paragraph",
+      "text": "Ask why a bank still routes incoming documents by hand, or why an insurer's intake team manually sorts faxes, and the answer is almost never that text classification is technically hard. Supervised classifiers have been reliable for a decade. The answer is that putting one into production requires two things enterprises struggle to supply: a labeled corpus, which means a labeling project with domain experts before a single prediction is served, and a tolerance for retraining, which most organizations lack because a model that retrains itself can silently get worse. The result is a standoff. The model is easy; the labeling project is expensive and slow, and the fear of autonomous drift keeps even a trained model frozen at its launch weights until it quietly decays. Recent research has supplied the ingredients to break this standoff but not the recipe. Large language models used as judges can label data at a fraction of human cost, with reports of 500-to-5000-fold savings while matching human-to-human agreement[4]; LLM-driven active learning reduces the annotation burden further[3], [9]; and the literature is clear that a small, cheap model trained on good labels often outperforms a large model prompted zero-shot on a narrow domain task. Model cascades, cheap model first and expensive model only when needed, are a well-understood way to control inference cost[7]. Each of these is a paper, not a product, and none of them addresses the second half of the standoff: how to let the resulting classifier retrain itself",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction"
+      ],
+      "char_start": 1990,
+      "char_end": 3525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8dae7153470d9979c8d1cdd60d8c7674",
+      "kind": "paragraph",
+      "text": "without a human signing off on every cycle, safely. 1",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction"
+      ],
+      "char_start": 3527,
+      "char_end": 3580,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca019f9f9a5e5127dcc89c1abb811321",
+      "kind": "paragraph",
+      "text": "The bottleneck in production classification is not the model. It is the labeling project that must come before it and the fear of the retraining that must come after. Remove the first and tame the second. We present  SIFT (Self-Improving, Frozen-gate Training), the dynamic classifier service of the FlowX.AI Platform. SIFT is built on two commitments. The first is that the corpus should assemble itself from production traffic: a cheap model serves the bulk of predictions, an LLM judge handles only the uncertain minority, and the judge's verdicts flow back into the corpus as labeled data, so accuracy compounds with use and a new document family costs a declarative bundle rather than a labeling project. The second is that autonomous retraining must be safe by construction: every candidate model is scored against a frozen golden set it was never trained on and against a per-class regression check, and either can veto promotion. SIFT thus turns the two things enterprises fear, cold-start labeling and self-retraining, into routine, governed operations.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction"
+      ],
+      "char_start": 3582,
+      "char_end": 4644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2f04750aa9bf097b62c9b7661a2cb0f",
+      "kind": "heading",
+      "text": "Contributions",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction",
+        "Contributions"
+      ],
+      "char_start": 4646,
+      "char_end": 4659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5522c17a9f14f89fede20027fb6901e",
+      "kind": "paragraph",
+      "text": "A reframing of the production-classification problem around its real blockers, the up-front labeling project and the unsafety of autonomous retraining, rather than model accuracy. A cost-tiered serving architecture (SPLADE sparse features into a LightGBM head, with LLM-judge escalation only on low-confidence pages) whose escalation rate falls as the corpus grows. A self-feeding corpus: judge verdicts write back as labeled rows, a bootstrap path labels raw pages with zero data in, and an active-learning queue routes the hardest pages to humans. A frozen-gate promotion mechanism, a critical-label F1 regression check plus a never-trained-on golden regression set, that makes autonomous retraining safe. Domains expressed as declarative bundles, so a new document family is onboarded without code or a labeling project, with multi-tenant isolation throughout.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Introduction",
+        "Contributions"
+      ],
+      "char_start": 4661,
+      "char_end": 5524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba26db8e4920bb657a1e34283047e126",
+      "kind": "heading",
+      "text": "Two Unsolved Problems",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems"
+      ],
+      "char_start": 5526,
+      "char_end": 5547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8644a21d323b618ef710c7be88de654",
+      "kind": "heading",
+      "text": "The cold-start labeling project",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The cold-start labeling project"
+      ],
+      "char_start": 5549,
+      "char_end": 5580,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a6c9eec11df67558dcc9d8027ef4d6a",
+      "kind": "paragraph",
+      "text": "A supervised classifier needs labeled examples, and in a regulated enterprise those labels require domain experts whose time is scarce and expensive. The conventional path, commission a labeling project, wait weeks, then train, makes every new document family a capital expenditure, which is why most never get a model at all. Weak supervision[1] and active learning[2] were designed to reduce this cost, and LLM judges now reduce it dramatically[3], [4]. But a one-time labeling exercise, however cheap, still treats the corpus as a fixed artifact built before deployment, when the most representative labels are precisely the ones production traffic will generate after it.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The cold-start labeling project"
+      ],
+      "char_start": 5582,
+      "char_end": 6257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c8cdcd2949380a766b48718515afc64",
+      "kind": "heading",
+      "text": "The unsafety of autonomous retraining",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The unsafety of autonomous retraining"
+      ],
+      "char_start": 6259,
+      "char_end": 6296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f463b2c2352a4dcd5adaa779da848d18",
+      "kind": "paragraph",
+      "text": "Suppose the labels exist and a model is trained. The model will decay: document mixes shift, new sub-types appear, upstream OCR changes. The remedy is retraining, and the cheap way to retrain is automatically, on a schedule or a trigger. Yet few enterprises permit this, for a sound reason: an automated retrain can regress a",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The unsafety of autonomous retraining"
+      ],
+      "char_start": 6298,
+      "char_end": 6623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64c2b7e72432fbc3f0d2d40d1b1befea",
+      "kind": "table",
+      "text": "class  that  matters  while  improving  aggregate  accuracy,  and  no  one  notices  until  a  critical  document  is",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The unsafety of autonomous retraining"
+      ],
+      "char_start": 6625,
+      "char_end": 6742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33dc88ccfd71356dbd8cb3d67fcb0f66",
+      "kind": "paragraph",
+      "text": "misrouted. Concept-drift adaptation is well studied[8], but the operational question, what mechanism makes it safe to promote a freshly trained model without a human reviewing it, is usually answered with “don't,” which is why so many production classifiers are frozen and slowly rotting. • • • • • 2",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "The unsafety of autonomous retraining"
+      ],
+      "char_start": 6744,
+      "char_end": 7044,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec3c25b14752df8649c6dd9f454a1a7d",
+      "kind": "heading",
+      "text": "What is needed",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "What is needed"
+      ],
+      "char_start": 7046,
+      "char_end": 7060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9966f652a48c86abfec3b59b5301fbd9",
+      "kind": "paragraph",
+      "text": "Solving one problem without the other is insufficient. Cheap labeling that still produces a frozen model decays; safe retraining that still needs an up-front labeling project never starts. SIFT addresses both at once: a corpus that grows from traffic so labeling is continuous and nearly free, and a frozen evaluation gate so retraining on that corpus is safe to automate. Table 1 contrasts the approaches.",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "What is needed"
+      ],
+      "char_start": 7062,
+      "char_end": 7468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10ceb4861d7d178ab4f562d171c28933",
+      "kind": "caption",
+      "text": "Table 1. Approaches against the two real blockers.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "What is needed"
+      ],
+      "char_start": 7470,
+      "char_end": 7520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8611489a44a430f6714894ab469fd090",
+      "kind": "paragraph",
+      "text": "Approach Cold-start cost Stays current? Safe to auto-retrain? One-time labeling + trainHigh No (frozen) N/A Zero-shot LLM classifierNone Yes No model to retrain (slow, costly per call) LLM active-learning label setLower No (still a fixed set)No explicit gate SIFT (this work) Near zero (bundle)Yes (traffic-fed) Yes (frozen gate)",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Two Unsolved Problems",
+        "What is needed"
+      ],
+      "char_start": 7522,
+      "char_end": 7851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a33c00447f1fc98fa4320e84d9d7981c",
+      "kind": "heading",
+      "text": "The SIFT Architecture",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "The SIFT Architecture"
+      ],
+      "char_start": 7853,
+      "char_end": 7874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c98e3d9748bb5371faff194437ff6a78",
+      "kind": "paragraph",
+      "text": "SIFT serves and trains a classifier per document family, called a domain, from a single shared kernel. The serving path is cheap and the expensive judge is the exception, not the rule; the judge's output feeds a corpus that the training path consumes; and a scheduler closes the loop. Figure 1 shows the arrangement.",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "The SIFT Architecture"
+      ],
+      "char_start": 7876,
+      "char_end": 8192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1a050a8a617819b5c033d3ed5b8f4ce",
+      "kind": "caption",
+      "text": "Figure 1. The cheap model answers the easy majority on CPU in milliseconds; only low-confidence pages reach the LLM judge.",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "The SIFT Architecture"
+      ],
+      "char_start": 8194,
+      "char_end": 8316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e40d48fd71092060c999ba1b6b159a1",
+      "kind": "paragraph",
+      "text": "The judge's verdicts, human reviews, and bootstrap labels accumulate in a corpus that the training kernel consumes; a scheduler fires retrains on row-count, age, or drift; and every candidate must clear the promote gate before the latest pointer moves. The expensive model teaches the cheap one, and the escalation rate falls over time.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "The SIFT Architecture"
+      ],
+      "char_start": 8318,
+      "char_end": 8654,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30a3264951963bb3996e3f531de982a4",
+      "kind": "heading",
+      "text": "POST/classify",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "POST/classify"
+      ],
+      "char_start": 8656,
+      "char_end": 8669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a25a9814de591c568d1454aaeeaebc72",
+      "kind": "paragraph",
+      "text": "domain+text",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "POST/classify"
+      ],
+      "char_start": 8671,
+      "char_end": 8682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73171e0ba3d010d6533d819613fb76c4",
+      "kind": "heading",
+      "text": "Cheapmodel",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Cheapmodel"
+      ],
+      "char_start": 8684,
+      "char_end": 8694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c451f17cb4cec2472b800391e104b16",
+      "kind": "heading",
+      "text": "SPLADE+LightGBM",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "SPLADE+LightGBM"
+      ],
+      "char_start": 8696,
+      "char_end": 8711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a10f06478e5bd6ec806bb116f6e6476f",
+      "kind": "heading",
+      "text": "CPU,~ms/page",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "CPU,~ms/page"
+      ],
+      "char_start": 8713,
+      "char_end": 8725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ca3907b7b2ca7edcc9d68a7f653aca4",
+      "kind": "paragraph",
+      "text": "confidence>=threshold? yes no",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "CPU,~ms/page"
+      ],
+      "char_start": 8727,
+      "char_end": 8756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:accad45bbf9edec4e9ffbd72d6cbaee0",
+      "kind": "heading",
+      "text": "LLMjudge",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "LLMjudge"
+      ],
+      "char_start": 8758,
+      "char_end": 8766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff05d8ead10afa413ed0aeb0485c883b",
+      "kind": "paragraph",
+      "text": "low-confidencepagesonly",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "LLMjudge"
+      ],
+      "char_start": 8768,
+      "char_end": 8791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:011cc28858bb7c16fb5c59b1a544c418",
+      "kind": "heading",
+      "text": "Labelreturned",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Labelreturned"
+      ],
+      "char_start": 8793,
+      "char_end": 8806,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b849ed58f54f46ab195b2953376a4db4",
+      "kind": "paragraph",
+      "text": "label+scores",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Labelreturned"
+      ],
+      "char_start": 8808,
+      "char_end": 8820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7857df37e0ece0d270a1250eec12e71",
+      "kind": "heading",
+      "text": "Labeledcorpus",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Labeledcorpus"
+      ],
+      "char_start": 8822,
+      "char_end": 8835,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2087fcd56bf4e35cccd2e61840f78b59",
+      "kind": "paragraph",
+      "text": "judgewrite-back(source=llm)·humanreview(source=human)·bootstrap write-back",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Labeledcorpus"
+      ],
+      "char_start": 8837,
+      "char_end": 8911,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:957d15cec623dab74956b768148dcc36",
+      "kind": "heading",
+      "text": "Trainingkernel",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Trainingkernel"
+      ],
+      "char_start": 8913,
+      "char_end": 8927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df162260d7c0dd0ce65049aaa2012bf0",
+      "kind": "paragraph",
+      "text": "versionedartifact+evalreport",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Trainingkernel"
+      ],
+      "char_start": 8929,
+      "char_end": 8957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:995df2447c05de517c0947982651d67b",
+      "kind": "heading",
+      "text": "Promotegate",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Promotegate"
+      ],
+      "char_start": 8959,
+      "char_end": 8970,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cfde1acdda71706965318a30374a783",
+      "kind": "paragraph",
+      "text": "critical-labelF1+frozenset latestpointer trainoncorpus servelatest",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Promotegate"
+      ],
+      "char_start": 8972,
+      "char_end": 9038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d6b91fe1ce79c10992caf6b3d2e1c26",
+      "kind": "heading",
+      "text": "Scheduler/triggers",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers"
+      ],
+      "char_start": 9040,
+      "char_end": 9058,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5988f59800457d2c96d51378422f9deb",
+      "kind": "paragraph",
+      "text": "row-count·age·driftfireretrains 3",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers"
+      ],
+      "char_start": 9060,
+      "char_end": 9093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0008a53d00f8d1d8693dc551cb7bd381",
+      "kind": "heading",
+      "text": "Domains as data, not code",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "Domains as data, not code"
+      ],
+      "char_start": 9095,
+      "char_end": 9120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f345a6ea4c019c1071f45502e70a86c",
+      "kind": "paragraph",
+      "text": "A domain in SIFT is a declarative bundle: a label space, a few anchor phrases per class for the sparse encoder, optional regex packs, and a glossary and policy block for the judge. The bundle is data, validated by a schema and round-tripping to and from YAML, so a new document family, freight, legal NDAs, healthcare claims, is onboarded by uploading a bundle, with no service redeploy and no per-domain code. One kernel trains and serves them all, and multi-tenant isolation keeps two tenants' identically-named domains, corpora, and model artifacts strictly separate.",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "Domains as data, not code"
+      ],
+      "char_start": 9122,
+      "char_end": 9692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e60d06b05a08fcf067495a4695744dac",
+      "kind": "heading",
+      "text": "Cost-tiered serving",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "Cost-tiered serving"
+      ],
+      "char_start": 9694,
+      "char_end": 9713,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1eb29073fcfb4ced804d9e685b4e7e5d",
+      "kind": "paragraph",
+      "text": "Serving is deliberately cheap. A SPLADE sparse encoder[5] turns each page into lexical features, dotted against per-class anchor phrases and combined with regex hit counts and simple length features; a LightGBM head[6] produces the label and a calibrated confidence, all CPU-bound at milliseconds per page. Only when that confidence falls below a threshold does the page escalate to the LLM judge, which sees the bundle's allowedlabel enum, glossary, and policy. This is a classic cost cascade[7], but with a twist that the next subsection makes central: the expensive tier's answers are not discarded after the response, they become training data for the cheap tier.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "Cost-tiered serving"
+      ],
+      "char_start": 9715,
+      "char_end": 10382,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0482ad0438b99314f19c7a781b56234",
+      "kind": "heading",
+      "text": "The self-feeding corpus",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "The self-feeding corpus"
+      ],
+      "char_start": 10384,
+      "char_end": 10407,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acf7a2dabc2275e7adc9fd5099e268fd",
+      "kind": "paragraph",
+      "text": "Every low-confidence judge verdict that clears a minimum-confidence bar is written back to the corpus as a labeled row, tagged by source. A bootstrap path goes further: pointed at a pile of raw, unlabeled pages, it runs the judge over each with the bundle's allowed labels and persists the confident verdicts, producing a first corpus and a first model from zero labeled data in. Human reviewers enter through an active-learning queue that surfaces the least-confident judge-labeled rows first, so scarce expert attention lands on the hardest pages and their corrected labels are stamped as ground truth. The corpus therefore grows fastest exactly where the model is weakest, and because the judge handles a shrinking fraction of traffic as the cheap model learns, the marginal cost of a new labeled example trends toward zero.",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Scheduler/triggers",
+        "The self-feeding corpus"
+      ],
+      "char_start": 10409,
+      "char_end": 11236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:269c83110c4859f7d0de9d843c1732f8",
+      "kind": "heading",
+      "text": "Safe Autonomous Retraining",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Safe Autonomous Retraining"
+      ],
+      "char_start": 11238,
+      "char_end": 11264,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d73cb5e8f20b6d663450b8ee3b97d72",
+      "kind": "paragraph",
+      "text": "A corpus that grows from traffic is only useful if the model can retrain on it without a human in every loop, and that is safe only if a bad candidate cannot be promoted. SIFT's promote gate is the mechanism that earns the autonomy. Figure 2 shows its logic.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Safe Autonomous Retraining"
+      ],
+      "char_start": 11266,
+      "char_end": 11524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:846fdc18423c1d36501acd89f8ceaf14",
+      "kind": "caption",
+      "text": "Figure 2. A candidate must clear both checks. The bundle's critical_labels name the classes that must never regress; if any",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Safe Autonomous Retraining"
+      ],
+      "char_start": 11526,
+      "char_end": 11649,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17b6049733d4ebe729d88e60a3e3d3f6",
+      "kind": "paragraph",
+      "text": "candidate F1 falls below the current model's, promotion is blocked with the regression deltas. Independently, the candidate is scored against a frozen golden set carried in the bundle and never used for training; a drop there also vetoes promotion. Autotriggered retrains land in a pending-review queue, and only a clean pass moves the live pointer.",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Safe Autonomous Retraining"
+      ],
+      "char_start": 11651,
+      "char_end": 12000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d309296f0dafe2ce02b234a8b305e9d8",
+      "kind": "heading",
+      "text": "Candidatemodel",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Candidatemodel"
+      ],
+      "char_start": 12002,
+      "char_end": 12016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:895f08cc51ec31a577402ee0f93fd44e",
+      "kind": "paragraph",
+      "text": "freshlytrained",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Candidatemodel"
+      ],
+      "char_start": 12018,
+      "char_end": 12032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b1506bf46e2cdfcb2428d4e02b23323",
+      "kind": "heading",
+      "text": "Critical-labelF1",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Critical-labelF1"
+      ],
+      "char_start": 12034,
+      "char_end": 12050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bf1ff3e9ee7bbad3cbc8015bca66c11",
+      "kind": "paragraph",
+      "text": "anylistedclassregressed?",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Critical-labelF1"
+      ],
+      "char_start": 12052,
+      "char_end": 12076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a021fdad99bc44f37bf447d3e6424107",
+      "kind": "heading",
+      "text": "Frozenregressionset",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Frozenregressionset"
+      ],
+      "char_start": 12078,
+      "char_end": 12097,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db6aa0f0138448bb820b0b6b258f06dc",
+      "kind": "paragraph",
+      "text": "golden,nevertrainedon",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Frozenregressionset"
+      ],
+      "char_start": 12099,
+      "char_end": 12120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c8058ac98db05e3b1d3a4cf588f6645",
+      "kind": "heading",
+      "text": "Eitherfails:BLOCK",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Eitherfails:BLOCK"
+      ],
+      "char_start": 12122,
+      "char_end": 12139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98bc08a449ae5ba03453f208c6747696",
+      "kind": "paragraph",
+      "text": "409withdeltas;staysinpendingqueue",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Eitherfails:BLOCK"
+      ],
+      "char_start": 12141,
+      "char_end": 12174,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b14cae4f68bae5145653d85f599958c2",
+      "kind": "heading",
+      "text": "Bothpass:PROMOTE",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE"
+      ],
+      "char_start": 12176,
+      "char_end": 12192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdf29512149a21b3d674856053ebbfb2",
+      "kind": "paragraph",
+      "text": "movelatestpointer;recordinaudittrail 4",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE"
+      ],
+      "char_start": 12194,
+      "char_end": 12232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad744f0afac241bb246fe9ca1ab2309f",
+      "kind": "heading",
+      "text": "Critical labels that refuse to regress",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Critical labels that refuse to regress"
+      ],
+      "char_start": 12234,
+      "char_end": 12272,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fadbee6b4f1dd6be51250164824786ac",
+      "kind": "paragraph",
+      "text": "Not every class matters equally. A bundle declares a list of critical labels, the classes whose misclassification is expensive, and the gate refuses to promote any candidate whose F1 on a critical label is below the current model's. Where there are no critical labels, the gate is permissive and any successful train promotes; where they are declared, a candidate with no evaluation is rejected outright, and a candidate that regresses a critical class is blocked with explicit per-label deltas. The protection is targeted: aggregate accuracy can fluctuate freely, but the classes the business cannot afford to get wrong are held to a ratchet.",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Critical labels that refuse to regress"
+      ],
+      "char_start": 12274,
+      "char_end": 12917,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53fbd409f8d59c33ab575c1307608b7c",
+      "kind": "heading",
+      "text": "A frozen set the model never sees",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "A frozen set the model never sees"
+      ],
+      "char_start": 12919,
+      "char_end": 12952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:092622df7f4cedcbac179ec46890fc7e",
+      "kind": "paragraph",
+      "text": "The second check guards against the subtle failure where a candidate looks better on data drawn from the same shifting distribution that produced it. The bundle carries a frozen regression set, a small collection of golden examples that is never added to the training corpus, and every candidate is scored against it. A drop on the frozen set, on critical-label F1 or overall accuracy, is a hard veto. Because the set is immutable and held out by construction, it is a stable yardstick across retrains: improvement measured against it is real, not an artifact of the corpus drifting underneath the metric.",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "A frozen set the model never sees"
+      ],
+      "char_start": 12954,
+      "char_end": 13559,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac7a0fc565cd58bc5c75a8e68b051c60",
+      "kind": "heading",
+      "text": "Why the gate changes the economics of retraining",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Why the gate changes the economics of retraining"
+      ],
+      "char_start": 13561,
+      "char_end": 13609,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36b8fd42b9a509d13f148e91bbc6a970",
+      "kind": "paragraph",
+      "text": "With these two checks in place, the calculus of autonomy inverts. A scheduler can fire retrains on row-count, age, or drift triggers; auto-triggered candidates land in a pending queue and either auto-promote when the gate is clean and the configured accuracy improvement is met, or wait for a human when it is not. The downside risk of an automated retrain, a silently regressed critical class, is the precise thing the gate forecloses. “Retrain this classifier every month without asking anyone” stops being a sentence that alarms a risk officer and becomes a",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Why the gate changes the economics of retraining"
+      ],
+      "char_start": 13611,
+      "char_end": 14171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a86082b3d25eb2e01b142ccc12dbd02",
+      "kind": "table",
+      "text": "configuration  default,  which  is  what  lets  the  self-feeding  corpus  actually  translate  into  a  continuously",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Why the gate changes the economics of retraining"
+      ],
+      "char_start": 14173,
+      "char_end": 14290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a17fc7fec6a6ff1e2017edfe0f36726",
+      "kind": "paragraph",
+      "text": "improving production model.",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Bothpass:PROMOTE",
+        "Why the gate changes the economics of retraining"
+      ],
+      "char_start": 14292,
+      "char_end": 14319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6f2b3e814a249df45930760a034a7bf",
+      "kind": "heading",
+      "text": "Illustrative Application",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 14321,
+      "char_end": 14345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:990bd07dd23cf1e73b02097f2905873b",
+      "kind": "paragraph",
+      "text": "Consider an operations team that must classify the pages of incoming legal documents, separating an actual non-disclosure agreement (the critical class, NDA) from pages that merely reference one (SUPPORTING) and from everything else (MISC). The figures here are illustrative and chosen to expose the mechanism. There is no labeling project. The team authors a bundle: three labels, a handful of anchor phrases (“Non- Disclosure Agreement,” “Confidentiality Agreement”), a regex for the literal heading, a judge policy clarifying that a page titled “Non-Disclosure Agreement” is an NDA while a passing mention is SUPPORTING, and NDA as the sole critical label. They point the bootstrap path at a few hundred unlabeled pages; the judge labels the confident ones, a first corpus forms, and a first model trains, all without a human labeling a single page. The eval report, a confusion matrix, per-class precision and recall, and a confidence histogram, is generated automatically for review. In production the cheap model handles the clear majority of pages in milliseconds; on a well-specified domain roughly fifteen to twenty-five percent of pages fall below the confidence threshold and escalate to the judge, each costing a fraction of a cent. Those judge verdicts flow back into the corpus. A month later the scheduler fires a retrain on the grown corpus and produces a candidate that improves overall accuracy but, the gate discovers, drops NDA F1 by two points: promotion is blocked with the per-label delta and the candidate waits",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 14347,
+      "char_end": 15882,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a85933e353220c4c54be88b806d18e38",
+      "kind": "paragraph",
+      "text": "in the pending queue for a human, exactly as intended. The team inspects, finds a cluster of mislabeled SUPPORTING pages from an ambiguous template, corrects them through the active-learning queue, and the",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 15884,
+      "char_end": 16089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:662c7bc792135b9ffdc604927ec0c674",
+      "kind": "table",
+      "text": "next  candidate  clears  both  the  critical-label  check  and  the  frozen  golden  set  and  auto-promotes.  Over",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 16091,
+      "char_end": 16206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92cf5b6bc8cf05989d76d2121deedb41",
+      "kind": "paragraph",
+      "text": "successive cycles the escalation rate falls as the cheap model absorbs what the judge taught it, and the team's 5",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 16208,
+      "char_end": 16321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84581b453cee6c73f0804796481b06f8",
+      "kind": "paragraph",
+      "text": "only recurring cost is reviewing the occasional blocked promotion. The classifier got better while nobody ran a labeling project, and it never once shipped a regression on the class that mattered.",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Illustrative Application"
+      ],
+      "char_start": 16323,
+      "char_end": 16519,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:750a026973da5b5646918900599cf656",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Discussion"
+      ],
+      "char_start": 16521,
+      "char_end": 16531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d403b173156ec1190f5406b52748f45",
+      "kind": "paragraph",
+      "text": "The economic shape of SIFT is its point. A conventional classifier front-loads cost (the labeling project) and then decays; SIFT amortizes labeling across production traffic at a marginal cost that falls as the cheap model learns, and the frozen gate converts the recurring cost of staying current from “a labeling project every quarter” into “reviewing the occasional vetoed promotion.” The LLM judge is best understood not as the classifier but as a teacher hired by the hour, deployed only on the lessons the student has not yet learned, and progressively idled as the student improves. This is a different use of an expensive model than running it on every request, and a far cheaper one at steady state. SIFT also slots into the broader platform pattern the rest of this series describes. Its eval-gated promotion mirrors the offline-then-online discipline used for hallucination control, its judge-write-back loop is a close",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Discussion"
+      ],
+      "char_start": 16533,
+      "char_end": 17463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e21de5a11a17c64b1c1b94d7f01602ad",
+      "kind": "table",
+      "text": "cousin  of  recursive  self-improvement,  and  its  promotions,  audit  trail,  and  per-tenant  isolation  make  it",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Discussion"
+      ],
+      "char_start": 17465,
+      "char_end": 17581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5268a5f82f331821df81f5992346f527",
+      "kind": "paragraph",
+      "text": "governable by the same policy engine that governs every other agent. A classifier that teaches itself is only deployable in a regulated enterprise because the teaching is gated, audited, and scoped, which is the same reason the other components in the platform are.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Discussion"
+      ],
+      "char_start": 17583,
+      "char_end": 17848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5014c2c973d49702f70dcc688ca9c77",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Limitations"
+      ],
+      "char_start": 17850,
+      "char_end": 17861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:506b72f6f84f03ee6875aadc4265e8de",
+      "kind": "paragraph",
+      "text": "Text only. SIFT classifies OCR-derived text; it does not yet use image embeddings, so a domain that depends on visual layout rather than words is out of scope until multimodal features land. The judge can be wrong. Write-back trusts the judge above a confidence bar, so a systematically biased judge can teach the cheap model its bias. The frozen set and active-learning review are the checks, but a blind spot shared by judge and golden set would persist. The frozen set must be representative. A golden regression set that does not cover an emerging sub-type cannot veto a regression on it. The set is a fixed yardstick, which is its strength and, against genuinely novel inputs, its limit. Cold-start quality depends on the bundle. Bootstrap quality rests on the anchor phrases, glossary, and policy an author supplies; a thin bundle yields a noisy first corpus that takes longer to converge. Operational footprint. The sparse encoder is the dominant resident cost, and training currently runs inprocess unless the queue mode is enabled; large multi-replica deployments need the shared artifact store and queue that are on the roadmap.",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Limitations"
+      ],
+      "char_start": 17863,
+      "char_end": 19001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cd83b206b1379800cac319c20646783",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Conclusion"
+      ],
+      "char_start": 19003,
+      "char_end": 19013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab437c22bd83d67d724f6499e147138f",
+      "kind": "paragraph",
+      "text": "Production text classification has been held back not by models but by the labeling project that precedes them and the fear of the retraining that should follow. SIFT removes the first by letting the corpus assemble itself from production traffic, with an LLM judge teaching a cheap model on exactly the pages it finds hard, and tames the second with a frozen evaluation gate that makes autonomous retraining safe by refusing to promote a candidate that regresses a critical class or a held-out golden set. The result is a classifier whose accuracy",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Conclusion"
+      ],
+      "char_start": 19015,
+      "char_end": 19563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e098c6059d0fe33b1450d1eba6246aa4",
+      "kind": "table",
+      "text": "compounds  with  use,  whose  marginal  labeling  cost  trends  toward  zero,  and  whose  self-improvement  is",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Conclusion"
+      ],
+      "char_start": 19565,
+      "char_end": 19676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36404bd37885ee060c3bcca6e82ada24",
+      "kind": "paragraph",
+      "text": "governed rather than reckless. Onboarding a new document family becomes a bundle, not a project, and keeping it accurate becomes a default, not a campaign. • • • • • 6",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Conclusion"
+      ],
+      "char_start": 19678,
+      "char_end": 19845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e09fe8efe39ea222975e088542f1a06",
+      "kind": "heading",
+      "text": "References",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 19847,
+      "char_end": 19857,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba8d256f1c777b7295a0d44f38735819",
+      "kind": "reference",
+      "text": "[1] Ratner, A., Bach, S. H., Ehrenberg, H., Fries, J., Wu, S., & Ré, C. Snorkel: Rapid Training Data Creation with Weak Su‐ pervision.Proc. VLDB Endowment, 11(3):269–282, 2017.",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 19859,
+      "char_end": 20035,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bcbc71806a0a9972c1bd3096e3cbc99",
+      "kind": "table",
+      "text": "[2]  Settles, B.  Active Learning Literature Survey.University of Wisconsin–Madison, Computer Sciences Technical Report",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20037,
+      "char_end": 20156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78b75087632f0c4f436e846df977efe3",
+      "kind": "paragraph",
+      "text": "1648, 2009. [3] Rouzegar, H., & Makrehchi, M. Enhancing Text Classification through LLM-Driven Active Learning and Human Annota‐ tion.Proc. LAW 2024. arXiv:2406.12114.",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20158,
+      "char_end": 20325,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcd7d213e6940b4f184216a8cf1c47b0",
+      "kind": "table",
+      "text": "[4]  Zheng, L., Chiang, W.-L., Sheng, Y., et al.  Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.Advances in",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20327,
+      "char_end": 20443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4dff847514fdcafc43a168f51aa4976",
+      "kind": "paragraph",
+      "text": "Neural Information Processing Systems (NeurIPS) 36, 2023.",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20445,
+      "char_end": 20502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6867e7d5326a5637950bda5237c65d8",
+      "kind": "table",
+      "text": "[5]  Formal, T., Piwowarski, B., & Clinchant, S.  SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking.",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20504,
+      "char_end": 20621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef96d6617c23fc19e1f61b9977ebe3d0",
+      "kind": "paragraph",
+      "text": "Proc. SIGIR 2021. [6] Ke, G., Meng, Q., Finley, T., et al. LightGBM: A Highly Efficient Gradient Boosting Decision Tree.Advances in Neural Information Processing Systems (NeurIPS) 30, 2017. [7] Chen, L., Zaharia, M., & Zou, J. FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance.arXiv:2305.05176, 2023. [8] Gama, J., Žliobaitė, I., Bifet, A., Pechenizkiy, M., & Bouchachia, A. A Survey on Concept Drift Adaptation.ACM Com‐ puting Surveys, 46(4):1–37, 2014. [9] Zhang, Y., & Takada, S. Applying LLMs to Active Learning: Toward Cost-Efficient Cross-Task Text Classification Without Manually Labeled Data.International Journal of Intelligent Systems, 2025. arXiv:2502.16892.",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 20623,
+      "char_end": 21332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b665b44cc835bcb32626b3dba3dd2549",
+      "kind": "table",
+      "text": "[10]  National Institute of Standards and Technology.  Artificial Intelligence Risk Management Framework (AI RMF 1.0).",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 21334,
+      "char_end": 21452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba897596d38d15a3119641901acd1398",
+      "kind": "paragraph",
+      "text": "NIST AI 100-1, 2023. 7",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 21454,
+      "char_end": 21476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00628101b07120fbd554959fb6f709ca",
+      "kind": "table",
+      "text": "Appendix A  Anatomy of a Domain Bundle A domain is data. The bundle below (abbreviated) is everything needed to onboard a new document family: no code, no labeling project. name: legal-nda version: \"1\" critical_labels: [NDA]          # classes that must never regress judge_policy: extra_instructions: | A page headed \"Non-Disclosure Agreement\" is NDA. Pages that mention NDAs in passing are SUPPORTING. labels:",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 21478,
+      "char_end": 21889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1ad8e616c1d4c583d8e197d69bdb137",
+      "kind": "list_item",
+      "text": "- name: NDA",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 21891,
+      "char_end": 21902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fd47953bc7e7478763602ef6e152822",
+      "kind": "paragraph",
+      "text": "pos_queries: [\"Non-Disclosure Agreement\", \"Confidentiality Agreement\"] regex_pos: [\"\\bnon[-\\s]disclosure\\s+agreement\\b\"]",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 21904,
+      "char_end": 22024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6161fb2549c96bfc4951e84265962356",
+      "kind": "list_item",
+      "text": "- name: SUPPORTING",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 22026,
+      "char_end": 22044,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c344b9d1497da3b431a6fab1157f1d3e",
+      "kind": "list_item",
+      "text": "- name: MISC",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 22046,
+      "char_end": 22058,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:643a1723da2dac6a443f962a3f14590b",
+      "kind": "paragraph",
+      "text": "regression_set:                 # frozen golden examples, never trained on",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 22060,
+      "char_end": 22134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c0c6369b46601d975a7f2e8d6b9d142",
+      "kind": "list_item",
+      "text": "- {page_id: g-1, label: NDA, text: \"MUTUAL NON-DISCLOSURE ...\"}",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 22136,
+      "char_end": 22199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d42921523873444fee154ff322e50e6",
+      "kind": "paragraph",
+      "text": "triggers: { enabled: true, min_new_rows_since_last_train: 200, drift_threshold: 0.08 } auto_promote: { enabled: true, require_accuracy_improvement: true } 8",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "References"
+      ],
+      "char_start": 22201,
+      "char_end": 22357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8943bbcbadb47497e3dda89b24e572d6",
+      "kind": "heading",
+      "text": "Appendix B  The Continuous-Training Loop",
+      "order": 107,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop"
+      ],
+      "char_start": 22359,
+      "char_end": 22399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d71aa4186c9c3244f10c178d1d8d970",
+      "kind": "paragraph",
+      "text": "The five steps below run unattended once configured; the gate of Section 4 is what makes step five safe to automate. Step What happens Governing knob",
+      "order": 108,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop"
+      ],
+      "char_start": 22401,
+      "char_end": 22550,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e79e460e6dbd5519a97a34583114ab9",
+      "kind": "heading",
+      "text": "Judge write-",
+      "order": 109,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Judge write-"
+      ],
+      "char_start": 22552,
+      "char_end": 22564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:271427700cce0d6fcdfc0ce145c7d896",
+      "kind": "paragraph",
+      "text": "through Low-confidence /classify verdicts persist as labeled rows (source=llm) autolabel min-confidence",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Judge write-"
+      ],
+      "char_start": 22566,
+      "char_end": 22669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7db75a17cbf291e8aae387c42e2d3c4d",
+      "kind": "heading",
+      "text": "Trigger sched‐",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Trigger sched‐"
+      ],
+      "char_start": 22671,
+      "char_end": 22685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc7947a459f28a36d87b4f5b63512b41",
+      "kind": "paragraph",
+      "text": "uler Walks each domain; row-count / age / drift fire a retrain; in-flight jobs block stacking triggers block in bundle",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Trigger sched‐"
+      ],
+      "char_start": 22687,
+      "char_end": 22805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:158944d4f5a2164becb833ff82cf7e96",
+      "kind": "heading",
+      "text": "Pending queueAuto-triggered trains land as candidates; one pending per domain",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Pending queueAuto-triggered trains land as candidates; one pending per domain"
+      ],
+      "char_start": 22807,
+      "char_end": 22884,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3eeb5835a29e178a7e6da34a409218ab",
+      "kind": "paragraph",
+      "text": "(supersede) auto_promote settings",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Pending queueAuto-triggered trains land as candidates; one pending per domain"
+      ],
+      "char_start": 22886,
+      "char_end": 22919,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15e82a6d9b3c533426b21d7b05f7dcc1",
+      "kind": "heading",
+      "text": "Frozen gate Critical-label F1 + golden-set score; either drop vetoes promotioncritical_labels, regres‐",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Frozen gate Critical-label F1 + golden-set score; either drop vetoes promotioncritical_labels, regres‐"
+      ],
+      "char_start": 22921,
+      "char_end": 23023,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d265ba6663c8978b245712ea0276c9c",
+      "kind": "paragraph",
+      "text": "sion_set",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Frozen gate Critical-label F1 + golden-set score; either drop vetoes promotioncritical_labels, regres‐"
+      ],
+      "char_start": 23025,
+      "char_end": 23033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6180af137fd0ec23921389eadd32f64",
+      "kind": "heading",
+      "text": "Drift detectionRolling confidence mean vs training baseline triggers the next cycledrift_threshold, window",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Drift detectionRolling confidence mean vs training baseline triggers the next cycledrift_threshold, window"
+      ],
+      "char_start": 23035,
+      "char_end": 23141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18c67f6f68670903eefa1473ccb9dbc1",
+      "kind": "paragraph",
+      "text": "Active learning Least-confident rows surfaced for human approve / relabel / rejectreview queue limit 9",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Classifier That Teaches Itself: Self-Improving, Frozen-gate",
+        "Appendix B  The Continuous-Training Loop",
+        "Drift detectionRolling confidence mean vs training baseline triggers the next cycledrift_threshold, window"
+      ],
+      "char_start": 23143,
+      "char_end": 23245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 9,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 9
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.18358",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 9,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

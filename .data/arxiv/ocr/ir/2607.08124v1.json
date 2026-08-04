@@ -1,0 +1,2877 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "88fe9b4897555a233a052d6bd2b63952fc1d60be349a2cc60e616077e3e9f48b",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:874246e071a0b7c3ac35b8ff68bd1c0d",
+      "kind": "heading",
+      "text": "TTHE: TEST-TIMEHARNESSEVOLUTION",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION"
+      ],
+      "char_start": 0,
+      "char_end": 31,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efd4d6ddd536801a29b3c354b7260cb0",
+      "kind": "paragraph",
+      "text": "Jun Nie1,2, Y onggang Zhang3, Jun Song 1, Qianshu Cai 2, Dahai Yu4, Yike Guo3, Xinmei Tian 2,∗, Bo Han 1,∗ 1Hong Kong Baptist University 2University of Science and Technology of China 3Hong Kong Generative AI Research & Development Center, The Hong Kong University of Science and Technology 4TCL Corporate Research (HK) Co., Ltd",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION"
+      ],
+      "char_start": 33,
+      "char_end": 361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73972fa8414a98413e2166692aa365ac",
+      "kind": "heading",
+      "text": "ABSTRACT",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "ABSTRACT"
+      ],
+      "char_start": 363,
+      "char_end": 371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dc84e80ec3c01151ef17cd02d8b800a",
+      "kind": "paragraph",
+      "text": "The behavior of an LLM agent is determined not only by the underlying model, but also by itsharness: the executable program that constructs context, invokes tools, verifies intermediate results, and recovers from failures. Existing approaches optimize such harnesses before deployment, searching training or development data for a fixed agent workflow that is then frozen at test time. This limits adaptation when the test distribution, failure modes, or tool interactions differ from those seen during development. We ask whether the harness can instead be optimized during evaluation itself, using only the unlabeled execution traces the agent produces on the test inputs. We introduceTest-Time Harness Evolution(TTHE), which treats the executable harness as the state of test-time adaptation. During evaluation, TTHE maintains a population of candidate harnesses and refines them through an agentic proposer that reasons over their execution traces, without gold labels or task-specific supervision; a judge then commits an improved harness from execution-derived proxy signals, and the selected program persists to govern subsequent inputs. Crucially, TTHE does not update model weights, require gold labels, or train a separate adaptation model: solver, proposers, and judge are different roles and harnesses around the same frozen LLM, so all adaptation occurs through changes to the surrounding program. Across text-to-SQL, competitive programming, software engineering, data-science coding, and agentic tool-use",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "ABSTRACT"
+      ],
+      "char_start": 373,
+      "char_end": 1892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:010bf008d40d02da2294d9add756c6c4",
+      "kind": "paragraph",
+      "text": "tasks, TTHE improves fixed ReAct-style baseline harnesses, yielding persistent, inspectable improvements rather than a pre-searched workflow or per-query retries. These results recast test-time adaptation for LLM agents as evolution over executable control programs and identify execution-derived proxy reliability as a central challenge for robust unsupervised agent improvement.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "ABSTRACT"
+      ],
+      "char_start": 1894,
+      "char_end": 2274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d24c612c31af3f1e2f916a93c1ca68a",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "INTRODUCTION"
+      ],
+      "char_start": 2276,
+      "char_end": 2288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bee874581377c081f045f9f3d1437341",
+      "kind": "paragraph",
+      "text": "Modern LLM agents are increasingly built as executable systems rather than single-call predictors: they retrieve context, call tools, execute code, inspect intermediate states, and recover from failures. In such systems, the agent’s behavior is governed not only by the frozen model, but also by the executableharnessaround it—the control program that constructs context, invokes tools, verifies intermediate results, and implements recovery strategies. Following prior work on model and agent harnesses (Lee et al., 2026; Zhang et al., 2026), we focus on this harness as the object of adaptation. This surrounding program can shape an agent’s behavior as much as the model itself: the same model, when placed inside different harnesses, can produce substantially different outcomes on the same workload. In most deployed or benchmarked agent systems, however, the harness is fixed during evaluation. Practitioners inspect development failures, adjust prompts and control flow, tune tool-use logic, and then ship a static artifact whose behavior remains unchanged at test time. This convention treats evaluation as a passive scoring stage, even though evaluation itself produces rich operational evidence. Every attempted task leaves an execution trace: model calls, tool actions, ∗Corresponding authors.",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "INTRODUCTION"
+      ],
+      "char_start": 2290,
+      "char_end": 3594,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c069d1882ce80579a76bcc276dec9ad0",
+      "kind": "heading",
+      "text": "Code:https://github.com/junnie00/TTHE",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 3596,
+      "char_end": 3633,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3349f0fab71b71608f6ab52db923b01",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 3635,
+      "char_end": 3636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71331eadec8c39b3cf0f27aedc126fb3",
+      "kind": "table",
+      "text": "arXiv:2607.08124v1  [cs.SE]  9 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 3638,
+      "char_end": 3677,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7b45ec106066c353b501613a4902279",
+      "kind": "paragraph",
+      "text": "intermediate outputs, database responses, test results, runtime errors, and recovery decisions. Such traces often expose not only whether an agent succeeded under available proxies, but also how its operating procedure might be improved. A text-to-SQL agent may repeatedly retrieve the correct table but apply an inconsistent value normalization; a coding agent may generate plausible patches without verifying them before submission; a data-science agent may compute an intermediate result but silently omit it from the final report. This is precisely the kind of evidence a human harness engineer would inspect when revising the scaffold. Crucially, it is available during evaluation and does not require gold labels. Existing adaptation mechanisms, however, leave the agent’s persistent control program untouched at test time. Fine-tuning and test-time training adapt model parameters (Sun et al., 2020; Wang et al., 2021). Self-debugging and reflection revise a single response or store textual experience for later attempts (Chen et al., 2024; Shinn et al., 2023). Automated prompt and workflow search can redesign the surrounding system, but such search is typically performed before evaluation against a training or development objective, after which the discovered workflow is fixed for testing (Khattab et al., 2023; Hu et al., 2025; Zhang et al., 2025b). Recent work on source-level rewriting for agentic systems further shows that a deployed agent’s source code can be automatically repaired from observed failure trajectories with the assistance of a strong external coding model (Cai et al., 2026).",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 3679,
+      "char_end": 5290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b692c8d606a09dad670cda9877af46e",
+      "kind": "paragraph",
+      "text": "However, a key question remains open: when the model weights are kept frozen, no external labels or human repair signals are available, and no additional repair model is introduced, can an LLM agent adapt during evaluation solely from its own execution traces by modifying its surrounding executable harness? We proposeTest-Time Harness Evolution(TTHE), which treats the executable harness as the state of test-time adaptation. Rather than searching for a harness on labeled development instances and freezing it for evaluation, TTHE moves harness optimization into the evaluation process itself. On each unlabeled test batch, TTHE maintains a population of candidate harnesses, executes them under instrumentation, and iteratively refines them through agentic proposers that reason over their unlabeled execution traces and proxy-indicated weaknesses. A separate judge commits one candidate according to execution-derived signals, and the selected program persists to govern subsequent inputs. Gold labels remain outside this loop and are consulted only after selection for measurement. The solver, proposers, and judge are instantiated as different roles and harnesses around the same frozen LLM, so adaptation occurs entirely through changes to the surrounding executable program rather than through weight updates or a separately trained adaptation model. This evaluation-time formulation offers two practical advantages. First, it adapts at the point where the relevant evidence appears: after the agent encounters the schemas, repositories, tests, tools, and",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 5292,
+      "char_end": 6856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9dfbd2aa68c68ad8c20ea7cf539ab73",
+      "kind": "paragraph",
+      "text": "runtime constraints of the target workload. It therefore does not require gradient access or an additional labeled development set tailored to that workload. Second, because the adaptation target is an executable program, TTHE can express behavioral changes that are difficult to encode as a single textual reflection, including revised context construction, multi-sample generation, tool-mediated grounding, deterministic contract checks, and conditional recovery branches. The cost of this flexibility is that execution is not an oracle. A query can execute successfully while answering the wrong question; code can pass visible tests while failing hidden ones; a proxy can reward behavior that is operationally plausible but benchmark-incompatible. TTHE must therefore optimize and select harnesses under incomplete execution evidence. We study this tradeoff across diverse execution-grounded tasks. TTHE improves fixed ReAct-style baseline harnesses across the evaluated settings and produces inspectable policies for grounding, verification, and repair. We further analyze where these gains come from and what currently limits them: performance is non-monotonic in search budget, and trace audits attribute the remaining errors to an agentic judge that can commit a plausible but incorrect program under imperfect proxy signals. These findings position test-time harness evolution as a practical mechanism for adapting LLM agents without changing model weights or requiring labels, while identifying proxy quality",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 6858,
+      "char_end": 8376,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f113f80921f6de5c53cfad5652bfb5b",
+      "kind": "paragraph",
+      "text": "and judge reliability as central technical bottlenecks. Contributions. • We formulatetest-time harness evolution—adapting a persistent executable harness during evaluation from unlabeled execution traces, with model weights fixed and gold labels isolated to post-selection measurement—and realize it as a population-based generate-and- 2",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 8378,
+      "char_end": 8715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:439a0171f4383f5a26e6db5af8be247c",
+      "kind": "paragraph",
+      "text": "judge loop in which the solver, proposers, and judge are instantiated as different roles and harnesses around the same frozen LLM. • We demonstrate gains across five execution-grounded domains and expose the resulting harness code, traces, and per-batch decisions for behavioral inspection. • We complement these results with diagnostics—search-budget, batch-size, and crossmodel ablations and per-batch trace audits—that characterize the setting’s failure modes, including limited candidate coverage and selection regret (candidates generated but not committed).",
+      "order": 14,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Code:https://github.com/junnie00/TTHE"
+      ],
+      "char_start": 8717,
+      "char_end": 9280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad82a331f2469a18235a01f5e2ae8ef2",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "RELATEDWORK"
+      ],
+      "char_start": 9282,
+      "char_end": 9293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:393e7fd4543d2bcebacdbb646724b941",
+      "kind": "paragraph",
+      "text": "Self-evolving agents and harness optimization.The work closest to ours automates the executable program that surrounds a fixed model. Prompt and pipeline optimizers tune instructions, demonstrations, and control flow: Promptbreeder evolves prompts (Fernando et al., 2024), APE searches instructions (Zhou et al., 2023), OPRO treats the model itself as an optimizer over prompts (Yang et al., 2024a), EvoPrompt runs prompt search as an evolutionary algorithm (Guo et al., 2024), DSPy compiles declarative pipelines against a metric (Khattab et al., 2023), and ADAS and AFlow search over modular agent designs and code-represented workflow graphs (Hu et al., 2025; Zhang et al., 2025b); evolutionary program search over code has even produced novel algorithms and mathematical constructions (Romera-Paredes et al., 2024). A more aggressive strand rewrites the agent’s own source: STOP applies a model-infused improvement operator to its scaffold (Zelikman et al., 2023), the Darwin G ¨odel Machine maintains an open-ended archive of selfmodifying coding agents (Zhang et al., 2025a), V oyager accumulates a library of executable skills as an agent explores (Wang et al., 2024), Self-Harness distills verifier-grounded failures into regressiontested harness edits (Zhang et al., 2026), and MOSS rewrites a production agent’s own source code— reaching the harness layer itself—in directed response to batches of real user-flagged failures (Cai et al., 2026). The concurrent Meta-Harness is the nearest system: it too uses an agentic proposer",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "RELATEDWORK"
+      ],
+      "char_start": 9295,
+      "char_end": 10832,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4bd2e218c1cee58214c5097278e4427",
+      "kind": "paragraph",
+      "text": "that reads prior candidates’ code, scores, and traces from a filesystem to rewrite the harness (Lee et al., 2026). Most of these systems optimizebeforethe final evaluation stage, driven by an explicit development objective, a curated failure set, or an externally provided success signal, and the resulting program is then evaluated as a fixed artifact. TTHE keeps the premise that the harness is the right object to optimize, but moves the optimization inside evaluation itself: task-level gold is hidden from both the proposer and the judge, each candidate is scored only by execution-derived proxies on the current unlabeled batch, and the committed program must be chosen from arbitrary code edits under incomplete evidence. This shift makes proxy reliability—whether the signal the judge trusts actually tracks correctness—a central object of study. Test-time adaptation.Test-time training and entropy minimization adapt a model’s parameters or normalization statistics on the test stream using self-supervised, augmentation-based, or confidencebased objectives (Sun et al., 2020; Wang et al., 2021; Zhang et al., 2022), and EvoTest adapts an agent by evolving a fixed configuration space across interactive episodes (He et al., 2025). TTHE shares their premise—useful adaptation can happen at deployment, after the model is frozen—but differs in both the adapted object and the learning signal. The object is an executable harness program rather than weights, normalization statistics, or a bounded set of configuration fields, so",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "RELATEDWORK"
+      ],
+      "char_start": 10834,
+      "char_end": 12370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9a15672ce5c35b71a3b63330024aaea",
+      "kind": "paragraph",
+      "text": "an update is a code edit that can introduce grounding, verification, or recovery logic that no parameter or hyperparameter setting can express. The signal is the task’s native execution trace— outputs, tool calls, database responses, tests, and errors—rather than a scalar reward or an auxiliary self-supervised loss, and the adaptation persists as inspectable source rather than as diffuse weight changes. Response-level inference and execution feedback.A large body of inference-time methods improves asingleresponse within a fixed, human-authored scaffold: chain-of-thought and selfconsistency restructure reasoning (Wei et al., 2022; Wang et al., 2023), ReAct interleaves reasoning with tool calls (Yao et al., 2023), Toolformer teaches a model to call external tools (Schick et al.,",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "RELATEDWORK"
+      ],
+      "char_start": 12372,
+      "char_end": 13159,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f6270f9a8c732c703bd99f95b986bd3",
+      "kind": "heading",
+      "text": ", and self-debugging, Reflexion, and Self-Refine revise an answer or store textual experience",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        ", and self-debugging, Reflexion, and Self-Refine revise an answer or store textual experience"
+      ],
+      "char_start": 13161,
+      "char_end": 13254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c559ea8aa306a810fdc73c3a3832a56e",
+      "kind": "paragraph",
+      "text": "for a later attempt (Chen et al., 2024; Shinn et al., 2023; Madaan et al., 2023). In execution-grounded domains, strong systems hand-engineer such behaviors directly: on Text-to-SQL benchmarks such 3",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        ", and self-debugging, Reflexion, and Self-Refine revise an answer or store textual experience"
+      ],
+      "char_start": 13256,
+      "char_end": 13455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fdc48c9785457b3526387fd918a0921",
+      "kind": "paragraph",
+      "text": "as Spider and BIRD (Yu et al., 2018; Li et al., 2023), pipelines encode schema decomposition and execution-based self-correction (Pourreza & Rafiei, 2023; Gao et al., 2023), and program-synthesis methods select among samples using generated tests (Chen et al., 2022; Li et al., 2022). A related line studies selection and verification directly: learned verifiers and process-reward models score candidate solutions or reasoning steps (Lightman et al., 2024), and strong LLMs are increasingly used to judge free-form outputs (Zheng et al., 2023); TTHE’s judge instead adjudicates over execution traces with no labeled correctness signal. TTHE rediscovers the same families of behavior— grounding, verification, and targeted repair—but promotes them from per-response tactics and handwritten scaffolds into a persistent executable policy learned automatically and without labels. We evaluate on execution-grounded slices chosen to resist contamination and saturation (Li et al., 2023; Jain et al., 2025), rather than the now-saturated HumanEval and MBPP (Chen et al., 2021; Austin et al., 2021).",
+      "order": 21,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        ", and self-debugging, Reflexion, and Self-Refine revise an answer or store textual experience"
+      ],
+      "char_start": 13457,
+      "char_end": 14550,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad596a41c6b61888f735bb5539e4ac39",
+      "kind": "heading",
+      "text": "PRELIMINARIES",
+      "order": 22,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "PRELIMINARIES"
+      ],
+      "char_start": 14552,
+      "char_end": 14565,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d67758e1f34592670d848632062662e",
+      "kind": "paragraph",
+      "text": "LetMbe a model with fixed parameters, and let a harnessH∈ Hbe a program that orchestrates calls toM, tools, and an execution environmentE. For inputx, the harness produces an output-trace pair,(o H (x), τH (x)) =H(x). Goldyexists only for evaluation. The measurement objective is J ⋆(H) =E (x,y)∼D",
+      "order": 23,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "PRELIMINARIES"
+      ],
+      "char_start": 14567,
+      "char_end": 14864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b23a2a379905eb3a8c3c78894312dec0",
+      "kind": "paragraph",
+      "text": "I[o H (x)≡y]",
+      "order": 24,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "PRELIMINARIES"
+      ],
+      "char_start": 14866,
+      "char_end": 14878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fb2a43d90b3f6d06ad7a4cfe0cfcbdf",
+      "kind": "paragraph",
+      "text": ",(1) whereI[·]is the indicator function (equal to1when its condition holds and0otherwise) and≡ denotes task-specific correctness rather than literal equality: set-equality of the executed result rows for SQL, or passing all hidden tests for code. ThusJ ⋆(H)is simply the expected accuracy ofHon D. Goldyenters only through this measurement objective and is never available during adaptation. Adaptation proceeds over a stream of unlabeled batches. At stept, letX t be the current batch of test inputs and letC t ⊆ Hbe the pool of candidate harnesses assembled for it, whereτH collects the traces produced by running a candidateH∈ Ct onX t. A proposer maps the current candidates and their traces to new harnesses, and a judgeJcommits one of them as the harness carried to the next batch, Ht+1 =J(X t,{(H, τH ) :H∈ Ct}),(2) using only the inputs, traces, and additional execution probes. This notation deliberately does not assume that the judge observes a calibrated scalar reward. TTHE differs from test-time training (Sun et al., 2020) and adaptation (Wang et al., 2021): model parameters and normalization statistics remain fixed, while the executable scaffold changes.",
+      "order": 25,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "PRELIMINARIES"
+      ],
+      "char_start": 14880,
+      "char_end": 16052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf63ab5779b39231ff515a5f3af70e37",
+      "kind": "heading",
+      "text": "METHOD",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "METHOD"
+      ],
+      "char_start": 16054,
+      "char_end": 16060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26757245a7576bb02120f8ef4c3cb192",
+      "kind": "heading",
+      "text": "OVERVIEW",
+      "order": 27,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "METHOD",
+        "OVERVIEW"
+      ],
+      "char_start": 16062,
+      "char_end": 16070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b2d80614ed3b564d5351643aa2604f9",
+      "kind": "paragraph",
+      "text": "TTHE optimizes the agent’s harnessduring evaluation, using only the evidence that execution itself produces. Two questions organize the method.(Q1)When gold labels, reference outputs, and hidden tests are withheld during adaptation, what provides the optimization signal?(Q2)Given only that imperfect signal, how is the harness actually improved? We answer Q1 with detailed execution traces and a small set of execution-derived proxy signals, and Q2 with a batch-level population search in which agentic proposers rewrite the harness code and a judge commits one candidate; we develop the two in turn below. TTHE processes an unlabeled streamx 1, . . . , xT in batches with a frozen solverMand an executable harnessH, maintaining a single committed harness across the stream. For batchX t it starts from the current harnessH t, evolves a population of candidate harnesses overRrounds, and commits one harnessH t+1 that carries forward toX t+1. The measurement objectiveJ ⋆ (Eq. 1) requires gold and is therefore unavailable during adaptation; TTHE instead drives the loop with executionderived evidence and consults gold only afterH t+1 is committed, for reporting. Figure 1 shows one batch. 4",
+      "order": 28,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "METHOD",
+        "OVERVIEW"
+      ],
+      "char_start": 16072,
+      "char_end": 17265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad81f2a47dbafb8e70c51d62f169013b",
+      "kind": "heading",
+      "text": "Committed",
+      "order": 29,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Committed"
+      ],
+      "char_start": 17267,
+      "char_end": 17276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fb4e9c696030dc3d3a237bddd742db1",
+      "kind": "paragraph",
+      "text": "harness 𝐻𝑡",
+      "order": 30,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Committed"
+      ],
+      "char_start": 17278,
+      "char_end": 17288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d56f528301e76f870c72ecf3408aa9e",
+      "kind": "heading",
+      "text": "Unlabeled",
+      "order": 31,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17290,
+      "char_end": 17299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d05d3475bb72b0750dcaf700f44b6071",
+      "kind": "paragraph",
+      "text": "batch 𝑋𝑡 Candidate harnesses 𝐻1 1 𝐻1 2 𝐻1 𝐺 …. Exec. health RT Cons.",
+      "order": 32,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17301,
+      "char_end": 17369,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b1877c8ca7b8ea3db96abbfe4ead679",
+      "kind": "heading",
+      "text": "Public",
+      "order": 33,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17371,
+      "char_end": 17377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a259e9ee73ef58bc37646141bcf73fc",
+      "kind": "paragraph",
+      "text": "tests Logs / traces",
+      "order": 34,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17379,
+      "char_end": 17398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f9cfb05ceca7c867ed8c976b1cc56de",
+      "kind": "heading",
+      "text": "Unlabeled",
+      "order": 35,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17400,
+      "char_end": 17409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f7352b6ecf7f8bb01561aef55ee0d18",
+      "kind": "paragraph",
+      "text": "execution signals Round 1 Candidate harnesses 𝐻2 1 𝐻2 2 𝐻2 𝐺 …. Exec. health RT Cons.",
+      "order": 36,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17411,
+      "char_end": 17496,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc07b329dfd5d66541603316ebdf6a7f",
+      "kind": "heading",
+      "text": "Public",
+      "order": 37,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17498,
+      "char_end": 17504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8c2fe6d7d7a2297a898504feaa41935",
+      "kind": "paragraph",
+      "text": "tests Logs / traces",
+      "order": 38,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17506,
+      "char_end": 17525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7779098a0dbd43eb4d93f24a06213328",
+      "kind": "heading",
+      "text": "Unlabeled",
+      "order": 39,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17527,
+      "char_end": 17536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a94cfc104cc85f29f9d01fd4f2da3b7",
+      "kind": "paragraph",
+      "text": "execution signals Round 2 Candidate harnesses 𝐻𝑅 1 𝐻𝑅 2 𝐻𝑅 𝐺 …. Exec. health RT Cons.",
+      "order": 40,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17538,
+      "char_end": 17623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53f9e0ca1012619e9bc1f4256b56af57",
+      "kind": "heading",
+      "text": "Public",
+      "order": 41,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17625,
+      "char_end": 17631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3d378f1f2015d1fedf61b83f06b4f9d",
+      "kind": "paragraph",
+      "text": "tests Logs / traces",
+      "order": 42,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Public"
+      ],
+      "char_start": 17633,
+      "char_end": 17652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0e6082660925acf80f07e6060b4531b",
+      "kind": "heading",
+      "text": "Unlabeled",
+      "order": 43,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17654,
+      "char_end": 17663,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1e7bfb2c31d8351d1b9fcc0418bcd19",
+      "kind": "paragraph",
+      "text": "execution signals",
+      "order": 44,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Unlabeled"
+      ],
+      "char_start": 17665,
+      "char_end": 17682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5d9652f152bbcff9f20ffd45100cc8f",
+      "kind": "heading",
+      "text": "Round R",
+      "order": 45,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Round R"
+      ],
+      "char_start": 17684,
+      "char_end": 17691,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:363ac2d8514781af2f97a4baeb6b9bde",
+      "kind": "paragraph",
+      "text": "… Judge with execution signals",
+      "order": 46,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Round R"
+      ],
+      "char_start": 17693,
+      "char_end": 17723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c94a245a6c7ae2cb71dc90aa12dc85c",
+      "kind": "heading",
+      "text": "Commit",
+      "order": 47,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit"
+      ],
+      "char_start": 17725,
+      "char_end": 17731,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b6c9f2c2fc11de0ebbe8cae222b8184",
+      "kind": "paragraph",
+      "text": "𝐻𝑡+1",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit"
+      ],
+      "char_start": 17733,
+      "char_end": 17737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0001cc68138e6cb81812acaff1d8c5ea",
+      "kind": "caption",
+      "text": "Figure 1: Test-Time Harness Evolution within one unlabeled batchX t. Starting from the commit-",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit"
+      ],
+      "char_start": 17739,
+      "char_end": 17833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:803b9da958b729175bb7bc1521c76a29",
+      "kind": "paragraph",
+      "text": "ted harnessH t, TTHE evolvesGbranches overRrounds. In each round the branch harnesses are executed on the batch and produce detailed execution traces (prompts, completions, tool calls, stdout/stderr, artifacts, runtime states, errors, and probes). Each branch’s proposer edits its own harness into the next round’s, reading the other branches’ traces for context, with theGbranches steered toward different edit directions to stay diverse. A judge then commits a single harnessH t+1 from the final branches, using the same label-free evidence—execution health, trace-level signals, roundtrip consistency, and public-test outcomes when available—and it is carried to the next batch. Gold never enters the loop.",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit"
+      ],
+      "char_start": 17835,
+      "char_end": 18544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bdcaa0f8a59a93c7d85ea23f59c71fb",
+      "kind": "heading",
+      "text": "HARNESS ANDADAPTATIONSTATE",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "HARNESS ANDADAPTATIONSTATE"
+      ],
+      "char_start": 18546,
+      "char_end": 18572,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a67bb208c0d654f031c03d1edd4dfd42",
+      "kind": "paragraph",
+      "text": "The object TTHE adapts is the harness: an executable control program that wraps the frozen solver Mand determines how the agent constructs context, invokes tools, validates intermediate results, and recovers from failures. In our implementation a harness is a Python class, so the adaptation state is arbitrary program code rather than a prompt template or a fixed menu of workflow switches, and the search space is the space of executable agent programs—which strictly contains prompt-only and fixed-workflow scaffolds. Within this space a proposer may express any strategy the traces motivate: grounding generation in retrieved context, executing candidate outputs through the environmentE and reading results back, decomposing a task into sub-problems, sampling and aggregating multiple solutions (Wang et al., 2023), adding deterministic contract checks, or repairing outputs from execution feedback (Chen et al., 2024). The baseline harnessH 0 is a standard ReAct scaffold (Yao et al., 2023), fixed before evolution begins; TTHE improves this program during evaluation rather than replacing it with one searched on labeled development data.",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "HARNESS ANDADAPTATIONSTATE"
+      ],
+      "char_start": 18574,
+      "char_end": 19719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c0f133e068bcf47c542a77801d5685f",
+      "kind": "heading",
+      "text": "THEOPTIMIZATIONSIGNAL",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "THEOPTIMIZATIONSIGNAL"
+      ],
+      "char_start": 19721,
+      "char_end": 19742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b7a579573b0c32f85792808be4f3bed",
+      "kind": "paragraph",
+      "text": "TTHE assumes no trusted scalar reward. Running a harnessHon an inputxto produceo= H(x)yields adetailed execution trace: the model prompts and completions, tool calls and outputs, stdout/stderr, intermediate artifacts, runtime states, errors, and probe results (long fields are truncated in the trace). A trace exposeshowa harness operates—whether it calls the right tools, whether intermediate artifacts are consumed correctly, whether errors or validation branches fire, and whether the output is supported by the preceding computation—and contains no gold label, reference output, or hidden-test result. From each trace TTHE also derives a few lightweight, task-dependentproxy signalsthat encode prior knowledge of what reliable execution looks like. They are imperfect evidence, not correctness oracles: •Execution healths∈ {0,1}:oruns without error and returns a well-formed, shapeconsistent result (e.g., a counting query returns a single scalar, not a malformed table). 5",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "THEOPTIMIZATIONSIGNAL"
+      ],
+      "char_start": 19744,
+      "char_end": 20721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bea0531c8305759621348c4fbcc888ca",
+      "kind": "paragraph",
+      "text": "•Round-trip consistencyb∈[0,1]: the output is inverted into a description˜x= RT(o) and scored against the input,b= match(x,˜x); because˜xis derived from the output rather than from gold, a lowbflags mis-grounding or semantic drift. •Public-test pass ratep∈[0,1]: where a task exposes public examples or repository tests, the fractionopasses—direct but incomplete evidence, since a program can pass public and still fail hidden tests. Crucially, TTHE exposes these signalstogether with the raw tracesto the agentic proposer and judge, rather than collapsing them into a single scalar to be maximized. This is deliberate: crosssample agreement is not correctness (candidates sharingMcan repeat the same systematic error), and any single proxy is easy to game. The design problem is therefore not to build a perfect reward, but to turn incomplete, execution-grounded evidence into reliable program edits—which the loop below does with an agentic proposer and judge that read the evidence directly.",
+      "order": 55,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "THEOPTIMIZATIONSIGNAL"
+      ],
+      "char_start": 20723,
+      "char_end": 21717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e219e8ab6d3c4e986998880193651b7",
+      "kind": "heading",
+      "text": "TEST-TIMEHARNESSEVOLUTION",
+      "order": 56,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "TEST-TIMEHARNESSEVOLUTION"
+      ],
+      "char_start": 21719,
+      "char_end": 21744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dfbf73efc44000bed63260bfa33cdd1",
+      "kind": "paragraph",
+      "text": "Within each batch TTHE evolvesGparallelbranchesof harnesses forRrounds, using three labelfree operators (Algorithm 1): OBSERVE(H, Xt)executes every harness inHon every input ofX t and returns their detailed traces, cached outputs, and derived proxy signals. PROPOSE({H g},T)runsGproposers in parallel. Proposergis a coding agent that edits itsown parent branchH g into one child harness—while free to read the other active branches’ code and traces for context—diagnosing likely failure modes from those traces; an invalid or unloadable child falls back toH g. It returns theGchildren. JUDGE(F,T, X t)is an agentic selector over thefinalbranch setF; it inspects code, traces, and signals, may run additional probes or re-execute a candidate, and commits one harness (Eq. 2). It never sees gold. Starting fromH t, TTHE observes it and instantiatesGbranches from it. In each ofRrounds, every branch’s proposer edits that branch’s current harness into a child and the new children are executed. The branches are fixed lineages: a proposer may read the other branches’ traces but always edits its own parent, and only theGround-Rbranches are eligible for selection—the judge commits one of them asH t+1. Two properties make this a population search rather than single-candidate reflection. Lineage: each branch carries its parent forward, so a useful verification, grounding, or repair routine persists and compounds along a branch across rounds.Diversity: theGbranches are steered toward different edit objectives (in our runs, a conservative-repair, an exploratory, and an adversarial role)",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "TEST-TIMEHARNESSEVOLUTION"
+      ],
+      "char_start": 21746,
+      "char_end": 23334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3860492810541581162efe5c503e333",
+      "kind": "paragraph",
+      "text": "and can borrow ideas visible in one another’s traces, so a round explores several directions at once. Because the judge selects among the final branches, a gain requires bothgeneratinga better behavior andcommittingit—a split our selection-regret analysis later quantifies. The committed harness is scored onX t from its cached outputs, without re-execution. Finally, sinceH t+1 is both selected onX t’s own label-free evidence and then measured onX t, reported accuracy istransductive(Sun et al., 2020), distinct fromprequentialscoring, which would measureH t onX t+1 beforeit adapts.",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "TEST-TIMEHARNESSEVOLUTION"
+      ],
+      "char_start": 23336,
+      "char_end": 23921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6db6f6dcaba00a88906f03171085abb",
+      "kind": "heading",
+      "text": "IMPLEMENTATION ANDADAPTATIONBOUNDARY",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "IMPLEMENTATION ANDADAPTATIONBOUNDARY"
+      ],
+      "char_start": 23923,
+      "char_end": 23959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01275204487b461ca23045fab26c2482",
+      "kind": "paragraph",
+      "text": "The solver, proposers, and judge are all driven by thesamefrozen backbone (deepseek-v4-flashin the main runs); they differ only in the harness through which the model is invoked. The solver runs inside the task harness being evolved, while the proposers and judge run inside a Claude Code agent scaffold that supplies file-reading, code-editing, execution, and probing tools. Here Claude Code is used only as an agentic codinginterface, not as a distinct model: every model call it issues is routed to the same frozen backbone as the solver, so TTHE introduces no stronger teacher and trains no separate adaptation model—every adaptation is a code change to the program around the frozen solver.Label-freerefers to this loop: gold labels, reference outputs, and hidden tests never enter the harness, proposers, judge, or traces, and are used only for post-selection measurement. Optimizing open-ended code against imperfect signals invites characteristic failures—a harness can overfit a proxy (pass public tests, fail hidden ones), specialize to a batch, or spend unbounded compute—which we bound with fixed resource and wall-clock 6",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "IMPLEMENTATION ANDADAPTATIONBOUNDARY"
+      ],
+      "char_start": 23961,
+      "char_end": 25095,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c7fc51bdd0682985e3bb0026f27f043",
+      "kind": "paragraph",
+      "text": "Algorithm 1Test-Time Harness Evolution (one stream) Input:solverM; streamx 1:T ; batch sizeB; branchesG; roundsR; baselineH 0 H←H 0 // ReAct baseline harness foreach unlabeled batchXof sizeBinx 1:T do (T[H],Y[H])←OBSERVE(H, X)// traces and cached outputs (H (0)",
+      "order": 61,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Commit",
+        "IMPLEMENTATION ANDADAPTATIONBOUNDARY"
+      ],
+      "char_start": 25097,
+      "char_end": 25358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1787e2d61897f9d1868b84441a16094d",
+      "kind": "heading",
+      "text": ", . . . , H(0)",
+      "order": 62,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        ", . . . , H(0)"
+      ],
+      "char_start": 25360,
+      "char_end": 25374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c772fe6e73e067082ff0bff3ced4254",
+      "kind": "paragraph",
+      "text": "G )←(H, . . . , H)//Gbranches fromH, sharing its cached traceT[H] forr= 1toRdo A ← {H(r−1) g }G g=1 // current active branches { ˜H (r) g }G g=1 ←PROPOSE(A,T[A])// branchgedits its own parentH (r−1) g H (r) g ← ˜H (r) g if valid, elseH (r−1) g // invalid child falls back to parent (T[H (r) g ],Y[H (r) g ])←OBSERVE(H (r) g , X)for each newly generated child end for F ← {H(R) g }G g=1 // final branches only H←JUDGE(F,T[F], X)// label-free selection SCORE(Y[H],Gold(X))// measurement only; no re-execution end for budgets, exclusion of malformed or non-terminating candidates, re-execution-backed judging, and the empirical audits reported with our experiments.",
+      "order": 63,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        ", . . . , H(0)"
+      ],
+      "char_start": 25376,
+      "char_end": 26038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be837bb4a0394ce9d8bc5b80cf50d438",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 64,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS"
+      ],
+      "char_start": 26040,
+      "char_end": 26051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dd799689f39b8acd6f6bdd8ede162ac",
+      "kind": "heading",
+      "text": "TASKS, MODELS,ANDPROTOCOL",
+      "order": 65,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "TASKS, MODELS,ANDPROTOCOL"
+      ],
+      "char_start": 26053,
+      "char_end": 26078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbb658b505201ad2cca91a9c8b26abec",
+      "kind": "paragraph",
+      "text": "We evaluate across execution-grounded tasks spanning structured queries, competitive programming, real-world software engineering, and data-science code.Text-to-SQL: BIRD (Li et al., 2023), a50-questionhardslice built from BIRD Mini-Dev by auditing questions the baseline repeatedly missed and retaining50unambiguous, substantively-hard cases; because the slice is conditioned on baseline failures, the baseline’s accuracy on it is low by construction and its absolute score should not be compared across models.Competitive programming: LiveCodeBench (Jain et al., 2025), a60-problemhardslice from its most recent, contamination-controlled release window (problems published after the solver’s training cutoff).Software engineering: SWE-bench Verified (Jimenez et al., 2024), a40-instancehardslice (selected by gold-patch complexity: multi-file or large diffs). Data-science code: DS-1000 (Lai et al., 2023), a50-problemhardslice (selected by referencesolution length). We focus on hard slices, where harness control matters most. Every slice was fixed before running TTHE, using only benchmark metadata or reference artifacts to construct it; no TTHE outcome was used to select or filter instances, and those artifacts are never passed to TTHE. In the main runs, the solver and proposer usedeepseek-v4-flash, and we additionally repeat Text-to-SQL with MiMo V2.5 and Kimi K2.5; for SWE-bench the baseline is instantiated as the off-the-shelf mini-swe-agent (Yang et al., 2024b), whose scaffold TTHE then evolves. Scoring is",
+      "order": 66,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "TASKS, MODELS,ANDPROTOCOL"
+      ],
+      "char_start": 26080,
+      "char_end": 27604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c38d27c6c410aa20c2825466f6fb1cb7",
+      "kind": "paragraph",
+      "text": "transductive: each batch is scored with the harness committed for it, and gold (the gold-SQL result set; the hidden test suite) is used only for measurement. The appendix provides task construction, complete per-batch trajectories, and all registered SQL ablations.",
+      "order": 67,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "TASKS, MODELS,ANDPROTOCOL"
+      ],
+      "char_start": 27606,
+      "char_end": 27871,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c47c021200421345c8a5a7a57b3b8dc6",
+      "kind": "heading",
+      "text": "BASELINES",
+      "order": 68,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "BASELINES"
+      ],
+      "char_start": 27873,
+      "char_end": 27882,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:edd3148b9b9fde336db278a9fe3fbb32",
+      "kind": "paragraph",
+      "text": "The baseline is a standard ReAct harness (Yao et al., 2023), used unchanged as the reference in every run, so the headline comparison measures the end-to-end value of the complete test-time procedure.",
+      "order": 69,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "BASELINES"
+      ],
+      "char_start": 27884,
+      "char_end": 28084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:523623cfc68d8bffd729b8d9a3ead49f",
+      "kind": "heading",
+      "text": "METRICS",
+      "order": 70,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "METRICS"
+      ],
+      "char_start": 28086,
+      "char_end": 28093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f43e5d8906d0312205862406a2daa2ee",
+      "kind": "paragraph",
+      "text": "We report execution accuracy: set-equality of executed results against the gold query for SQL, and passingallhidden tests for code. We report accuracy as the percentage of tasks solved on each evaluation slice, together with per-batch trajectories. SQL diagnostics compare search budgets, batch sizes, and solver models. 7",
+      "order": 71,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "EXPERIMENTS",
+        "METRICS"
+      ],
+      "char_start": 28095,
+      "char_end": 28417,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b28184c0c54ef073efcd54f7acb32e63",
+      "kind": "heading",
+      "text": "BIRD LCB SWE-bench DS-1000 claw-eval",
+      "order": 72,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval"
+      ],
+      "char_start": 28419,
+      "char_end": 28455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e4130532b898a7acb48225eb41ab00f",
+      "kind": "paragraph",
+      "text": "(score) 0 20 40 60 80 Accuracy / score (%)",
+      "order": 73,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval"
+      ],
+      "char_start": 28457,
+      "char_end": 28499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e8767f7f206646f0e6fb52d7f6c3510",
+      "kind": "heading",
+      "text": "0",
+      "order": 74,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28501,
+      "char_end": 28502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9365b2336f7d6d787016359d220b49d",
+      "kind": "heading",
+      "text": "0",
+      "order": 75,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28504,
+      "char_end": 28505,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8317c0e8ec3953ecea7354b11232aa7",
+      "kind": "heading",
+      "text": "0",
+      "order": 76,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28507,
+      "char_end": 28508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dd93985823baed94ffb5e52abbc1db4",
+      "kind": "heading",
+      "text": "0",
+      "order": 77,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28510,
+      "char_end": 28511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:431f8d5c9cea14a2a78796756efda4c3",
+      "kind": "heading",
+      "text": "9",
+      "order": 78,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "9"
+      ],
+      "char_start": 28513,
+      "char_end": 28514,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b01e8e4b666b4c63a6082d19ec1d6bec",
+      "kind": "heading",
+      "text": "0",
+      "order": 79,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28516,
+      "char_end": 28517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fa379d153d6a5e362ae6638af90aaee",
+      "kind": "heading",
+      "text": "3",
+      "order": 80,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "3"
+      ],
+      "char_start": 28519,
+      "char_end": 28520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe7da1b3b2e125b69389e71bcbc0d116",
+      "kind": "heading",
+      "text": "0",
+      "order": 81,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28522,
+      "char_end": 28523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25bc9dbe5345d7c908953158b716f0bc",
+      "kind": "heading",
+      "text": "0",
+      "order": 82,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "0"
+      ],
+      "char_start": 28525,
+      "char_end": 28526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e55c423363ad6ff14ed13cb1237bb482",
+      "kind": "heading",
+      "text": "8",
+      "order": 83,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "BIRD LCB SWE-bench DS-1000 claw-eval",
+        "8"
+      ],
+      "char_start": 28528,
+      "char_end": 28529,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85185dd2e736bc92acb72b00e836b819",
+      "kind": "heading",
+      "text": "Baseline TTHE",
+      "order": 84,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Baseline TTHE"
+      ],
+      "char_start": 28531,
+      "char_end": 28544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7258ba08df26b78d41990735a24c1524",
+      "kind": "caption",
+      "text": "Figure 2: Baseline harness versus committed",
+      "order": 85,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Baseline TTHE"
+      ],
+      "char_start": 28546,
+      "char_end": 28589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94846ecda57b3046dc116369ac2ace63",
+      "kind": "paragraph",
+      "text": "TTHE harness across all evaluated domains. Bars show pass@1 accuracy (%) for the code domains and the mean graded task score for claweval (right of the divider, a different metric in [0,1], shown×100).",
+      "order": 86,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Baseline TTHE"
+      ],
+      "char_start": 28591,
+      "char_end": 28792,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56bf3a327373cb5313c1e4ea7716ef97",
+      "kind": "heading",
+      "text": "10 25 50",
+      "order": 87,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50"
+      ],
+      "char_start": 28794,
+      "char_end": 28802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5eb4596a49d3016c5fa9fdc49a775fe7",
+      "kind": "paragraph",
+      "text": "Batch size B (log scale) 0 20 40 60 Accuracy (%) Baseline, 12% 44 50 38 44",
+      "order": 88,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50"
+      ],
+      "char_start": 28804,
+      "char_end": 28878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69c10a91dfa0347b2ddf26cc698462a5",
+      "kind": "caption",
+      "text": "Figure 3: Batch-size ablation on the hard BIRD",
+      "order": 89,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50"
+      ],
+      "char_start": 28880,
+      "char_end": 28926,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ac2b56c8de9c2b6e9aa0a3face8b67e",
+      "kind": "paragraph",
+      "text": "slice (DeepSeek,G=3,R=3). Committedharness accuracy is non-monotonic inBand peaks atB=10; the dashed line is the fixed baseline.",
+      "order": 90,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50"
+      ],
+      "char_start": 28928,
+      "char_end": 29056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5be76ff49e0844fee57cc254897d206",
+      "kind": "heading",
+      "text": "EFFECTIVENESSACROSSTASKS",
+      "order": 91,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EFFECTIVENESSACROSSTASKS"
+      ],
+      "char_start": 29058,
+      "char_end": 29082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:628faf5b82c7032f07d310d1d2ad7df0",
+      "kind": "caption",
+      "text": "Figure 2 reports exact results from the completed main runs. Withdeepseek-v4-flashas",
+      "order": 92,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EFFECTIVENESSACROSSTASKS"
+      ],
+      "char_start": 29084,
+      "char_end": 29168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5567a4613a25939d4a80a7db64d01746",
+      "kind": "paragraph",
+      "text": "solver and proposer, TTHE improved BIRD from12.0%to50.0%, LiveCodeBench from30.0% to38.3%, SWE-bench Verified from20.0%to35.0%, and DS-1000 from38.0%to44.0%. The BIRD slice is built from questions the baseline systematically fails, so its low starting accuracy is by construction and its large gain measuresrecoveryon those queries rather than an intrinsically easier task. The four slices differ in data, baseline, and selection criterion, so these magnitudes are not a controlled cross-task comparison. TTHE also lifts BIRD under two further backbones— MiMo V2.5 (32.0%→52.0%) and Kimi K2.5 (28.0%→48.0%)—indicating the loop is not tied to one model (model ablation below).",
+      "order": 93,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EFFECTIVENESSACROSSTASKS"
+      ],
+      "char_start": 29170,
+      "char_end": 29845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3ffd9d0b003b0f92e0fa87f3e27095b",
+      "kind": "heading",
+      "text": "BEYONDCODE: ANAGENTICTOOL-USEDOMAIN",
+      "order": 94,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "BEYONDCODE: ANAGENTICTOOL-USEDOMAIN"
+      ],
+      "char_start": 29847,
+      "char_end": 29882,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bbd0e480ced116b6972476e27f39a6a",
+      "kind": "equation",
+      "text": "G= 1G= 3 R= 1 46.0 44.0 R= 3 40.050.0",
+      "order": 95,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "BEYONDCODE: ANAGENTICTOOL-USEDOMAIN"
+      ],
+      "char_start": 29884,
+      "char_end": 29921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74c350d9b034e61488578564a09ba159",
+      "kind": "caption",
+      "text": "Table 1: Search-budget ablation on",
+      "order": 96,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "BEYONDCODE: ANAGENTICTOOL-USEDOMAIN"
+      ],
+      "char_start": 29923,
+      "char_end": 29957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc8e82198864d4c7844ff990bfe71484",
+      "kind": "paragraph",
+      "text": "the50-question hard Text-to-SQL slice: committed-harness accuracy (%) as a function of proposers per roundG (columns) and generation roundsR (rows). More rounds help only atG=3; the best setting isG=3,R=3. The four tasks above are all code or query generation. To probe whether the same loop extends to a different regime, we additionally ran TTHE onclaw-eval, an agentic tool-use benchmark in which the solver completes multi-service office workflows—reading mail, searching a knowledge base, scheduling meetings, updating tickets—by issuing tool calls, and is scored by a per-task graded rubric in[0,1]rather than by a binary pass. On a30-task slice selected for headroom, one accumulating harness raised the mean task score from",
+      "order": 97,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "BEYONDCODE: ANAGENTICTOOL-USEDOMAIN"
+      ],
+      "char_start": 29959,
+      "char_end": 30690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d3bf332dfb1aaec4d6076fd4fc95e0b",
+      "kind": "heading",
+      "text": "9%to69.8%(+20.9points; improved on28of the",
+      "order": 98,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "9%to69.8%(+20.9points; improved on28of the"
+      ],
+      "char_start": 30692,
+      "char_end": 30734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f3471c71a8edbab49d58c1ca93490ed",
+      "kind": "paragraph",
+      "text": "30tasks; rightmost group of Figure 2). From label-free traces alone the proposer recovered the same family of grounding-and-verification policies seen in the code domains: emit single-line tool payloads so write actions are actually recorded, cite every retrieved record identifier under a pre-delivery completeness check, chain services by exact identifier rather than display name, and never report an action it did not execute. Because this metric is a graded score rather than pass@1, its magnitude is not directly comparable to the counts above; we present it as evidence of breadth. Full protocol, per-batch trajectory, and discovered policies are in the appendix.",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "9%to69.8%(+20.9points; improved on28of the"
+      ],
+      "char_start": 30736,
+      "char_end": 31406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5dd58bcaa0bffdf176c360a45404b1b9",
+      "kind": "heading",
+      "text": "EMERGENTINFERENCEPOLICIES",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EMERGENTINFERENCEPOLICIES"
+      ],
+      "char_start": 31408,
+      "char_end": 31433,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f9041773d6af2ab85391a2708593663",
+      "kind": "paragraph",
+      "text": "The evolved harnesses are inspectable source code, so the discovered policies can be read off directly. On SWE-bench, starting from the baseline, the proposer rewrote the agent’s prompts into 8",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EMERGENTINFERENCEPOLICIES"
+      ],
+      "char_start": 31435,
+      "char_end": 31628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1feabc6be3927ce0984b6b8657282a39",
+      "kind": "paragraph",
+      "text": "Solver/proposer Base (%) TTHE (%)∆ DeepSeek V4 Flash 12.0 50.0+38.0 MiMo V2.5 32.0 52.0+20.0 Kimi K2.5 28.0 48.0+20.0",
+      "order": 102,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EMERGENTINFERENCEPOLICIES"
+      ],
+      "char_start": 31630,
+      "char_end": 31747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24bb5252a76959b8b76dd5adb25b9166",
+      "kind": "caption",
+      "text": "Table 2: Cross-model check on the hard BIRD",
+      "order": 103,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EMERGENTINFERENCEPOLICIES"
+      ],
+      "char_start": 31749,
+      "char_end": 31792,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f93f263b6f63fd604dfdb44b92ca6d3d",
+      "kind": "paragraph",
+      "text": "slice under the same B10/G3/R3 protocol. Every backbone improves over its own modelmatched baseline. The slice is conditioned on DeepSeek’s failures, so the absolute scores are not a model ranking.",
+      "order": 104,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "10 25 50",
+        "EMERGENTINFERENCEPOLICIES"
+      ],
+      "char_start": 31794,
+      "char_end": 31991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a55fa32433a07737ae7c9198fcae3f2a",
+      "kind": "heading",
+      "text": "B1 B2 B3 B4 B5 Overall",
+      "order": 105,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall"
+      ],
+      "char_start": 31993,
+      "char_end": 32015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98fa00f6fa60a13f05219f3b2d886eef",
+      "kind": "paragraph",
+      "text": "Accumulate 30 70 40 60 5050.0 Reset each batch 30 40 40 50 60 44.0",
+      "order": 106,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall"
+      ],
+      "char_start": 32017,
+      "char_end": 32083,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f02d917c1e0b704e98444e0073247349",
+      "kind": "caption",
+      "text": "Table 3: Per-batch and overall accuracy (%) on",
+      "order": 107,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall"
+      ],
+      "char_start": 32085,
+      "char_end": 32131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58824d07cfa48b33e6b84f42c06b8dbe",
+      "kind": "paragraph",
+      "text": "the hard BIRD slice (B10/G3/R3) for carrying the committed harness across batches (Accumulate) versus resetting to the baseline each batch. Accumulation’s+6-point edge comes mostly from the middle batches (notably B2), where a warm start already carries useful structure. a strictreproduce-first, locate-root-cause, fix, re-verify, run-existing-testsworkflow, raised the step budget, and—crucially—added apost-rollout repairbranch that re-runs the agent with a sharper prompt whenever the first rollout returns an empty patch (full source in the appendix, Figure 5). On Text-to-SQL, an evolved harness (full source in the appendix, Figure 4) grounds filter values against the database for exact casing, infers the expected output shape from the question, and wraps generation in an execute-and-self-debug loop that feeds each failure a targeted error message. On LiveCodeBench the analogous discovery is a conditional verification-and-repair policy: use the lowcost path by default, escalate only after a public-test failure, and then repair. None of these were given; each was selected purely from label-free execution traces.",
+      "order": 108,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall"
+      ],
+      "char_start": 32133,
+      "char_end": 33260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8be998c5aec3ceea4709aa867f38dec",
+      "kind": "heading",
+      "text": "ABLATIONSTUDY",
+      "order": 109,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall",
+        "ABLATIONSTUDY"
+      ],
+      "char_start": 33262,
+      "char_end": 33275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e9b1fbb072aca331093e9236887d6d8",
+      "kind": "paragraph",
+      "text": "In this section, we ablate the components of TTHE’s search loop. Unless otherwise specified, all ablations use the same50-question hard Text-to-SQL slice withdeepseek-v4-flashas both solver and proposer, starting from the same baseline (12.0%); each entry is a single completed run, reported as accuracy (%). Search budget (GandR).Table 1 sweeps the number of proposers per roundGagainst the maximum number of generation roundsR. The effect of more rounds is non-monotonic and interacts withG: atG=1, accuracyfallsfrom46.0%at one round to40.0%at three, whereas atG=3itrises from44.0%to50.0%. A single lineage (G=1) often leaves the final round with only one surviving descendant, so a good early candidate can be lost with no substantive choice left to the judge; parallel lineages (G=3) make it likelier that a useful behavior survives to be selected. TheG=3, R=3setting is best at50.0%, but it changes both the number of proposers and their role prompts (a conservative-repair, an exploratory, and an adversarial branch), so its+5questions overG=1is not attributable to proposer count alone. Batch size.HoldingG=3andR=3, we sweep the batch sizeB(Figure 3). Accuracy is nonmonotonic and peaks atB=10(50.0%): both smaller (B=5:44.0%) and larger (B=25:38.0%; B=50:44.0%) batches do worse, though all remain far above the12.0%baseline. A smaller batch makes more commit decisions on less evidence each, whereas a larger batch gives each proposer more context per decision but fewer adaptation steps over the stream;B=10balances the two.",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall",
+        "ABLATIONSTUDY"
+      ],
+      "char_start": 33277,
+      "char_end": 34811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6716166cf942bdaa647e4a30eac64b1",
+      "kind": "paragraph",
+      "text": "Solver/proposer model.To test whether the loop is tied to one backbone, we repeat it with two further models, each instantiating both solver and proposer. As Table 2 shows, all three improve over their own model-matched baselines. Because the slice is conditioned on DeepSeek’s failures, the absolute scores are not a model ranking; the consistent within-model gain is the point. Cross-batch accumulation.Finally, we ask whether carrying the committed harness across batches matters by resetting to the baseline before every batch. Here accumulation helps: as Table 3 shows, the accumulating run reaches50.0%versus44.0%for the reset variant, and its advantage is concentrated in the middle batches rather than spread uniformly. Because each batch is both adapted to and scored on the same inputs, part of the gain is still batch-local specialization; but on this slice a warm start is worth roughly six points. 9",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall",
+        "ABLATIONSTUDY"
+      ],
+      "char_start": 34813,
+      "char_end": 35725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:969255f589f1bdd1e809ebad268700fd",
+      "kind": "heading",
+      "text": "WHERE THEGAINSARELOST: COVERAGE ANDSELECTION",
+      "order": 112,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall",
+        "WHERE THEGAINSARELOST: COVERAGE ANDSELECTION"
+      ],
+      "char_start": 35727,
+      "char_end": 35771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3e1294f2f28893a6aaef8e41c9bd27c",
+      "kind": "paragraph",
+      "text": "To locate where TTHE loses accuracy, we score the committed harness against two post-hocoracles that consult gold only for this diagnostic, never inside the loop. An oracle restricted to the pool the judge actually saw reaches64.0%versus the judge’s50.0%: seven tasks are solved bysomecandidate the judge saw but are not committed—selection regret. The judge is measurably miscalibrated: it commits a3/10branch over an available4/10in one batch and a6/10over a7/10in another, while claiming near-perfect correctness for candidates that exact scoring shows are far worse; the missed cases are subtle—every query executes, but the judge prefers a benchmark-incompatible output shape (returning extra columns or a coarser granularity than the reference expects). Coverage is a limit too: an oracle overallcandidates ever generated still reaches only70.0%, so roughly fifteen tasks are never produced by any candidate and no selector could recover them. Because the proposer and judge share the frozen model, additional search budget tends to generate correlated variants that repeat the same errors rather than closing either gap, which is consistent with the non-monotonic search curves above. The coverage gap is intrinsic to the current search, while the selection gap is at least partly recoverable, since the pool oracle shows fourteen points already generated but left uncommitted.",
+      "order": 113,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B1 B2 B3 B4 B5 Overall",
+        "WHERE THEGAINSARELOST: COVERAGE ANDSELECTION"
+      ],
+      "char_start": 35773,
+      "char_end": 37157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdb53f6b93137128bb573ba7db3c669a",
+      "kind": "heading",
+      "text": "LIMITATIONS",
+      "order": 114,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "LIMITATIONS"
+      ],
+      "char_start": 37159,
+      "char_end": 37170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ab3e1b9bf3ff59728a1cb9bead864e7",
+      "kind": "paragraph",
+      "text": "Our main protocol follows atransductivetest-time adaptation setting: a batch supplies the unlabeled traces used to select a harness and is then evaluated after adaptation. This directly measures withinbatch adaptation, but does not by itself establish forward generalization—because the harness is fit to a batch’s own execution structure, the reported accuracy does not on its own rule out adaptation to batch-specific artifacts. The decisive test we leave to future work isprequentialscoring, evaluating the harness committed on batchtagainst batcht+1beforeit adapts; a shuffled-batch rerun is likewise needed to separate cross-batch accumulation from batch-local adaptation, which is especially relevant for the difficulty-ordered claw-eval slice. Second, selection is made by a learned agentic judge; the selection regret above locates the bottleneck there, and an information ablation—exposing the proposer and judge to only scores, to scores plus summaries, or to full execution traces—would test our claim that raw-trace access is what enables the discovered policies. Third, extending our results with multi-seed evaluation and compute-matched baselines—such as best-of-Nexecution selection and development-time optimizers—is a natural direction for further strengthening the evidence. Finally, our runs use a restricted, sandboxed execution environment; extending label-free harness evolution to open-world or safety-critical deployments would require additional guardrails on the programs the proposer may write.",
+      "order": 115,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "LIMITATIONS"
+      ],
+      "char_start": 37172,
+      "char_end": 38694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a9efee789b4e0026aae0f717016afc0",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 116,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "CONCLUSION"
+      ],
+      "char_start": 38696,
+      "char_end": 38706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3cd21326a4477280d532eeb262ff994",
+      "kind": "paragraph",
+      "text": "TTHE turns evaluation-time execution into updates to the program that controls an agent. Without changing model weights or revealing gold, it improved baseline harnesses across different tasks and produced inspectable grounding, verification, and repair policies. The same experiments show why this problem is not solved by scaling search alone: incomplete execution evidence can cause an agentic judge to commit regressions. Within the transductive setting we study, these findings identify the executable harness as a practical test-time adaptation state and proxy reliability as the key challenge for making such evolution robust.",
+      "order": 117,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "CONCLUSION"
+      ],
+      "char_start": 38708,
+      "char_end": 39341,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef8794eaa4b22ac6353f198a2cb99ad8",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 118,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "REFERENCES"
+      ],
+      "char_start": 39343,
+      "char_end": 39353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72762f2842fb51336554ff04b75462e3",
+      "kind": "paragraph",
+      "text": "Jacob Austin, Augustus Odena, Maxwell Nye, Maarten Bosma, Henryk Michalewski, David Dohan, Ellen Jiang, Carrie Cai, Michael Terry, Quoc Le, et al. Program synthesis with large language models.arXiv preprint arXiv:2108.07732, 2021. Qianshu Cai, Yonggang Zhang, Xianzhang Jia, Wei Xue, Jun Song, Xinmei Tian, and Yike Guo. Moss: Self-evolution through source-level rewriting in autonomous agent systems.arXiv preprint arXiv:2605.22794, 2026. 10",
+      "order": 119,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "REFERENCES"
+      ],
+      "char_start": 39355,
+      "char_end": 39797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ac6954b4f9c3224d2bc9fea50827e34",
+      "kind": "paragraph",
+      "text": "Bei Chen, Fengji Zhang, Anh Nguyen, Daoguang Zan, Zeqi Lin, Jian-Guang Lou, and Weizhu Chen. CodeT: Code generation with generated tests.arXiv preprint arXiv:2207.10397, 2022. Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde De Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, et al. Evaluating large language models trained on code.arXiv preprint arXiv:2107.03374, 2021. Xinyun Chen, Maxwell Lin, Nathanael Sch ¨arli, and Denny Zhou. Teaching large language models to self-debug. InInternational Conference on Learning Representations, ICLR, 2024. Chrisantha Fernando, Dylan Banarse, Henryk Michalewski, Simon Osindero, and Tim Rockt¨aschel. Promptbreeder: Self-referential self-improvement via prompt evolution. InInternational Conference on Machine Learning, ICML, 2024. Dawei Gao, Haibin Wang, Yaliang Li, Xiuyu Sun, Yichen Qian, Bolin Ding, and Jingren Zhou. Text-to-SQL empowered by large language models: A benchmark evaluation.arXiv preprint arXiv:2308.15363, 2023. Qingyan Guo, Rui Wang, Junliang Guo, Bei Li, Kaitao Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yujiu Yang. Connecting large language models with evolutionary algorithms yields powerful prompt optimizers. InInternational Conference on Learning Representations, ICLR, 2024. Yufei He, Juncheng Liu, Yue Liu, Yibo Li, Tri Cao, Zhiyuan Hu, Xinxing Xu, and Bryan Hooi. EvoTest: Evolutionary test-time learning for self-improving agentic systems.arXiv preprint arXiv:2510.13220, 2025. Shengran Hu, Cong Lu, and Jeff Clune. Automated design of agentic systems. InInternational",
+      "order": 120,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "REFERENCES"
+      ],
+      "char_start": 39799,
+      "char_end": 41397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:674ac263bf131af1ba271d7cb2e9f0fb",
+      "kind": "paragraph",
+      "text": "Conference on Learning Representations, ICLR, 2025. Naman Jain, King Han, Alex Gu, Wen-Ding Li, Fanjia Yan, Tianjun Zhang, Sida Wang, Armando Solar-Lezama, Koushik Sen, and Ion Stoica. LiveCodeBench: Holistic and contamination free evaluation of large language models for code. InInternational Conference on Learning Representations, ICLR, 2025. Carlos E Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik Narasimhan. SWE-bench: Can language models resolve real-world GitHub issues? InInternational Conference on Learning Representations, ICLR, 2024.",
+      "order": 121,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "REFERENCES"
+      ],
+      "char_start": 41399,
+      "char_end": 41983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f315972e504ef25f6e3663e62d2db478",
+      "kind": "heading",
+      "text": "Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav Santhanam, Sri Vard-",
+      "order": 122,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav Santhanam, Sri Vard-"
+      ],
+      "char_start": 41985,
+      "char_end": 42076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b019108d3b79a95254b31a4b80662000",
+      "kind": "paragraph",
+      "text": "hamanan, Saiful Haq, Ashutosh Sharma, Thomas T Joshi, Hanna Moazam, et al. DSPy: Compiling declarative language model calls into self-improving pipelines.arXiv preprint arXiv:2310.03714, 2023. Yuhang Lai, Chengxi Li, Yiming Wang, Tianyi Zhang, Ruiqi Zhong, Luke Zettlemoyer, Wen-tau Yih, Daniel Fried, Sida Wang, and Tao Yu. DS-1000: A natural and reliable benchmark for data science code generation. InInternational Conference on Machine Learning, ICML, 2023. Yoonho Lee, Roshen Nair, Qizheng Zhang, Kangwook Lee, Omar Khattab, and Chelsea Finn. Metaharness: End-to-end optimization of model harnesses.arXiv preprint arXiv:2603.28052, 2026. Jinyang Li, Binyuan Hui, Ge Qu, Jiaxi Yang, Binhua Li, Bowen Li, Bailin Wang, Bowen Qin, Ruiying Geng, Nan Huo, et al. Can LLM already serve as a database interface? a big bench for large-scale database grounded text-to-SQLs. InAdvances in Neural Information Processing Systems, NeurIPS, 2023. Yujia Li, David Choi, Junyoung Chung, Nate Kushman, Julian Schrittwieser, R ´emi Leblond, Tom Eccles, James Keeling, Felix Gimeno, Agustin Dal Lago, et al. Competition-level code generation with AlphaCode.Science, 2022. Hunter Lightman, Vineet Kosaraju, Yuri Burda, Harrison Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. Let’s verify step by step. InInternational Conference on Learning Representations, ICLR, 2024. 11",
+      "order": 123,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav Santhanam, Sri Vard-"
+      ],
+      "char_start": 42078,
+      "char_end": 43477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d9c9e0dcf06a85d1394d48b2f5880ab",
+      "kind": "paragraph",
+      "text": "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, et al. Self-Refine: Iterative refinement with self-feedback. InAdvances in Neural Information Processing Systems, NeurIPS, 2023. Mohammadreza Pourreza and Davood Rafiei. DIN-SQL: Decomposed in-context learning of textto-SQL with self-correction. InAdvances in Neural Information Processing Systems, NeurIPS, 2023. Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, Matej Balog, M Pawan Kumar, Emilien Dupont, Francisco JR Ruiz, Jordan S Ellenberg, Pengming Wang, Omar Fawzi, et al. Mathematical discoveries from program search with large language models. Nature, 2024. Timo Schick, Jane Dwivedi-Yu, Roberto Dess `ı, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. Toolformer: Language models can teach themselves to use tools. InAdvances in Neural Information Processing Systems, NeurIPS, 2023.",
+      "order": 124,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav Santhanam, Sri Vard-"
+      ],
+      "char_start": 43479,
+      "char_end": 44487,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50ad6bfe3dc392b56d10854b6220a33e",
+      "kind": "heading",
+      "text": "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflex-",
+      "order": 125,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflex-"
+      ],
+      "char_start": 44489,
+      "char_end": 44579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:818470caa2a59b5e4189a3f2b1bcc3ae",
+      "kind": "paragraph",
+      "text": "ion: language agents with verbal reinforcement learning. InAdvances in Neural Information Processing Systems, NeurIPS, 2023. Yu Sun, Xiaolong Wang, Zhuang Liu, John Miller, Alexei Efros, and Moritz Hardt. Test-time training with self-supervision for generalization under distribution shifts. InInternational Conference on Machine Learning, ICML, 2020. Dequan Wang, Evan Shelhamer, Shaoteng Liu, Bruno A. Olshausen, and Trevor Darrell. Tent: Fully test-time adaptation by entropy minimization. InInternational Conference on Learning Representations, ICLR, 2021. Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. V oyager: An open-ended embodied agent with large language models. Trans. Mach. Learn. Res., 2024. Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc V . Le, Ed H. Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. Self-consistency improves chain of thought reasoning in language models. InInternational Conference on Learning Representations, ICLR, 2023. Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou, et al. Chain-of-thought prompting elicits reasoning in large language models. InAdvances in Neural Information Processing Systems, NeurIPS, 2022. Chengrun Yang, Xuezhi Wang, Yifeng Lu, Hanxiao Liu, Quoc V Le, Denny Zhou, and Xinyun Chen. Large language models as optimizers. InInternational Conference on Learning Representations, ICLR, 2024a. John Yang, Carlos Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and",
+      "order": 126,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflex-"
+      ],
+      "char_start": 44581,
+      "char_end": 46145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a97c51be0d9b3d3d227dbe890d3bb3f2",
+      "kind": "paragraph",
+      "text": "Ofir Press. SWE-agent: Agent-computer interfaces enable automated software engineering. In Advances in Neural Information Processing Systems, NeurIPS, 2024b. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R. Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models. InInternational Conference on Learning Representations, ICLR, 2023. Tao Yu, Rui Zhang, Kai Yang, Michihiro Yasunaga, Dongxu Wang, Zifan Li, James Ma, Irene Li, Qingning Yao, Shanelle Roman, Zilin Zhang, and Dragomir R. Radev. Spider: A large-scale human-labeled dataset for complex and cross-domain semantic parsing and text-to-sql task. In Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, EMNLP, 2018.",
+      "order": 127,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflex-"
+      ],
+      "char_start": 46147,
+      "char_end": 46901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c36cf5ec654782f4850c5ea30ed42fe",
+      "kind": "heading",
+      "text": "Eric Zelikman, Eliana Lorch, Lester Mackey, and Adam Tauman Kalai. Self-taught optimizer",
+      "order": 128,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Eric Zelikman, Eliana Lorch, Lester Mackey, and Adam Tauman Kalai. Self-taught optimizer"
+      ],
+      "char_start": 46903,
+      "char_end": 46991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33104a1594002b80d5119bd9cb343a97",
+      "kind": "paragraph",
+      "text": "(STOP): Recursively self-improving code generation.arXiv preprint arXiv:2310.02304, 2023. 12",
+      "order": 129,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Eric Zelikman, Eliana Lorch, Lester Mackey, and Adam Tauman Kalai. Self-taught optimizer"
+      ],
+      "char_start": 46993,
+      "char_end": 47085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:429b1a6d18623126db6a2a5d728ff926",
+      "kind": "paragraph",
+      "text": "Hangfan Zhang, Shao Zhang, Kangcong Li, Chen Zhang, Yang Chen, Yiqun Zhang, Lei Bai, and Shuyue Hu. Self-harness: Harnesses that improve themselves.arXiv preprint arXiv:2606.09498, 2026. Jenny Zhang, Shengran Hu, Cong Lu, Robert Lange, and Jeff Clune. Darwin godel machine: Openended evolution of self-improving agents.arXiv preprint arXiv:2505.22954, 2025a. Jiayi Zhang, Jinyu Xiang, Zhaoyang Yu, Fengwei Teng, Xionghui Chen, Jiaqi Chen, Mingchen Zhuge, Xin Cheng, Sirui Hong, Jinlin Wang, Bingnan Zheng, Bang Liu, Yuyu Luo, and Chenglin Wu. Aflow: Automating agentic workflow generation. InInternational Conference on Learning Representations, ICLR, 2025b. Marvin Zhang, Sergey Levine, and Chelsea Finn. MEMO: test time robustness via adaptation and augmentation. InAdvances in Neural Information Processing Systems, NeurIPS, 2022. Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica. Judging LLM-as-a-judge with MT-Bench and chatbot arena. InAdvances in Neural Information Processing Systems, NeurIPS, 2023. Yongchao Zhou, Andrei Ioan Muresanu, Ziwen Han, Keiran Paster, Silviu Pitis, Harris Chan, and Jimmy Ba. Large language models are human-level prompt engineers. InInternational Conference on Learning Representations, ICLR, 2023. 13",
+      "order": 130,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "Eric Zelikman, Eliana Lorch, Lester Mackey, and Adam Tauman Kalai. Self-taught optimizer"
+      ],
+      "char_start": 47087,
+      "char_end": 48455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7899834a3f77ae069cf425cf1e66211",
+      "kind": "heading",
+      "text": "A TASKCONSTRUCTION",
+      "order": 131,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "A TASKCONSTRUCTION"
+      ],
+      "char_start": 48457,
+      "char_end": 48475,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:608371d0f8c848b57598c8c5e672f755",
+      "kind": "paragraph",
+      "text": "We use selected hard slices to make harness failures observable under a feasible test-time budget. The BIRD stream spans multiple databases. The LiveCodeBench stream contains hard problems from a recent contamination-controlled release window. SWE-bench instances are selected by goldpatch complexity (multi-file or large changes). DS-1000 instances are selected by reference-solution length. Selection uses benchmark metadata or reference artifacts only to construct the fixed evaluation slice; those artifacts are never passed to TTHE.",
+      "order": 132,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "A TASKCONSTRUCTION"
+      ],
+      "char_start": 48477,
+      "char_end": 49014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61439ff8ce7c584476cecb971b897f72",
+      "kind": "heading",
+      "text": "B DISCOVEREDHARNESSPOLICIES",
+      "order": 133,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B DISCOVEREDHARNESSPOLICIES"
+      ],
+      "char_start": 49016,
+      "char_end": 49043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78f94ba7d535eaa2aa9dc6b80ad41e90",
+      "kind": "paragraph",
+      "text": "The evolved programs are retained as source code rather than summarized only by aggregate scores. Recurring discovered policies include: •Text-to-SQL: value grounding through database probes, date-format repair, explicit output-shape checks, and removal of accidental limits on list queries. •LiveCodeBench: multiple candidate programs, execution-based ranking on public tests, targeted repair from expected-versus-observed outputs, and fresh-start recovery after repeated failure. •SWE-bench: reproduce-first debugging, root-cause localization before editing, post-edit verification, and an anti-paralysis failsafe for issues that would otherwise return an empty patch (Figure 5). •DS-1000: insertion-only output contracts, deterministic self-checks, and guards against redefining supplied variables. •claw-eval: single-line tool payloads so write actions are recorded, per-record identifier citation with a pre-delivery completeness check, exact-identifier service chaining, and a prohibition on reporting unexecuted actions (see the claw-eval section below). These policies are examples of program-level adaptation: they modify the control procedure used across instances rather than appending a one-off answer correction.",
+      "order": 134,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "B DISCOVEREDHARNESSPOLICIES"
+      ],
+      "char_start": 49045,
+      "char_end": 50270,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bee10fb57c64b0b172b071f873b7d38",
+      "kind": "heading",
+      "text": "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+      "order": 135,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN"
+      ],
+      "char_start": 50272,
+      "char_end": 50306,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28e7100d2aeb36bbc577e8fe2930ecaa",
+      "kind": "heading",
+      "text": "1 TASK,METRIC,AND PROTOCOL",
+      "order": 136,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "1 TASK,METRIC,AND PROTOCOL"
+      ],
+      "char_start": 50308,
+      "char_end": 50334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c467a98be0359c719c31fb17560fc2a0",
+      "kind": "paragraph",
+      "text": "claw-eval instances are multi-service office workflows: the solver reads mail, searches a knowledge base, looks up contacts, inspects a CRM or helpdesk, schedules meetings, and updates tickets by issuing tool calls to per-task mock services. Unlike the code and query domains, correctness is a graded rubricin[0,1]rather than a binary pass: each task defines completion, safety, and communication criteria, combined into one score (a safety factor multiplying a weighted sum of completion and robustness) and judged by a held-out model grader. From the139agentic tasks we retain the 112that depend only on local deterministic mock services and select the30on which the frozen baseline scores below0.60as a headroom slice. The solver isdeepseek-v4-flashrunning inside the OpenClaw agent, whose system prompt and skills form the harness that the proposer edits as source. The run processes the30tasks in six batches, evolving one general harness that accumulates from the baseline. The loop is label-free: the grader is disabled during in-loop observation, so no task score or rubric target enters proposer or judge input, and gold grading is applied only to the committed harness for measurement.",
+      "order": 137,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "1 TASK,METRIC,AND PROTOCOL"
+      ],
+      "char_start": 50336,
+      "char_end": 51531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1040ef37ada76a8cb80dae5672332246",
+      "kind": "heading",
+      "text": "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES",
+      "order": 138,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES"
+      ],
+      "char_start": 51533,
+      "char_end": 51579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8760829f82b460a3e5f0cafdee1d704c",
+      "kind": "paragraph",
+      "text": "Baseline to committed-harness mean task score, in stream order, is29→49,36→70,42→62, 46→78,49→76,56→84(%); the aggregate is48.9→69.8%(+20.9points; improved on28of 30tasks). From label-free traces alone the accumulated harness adds four general rules to the baseline: single-line tool payloads for reliable action capture; citation of every retrieved record identifier under a completeness checklist before delivery; chaining services by exact identifier (email or ID) 14",
+      "order": 139,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES"
+      ],
+      "char_start": 51581,
+      "char_end": 52051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9ec36168e3473f2c3e7620b6fb60d20",
+      "kind": "paragraph",
+      "text": "RULES = (\"Hint is authoritative; use exact DB casing (SQLite\" \" ’=’ is case-sensitive); return EXACTLY the asked\" \" column(s); superlative -> ORDER BY .. LIMIT 1 with a\" \" tiebreaker; no ROUND() unless asked; NULLIF safe div.\") class EvolvedSQLHarness(SQLHarness): def solve(self, question): # (1) ground filter values vs the DB (exact casing) grounding = self.ground_values(question) # (2) infer expected output shape (#cols, 1 vs many) shape = self.explain_shape(question) # (3) generate -> validate -> run -> self-debug (<=6x) err = \"\" for _ in range(6): sql = extract_sql(self.llm( self.prompt(question, grounding, shape, err), system=RULES)) if (msg := self.validate_structure(sql, question)): err = msg; continue # e.g. SELECT * res = self.execute(sql) if not res[\"ok\"]: err = \"SQL error: \" + res[\"error\"]; continue if not res[\"rows\"]: err = \"0 rows -- recheck WHERE casing\"; continue if (msg := self.check_columns(question, res)): err = msg; continue # wrong / extra columns return self.fix_shape(question, sql, res) return sql",
+      "order": 140,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES"
+      ],
+      "char_start": 52053,
+      "char_end": 53087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c2040eb6b33abb759610206e2877cc2",
+      "kind": "caption",
+      "text": "Figure 4: Source of an evolved Text-to-SQL harness (excerpt, lightly abridged), discovered from",
+      "order": 141,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES"
+      ],
+      "char_start": 53089,
+      "char_end": 53184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0830002ce545dcae91fd2f640fba32c9",
+      "kind": "paragraph",
+      "text": "label-free execution traces alone. It grounds filter values against the database for exact casing, infers the expected output shape from the question, and wraps generation in an execute-and-self-debug loop that returns each failure a targeted error message—structural check, execution error, empty result, wrong column count—before a final shape fix. The baseline is a standard ReAct harness (before any test-time evolution). # Evolved SWE-bench harness (excerpt, abridged). Its header records # what the proposer synthesized from 15 traces of earlier candidates: # - reproduce-first works: 4/5 issues yield a patch once the # agent starts running commands; # - one issue yields EMPTY patches across ALL harnesses: the # agent is \"paralyzed\" and emits no commands at all; # - \"previous attempt failed\" messaging deepens the freeze; # - the first 3-5 commands decide success. # Synthesized policy: reproduce-first + anti-paralysis failsafe.",
+      "order": 142,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "THE CLAW-EVALAGENTICTOOL-USEDOMAIN",
+        "2 PER-BATCH TRAJECTORY AND DISCOVERED POLICIES"
+      ],
+      "char_start": 53186,
+      "char_end": 54125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd60e5c91216456315d763ad7d54a013",
+      "kind": "heading",
+      "text": "_SYSTEM = \"\"\"",
+      "order": 143,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\""
+      ],
+      "char_start": 54127,
+      "char_end": 54140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6868608fd033688dbb44fcf573fc633",
+      "kind": "paragraph",
+      "text": "You are a focused engineer fixing a bug from a PR description. ## Mandatory workflow (IN ORDER, never skip)",
+      "order": 144,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\""
+      ],
+      "char_start": 54142,
+      "char_end": 54249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d199cebe95b1c743a96845dae7639fed",
+      "kind": "heading",
+      "text": "REPRODUCE FIRST: run /tmp/repro.py BEFORE reading source;",
+      "order": 145,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "REPRODUCE FIRST: run /tmp/repro.py BEFORE reading source;"
+      ],
+      "char_start": 54251,
+      "char_end": 54308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e87767b86423d4c4dfa8b2224f0fc05b",
+      "kind": "paragraph",
+      "text": "you MUST see the wrong behaviour.",
+      "order": 146,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "REPRODUCE FIRST: run /tmp/repro.py BEFORE reading source;"
+      ],
+      "char_start": 54310,
+      "char_end": 54343,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b694b55cc65c8646bb8bcfd7a24a573",
+      "kind": "heading",
+      "text": "TRACE with grep/sed; never cat whole files.",
+      "order": 147,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "TRACE with grep/sed; never cat whole files."
+      ],
+      "char_start": 54345,
+      "char_end": 54388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f3344f141f859f44399d850873797b5",
+      "kind": "heading",
+      "text": "DECLARE root cause BEFORE editing, citing the buggy lines.",
+      "order": 148,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "DECLARE root cause BEFORE editing, citing the buggy lines."
+      ],
+      "char_start": 54390,
+      "char_end": 54448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd0ef50c08d5cfea5f381f3153e3ace1",
+      "kind": "heading",
+      "text": "FIX MINIMALLY: 1-10 lines in ONE source file (never tests/).",
+      "order": 149,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "FIX MINIMALLY: 1-10 lines in ONE source file (never tests/)."
+      ],
+      "char_start": 54450,
+      "char_end": 54510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b1abfe5bf8a38ed112a3300c8e348de",
+      "kind": "heading",
+      "text": "VERIFY: re-run /tmp/repro.py; the bug output MUST be gone.",
+      "order": 150,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "VERIFY: re-run /tmp/repro.py; the bug output MUST be gone."
+      ],
+      "char_start": 54512,
+      "char_end": 54570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5033b29b4684606e2b59d08157306ccd",
+      "kind": "heading",
+      "text": "TEST: run pytest once. 7. SUBMIT the diff.",
+      "order": 151,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "TEST: run pytest once. 7. SUBMIT the diff."
+      ],
+      "char_start": 54572,
+      "char_end": 54614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfaf51bc76f17c7adf395d0134d50f28",
+      "kind": "paragraph",
+      "text": "## Momentum is critical If you go 5 steps without running a command you are STUCK: run ANY command to break the logjam. \"\"\" # A separate anti-paralysis phase gives a 4-command starter # (ls -> check Python -> find models -> write repro) and a # copy-paste repro template, and never mentions prior failure.",
+      "order": 152,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "TEST: run pytest once. 7. SUBMIT the diff."
+      ],
+      "char_start": 54616,
+      "char_end": 54921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:200c00963209e4819ffcf4ee617ce507",
+      "kind": "caption",
+      "text": "Figure 5: An evolved SWE-bench harness (excerpt, abridged), starting from the stock mini-swe-",
+      "order": 153,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "TEST: run pytest once. 7. SUBMIT the diff."
+      ],
+      "char_start": 54923,
+      "char_end": 55016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:574229cd95f0548fed0bfc011c5a096b",
+      "kind": "paragraph",
+      "text": "agent and discovered from label-free execution traces alone. The proposer’s own comments record the failure mode it found—some issues drive the agent into “empty-patch paralysis”—and the reproduce-first workflow and anti-paralysis failsafe it synthesized in response. None of this was supplied. rather than display name; and grounding every reported action in an executed tool call. The batches are ordered by ascending baseline difficulty, so this slice supports the per-task before/after but not an isolated claim about cross-batch accumulation. 15",
+      "order": 154,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "TTHE: TEST-TIMEHARNESSEVOLUTION",
+        "_SYSTEM = \"\"\"",
+        "TEST: run pytest once. 7. SUBMIT the diff."
+      ],
+      "char_start": 55018,
+      "char_end": 55568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.08124",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

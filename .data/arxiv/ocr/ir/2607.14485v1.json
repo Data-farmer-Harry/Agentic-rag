@@ -1,0 +1,3448 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "a3b980d4c26d2b76bd8f6cf5aac81056e50f6e2cebb2732da58cd591ad2a3cf4",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:a51a5c0a97279cfb9dce284c49afbb90",
+      "kind": "heading",
+      "text": "Step-Level Preference Learning for Generative",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative"
+      ],
+      "char_start": 0,
+      "char_end": 45,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7ff82f6a8f77297f59239ea9191feec",
+      "kind": "paragraph",
+      "text": "Agents in Social Simulations Wenchang Gao1†, Pingyue Sheng 3, Lanlan Qiu 1, Yunfei Ma 1, Jian Zhao 2, Baicheng Chen 2,4, Kangda Wang 2, Yuyang Tian 1,5, Shunqiang Mao 1,6, Tianxing He 3,2,1‡ 1Shanghai Qi Zhi Institute 2Xiongan AI Institute 3Tsinghua University 4CUHK-Shenzhen 5USTC 6Sun Yat-sen University Abstract. Large language model (LLM)-based generative agents simulate human behavior through long-horizon decision-making processes that comprise intermediate steps such as planning, memory retrieval, reflection, and action selection. However, fine-grained human annotations of these intermediate steps remain scarce, and existing agents are not grounded in human preferences over such intermediate decisions. To address this gap, we introduce SimPref, an interactive simulation interface that enables us to collect step-level human preference supervision over agent decision trajectories, leading to a dataset of 57K fine-grained annotations. We conduct step-level preference learning on open-weight language models using supervised finetuning and direct preference optimization on this data, consistently improving simulation fidelity, coordination, and interaction quality, and inducing more socially effective agent behavior. Our results show that step-level human supervision is an effective training signal for improving both local decision quality and long-horizon agent behavior. The related code and dataset will be opensourced in https://github.com/W-GaoT/SimPref. Keywords: Social simulation · Generative agent · Preference learning",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative"
+      ],
+      "char_start": 47,
+      "char_end": 1596,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec0032bd1a3fd13620762a82c524c172",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Introduction"
+      ],
+      "char_start": 1598,
+      "char_end": 1610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0d7630d7699f991233a918816af39d2",
+      "kind": "paragraph",
+      "text": "Simulating realistic human behavior in complex social contexts is a long-standing problem in cognitive science and artificial intelligence [ 24, 28]. Starting from Generative Agents (GA) [ 23], systems that combine a language model with a structured agent architecture composed of modules for memory retrieval, reflection, planning, and action, have enabled increasingly complex social worlds in which agents maintain personas, react to events, and exhibit long-horizon routines [ 5, 8, 30, 39]. Despite this progress, the fine-grained processes underlying agent behavior remain poorly understood. While language agents can produce increasingly realistic long-horizon behaviors, we still have a limited understanding of how their † Work done during an internship at Shanghai Qi Zhi Institute. Email: wenchanggao93@gmail.com ‡ Corresponding author. Email: hetianxing@mail.tsinghua.edu.cn",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Introduction"
+      ],
+      "char_start": 1612,
+      "char_end": 2498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86a74b8babfe5e62b6f84deea6944480",
+      "kind": "table",
+      "text": "arXiv:2607.14485v1  [cs.AI]  16 Jul 2026",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Introduction"
+      ],
+      "char_start": 2500,
+      "char_end": 2540,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1db581a06cdd9e0b03aaabf43450bb4",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 5,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 2542,
+      "char_end": 2555,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64869150e65e2b4a1f5aa666d9c30532",
+      "kind": "paragraph",
+      "text": "intermediate decisions are formed and where failures emerge. Existing work has largely focused either on proposing new architectural variants [ 5, 34, 39] or on applying agent simulations to diverse social settings [ 3, 14, 15, 30]. In both lines of work, human annotation is typically collected only after the simulation ends, such as trajectory-level judgments or Likert-scale ratings over complete behaviors. Relative to the intermediate decisions that produce behavior, such supervision is coarse-grained and is only available after the simulation ends: it evaluates the final outcome but offers limited signal about how that outcome was produced. This granularity gap makes it diﬀicult to attribute downstream failures to specific local decisions, or to derive fine-grained, actionable supervision for improving them. To address this gap, this work introduces SimPref, an interactive interface for step-level human supervision in GA-style social simulation. For several human-controlled agents, SimPref exposes their intermediate behaviors to annotators, who can supervise agent behavior by selecting or customizing their preferred outcome. Leveraging this interface, we construct the first step-level human preference dataset for GA-style social simulation. Our dataset contains 57,239 preference pairs spanning six decision modules: planning, importance scoring, reflection question generation, reflection, action, and dialogue. Our dataset is collected from 30 designed social events, each involving 4–8 agents with indi-",
+      "order": 6,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 2557,
+      "char_end": 4086,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43d42030c258022ecabd32e0511ab4a8",
+      "kind": "paragraph",
+      "text": "vidual goals under partial observability. Our empirical evaluation shows that step-level preference learning substantially improves GA-style social simulation quality. We perform step-level preference learning on open-weight base language models using supervised finetuning (SFT) and direct preference optimization (DPO) [ 26]. On 10 held-out social events, preference learning consistently enhances open-weight LLMs across whole-trajectory metrics. Our analysis also shows that preference-aligned agents allocate their time more properly across activities. We further provide case studies that illustrate how these gains manifest in concrete decisions. These results demonstrate that step-level human supervision is an effective training signal for improving both local decision quality and long-horizon agent behavior. Our contributions are summarized as follows: – We introduce SimPref, an interactive social simulation interface that enables human guidance of step-level outputs from agent modules. – We build the first step-level human preference dataset conditioned on a GAstyle architecture, spanning the agent’s internal decision process and behavior generation across a diverse range of social scenarios. – We conduct extensive experiments and demonstrate that step-level human supervision is an effective training signal for improving both local decision quality and long-horizon agent behavior.",
+      "order": 7,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 4088,
+      "char_end": 5493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f638d606190ee69ac39cde84a72fbff",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Related Work"
+      ],
+      "char_start": 5495,
+      "char_end": 5507,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d53af36a1d6a85ab79df3997b7284d8b",
+      "kind": "paragraph",
+      "text": "Agent-based social simulation. Recent work on LLM agents has popularized modular architectures that decompose behavior into modules such as memory retrieval, reflection, planning, and action, enabling long-horizon simulation of daily",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Related Work"
+      ],
+      "char_start": 5509,
+      "char_end": 5742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e28341a53b7d7d0aa662c813a25b418",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 3 routines and social interactions [ 13, 15, 23, 39, 40]. Building on this paradigm, many follow-up systems extend the architecture (e.g., with basic needs [ 34], cost reduction [ 17, 39], intrinsic desires [ 33], and long-term values [ 5]), or port it to new environments, like urban mobility [ 2, 38], economy simulation [ 8, 14, 31], or opinion evolution [ 3, 10]. These works primarily evaluate agents at the holistic level, leaving a gap in the grounding and validation of the intermediate module outputs that actually drive behavior. Interfaces and benchmarks for social simulation. A parallel line of work provides interfaces and environments to standardize agent evaluation and enable scalable experiments [ 4, 25, 30, 32, 34]. Such interfaces emphasize scenario design and systematic comparisons across models and settings. However, these interfaces do not provide direct human supervision over step-level module outputs during simulation. In contrast, SimPref is designed specifically to support direct human intervention in intermediate agent decisions in GA-style social simulation, enabling supervision at the level where downstream behavior is formed. Human-in-the-loop supervision and preference learning. Human feedback has long been used to align policies in the LLM post-training pipeline [ 16, 18, 26, 27]. Existing works in human preference data collection and alignment typically focus on instruction following [ 12, 22], securing model harmlessness [ 1, 11, 29], or",
+      "order": 10,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Related Work"
+      ],
+      "char_start": 5744,
+      "char_end": 7284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d486370539191b166f4b4f2b49408c8d",
+      "kind": "paragraph",
+      "text": "stylistic compliance via preference modeling [ 7, 35, 36]. In contrast, our work studies preference learning in interactive social simulation, where feedback is attached to triggered module outputs under partial observability and multi-agent interaction. To our knowledge, fine-grained human preference data for GA-style simulation at this level has not been previously studied. Our work fills this gap by introducing step-level human supervision and using it to align intermediate agent decisions in social simulation.",
+      "order": 11,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Related Work"
+      ],
+      "char_start": 7286,
+      "char_end": 7805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:628fe50fd29b95baae860da9ed63d649",
+      "kind": "heading",
+      "text": "Preliminary",
+      "order": 12,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Preliminary"
+      ],
+      "char_start": 7807,
+      "char_end": 7818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13150dddba0f5cba333c8329bebfbd52",
+      "kind": "paragraph",
+      "text": "To simulate human behavior, prior work [ 23] proposes a generative agent architecture comprising multiple modules: in the simulation environment, the agent perceives recent events, stores them as memories, which are high-level descriptions of the perceptions in natural language. To perform any action, the agent retrieves a small set of relevant memories, reflects based on the retrieved memories, and plans for the near future. In this work, we study social simulation in multi-agent social event settings. Each simulation contains agents that must host, attend, coordinate, and interact around an event. Each agent i is assigned an explicit event-related goal gi that specifies what it is trying to accomplish. At time step t, agent i receives a partial observation set oi,t, consisting of events within its local perceptual range. The agent converts these observations into memory entries and stores them in its memory bank Mi. Each memory m ∈ M i is associated with an LLM-estimated importance score. During memory retrieval, the agent forms a context-dependent query qt and retrieves a small subset of memories Ri,t ⊂ M i according to a weighted retrieval",
+      "order": 13,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Preliminary"
+      ],
+      "char_start": 7820,
+      "char_end": 8981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ccf0051693f512ffd264691dadf5374e",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 14,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 8983,
+      "char_end": 8996,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04906edf0d6b00cbdb26c6b7388a4fb8",
+      "kind": "caption",
+      "text": "Fig. 1: Overview of our framework. (1) SimPref enables step-level human super-",
+      "order": 15,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 8998,
+      "char_end": 9076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4662d378b67364d9e05e507158334b1c",
+      "kind": "paragraph",
+      "text": "vision. At each triggered decision step, the LLM backend of the agent generates three candidate outputs from the current decision context, and a human annotator selects a preferred output or provides a customized alternative. This yields one accepted output and multiple rejected outputs, stored as pairwise preference tuples in the dataset. (2) Repeating this process produces a GA preference dataset with 57,239 preference pairs spanning 30 social events and 6 agent modules. (3) Accepted outputs are used for supervised fine-tuning, while pairwise preferences (x, y+, y−) are used for direct preference optimization. score: score(m; qt) = α rel(m, qt) + β recency(m) + γ imp(m), where rel(m, qt) measures semantic relevance between memory m and the current query, recency(m) favors recently observed information, and imp (m) denotes the memory’s importance score. α, β, and γ weight the three terms. The retrieved memories are then used by several downstream modules. The plan module produces short-horizon intentions or schedules that help the agent organize its next steps in the event. The reflect module synthesizes multiple memories into higher-level insights, while the reflection questions module generates targeted queries that guide how reflection should occur. The talk module produces utterances for social interaction, and the act module selects actions in the environment, such as moving, approaching another agent, or participating in an activity. Together, these modules define the architecture backbone of the",
+      "order": 16,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 9078,
+      "char_end": 10606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1a5b9dc8e5ab887b492f948e3a30a01",
+      "kind": "paragraph",
+      "text": "agents studied in this work.",
+      "order": 17,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 10608,
+      "char_end": 10636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:465f1f3ab08a0d8a6fdc4e9d6e576a6e",
+      "kind": "heading",
+      "text": "Framework",
+      "order": 18,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework"
+      ],
+      "char_start": 10638,
+      "char_end": 10647,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:854725b7694e27901d39261025b9e034",
+      "kind": "paragraph",
+      "text": "We formulate GA-style social simulation at the level of triggered agent internal modules, where each module produces a specific output given the agent’s current local context. This formulation turns agent execution into a sequence of steplevel decisions that can be directly supervised by human preferences. As shown in Figure 1, our framework has three parts: (1) an interactive interface for steplevel human annotation, (2) a preference dataset built from these annotations, and (3) a preference learning pipeline that uses the resulting data to align agent behavior with human expectations.",
+      "order": 19,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework"
+      ],
+      "char_start": 10649,
+      "char_end": 11242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef723352009e4cceab2bc5454ebd6a6",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 5",
+      "order": 20,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework"
+      ],
+      "char_start": 11244,
+      "char_end": 11298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58f9a92bada1a6fbeee88a8dbc54eb53",
+      "kind": "heading",
+      "text": "Simulator Interface",
+      "order": 21,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Simulator Interface"
+      ],
+      "char_start": 11300,
+      "char_end": 11319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:663424c869bac50ecd040266ff7c0fb9",
+      "kind": "paragraph",
+      "text": "SimPref is an interactive interface for collecting step-level human preferences from GA-style simulations. During the simulation, annotators control 2–3 agents.1 Whenever a module of these human-controlled agents is triggered, the interface reveals the same decision context provided to the model, including the agent’s partial observations, explicit goal, retrieved memories, and local state. The model then generates three diverse candidate outputs, and the annotator either selects the preferred one or provides a customized alternative. Rather than subjective social taste, annotators judge decision competence, i.e., the feasibility of the output, its consistency with the current information state, its temporal and spatial appropriateness, and whether it advances the agent’s explicit goal, using only the goal, retrieved memories, and observations exposed in the same decision context given to the model. Interface illustrations and implementation details are provided in Appendices A and C.",
+      "order": 22,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Simulator Interface"
+      ],
+      "char_start": 11321,
+      "char_end": 12320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:079dd04e2fb034e4f602443f1e039a05",
+      "kind": "heading",
+      "text": "Preference Collection Pipeline",
+      "order": 23,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Preference Collection Pipeline"
+      ],
+      "char_start": 12322,
+      "char_end": 12352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:038463b6b96252a2bfb7352e767e422d",
+      "kind": "paragraph",
+      "text": "We collect training data from 30 social events, each involving 4–8 agents with distinct goals under partial observability. The scenarios are designed to distribute key event information asymmetrically across agents, thereby requiring information exchange and coordination through social interaction. We provide detailed event design principles in Appendix C. For each triggered module k of agent i at simulation step t, we construct a decision context x(k) i,t = ( oi,t, gi, Ri,t, zi,t ) , where oi,t denotes the current partial observations, gi the explicit goal, Ri,t the retrieved memories, and zi,t the local state features. Given x(k) i,t , base model GPT-4o [ 19] generates three candidate outputs {y(1), y(2), y(3)}. A human annotator selects the most preferred candidate or provides a customized alternative. We store the final accepted output together with the rejected candidates as step-level preference records, which can be decomposed into pairwise tuples ( x(k) i,t , y+, y−) , where y+ denotes the humanpreferred output and y− a rejected alternative. A customized output is treated as the accepted output and paired with all model-generated candidates as rejected alternatives.",
+      "order": 24,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Preference Collection Pipeline"
+      ],
+      "char_start": 12354,
+      "char_end": 13546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:936337252201c11204e651629e762485",
+      "kind": "heading",
+      "text": "Step-level Preference Learning",
+      "order": 25,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Step-level Preference Learning"
+      ],
+      "char_start": 13548,
+      "char_end": 13578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01a212eb1588aed06f05f097eb8c8076",
+      "kind": "paragraph",
+      "text": "We formulate learning step-level human preferences for GA-style simulation as the problem of learning a module-conditioned backbone language model πθ(y | x, k), where x is the decision context and k denotes the triggered agent module. We perform step-level preference learning of the base models in two stages. In the first stage, we apply supervised finetuning (SFT) on the human-accepted outputs: for each record we maximize the likelihood of the accepted output y+",
+      "order": 26,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Framework",
+        "Step-level Preference Learning"
+      ],
+      "char_start": 13580,
+      "char_end": 14047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb51c0aff221d978ff6b1409ee508ae4",
+      "kind": "heading",
+      "text": "The number of human-controlled agents is set to 2–3 as a balance between event",
+      "order": 27,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "The number of human-controlled agents is set to 2–3 as a balance between event"
+      ],
+      "char_start": 14049,
+      "char_end": 14127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37f6144baaaadf42078676f1dd5bb5e9",
+      "kind": "paragraph",
+      "text": "coverage and annotation burden. A single controlled agent often cannot adequately influence or participate in the event, whereas controlling too many agents makes annotation diﬀicult.",
+      "order": 28,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "The number of human-controlled agents is set to 2–3 as a balance between event"
+      ],
+      "char_start": 14129,
+      "char_end": 14312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:209300cacd9d13d52a25ae4303b022d2",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 29,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 14314,
+      "char_end": 14327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21889e799e0f0395e470dcc0f8506f86",
+      "kind": "paragraph",
+      "text": "conditioned on its decision context x and triggered module k. In the second stage, we apply Direct Preference Optimization (DPO) [ 26] to the accepted–rejected pairs to further align the policy with human preferences. Training details are provided in Appendix B.",
+      "order": 30,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 14329,
+      "char_end": 14591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8e703d150746a5b95b132bb30f355f0",
+      "kind": "heading",
+      "text": "Step-Level Human Preference Dataset",
+      "order": 31,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset"
+      ],
+      "char_start": 14593,
+      "char_end": 14628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b080ae436fc0aee268cb395c63585978",
+      "kind": "heading",
+      "text": "Dataset Construction",
+      "order": 32,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Dataset Construction"
+      ],
+      "char_start": 14630,
+      "char_end": 14650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5bc9e893160bfc174c57e532e1ea2c4e",
+      "kind": "paragraph",
+      "text": "Leveraging our SimPref interface and preference collection pipeline, we construct the first step-level human preference dataset for GA-style social simulation. The dataset comprises 57,239 preference pairs, spanning various social contexts with distinct personal goals under partial observability. Each data record corresponds to one triggered decision module k ∈ K for an agent at the simulation step, and is associated with the same LLM prompt at that moment (§ 4.2).",
+      "order": 33,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Dataset Construction"
+      ],
+      "char_start": 14652,
+      "char_end": 15121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1237bd907df94d3e1f15a5028dea480c",
+      "kind": "caption",
+      "text": "Table 1: Dataset composition and human–LLM",
+      "order": 34,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Dataset Construction"
+      ],
+      "char_start": 15123,
+      "char_end": 15165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dc90fd76b5198b83e3c3bb6e276795f",
+      "kind": "paragraph",
+      "text": "alignment statistics. #Pairs counts preference pairs per module. Pct. denotes the fraction of each module in the whole dataset. Top-1 Match denotes the fraction of triggers where the human choice matches the LLM top-ranked candidate. #Cust. denotes the number of humancustomized outputs in this module. Refl. Q. denotes the Reflection Question module. Imp. Sc. denotes the Importance Score module. Module #Pairs Pct. Top-1 Match #Cust. Plan 2199 3.8 31.2 47 Act 19591 34.2 39.6 253 Talk 10573 18.4 35.3 593 Reflect 1142 2.0 47.1 0 Refl. Q. 1142 2.0 51.4 0 Imp. Sc. 22592 39.5 29.3 324 Our dataset is constructed by eight software engineers with at least a bachelor’s degree over a four-week period. Each decision step is annotated by a single annotator, with no overlap across annotators. To ensure annotation quality, annotators completed a calibration phase with supervised pilot simulations before formal annotation. The presentation order of the three candidates is randomized at each step to prevent annotators from defaulting to a fixed position. We summarize dataset composition in Table 1. Importance Score is the most frequent module (39.5%), followed by Act (34.2%), Talk (18.4%), Plan (3.8%), Reflection Question (2.0%), and Reflect (2.0%). This distribution reflects the execution-heavy nature of long-horizon trajectories and the central role of memory in GA-style architectures.",
+      "order": 35,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Dataset Construction"
+      ],
+      "char_start": 15167,
+      "char_end": 16559,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48bd5a5dddf0082ab4a279455144cf14",
+      "kind": "heading",
+      "text": "Human–LLM Preference Alignment",
+      "order": 36,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Human–LLM Preference Alignment"
+      ],
+      "char_start": 16561,
+      "char_end": 16591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55d0ee61178be230ce2c84175bbd15e7",
+      "kind": "paragraph",
+      "text": "A unique feature of our dataset is that, for each triggered decision step, we record both the human-preferred output and the LLM’s self-preference among the 3 candidates presented to the annotator. We prompt the model to rank the generated 3 candidates according to its own preference during data collection. We quantify per-module preference agreement using T op-1 Match, defined as the fraction of outcomes in which the human choice matches the LLM’s top-ranked",
+      "order": 37,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Human–LLM Preference Alignment"
+      ],
+      "char_start": 16593,
+      "char_end": 17056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7a54012fa38f60d19a75a752ab6acc6",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 7 candidate. Candidate generation and self-preference ranking use the same steplevel context exposed by the preference collection pipeline. Since each trigger presents three candidates, the naive baseline for Top-1 Match under random agreement is about 33%. We observe higher human–LLM agreement on the Reflection Questions and Reflection modules, with approximately 50% of human choices matching the LLM’s top choices. This higher agreement likely stems from the relatively formulaic nature of these modules and their reduced dependence on feasibility constraints. For Act, Plan, and Talk, human–LLM agreement drops substantially. These modules directly influence agent behavior and therefore require consistent grounding in the information state. In particular, Importance Score has the smallest output space, which would inflate its chance agreement above the ≈ 33% naive baseline; yet it exhibits the lowest observed alignment of any module, with only 29.3% of human choices matching the LLM’s top-ranked candidate (Table 1). This is notable because importance is not directly observable in agents’ trajectory-level behaviors, yet it indirectly affects memory retrieval. Systematic miscalibration of importance scores could propagate downstream errors by promoting irrelevant memories and suppressing goal-critical ones, leading agents to forget arrangements or act inconsistently. We further connect this mismatch to behavior by ablating the importance estimator and examining this hypothesis in § 6.2.",
+      "order": 38,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Step-Level Human Preference Dataset",
+        "Human–LLM Preference Alignment"
+      ],
+      "char_start": 17058,
+      "char_end": 18618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bc268964fd745326bd93a6306463873",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 39,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Experiments"
+      ],
+      "char_start": 18620,
+      "char_end": 18631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0aa028375dd0d07004c2731d905aaf2",
+      "kind": "paragraph",
+      "text": "In this section, we aim to answer the following questions: – Q1: Can step-level preference learning improve open-weight LLMs on GAstyle social event simulations? – Q2: How do supervised finetuning and preference alignment, respectively, contribute to improvements in agent interaction quality and goal fulfillment? – Q3: How does step-level preference learning influence the agents’ behavioral composition in long-horizon trajectories?",
+      "order": 40,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Experiments"
+      ],
+      "char_start": 18633,
+      "char_end": 19068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dd9c54e1a4952600641fb01bbb3719b",
+      "kind": "heading",
+      "text": "Experimental Setup",
+      "order": 41,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 19070,
+      "char_end": 19088,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca737cfb8c38002294257574220cdebb",
+      "kind": "paragraph",
+      "text": "Evaluation scenarios. We evaluate scenario-level generalization within the GA paradigm: preferences collected on the 30 training events are tested on 10 heldout social events with disjoint scripts, different agents, distinct goal assignments, and different information-asymmetry structures (§ 5). Each event involves 4-8 agents with distinct goals, using the same simulator, perception pipeline, and action interface; methods differ only in the backbone model and/or the memory importance estimator. For each method and held-out event, we run 3 independent episodes each lasting 3 simulated days. Baselines and trained variants. We evaluate both proprietary and open-weight baselines. The proprietary baselines are GPT-4o [ 19], GPT-5.2 [21], and DeepSeekv3.2 [ 6]. The open-weight baselines are Qwen2.5-7B-Instruct (Q7B), Qwen2.5- 14B-Instruct (Q14B) [ 37], and Llama-3.1-8B-Instruct (L8B) [ 9]. We further report a human reference consisting of trajectories generated by annotators controlling agents through SimPref under the same intervention setting as in",
+      "order": 42,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 19090,
+      "char_end": 20150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:899c923b713980e80eba8f246cb9660b",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 43,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 20152,
+      "char_end": 20165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f8514a504db7ac7475d4c171ca422bf",
+      "kind": "paragraph",
+      "text": "data collection, judged by the same GPT-5.2 / DeepSeek-v3.2 evaluators as all other models. To study the impact of step-level preference learning, we evaluate SFT models trained on accepted outputs. We then evaluate SFT+DPO models further trained on pairwise preference data, warm-starting from the SFT checkpoints. We also report +MI variants that keep the language model backbone unchanged and only replace the memory-importance estimator in retrieval scoring. The +MI variant is not intended as an apples-to-apples counterpart to full SFT/DPO; it isolates whether a drop-in improvement to the importance estimator alone, holding the backbone fixed, is suﬀicient to improve downstream behavior. For retrieval-related embedding computations, we use text-embedding-3-small [20]. Evaluation metrics. We evaluate full trajectories using five event-centered metrics adapted from [ 30]. For each trajectory, automated LLM evaluators are given the agents’ goals, persona descriptions, and full execution histories and assign a 5-point Likert score for each metric. The five metrics are Location Adherence (whether the agent appears at the appropriate location for the intended activity), T emporal Adherence (whether actions occur at appropriate times relative to the event schedule), Requirement Consistency (whether behavior remains consistent with event constraints, available information, and agent profile), Interaction Quality (whether interactions are contextually relevant, coherent, and socially appropriate), and Role F ulfillment (whether behavior",
+      "order": 44,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 20167,
+      "char_end": 21720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1591c32ae8103534c487a4d2ce6876c",
+      "kind": "paragraph",
+      "text": "is consistent with the assigned persona and advances the explicit goal). We use GPT-5.2 [ 21] and DeepSeek-v3.2 [ 6] as judges and report mean scores across evaluated trajectories in Table 2.",
+      "order": 45,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 21722,
+      "char_end": 21913,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bdbe5d92f653378037cbc350dac30e1",
+      "kind": "heading",
+      "text": "Main Results",
+      "order": 46,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Main Results"
+      ],
+      "char_start": 21915,
+      "char_end": 21927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92330c7bfcef714b80b0e617ea44cddf",
+      "kind": "paragraph",
+      "text": "Step-level preference learning narrows the performance gap. Table 2 shows that proprietary models (GPT-4o, DeepSeek-v3.2 and GPT-5.2) outperform open-weight baselines across all five metrics, indicating a substantial capability gap in social simulation. However, step-level preference learning markedly improves open-weight models. Compared with their base versions, both SFT and SFT+DPO consistently improve trajectory quality across all metrics, with especially large gains in temporal adherence, requirement consistency, and role fulfillment. Supervised finetuning accounts for most of the gains. Compared with the base models, most gains already appear after supervised finetuning on human-preferred module outputs. This indicates that many simulation failures stem from poor local decisions at individual steps, rather than from a lack of general linguistic ability. Training on accepted step-level outputs helps the model produce actions and dialogues that are more aligned with agent roles and social constraints. As a result, agents become better at coordinating with timing, adhering to scenario requirements, and behaving consistently with their backgrounds and goals.",
+      "order": 47,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Main Results"
+      ],
+      "char_start": 21929,
+      "char_end": 23107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:199abc1908758964d04cf613dc69ae37",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 9",
+      "order": 48,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Main Results"
+      ],
+      "char_start": 23109,
+      "char_end": 23163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51246007ad09be3eeeddb4bb67ac0aa3",
+      "kind": "caption",
+      "text": "Table 2: Trajectory performance scores across five evaluation dimensions. We",
+      "order": 49,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Main Results"
+      ],
+      "char_start": 23165,
+      "char_end": 23241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62c148cc5c59a9af7ab29d89a65c1100",
+      "kind": "paragraph",
+      "text": "compare base models, memory importance variants (MI), supervised fine-tuning (SFT), and direct preference optimization (DPO) methods, evaluated using GPT-",
+      "order": 50,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Main Results"
+      ],
+      "char_start": 23243,
+      "char_end": 23397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c47c9059ca3f3b72e0b0f16292088a4",
+      "kind": "heading",
+      "text": "and DeepSeek-v3.2 as judges (higher is better). Gray indicates human refer-",
+      "order": 51,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "and DeepSeek-v3.2 as judges (higher is better). Gray indicates human refer-"
+      ],
+      "char_start": 23399,
+      "char_end": 23474,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:360b61f4df7c48bca9ce2b2f60aad1f4",
+      "kind": "paragraph",
+      "text": "ence. Bold denotes the best non-human performance. ↑ / ↓ denotes the absolute score increase / decrease from the base model. Overall, preference-aligned models (SFT and DPO) consistently outperform base models, with most of the gain coming from SFT; DPO adds a modest and uneven improvement over SFT, concentrated in location adherence and interaction quality, while approaching human-level performance in several metrics.",
+      "order": 52,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "and DeepSeek-v3.2 as judges (higher is better). Gray indicates human refer-"
+      ],
+      "char_start": 23476,
+      "char_end": 23898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:931aa8725e0a842f2fd840c327c8cf3b",
+      "kind": "heading",
+      "text": "Model Location Temporal Role Requirement Interaction",
+      "order": 53,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Model Location Temporal Role Requirement Interaction"
+      ],
+      "char_start": 23900,
+      "char_end": 23952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a76bf4c76e8961ceb451f4cc9aa9eec",
+      "kind": "heading",
+      "text": "Adherence Adherence Fulfillment Consistency Quality",
+      "order": 54,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Adherence Adherence Fulfillment Consistency Quality"
+      ],
+      "char_start": 23954,
+      "char_end": 24005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70856ca2fda09f3015cec682d30eb771",
+      "kind": "paragraph",
+      "text": "Human 3.12 3.07 3.25 3.41 3.09 GPT-4o 2.39 2.94 2.81 3.07 2.30 GPT-5.2 2.68 2.97 3.05 3.09 3.01 DeepSeek-v3.2 2.75 2.51 3.02 2.84 2.95 Q7B-Base 1.51 1.71 2.13 1.79 1.95 Q14B-Base 1.70 2.07 2.35 2.12 1.96 L8B-Base 2.14 2.11 2.28 2.29 2.13 GPT-4o+MI 2.38↓0.01 2.77↓0.17 2.79↓0.02 3.06↓0.01 2.39↑0.09 DeepSeek-v3.2+MI 2.88↑0.13 2.56↑0.05 3.04↑0.02 3.01↑0.17 3.17↑0.22",
+      "order": 55,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Adherence Adherence Fulfillment Consistency Quality"
+      ],
+      "char_start": 24007,
+      "char_end": 24371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2b02fed1c7fa21ba975c45496205e77",
+      "kind": "heading",
+      "text": "Q7B+MI 1.54↑0.03 1.75↑0.04 2.10↓0.03 1.73↓0.06 1.93↓0.02",
+      "order": 56,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q7B+MI 1.54↑0.03 1.75↑0.04 2.10↓0.03 1.73↓0.06 1.93↓0.02"
+      ],
+      "char_start": 24373,
+      "char_end": 24429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14b4f04e1ee028dc6c63b549d174354f",
+      "kind": "heading",
+      "text": "Q14B+MI 1.77↑0.07 2.13↑0.06 2.42↑0.07 2.24↑0.12 2.06↑0.10",
+      "order": 57,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q14B+MI 1.77↑0.07 2.13↑0.06 2.42↑0.07 2.24↑0.12 2.06↑0.10"
+      ],
+      "char_start": 24431,
+      "char_end": 24488,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:369b2c830e192c3d0daf23c988d22aae",
+      "kind": "heading",
+      "text": "L8B+MI 2.03↓0.11 2.15↑0.04 2.26↓0.02 2.27↓0.02 2.08↓0.05",
+      "order": 58,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "L8B+MI 2.03↓0.11 2.15↑0.04 2.26↓0.02 2.27↓0.02 2.08↓0.05"
+      ],
+      "char_start": 24490,
+      "char_end": 24546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb2b7478512c6b62ad8daa02e273bcc1",
+      "kind": "heading",
+      "text": "Q7B-SFT 2.27↑0.76 2.76↑1.05 2.81↑0.68 2.93↑1.14 2.60↑0.65",
+      "order": 59,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q7B-SFT 2.27↑0.76 2.76↑1.05 2.81↑0.68 2.93↑1.14 2.60↑0.65"
+      ],
+      "char_start": 24548,
+      "char_end": 24605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72e9419e77261b4f410a1c77c1b4d157",
+      "kind": "heading",
+      "text": "Q14B-SFT 2.21↑0.51 2.48↑0.41 2.85↑0.50 2.55↑0.43 2.35↑0.39",
+      "order": 60,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q14B-SFT 2.21↑0.51 2.48↑0.41 2.85↑0.50 2.55↑0.43 2.35↑0.39"
+      ],
+      "char_start": 24607,
+      "char_end": 24665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6adb048cf88444cc0f9b0da3e42a29cd",
+      "kind": "heading",
+      "text": "L8B-SFT 2.37↑0.23 2.75↑0.64 2.84↑0.56 2.93↑0.64 2.64↑0.51",
+      "order": 61,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "L8B-SFT 2.37↑0.23 2.75↑0.64 2.84↑0.56 2.93↑0.64 2.64↑0.51"
+      ],
+      "char_start": 24667,
+      "char_end": 24724,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10db264f1eb9207126931b1e9a98b0d5",
+      "kind": "heading",
+      "text": "Q7B-SFT+DPO 2.33↑0.82 2.70↑0.99 2.83↑0.70 2.89↑1.10 2.64↑0.69",
+      "order": 62,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q7B-SFT+DPO 2.33↑0.82 2.70↑0.99 2.83↑0.70 2.89↑1.10 2.64↑0.69"
+      ],
+      "char_start": 24726,
+      "char_end": 24787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3f46a89e5d38e1be1b917e41ebbcda4",
+      "kind": "heading",
+      "text": "Q14B-SFT+DPO 2.41 ↑0.71 2.62↑0.55 2.74↑0.39 2.63↑0.51 2.47↑0.51",
+      "order": 63,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Q14B-SFT+DPO 2.41 ↑0.71 2.62↑0.55 2.74↑0.39 2.63↑0.51 2.47↑0.51"
+      ],
+      "char_start": 24789,
+      "char_end": 24852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e60b5e4d597026963b1b8d312afc044",
+      "kind": "heading",
+      "text": "L8B-SFT+DPO 2.75↑0.61 2.56↑0.45 3.08↑0.80 2.91↑0.62 2.71↑0.58",
+      "order": 64,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "L8B-SFT+DPO 2.75↑0.61 2.56↑0.45 3.08↑0.80 2.91↑0.62 2.71↑0.58"
+      ],
+      "char_start": 24854,
+      "char_end": 24915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e66df2b023c453b0f9fc116ffe173ca",
+      "kind": "paragraph",
+      "text": "Preference optimization brings modest and uneven additional gains. Because SFT already trains on the accepted outputs y+, the added value of DPO is the explicit contrast against the rejected y−, and its effect is correspondingly smaller and dimension-dependent. A veraged over the three open-weight models, DPO improves location adherence ( +0.21) and interaction quality ( +0.08) over SFT, is essentially flat on role fulfillment ( +0.05) and requirement consistency ( +0.01), and is slightly lower on temporal adherence ( −0.04). The largest gains appear where several candidates are individually plausible but differ in grounding to the current information state or social appropriateness: by explicitly contrasting preferred and rejected outputs, preference optimization helps the model distinguish better choices from merely plausible ones. Improving memory importance alone is insuﬀicient. The +MI results show that improving only the memory importance estimator yields noticeably smaller and less consistent gains than full step-level alignment. This finding suggests that retrieval is only one part of the agent decision pipeline. Even with higher-ranked",
+      "order": 65,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "L8B-SFT+DPO 2.75↑0.61 2.56↑0.45 3.08↑0.80 2.91↑0.62 2.71↑0.58"
+      ],
+      "char_start": 24917,
+      "char_end": 26079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f24557c5f209287f2ee459010ae19e3",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 66,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 26081,
+      "char_end": 26094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f9558b708fb46d477767f39bf71ee6b",
+      "kind": "caption",
+      "text": "Fig. 2: Distribution of agent time allocation across behavioral categories before",
+      "order": 67,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 26096,
+      "char_end": 26177,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c1e486b5d10bcb86d109cf0a5e0a634",
+      "kind": "paragraph",
+      "text": "training, after training, and in human reference data. After step-level preference learning, agents spend more time on event coordination (+28pp) and event participation (+11pp), while reducing daily routines (-18pp), idle/off-task behavior (-9pp), and misleading interactions (-6pp). The resulting distribution more closely matches human behavior. memories, the agent may still fail to plan appropriately, interact coherently, or choose actions that advance the event. Stronger long-horizon social behavior appears to require coordinated improvement across multiple modules, rather than isolated optimization of memory retrieval alone.",
+      "order": 68,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 26179,
+      "char_end": 26815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a5f75324b66657a7151ef2ef772a4c2",
+      "kind": "heading",
+      "text": "Behavioral Distribution Analysis",
+      "order": 69,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Behavioral Distribution Analysis"
+      ],
+      "char_start": 26817,
+      "char_end": 26849,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8aa038538b563d867c9305f2468137e5",
+      "kind": "paragraph",
+      "text": "To answer Q3, we analyze how step-level preference learning changes the longhorizon behavioral composition of agents. We analyze the distribution of time spent across behavioral categories of Q14B-Base and Q14B-SFT+DPO, and compare these distributions with human reference data. We categorize agent activities into six types: (i) personal duties, (ii) daily routines, (iii) event coordination, (iv) event participation, (v) idle/off-task behavior, and (vi) misleading interactions. Figure 2 shows the proportion of time allocated to each category. Improved role alignment and reduced harmful behaviors. After training, agents exhibit a clear shift toward role-aligned behaviors. Time spent on event coordination and participation become more balanced. In particular, event coordination increases substantially from 8% to 36%, and event participation also increases substantially from 2% to 13%. We observe a decrease in undesirable behaviors: idle/off-task behavior is reduced from 31% to 22%, and misleading interactions drop from 8% to 2%. These results indicate that step-level preference learning encourages agents to engage more actively in socially meaningful activities and provides effective signals to discourage irrelevant or harmful actions. Closer alignment with human reference distribution. Overall, the post-trained distribution more closely resembles the human reference. We further quantify",
+      "order": 70,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Behavioral Distribution Analysis"
+      ],
+      "char_start": 26851,
+      "char_end": 28258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c1920540bd7a5ffb97e0a9cb086aa1e",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 11",
+      "order": 71,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Behavioral Distribution Analysis"
+      ],
+      "char_start": 28260,
+      "char_end": 28315,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f607a24f6389f821fdefa891d8d2b60",
+      "kind": "caption",
+      "text": "Fig. 3: Case study of event information propagation before and after preference",
+      "order": 72,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Behavioral Distribution Analysis"
+      ],
+      "char_start": 28317,
+      "char_end": 28396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:390cf6f6c00b48e691552748dfc9b99c",
+      "kind": "paragraph",
+      "text": "training. Panels (a)-(b) show that before training, agents seldom interact and spread a false rumor, and the event does not take place. Panels (c)-(d) show that after training, agents actively exchange correct event information, forming a successful invitation chain and enabling the event to take place. distributional alignment by computing the KL divergence over the normalized frequencies of behavior categories. The divergence to the human reference decreases from 0.610 before training to 0.084 after training, confirming that steplevel preference learning improves not only individual decisions, but also the overall long-horizon composition of agent behavior. Taken together, these longhorizon results address the concern that step-level (local) supervision might induce myopic or collapsing agents: over 3-day simulations the behavioral distribution moves toward the human reference and coordination and participation rise, rather than degrading, indicating that local preference signals translate into coherent global behavior.",
+      "order": 73,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Behavioral Distribution Analysis"
+      ],
+      "char_start": 28398,
+      "char_end": 29435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c157e04f07f45df0a9990f880ee27945",
+      "kind": "heading",
+      "text": "Case Studies",
+      "order": 74,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Case Studies"
+      ],
+      "char_start": 29437,
+      "char_end": 29449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd6f2ce59a175408352a8c67aec821e0",
+      "kind": "paragraph",
+      "text": "To complement our quantitative analysis, we examine how step-level preference finetuning affects agent behavior in concrete simulation episodes. This case study is a qualitative complement, not independent statistical evidence: its role is to illustrate the mechanism behind the aggregate results, and the population-level evidence it illustrates is the behavioral shift in Figure 2 and the KL-to-human drop from 0.610 to 0.084 (§ 6.3). Figure 3 contrasts the same social event before and after training at two stages: information propagation (Feb. 13) and event execution (Feb. 14). In this event, Isabella is responsible for hosting a coffee tasting event on Feb. 14 at 3:00 PM in her cafe. Other agents do not know the event details and are expected to gather the missing information and then participate in the event. Case study 1: Broken information propagation before preference training. Before training, the key coordinator, Isabella, remains isolated and does not initiate in-",
+      "order": 75,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Case Studies"
+      ],
+      "char_start": 29451,
+      "char_end": 30436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c209b4f8cf738a49e28dff432df516f1",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 76,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 30438,
+      "char_end": 30451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5fa5dd042345b93d4d8bf20e865314df",
+      "kind": "paragraph",
+      "text": "vitations, while another agent generates and spreads incorrect event details (Figure 3(a)). The resulting information breakdown leads to complete event failure, with no agents arriving at the venue (Figure 3(b)). Case study 2: Successful event coordination after preference training. After training, Isabella proactively disseminates event information, whereas other agents help propagate it after meeting Isabella (Figure 3(c)). As a result, most participants successfully attend the event (Figure 3(d)). These patterns are consistent with the quantitative gains in location adherence, temporal adherence, and role fulfillment scores reported in Table 2.",
+      "order": 77,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 30453,
+      "char_end": 31108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c0092c4576c5eb54c626e6f52dffeaa",
+      "kind": "heading",
+      "text": "Limitations and Future Work",
+      "order": 78,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Limitations and Future Work"
+      ],
+      "char_start": 31110,
+      "char_end": 31137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e10c48966239c7bf3be63a31e64c5fb",
+      "kind": "paragraph",
+      "text": "Our work has several limitations. First, although we collect step-level human preferences across multiple modules, current data is collected from a finite set of event scenarios with a limited number of annotators, which may not fully capture broader variations in social norms, interaction styles, or long-horizon coordination strategies. Second, each decision step is labeled by a single annotator without overlap, so we do not report inter-annotator agreement; while our annotation targets decision competence rather than subjective social taste and uses a supervised calibration phase and randomized candidate order (§ 5), the absence of a measured agreement statistic remains a limitation. Third, our evaluation relies primarily on LLM-as-a-judge scoring, which, although far more affordable than human annotation, carries some degree of evaluator bias relative to human scoring. Fourth, the collected data is heavily module-imbalanced, with two modules accounting for over 70% of all pairs, which can bias the jointly trained preference signal toward high-frequency modules. Future work can extend this line of research in several directions. A natural next step is to expand the dataset to more diverse scenarios, more heterogeneous annotator populations, and more varied social goals. It is also worth characterizing the marginal value of the annotation effort through a data-quantity ablation, for example training on subsets of the accepted and preference data to test whether performance saturates before the full 57K pairs, and verifying that step-",
+      "order": 79,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Limitations and Future Work"
+      ],
+      "char_start": 31139,
+      "char_end": 32699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96ada307a24c933aa6d09029f52e0e65",
+      "kind": "paragraph",
+      "text": "level alignment preserves general capabilities by evaluating on general-purpose benchmarks such as MMLU or IFEval before and after training. Beyond the scenario-level generalization we study, cross-environment and cross-architecture transfer remains open. Finally, combining step-level human preferences with trajectory-level supervision is a promising direction for jointly optimizing internal module decisions and global social outcomes.",
+      "order": 80,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Limitations and Future Work"
+      ],
+      "char_start": 32701,
+      "char_end": 33140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b84dbbb57e011a983e19848536c9548",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 81,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Conclusion"
+      ],
+      "char_start": 33142,
+      "char_end": 33152,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f84c96dec52ce62b61f23e0e4dd10434",
+      "kind": "paragraph",
+      "text": "In this work, we introduce SimPref, an interactive social simulation interface that enables eﬀicient step-level human supervision of the outcomes of agent internal modules. Leveraging the interface, we construct the first human preference dataset conditioned on GA-style simulations. We perform step-level preference learning on open-weight base models and demonstrate consistent improvements on held-out events across event-coordination and role-fulfillment metrics. Overall, our results highlight the value of step-level human preferences as both training signals and analytical tools for social simulation agents. We hope",
+      "order": 82,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Conclusion"
+      ],
+      "char_start": 33154,
+      "char_end": 33778,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be42d4958f60f715e091923d3f32b982",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 13 SimPref will facilitate more principled evaluation and alignment of fine-grained agent decisions as a complement to trajectory-level evaluation, with the combination of step-level and trajectory-level supervision a promising direction for future work.",
+      "order": 83,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Conclusion"
+      ],
+      "char_start": 33780,
+      "char_end": 34087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b35102d262d78644a5a2759e366d68bb",
+      "kind": "heading",
+      "text": "Acknowledgements",
+      "order": 84,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Acknowledgements"
+      ],
+      "char_start": 34089,
+      "char_end": 34105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68c36302a7164131fa159d1e4dac317c",
+      "kind": "paragraph",
+      "text": "All content was originally written by the authors; generative AI tools were used solely for language polishing and grammar checking.",
+      "order": 85,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Acknowledgements"
+      ],
+      "char_start": 34107,
+      "char_end": 34239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d21d5899ba33f40b5c2566c709d98ad",
+      "kind": "heading",
+      "text": "References",
+      "order": 86,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References"
+      ],
+      "char_start": 34241,
+      "char_end": 34251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c3ef021e7e25cb868d45eee0596a911",
+      "kind": "heading",
+      "text": "Bai, Y., Jones, A., Ndousse, K., Askell, A., Chen, A., et al.: Training a helpful",
+      "order": 87,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Bai, Y., Jones, A., Ndousse, K., Askell, A., Chen, A., et al.: Training a helpful"
+      ],
+      "char_start": 34253,
+      "char_end": 34334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8265737ad7b6c19b33ccc1136b0b643",
+      "kind": "paragraph",
+      "text": "and harmless assistant with reinforcement learning from human feedback (2022), https://arxiv.org/abs/2204.05862",
+      "order": 88,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Bai, Y., Jones, A., Ndousse, K., Askell, A., Chen, A., et al.: Training a helpful"
+      ],
+      "char_start": 34336,
+      "char_end": 34447,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6c1dbf8e1d52a33f393f09a905dde71",
+      "kind": "heading",
+      "text": "Bougie, N., Watanabe, N.: Citysim: Modeling urban behaviors and city dynamics",
+      "order": 89,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Bougie, N., Watanabe, N.: Citysim: Modeling urban behaviors and city dynamics"
+      ],
+      "char_start": 34449,
+      "char_end": 34526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d396957cefe34a1a8825c60421dbee64",
+      "kind": "paragraph",
+      "text": "with large-scale llm-driven agent simulation (2025), https://arxiv.org/abs/2506. 21805",
+      "order": 90,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Bougie, N., Watanabe, N.: Citysim: Modeling urban behaviors and city dynamics"
+      ],
+      "char_start": 34528,
+      "char_end": 34614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:790dc85015585285cfae6c63e055f070",
+      "kind": "heading",
+      "text": "Cau, E., Pansanella, V., Pedreschi, D., Rossetti, G.: Language-driven opinion dy-",
+      "order": 91,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Cau, E., Pansanella, V., Pedreschi, D., Rossetti, G.: Language-driven opinion dy-"
+      ],
+      "char_start": 34616,
+      "char_end": 34697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3366ca3f0237106b0635905e71c23e98",
+      "kind": "paragraph",
+      "text": "namics in agent-based simulations with llms (2025), https://arxiv.org/abs/2502. 19098",
+      "order": 92,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Cau, E., Pansanella, V., Pedreschi, D., Rossetti, G.: Language-driven opinion dy-"
+      ],
+      "char_start": 34699,
+      "char_end": 34784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d86fc6a5b00634cfd5cbd92d4a454f4a",
+      "kind": "heading",
+      "text": "Chen, W., Su, Y., Zuo, J., Yang, C., Yuan, C., Chan, C.M., Yu, H., Lu, Y., Hung,",
+      "order": 93,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Chen, W., Su, Y., Zuo, J., Yang, C., Yuan, C., Chan, C.M., Yu, H., Lu, Y., Hung,"
+      ],
+      "char_start": 34786,
+      "char_end": 34866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eed0766ce0312e941068a5b5102e5cc6",
+      "kind": "paragraph",
+      "text": "Y.H., Qian, C., Qin, Y., Cong, X., Xie, R., Liu, Z., Sun, M., Zhou, J.: Agentverse: Facilitating multi-agent collaboration and exploring emergent behaviors (2023), https://arxiv.org/abs/2308.10848",
+      "order": 94,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Chen, W., Su, Y., Zuo, J., Yang, C., Yuan, C., Chan, C.M., Yu, H., Lu, Y., Hung,"
+      ],
+      "char_start": 34868,
+      "char_end": 35064,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26f459fd39e5f1e849ac4464fd7da67e",
+      "kind": "heading",
+      "text": "Chen, X., Zhang, S., Song, G.: Towards humanoid: Value-driven agent model-",
+      "order": 95,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Chen, X., Zhang, S., Song, G.: Towards humanoid: Value-driven agent model-"
+      ],
+      "char_start": 35066,
+      "char_end": 35140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6558024945639d40268f6f6ba1e66994",
+      "kind": "paragraph",
+      "text": "ing based on large language models. In: NeurIPS 2024 Workshop on Open-World Agents (2024), https://openreview.net/forum?id=irKHAnZjvc",
+      "order": 96,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Chen, X., Zhang, S., Song, G.: Towards humanoid: Value-driven agent model-"
+      ],
+      "char_start": 35142,
+      "char_end": 35275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5e0cf5f72826b9f3d9c26906209659b",
+      "kind": "heading",
+      "text": "DeepSeek-AI, et al.: Deepseek-v3.2: Pushing the frontier of open large language",
+      "order": 97,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "DeepSeek-AI, et al.: Deepseek-v3.2: Pushing the frontier of open large language"
+      ],
+      "char_start": 35277,
+      "char_end": 35356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c429295c533e81e9c70e99951023e36",
+      "kind": "paragraph",
+      "text": "models. arXiv preprint arXiv:2512.02556 (2025)",
+      "order": 98,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "DeepSeek-AI, et al.: Deepseek-v3.2: Pushing the frontier of open large language"
+      ],
+      "char_start": 35358,
+      "char_end": 35404,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d084d26d8759fc8cf45a13fd55fe174",
+      "kind": "heading",
+      "text": "Dong, Y., Wang, Z., Sreedhar, M.N., Wu, X., Kuchaiev, O.: Steerlm: Attribute",
+      "order": 99,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Dong, Y., Wang, Z., Sreedhar, M.N., Wu, X., Kuchaiev, O.: Steerlm: Attribute"
+      ],
+      "char_start": 35406,
+      "char_end": 35482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d20af36eb79630b35ccab60be833724",
+      "kind": "paragraph",
+      "text": "conditioned sft as an (user-steerable) alternative to rlhf (2023), https://arxiv.org/ abs/2310.05344",
+      "order": 100,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Dong, Y., Wang, Z., Sreedhar, M.N., Wu, X., Kuchaiev, O.: Steerlm: Attribute"
+      ],
+      "char_start": 35484,
+      "char_end": 35584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:856ddb8abc8bddf2f4163b0522647105",
+      "kind": "heading",
+      "text": "Feng, Y., Lu, Y., Su, H., He, T.: Simcity: Multi-agent urban development simula-",
+      "order": 101,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Feng, Y., Lu, Y., Su, H., He, T.: Simcity: Multi-agent urban development simula-"
+      ],
+      "char_start": 35586,
+      "char_end": 35666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be9db2e7acddf633be8ce8b91f57150d",
+      "kind": "paragraph",
+      "text": "tion with rich interactions (2025), https://arxiv.org/abs/2510.01297",
+      "order": 102,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Feng, Y., Lu, Y., Su, H., He, T.: Simcity: Multi-agent urban development simula-"
+      ],
+      "char_start": 35668,
+      "char_end": 35736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82e00a6ce4607a4d17c1720c7d1a633d",
+      "kind": "heading",
+      "text": "Grattafiori, A., Dubey, A., Jauhri, A., et al.: The llama 3 herd of models (2024),",
+      "order": 103,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Grattafiori, A., Dubey, A., Jauhri, A., et al.: The llama 3 herd of models (2024),"
+      ],
+      "char_start": 35738,
+      "char_end": 35820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68e6441cc0365b78c3dcbbacb402ad0a",
+      "kind": "equation",
+      "text": "https://arxiv.org/abs/2407.21783",
+      "order": 104,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Grattafiori, A., Dubey, A., Jauhri, A., et al.: The llama 3 herd of models (2024),"
+      ],
+      "char_start": 35822,
+      "char_end": 35854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:103f2909ec496b60a5ab96d783b50053",
+      "kind": "heading",
+      "text": "Hou, A.B., Du, H., Wang, Y., Zhang, J., Wang, Z., Liang, P.P., Khashabi, D.,",
+      "order": 105,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Hou, A.B., Du, H., Wang, Y., Zhang, J., Wang, Z., Liang, P.P., Khashabi, D.,"
+      ],
+      "char_start": 35856,
+      "char_end": 35932,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e51b7f54af6e0354b5c9773123c57cb0",
+      "kind": "paragraph",
+      "text": "Gardner, L., He, T.: Can a society of generative agents simulate human behavior and inform public health policy? a case study on vaccine hesitancy (2025), https: //arxiv.org/abs/2503.09639",
+      "order": 106,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Hou, A.B., Du, H., Wang, Y., Zhang, J., Wang, Z., Liang, P.P., Khashabi, D.,"
+      ],
+      "char_start": 35934,
+      "char_end": 36122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62f94f8d4594762e7f5f1b88638be9ef",
+      "kind": "heading",
+      "text": "Ji, J., Hong, D., Zhang, B., Chen, B., Dai, J., Zheng, B., Qiu, T., Zhou, J.,",
+      "order": 107,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Ji, J., Hong, D., Zhang, B., Chen, B., Dai, J., Zheng, B., Qiu, T., Zhou, J.,"
+      ],
+      "char_start": 36124,
+      "char_end": 36201,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fc8d5317fe8b0e799c037c443ca98a2",
+      "kind": "paragraph",
+      "text": "Wang, K., Li, B., Han, S., Guo, Y., Yang, Y.: Pku-saferlhf: Towards multi-level safety alignment for llms with human preference (2025), https://arxiv.org/abs/",
+      "order": 108,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Ji, J., Hong, D., Zhang, B., Chen, B., Dai, J., Zheng, B., Qiu, T., Zhou, J.,"
+      ],
+      "char_start": 36203,
+      "char_end": 36361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13749a09b625c0de2c9a357e0579f831",
+      "kind": "heading",
+      "text": "15513",
+      "order": 109,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "15513"
+      ],
+      "char_start": 36363,
+      "char_end": 36368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4d794d5874c33e19500f7415e2bbd0f",
+      "kind": "heading",
+      "text": "Ji, J., Zhou, J., Lou, H., Chen, B., Hong, D., Wang, X., Chen, W., Wang, K., Pan,",
+      "order": 110,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Ji, J., Zhou, J., Lou, H., Chen, B., Hong, D., Wang, X., Chen, W., Wang, K., Pan,"
+      ],
+      "char_start": 36370,
+      "char_end": 36451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c353aed03fa4e4350bed99bc89e53bd",
+      "kind": "paragraph",
+      "text": "R., Li, J., Wang, M., Dai, J., Qiu, T., Xu, H., Li, D., Chen, W., Song, J., Zheng, B., Yang, Y.: Align anything: Training all-modality models to follow instructions with language feedback (2024), https://arxiv.org/abs/2412.15838",
+      "order": 111,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "References",
+        "Ji, J., Zhou, J., Lou, H., Chen, B., Hong, D., Wang, X., Chen, W., Wang, K., Pan,"
+      ],
+      "char_start": 36453,
+      "char_end": 36681,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd0c729f4ca1ab0530ef573d48586fd5",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 112,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 36683,
+      "char_end": 36696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a054acd87f9ed6da7be44bfedc740f7",
+      "kind": "heading",
+      "text": "Li, J., Li, J., Chen, J., Li, Y., Wang, S., Zhou, H., Ye, M., Su, Y.: Evolving",
+      "order": 113,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, J., Li, J., Chen, J., Li, Y., Wang, S., Zhou, H., Ye, M., Su, Y.: Evolving"
+      ],
+      "char_start": 36698,
+      "char_end": 36776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc4730dc8880757a166ee9f37a7284d8",
+      "kind": "paragraph",
+      "text": "agents: Interactive simulation of dynamic and diverse human personalities (2024), https://arxiv.org/abs/2404.02718",
+      "order": 114,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, J., Li, J., Chen, J., Li, Y., Wang, S., Zhou, H., Ye, M., Su, Y.: Evolving"
+      ],
+      "char_start": 36778,
+      "char_end": 36892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9c7156202756205c0e785ad24f68757",
+      "kind": "heading",
+      "text": "Li, N., Gao, C., Li, M., Li, Y., Liao, Q.: Econagent: Large language model-",
+      "order": 115,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, N., Gao, C., Li, M., Li, Y., Liao, Q.: Econagent: Large language model-"
+      ],
+      "char_start": 36894,
+      "char_end": 36969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:062fd6208f5c33a55cbb73124ee573ba",
+      "kind": "paragraph",
+      "text": "empowered agents for simulating macroeconomic activities (2024), https://arxiv. org/abs/2310.10436",
+      "order": 116,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, N., Gao, C., Li, M., Li, Y., Liao, Q.: Econagent: Large language model-"
+      ],
+      "char_start": 36971,
+      "char_end": 37069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:928c6f1c178c539f299ad4535b19efd9",
+      "kind": "heading",
+      "text": "Li, Y., Sun, L., Zhang, Y.: MetaAgents: Large language model based agents for",
+      "order": 117,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, Y., Sun, L., Zhang, Y.: MetaAgents: Large language model based agents for"
+      ],
+      "char_start": 37071,
+      "char_end": 37148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ac5f671628a553e8eb8e3496bc7b335",
+      "kind": "paragraph",
+      "text": "decision-making on teaming. Proceedings of the ACM on Human-Computer Interaction 9(2), 1–27 (May 2025). https://doi.org/10.1145/3711032, http://dx.doi. org/10.1145/3711032",
+      "order": 118,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Li, Y., Sun, L., Zhang, Y.: MetaAgents: Large language model based agents for"
+      ],
+      "char_start": 37150,
+      "char_end": 37321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbc948723e58417adbe361e9fd65dc50",
+      "kind": "heading",
+      "text": "Liu, R., Yang, R., Jia, C., Zhang, G., Zhou, D., Dai, A.M., Yang, D., Vosoughi, S.",
+      "order": 119,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Liu, R., Yang, R., Jia, C., Zhang, G., Zhou, D., Dai, A.M., Yang, D., Vosoughi, S."
+      ],
+      "char_start": 37323,
+      "char_end": 37405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32e6c4e705a4b7c3cf69efb87e4ea331",
+      "kind": "paragraph",
+      "text": "Training socially aligned language models on simulated social interactions (2023), https://arxiv.org/abs/2305.16960",
+      "order": 120,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Liu, R., Yang, R., Jia, C., Zhang, G., Zhou, D., Dai, A.M., Yang, D., Vosoughi, S."
+      ],
+      "char_start": 37407,
+      "char_end": 37522,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa29057dfa45583cf25e59fdaa1e2e39",
+      "kind": "heading",
+      "text": "Mou, X., Qian, C., Liu, W., Huang, X., Wei, Z.: Ecolang: Eﬀicient and effec-",
+      "order": 121,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Mou, X., Qian, C., Liu, W., Huang, X., Wei, Z.: Ecolang: Eﬀicient and effec-"
+      ],
+      "char_start": 37524,
+      "char_end": 37600,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39f2d789a06a591ab8a01d6de46fc6ad",
+      "kind": "paragraph",
+      "text": "tive agent communication language induction for social simulation (2025), https: //arxiv.org/abs/2505.06904",
+      "order": 122,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Mou, X., Qian, C., Liu, W., Huang, X., Wei, Z.: Ecolang: Eﬀicient and effec-"
+      ],
+      "char_start": 37602,
+      "char_end": 37709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35ae9bcaee71deed79adb1c6e5dfcb39",
+      "kind": "heading",
+      "text": "Movva, R., Milli, S., Min, S., Pierson, E.: What’s in my human feedback? learning",
+      "order": 123,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Movva, R., Milli, S., Min, S., Pierson, E.: What’s in my human feedback? learning"
+      ],
+      "char_start": 37711,
+      "char_end": 37792,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cc752d8bc7c9c1d41e1659ccc3b7135",
+      "kind": "paragraph",
+      "text": "interpretable descriptions of preference data (2025), https://arxiv.org/abs/2510. 26202",
+      "order": 124,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Movva, R., Milli, S., Min, S., Pierson, E.: What’s in my human feedback? learning"
+      ],
+      "char_start": 37794,
+      "char_end": 37881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f050ae48685fff93e93d52e626069443",
+      "kind": "heading",
+      "text": "OpenAI: Gpt-4o: Omni model. https://openai.com/index/hello-gpt-4o/ (2024)",
+      "order": 125,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "OpenAI: Gpt-4o: Omni model. https://openai.com/index/hello-gpt-4o/ (2024)"
+      ],
+      "char_start": 37883,
+      "char_end": 37956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4ac6cb9a77e9a3a1fae0d003c9e4220",
+      "kind": "heading",
+      "text": "OpenAI: New embedding models and api updates. https://openai.com/index/",
+      "order": 126,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "OpenAI: New embedding models and api updates. https://openai.com/index/"
+      ],
+      "char_start": 37958,
+      "char_end": 38029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ff3c23843a470557fe145127e2cfc3e",
+      "kind": "paragraph",
+      "text": "new-embedding-models-and-api-updates/ (2024), accessed: 2026-01-18",
+      "order": 127,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "OpenAI: New embedding models and api updates. https://openai.com/index/"
+      ],
+      "char_start": 38031,
+      "char_end": 38097,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cbcc73354cd4a18b8e1ddeb61f26c84",
+      "kind": "heading",
+      "text": "OpenAI: Update to GPT-5 system card: GPT-5.2. Tech. rep., OpenAI (Decem-",
+      "order": 128,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "OpenAI: Update to GPT-5 system card: GPT-5.2. Tech. rep., OpenAI (Decem-"
+      ],
+      "char_start": 38099,
+      "char_end": 38171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bb6f9ab26957bf1970c27b875dbb9f8",
+      "kind": "paragraph",
+      "text": "ber 2025), https://cdn.openai.com/pdf/3a4153c8-c748-4b71-8e31-aecbde944f8d/ oai_5_2_system-card.pdf, accessed: 2026-01-18",
+      "order": 129,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "OpenAI: Update to GPT-5 system card: GPT-5.2. Tech. rep., OpenAI (Decem-"
+      ],
+      "char_start": 38173,
+      "char_end": 38294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f73591aa0986085748e441dc6e2cb36f",
+      "kind": "heading",
+      "text": "Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C.L., Mishkin, P., Zhang,",
+      "order": 130,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Ouyang, L., Wu, J., Jiang, X., Almeida, D., Wainwright, C.L., Mishkin, P., Zhang,"
+      ],
+      "char_start": 38296,
+      "char_end": 38377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:351028c49e26393b0be3571d56856f1e",
+      "kind": "heading",
+      "text": ", Agarwal, S., Slama, K., Ray, A., Schulman, J., Hilton, J., Kelton, F., Miller, L.,",
+      "order": 131,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        ", Agarwal, S., Slama, K., Ray, A., Schulman, J., Hilton, J., Kelton, F., Miller, L.,"
+      ],
+      "char_start": 38379,
+      "char_end": 38463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b44ae91eacf9d88c8cbc1b992d624a5",
+      "kind": "paragraph",
+      "text": "Simens, M., Askell, A., Welinder, P., Christiano, P., Leike, J., Lowe, R.: Training language models to follow instructions with human feedback (2022), https://arxiv. org/abs/2203.02155",
+      "order": 132,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        ", Agarwal, S., Slama, K., Ray, A., Schulman, J., Hilton, J., Kelton, F., Miller, L.,"
+      ],
+      "char_start": 38465,
+      "char_end": 38649,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92d396b8227659e1b9069c441b7f606e",
+      "kind": "heading",
+      "text": "Park, J.S., O’Brien, J.C., Cai, C.J., Morris, M.R., Liang, P., Bernstein, M.S.: Gen-",
+      "order": 133,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Park, J.S., O’Brien, J.C., Cai, C.J., Morris, M.R., Liang, P., Bernstein, M.S.: Gen-"
+      ],
+      "char_start": 38651,
+      "char_end": 38735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1405b1d3ca09302cc21d9d5b049e4f9",
+      "kind": "paragraph",
+      "text": "erative agents: Interactive simulacra of human behavior (2023), https://arxiv.org/ abs/2304.03442",
+      "order": 134,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Park, J.S., O’Brien, J.C., Cai, C.J., Morris, M.R., Liang, P., Bernstein, M.S.: Gen-"
+      ],
+      "char_start": 38737,
+      "char_end": 38834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18d00deb4d760402f5a2e6b1dbec0359",
+      "kind": "heading",
+      "text": "Park, J.S., Zou, C.Q., Shaw, A., Hill, B.M., Cai, C., Morris, M.R., Willer, R.,",
+      "order": 135,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Park, J.S., Zou, C.Q., Shaw, A., Hill, B.M., Cai, C., Morris, M.R., Willer, R.,"
+      ],
+      "char_start": 38836,
+      "char_end": 38915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f490620b5e0de9adf3475dead7d13c77",
+      "kind": "paragraph",
+      "text": "Liang, P., Bernstein, M.S.: Generative agent simulations of 1,000 people (2024), https://arxiv.org/abs/2411.10109",
+      "order": 136,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Park, J.S., Zou, C.Q., Shaw, A., Hill, B.M., Cai, C., Morris, M.R., Willer, R.,"
+      ],
+      "char_start": 38917,
+      "char_end": 39030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f4877ea49a074b2696563118fe3ce0c",
+      "kind": "heading",
+      "text": "Piao, J., Yan, Y., Zhang, J., Li, N., Yan, J., Lan, X., Lu, Z., Zheng, Z., Wang,",
+      "order": 137,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Piao, J., Yan, Y., Zhang, J., Li, N., Yan, J., Lan, X., Lu, Z., Zheng, Z., Wang,"
+      ],
+      "char_start": 39032,
+      "char_end": 39112,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c9951ca31d166c4569f8af2dd74e46a",
+      "kind": "paragraph",
+      "text": "J.Y., Zhou, D., Gao, C., Xu, F., Zhang, F., Rong, K., Su, J., Li, Y.: Agentsociety: Large-scale simulation of llm-driven generative agents advances understanding of human behaviors and society (2025), https://arxiv.org/abs/2502.08691",
+      "order": 138,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Piao, J., Yan, Y., Zhang, J., Li, N., Yan, J., Lan, X., Lu, Z., Zheng, Z., Wang,"
+      ],
+      "char_start": 39114,
+      "char_end": 39347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b48198290a69dfdf7642ab55c8611db",
+      "kind": "heading",
+      "text": "Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C.D., Finn, C.: Direct",
+      "order": 139,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C.D., Finn, C.: Direct"
+      ],
+      "char_start": 39349,
+      "char_end": 39431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f15bf9b999bd7e2be87007f77eb0a2a2",
+      "kind": "paragraph",
+      "text": "preference optimization: Your language model is secretly a reward model (2024), https://arxiv.org/abs/2305.18290",
+      "order": 140,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C.D., Finn, C.: Direct"
+      ],
+      "char_start": 39433,
+      "char_end": 39545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d893a1aa4f588ed3e5b4f5dd9ba8814",
+      "kind": "heading",
+      "text": "Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Bi, X., Zhang, H., Zhang, M.,",
+      "order": 141,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Bi, X., Zhang, H., Zhang, M.,"
+      ],
+      "char_start": 39547,
+      "char_end": 39623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60785cd7970258a38771f1cc96f2d839",
+      "kind": "paragraph",
+      "text": "Li, Y.K., Wu, Y., Guo, D.: Deepseekmath: Pushing the limits of mathematical reasoning in open language models (2024), https://arxiv.org/abs/2402.03300",
+      "order": 142,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J., Bi, X., Zhang, H., Zhang, M.,"
+      ],
+      "char_start": 39625,
+      "char_end": 39775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4de254b535712299f9d32def10a1b53d",
+      "kind": "heading",
+      "text": "Squazzoni, F., Jager, W., Edmonds, B.: Social simulation in the social sciences",
+      "order": 143,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Squazzoni, F., Jager, W., Edmonds, B.: Social simulation in the social sciences"
+      ],
+      "char_start": 39777,
+      "char_end": 39856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9fec04f487f5dc3417cb472fed17271",
+      "kind": "paragraph",
+      "text": "A brief overview. Social Science Computer Review 32(3), 279–294 (2014), https: //doi.org/10.1177/0894439313512975",
+      "order": 144,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Squazzoni, F., Jager, W., Edmonds, B.: Social simulation in the social sciences"
+      ],
+      "char_start": 39858,
+      "char_end": 39971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14e72505687af59c8f3b65d5ed19af86",
+      "kind": "paragraph",
+      "text": "Step-Level Preference Learning for Generative Agents 15",
+      "order": 145,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Squazzoni, F., Jager, W., Edmonds, B.: Social simulation in the social sciences"
+      ],
+      "char_start": 39973,
+      "char_end": 40028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36515b21e236a542821775d3b3084ce4",
+      "kind": "heading",
+      "text": "Tan, Y., Jiang, Y., Li, Y., Liu, J., Bu, X., Su, W., Yue, X., Zhu, X., Zheng, B.",
+      "order": 146,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tan, Y., Jiang, Y., Li, Y., Liu, J., Bu, X., Su, W., Yue, X., Zhu, X., Zheng, B."
+      ],
+      "char_start": 40030,
+      "char_end": 40110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9506a4d338eb682442308b12da0b546b",
+      "kind": "paragraph",
+      "text": "Equilibrate rlhf: Towards balancing helpfulness-safety trade-off in large language models (2025), https://arxiv.org/abs/2502.11555",
+      "order": 147,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tan, Y., Jiang, Y., Li, Y., Liu, J., Bu, X., Su, W., Yue, X., Zhu, X., Zheng, B."
+      ],
+      "char_start": 40112,
+      "char_end": 40242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d88d57a3cf72dbecec4e1b9881524b3a",
+      "kind": "heading",
+      "text": "Tian, Y., Mao, S., Gao, W., Qiu, L., He, T.: A visualized framework for event",
+      "order": 148,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tian, Y., Mao, S., Gao, W., Qiu, L., He, T.: A visualized framework for event"
+      ],
+      "char_start": 40244,
+      "char_end": 40321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c9caefd2929710e7957c7c9945aa1f1",
+      "kind": "paragraph",
+      "text": "cooperation with generative agents (2025), https://arxiv.org/abs/2509.13011",
+      "order": 149,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tian, Y., Mao, S., Gao, W., Qiu, L., He, T.: A visualized framework for event"
+      ],
+      "char_start": 40323,
+      "char_end": 40398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7aedcc8895466a9cf50ac40be38accc4",
+      "kind": "heading",
+      "text": "Tomasev, N., Franklin, M., Leibo, J.Z., Jacobs, J., Cunningham, W.A., Gabriel, I.,",
+      "order": 150,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tomasev, N., Franklin, M., Leibo, J.Z., Jacobs, J., Cunningham, W.A., Gabriel, I.,"
+      ],
+      "char_start": 40400,
+      "char_end": 40482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9dbad6a388caef47def7d2c77e9aa828",
+      "kind": "paragraph",
+      "text": "Osindero, S.: Virtual agent economies (2025), https://arxiv.org/abs/2509.10147",
+      "order": 151,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Tomasev, N., Franklin, M., Leibo, J.Z., Jacobs, J., Cunningham, W.A., Gabriel, I.,"
+      ],
+      "char_start": 40484,
+      "char_end": 40562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:140dc9729b5359375b4c411835a7a0e2",
+      "kind": "heading",
+      "text": "Wang, L., Gao, H., Bo, X., Chen, X., Wen, J.R.: Yulan-onesim: Towards the next",
+      "order": 152,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, L., Gao, H., Bo, X., Chen, X., Wen, J.R.: Yulan-onesim: Towards the next"
+      ],
+      "char_start": 40564,
+      "char_end": 40642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe2c3af304c6a2d72f0af97d90f987e9",
+      "kind": "paragraph",
+      "text": "generation of social simulator with large language models (2025), https://arxiv. org/abs/2505.07581",
+      "order": 153,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, L., Gao, H., Bo, X., Chen, X., Wen, J.R.: Yulan-onesim: Towards the next"
+      ],
+      "char_start": 40644,
+      "char_end": 40743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43718e6a4b06a7ac8bd8d0f3b14bf23b",
+      "kind": "heading",
+      "text": "Wang, Y., Chen, Y., Zhong, F., Ma, L., Wang, Y.: Simulating human-like daily",
+      "order": 154,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Y., Chen, Y., Zhong, F., Ma, L., Wang, Y.: Simulating human-like daily"
+      ],
+      "char_start": 40745,
+      "char_end": 40821,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3859f39161b496bb7dce700c3480b10",
+      "kind": "paragraph",
+      "text": "activities with desire-driven autonomy (2025), https://arxiv.org/abs/2412.06435",
+      "order": 155,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Y., Chen, Y., Zhong, F., Ma, L., Wang, Y.: Simulating human-like daily"
+      ],
+      "char_start": 40823,
+      "char_end": 40902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af16fde963bc11df8859c3b44da5093d",
+      "kind": "heading",
+      "text": "Wang, Z., Chiu, Y.Y., Chiu, Y.C.: Humanoid agents: Platform for simulating",
+      "order": 156,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Chiu, Y.Y., Chiu, Y.C.: Humanoid agents: Platform for simulating"
+      ],
+      "char_start": 40904,
+      "char_end": 40978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:495bddbba097b23a0f55d7d354c7df3c",
+      "kind": "paragraph",
+      "text": "human-like generative agents (2023), https://arxiv.org/abs/2310.05418",
+      "order": 157,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Chiu, Y.Y., Chiu, Y.C.: Humanoid agents: Platform for simulating"
+      ],
+      "char_start": 40980,
+      "char_end": 41049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a142d4c39da9f1c3bab4d58f7ae4a1b",
+      "kind": "heading",
+      "text": "Wang, Z., Dong, Y., Delalleau, O., Zeng, J., Shen, G., Egert, D., Zhang, J.J.,",
+      "order": 158,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Dong, Y., Delalleau, O., Zeng, J., Shen, G., Egert, D., Zhang, J.J.,"
+      ],
+      "char_start": 41051,
+      "char_end": 41129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7c6561543e251838b07a532023084b",
+      "kind": "paragraph",
+      "text": "Sreedhar, M.N., Kuchaiev, O.: Helpsteer2: Open-source dataset for training topperforming reward models (2024), https://arxiv.org/abs/2406.08673",
+      "order": 159,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Dong, Y., Delalleau, O., Zeng, J., Shen, G., Egert, D., Zhang, J.J.,"
+      ],
+      "char_start": 41131,
+      "char_end": 41274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a37ffb36c7d11b2ef72ab4226a9e848c",
+      "kind": "heading",
+      "text": "Wang, Z., Zeng, J., Delalleau, O., Shin, H.C., Soares, F., Bukharin, A., Evans, E.,",
+      "order": 160,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Zeng, J., Delalleau, O., Shin, H.C., Soares, F., Bukharin, A., Evans, E.,"
+      ],
+      "char_start": 41276,
+      "char_end": 41359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3988308ad6beec9b2de70d11f8d22eb7",
+      "kind": "paragraph",
+      "text": "Dong, Y., Kuchaiev, O.: Helpsteer3-preference: Open human-annotated preference data across diverse tasks and languages (2025), https://arxiv.org/abs/2505.11475",
+      "order": 161,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Wang, Z., Zeng, J., Delalleau, O., Shin, H.C., Soares, F., Bukharin, A., Evans, E.,"
+      ],
+      "char_start": 41361,
+      "char_end": 41520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34dfbb1356b12ebff0b00f09b0be7a84",
+      "kind": "heading",
+      "text": "Yang, A., Yang, B., Zhang, B., Hui, B., Zheng, B., Yu, B., Li, C., Liu, D., Huang,",
+      "order": 162,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yang, A., Yang, B., Zhang, B., Hui, B., Zheng, B., Yu, B., Li, C., Liu, D., Huang,"
+      ],
+      "char_start": 41522,
+      "char_end": 41604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2307eb41d2573a44dfc8e20e6bccc0e5",
+      "kind": "paragraph",
+      "text": "F., Wei, H., Lin, H., Yang, J., Tu, J., Zhang, J., Yang, J., Yang, J., Zhou, J., Lin, J., Dang, K., Lu, K., Bao, K., Yang, K., Yu, L., Li, M., Xue, M., Zhang, P., Zhu, Q., Men, R., Lin, R., Li, T., Tang, T., Xia, T., Ren, X., Ren, X., Fan, Y., Su, Y., Zhang, Y., Wan, Y., Liu, Y., Cui, Z., Zhang, Z., Qiu, Z.: Qwen2.5 technical report (2025), https://arxiv.org/abs/2412.15115",
+      "order": 163,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yang, A., Yang, B., Zhang, B., Hui, B., Zheng, B., Yu, B., Li, C., Liu, D., Huang,"
+      ],
+      "char_start": 41606,
+      "char_end": 41981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f66eedae67663a61cec97ccf80d6c4e2",
+      "kind": "heading",
+      "text": "Ye, X., Bougie, N., Yamasaki, T., Watanabe, N.: Mobilecity: An eﬀicient framework",
+      "order": 164,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Ye, X., Bougie, N., Yamasaki, T., Watanabe, N.: Mobilecity: An eﬀicient framework"
+      ],
+      "char_start": 41983,
+      "char_end": 42064,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10f01e547bd45ea898673507ed068e79",
+      "kind": "paragraph",
+      "text": "for large-scale urban behavior simulation (2025), https://arxiv.org/abs/2504.16946",
+      "order": 165,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Ye, X., Bougie, N., Yamasaki, T., Watanabe, N.: Mobilecity: An eﬀicient framework"
+      ],
+      "char_start": 42066,
+      "char_end": 42148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2795e4294437f37a54962af02ba0bfca",
+      "kind": "heading",
+      "text": "Yu, Y., Zhang, Q., Li, J., Fu, Q., Ye, D.: Affordable generative agents (2024),",
+      "order": 166,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yu, Y., Zhang, Q., Li, J., Fu, Q., Ye, D.: Affordable generative agents (2024),"
+      ],
+      "char_start": 42150,
+      "char_end": 42229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2db7631ef983ffdad05d36bf608efeba",
+      "kind": "equation",
+      "text": "https://arxiv.org/abs/2402.02053",
+      "order": 167,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yu, Y., Zhang, Q., Li, J., Fu, Q., Ye, D.: Affordable generative agents (2024),"
+      ],
+      "char_start": 42231,
+      "char_end": 42263,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df6ebd402cbba8bd92d5eab3f626a725",
+      "kind": "heading",
+      "text": "Yuan, S., Song, K., Chen, J., Tan, X., Li, D., Yang, D.: Evoagent: Towards au-",
+      "order": 168,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yuan, S., Song, K., Chen, J., Tan, X., Li, D., Yang, D.: Evoagent: Towards au-"
+      ],
+      "char_start": 42265,
+      "char_end": 42343,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc03f7682df5e185768d81b2f428e724",
+      "kind": "paragraph",
+      "text": "tomatic multi-agent generation via evolutionary algorithms (2025), https://arxiv. org/abs/2406.14228",
+      "order": 169,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al.",
+        "Yuan, S., Song, K., Chen, J., Tan, X., Li, D., Yang, D.: Evoagent: Towards au-"
+      ],
+      "char_start": 42345,
+      "char_end": 42445,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c7514f77a7a1a825f56924303d32575",
+      "kind": "heading",
+      "text": "Appendix",
+      "order": 170,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Appendix"
+      ],
+      "char_start": 42447,
+      "char_end": 42455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32490a8b426bb0038e8cf05b55c18fd5",
+      "kind": "heading",
+      "text": "A Interface Illustration",
+      "order": 171,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "A Interface Illustration"
+      ],
+      "char_start": 42457,
+      "char_end": 42481,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:945fa5b440e55ee0919786f270b8be28",
+      "kind": "caption",
+      "text": "Fig. 4: Overview of the SimPref interface. The left panel shows controlled-agent",
+      "order": 172,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "A Interface Illustration"
+      ],
+      "char_start": 42483,
+      "char_end": 42563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9551649ac078dc9f82147935fac04e4",
+      "kind": "paragraph",
+      "text": "observations, activity, and goal, while the map view shows agents and their current activities; annotators can switch agents or inspect other agents during simulation.",
+      "order": 173,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "A Interface Illustration"
+      ],
+      "char_start": 42565,
+      "char_end": 42732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ce27a6c5e5e30c54ac6545564453dbd",
+      "kind": "heading",
+      "text": "W. Gao et al.",
+      "order": 174,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 42734,
+      "char_end": 42747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f029d4bd640aeb634990709c37a811bd",
+      "kind": "paragraph",
+      "text": "(a) Decision context (b) Candidate selection (c) Output customization",
+      "order": 175,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 42749,
+      "char_end": 42818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06c2705cb9748b3b0f13abd5284a495f",
+      "kind": "caption",
+      "text": "Fig. 5: Screenshots of the SimPref annotation interface",
+      "order": 176,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "W. Gao et al."
+      ],
+      "char_start": 42820,
+      "char_end": 42875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a9a1af460d8a495cec5dff1cda060da",
+      "kind": "heading",
+      "text": "B Additional Training Details",
+      "order": 177,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "B Additional Training Details"
+      ],
+      "char_start": 42877,
+      "char_end": 42906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a0f273855248d23092fd61211bb5783",
+      "kind": "paragraph",
+      "text": "LoRA (rank 16, α = 16, dropout 0.05) is applied to the self-attention projection matrices (q, k, v, o) in both SFT and SFT+DPO stages of Qwen2.5-7B-Instruct and Llama-3.1-8B-Instruct experiments. For Qwen2.5-14B-Instruct experiments, we applied LoRA with the same hyperparameters to self-attention projection matrices q, v. We use AdamW with weight decay 0.1, warmup ratio 0.05, gradient clipping 1.0, bf16 mixed precision, max sequence length 4096, and train for 1 epoch on 2 ×A100 GPUs. SFT uses a cosine schedule with learning rate 3 × 10−5 for Llama and 2 × 10−5 for Qwen. DPO ( β = 0 .05) uses a linear schedule with learning rate one order of magnitude smaller ( 3×10−6 and 2×10−6, respectively), warm-started from the SFT checkpoint.",
+      "order": 178,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "B Additional Training Details"
+      ],
+      "char_start": 42908,
+      "char_end": 43648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5eab6e8c685caa04fbd7ff8543f361a",
+      "kind": "heading",
+      "text": "Implementation Details",
+      "order": 179,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Implementation Details"
+      ],
+      "char_start": 43650,
+      "char_end": 43672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35c564de417d63037ff922663ecbc06f",
+      "kind": "heading",
+      "text": "1 Interface and Engine",
+      "order": 180,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Implementation Details",
+        "1 Interface and Engine"
+      ],
+      "char_start": 43674,
+      "char_end": 43696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c255ceb3e1f5a667b48569831635e1c9",
+      "kind": "paragraph",
+      "text": "SimPref follows a server–client architecture: a backend engine maintains a centralized world state and a discrete simulation clock over a tile-based spatial representation built on the SmallVille assets [ 23], while clients visualize the simulation for human annotators. We instantiate 60 agent profiles across 40 social events (30 for training, 10 for evaluation). To accommodate the additional latency of generating multiple candidates for protagonist agents ( ≈5s vs. ≈1s for normal agents), the engine applies time dilation only to protagonist agents during data collection. Each agent runs in its own worker thread and communicates with the engine through a thread-safe queue, enabling concurrent cognition while keeping world updates deterministic. Agents output structured actions in a restricted space— navigation, descriptive activities, and dialogue initiation—each accompanied by an observable event description and an estimated duration. New actions are generated only when the current activity elapses, and can be preempted by incoming events or dialogue.",
+      "order": 181,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Implementation Details",
+        "1 Interface and Engine"
+      ],
+      "char_start": 43698,
+      "char_end": 44766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f2ca6e30ca59ff0ef4b9b8adab97fa7",
+      "kind": "heading",
+      "text": "2 Event Design",
+      "order": 182,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Implementation Details",
+        "2 Event Design"
+      ],
+      "char_start": 44768,
+      "char_end": 44782,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50a690c6477832095cc0045719cf75df",
+      "kind": "paragraph",
+      "text": "Each event centers on a shared social objective involving a host with nearcomplete event information and participants who observe only partial details, each assigned an explicit goal gi describing their responsibility. This asymmetry forces agents to acquire missing details through interaction or memory retrieval—naturally inducing confirmation, invitation, coordination, and occasional miscommunication—and admits multiple valid trajectories, yielding the diverse candidate outputs needed for step-level annotation.",
+      "order": 183,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Step-Level Preference Learning for Generative",
+        "Implementation Details",
+        "2 Event Design"
+      ],
+      "char_start": 44784,
+      "char_end": 45302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 16,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 16
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.14485",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 16,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

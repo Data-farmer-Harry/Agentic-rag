@@ -1,0 +1,88 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hermesgraph"
+version = "0.1.0"
+description = "A domain-pluggable, evidence-first, self-learning agent runtime."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+  "fastapi>=0.115.0",
+  "httpx>=0.28.0",
+  "langchain-core>=1.0.0",
+  "langchain-text-splitters>=1.0.0",
+  "jsonschema>=4.26.0",
+  "openai>=2.45.0",
+  "pillow>=11.0,<13.0",
+  "pydantic>=2.10.0",
+  "pydantic-settings>=2.7.0",
+  "pypdf==6.14.2",
+  "python-multipart==0.0.32",
+  "pyyaml>=6.0.2",
+  "tiktoken>=0.12.0,<1.0.0",
+  "uvicorn>=0.34.0",
+]
+
+[project.optional-dependencies]
+infra = [
+  "asyncpg>=0.30.0",
+  "neo4j>=6.2.0,<7.0.0",
+  "qdrant-client>=1.18.0,<2.0.0",
+  "sqlalchemy[asyncio]>=2.0.0",
+]
+dev = [
+  "httpx>=0.28.0",
+  "mypy>=1.14.0",
+  "neo4j>=6.2.0,<7.0.0",
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.25.0",
+  "qdrant-client>=1.18.0,<2.0.0",
+  "ruff>=0.9.0",
+  "types-PyYAML>=6.0.12",
+  "types-jsonschema>=4.26.0",
+]
+
+[project.scripts]
+hermesgraph = "app.cli:main"
+hermesgraph-eval-graph = "app.evaluation.graph_cli:main"
+hermesgraph-eval-retrieval = "app.evaluation.retrieval_cli:main"
+hermesgraph-eval-vision = "app.evaluation.vision_cli:main"
+hermesgraph-eval-web-search = "app.evaluation.web_search_cli:main"
+hermesgraph-eval-conversation-routing = "app.evaluation.conversation_routing_cli:main"
+hermesgraph-calibrate-embeddings = "app.evaluation.embedding_calibration_cli:main"
+hermesgraph-backfill-graph = "app.graph.backfill_cli:main"
+hermesgraph-reindex-graph-structure = "app.graph.structure_reindex_cli:main"
+hermesgraph-reconcile-graph-candidates = "app.graph.maintenance_cli:main"
+hermesgraph-rechunk-knowledge = "app.knowledge.rechunk_cli:main"
+hermesgraph-reindex-knowledge = "app.knowledge.reindex_cli:main"
+hermesgraph-sync-arxiv = "app.sources.arxiv_cli:main"
+hermesgraph-ocr-arxiv = "app.sources.arxiv_ocr_cli:main"
+hermesgraph-check-web-search = "app.web_search.cli:main"
+hermesgraph-reconcile-learning = "app.learning.reconcile_cli:main"
+hermesgraph-backfill-harness = "app.harness.backfill_cli:main"
+hermesgraph-mine-patterns = "app.harness.mine_cli:main"
+hermesgraph-worker = "app.worker:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ASYNC"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "typings"

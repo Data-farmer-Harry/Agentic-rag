@@ -1,0 +1,2576 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "5ca58f89b4f0fd1f2ae7895bbc88a84e7aa2ea9592389431150d7e321ef21b9d",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:216208edb5379345aaeabbd91e06ffe3",
+      "kind": "paragraph",
+      "text": "Agentic systems for breast cancer treatment recommendations Vinicius Anjos de Almeida ∗ N´ıcolas Henrique Borges † Leonardo Vicenzi ‡ Helena Kociolek § Sarah Miri˜a de Castro Rocha ¶ Frederico Nassif Gomes ∥ J´ulia Cristina Ferreira Ribeiro ∗∗ Lucas Emanuel Silva e Oliveira ††",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:359387f8b6c82222e568a5efa91442cd",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 279,
+      "char_end": 287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61d123344ea5cebffa2e42de6add007d",
+      "kind": "paragraph",
+      "text": "Large language models (LLMs) are increasingly being explored for clinical decision support, but their reliability in complex oncology treatment planning remains unclear. We evaluated agentic LLM systems for breast cancer treatment recommendation generation using 72 real clinical cases across stages I to IV and 1,147 case-specific rubrics generated through Asymmetric Information Rubric Generation (AIRG), in which the rubric generator had access to real clinical decisions unavailable to the evaluated models. Seven pipelines were compared, including single-LLM baselines, tool-augmented systems, and multi-agent architectures with fact checking and autonomous subagent spawning. The best-performing configuration, Claude Opus 4.8 with the D&C+SA pipeline, achieved a global score of",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 289,
+      "char_end": 1074,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a7ff618ec06117ac9b33c85482288b1",
+      "kind": "heading",
+      "text": "± 0.025. Tool use and increased agent autonomy had mixed effects, improv-",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "± 0.025. Tool use and increased agent autonomy had mixed effects, improv-"
+      ],
+      "char_start": 1076,
+      "char_end": 1149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfe166ee3b84763cfb182ae505d678dc",
+      "kind": "paragraph",
+      "text": "ing performance in some settings but degrading it in others. Performance varied by clinical domain and disease stage, and oncologist-led error analysis revealed persistent clinically relevant failures, including incorrect or missing recommendations, flawed justifications, citation errors, outdated claims, and overconfidence. These findings suggest that agentic LLM systems can generate clinically relevant breast cancer recommendations, but remain insufficient for unsupervised clinical use.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "± 0.025. Tool use and increased agent autonomy had mixed effects, improv-"
+      ],
+      "char_start": 1151,
+      "char_end": 1644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5767a43ca4a4614deae9f41fb37fdb1e",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1646,
+      "char_end": 1658,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a894603e93696fdc3f7a7c66eedb71ba",
+      "kind": "paragraph",
+      "text": "Large language models (LLMs) have rapidly improved in biomedical and clinical tasks, achieving high performance on medical licensing examinations and other standardized benchmarks [1–3]. Both general-purpose LLMs and specialized clinical AI systems have demonstrated substantial po- ∗Vinicius Anjos de Almeida is with Spesia, Alameda Dom Pedro II, 574, 80420-060, Curitiba, Paran ´a, Brazil, and also with Faculdade de Medicina, Universidade de S ˜ao Paulo, Av. Dr. Arnaldo, 455, 01246-903, S ˜ao Paulo, S ˜ao Paulo, Brazil (corresponding author, e-mail: vinicius.almeida@spesia.com.br). †N´ıcolas Henrique Borges is with Spesia (e-mail: nicolas.borges@spesia.com.br). ‡Leonardo Vicenzi is with Spesia and also with the Laboratory of Artificial Intelligence Applied to Bioinformatics, SEPT, Universidade Federal do Paran´a (UFPR), Rua Alcides Vieira Arcoverde, 1225, 81520-260, Curitiba, Paran ´a, Brazil (e-mail: leonardo.vicenzi@spesia.com.br). §Helena Kociolek is with Spesia, Pontif´ıcia Universidade Cat´olica do Paran´a (PUCPR), R. Imac. Conceic ¸˜ao, 1155, 80215- 901, Curitiba, Paran´a, Brazil, and Universidade Federal do Paran´a (UFPR), Rua Alcides Vieira Arcoverde, 1225, 81520-260, Curitiba, Paran´a, Brazil (e-mail: helenakociolek@hotmail.com). ¶Sarah Miri˜a de Castro Rocha is with Spesia and also with Pontif´ıcia Universidade Cat´olica do Paran´a (PUCPR) (e-mail: sarah.miria@pucpr.edu.br). ∥Frederico Nassif Gomes is with Spesia and also with Pontif ´ıcia Universidade Cat ´olica do Paran ´a (PUCPR) (e-mail:",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1660,
+      "char_end": 3185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de1a48802254f4441d8d47787fd237e2",
+      "kind": "paragraph",
+      "text": "frednassifgomes@gmail.com). ∗∗J´ulia Cristina Ferreira Ribeiro is with Spesia and also with Pontif´ıcia Universidade Cat´olica do Paran´a (PUCPR) (e-mail: f.cristina1@pucpr.edu.br). ††Lucas Emanuel Silva e Oliveira is with Spesia and also with Pontif ´ıcia Universidade Cat ´olica do Paran ´a (PUCPR) (email: lucas.oliveira@spesia.com.br).",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3187,
+      "char_end": 3526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:262dccef3cbbc38f694a0a7feaece891",
+      "kind": "table",
+      "text": "arXiv:2607.12051v1  [cs.CL]  13 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3528,
+      "char_end": 3568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a616d54ba61049d0b360ff73ca6eb899",
+      "kind": "paragraph",
+      "text": "tential to support healthcare providers in navigating medical knowledge [4, 5]. These results have motivated growing interest in the use of LLMs as clinical decision-support tools, particularly in domains where clinicians must synthesize heterogeneous information from guidelines, clinical notes, scientific literature, and patient-specific factors. Breast cancer treatment is a clinically important setting for evaluating LLM-based decision support. Treatment planning may involve systemic therapy, surgery, radiotherapy, genetic testing, complementary exams, and sequencing decisions that vary according to stage, tumor biology, patient condition, prior treatments, local availability of resources, and evolving guidelines. In many institutions, complex cases are discussed in multidisciplinary tumor boards, where recommendations are shaped by the combined expertise of oncologists, surgeons, radiation oncologists, radiologists, pathologists, geneticists, and other specialists. This makes breast cancer treatment recommendation generation a challenging and clinically meaningful task for evaluating whether LLM systems can support nuanced therapeutic decision-making. Previous studies have explored the use of LLMs in breast cancer care, including clinical decision support in tumor boards [6–10], surgical planning [11], guideline-based question answering [12, 13], and information extraction pipelines [14]. Similar applications have also been studied in other cancer types, including colon cancer [15], prostate cancer [16], head and neck cancer [17, 18], and",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3570,
+      "char_end": 5137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5e93c4b253be6d652c5f5e36875bc0b",
+      "kind": "paragraph",
+      "text": "lung cancer [19]. Although these studies suggest that LLMs may produce clinically useful outputs, they also reveal important limitations. Prior work in breast cancer tumor board settings has reported incomplete agreement with expert recommendations, harmful or inappropriate decisions, poor understanding of treatment sequencing, difficulty integrating surgical history, and only moderate concordance with oncologists in specific treatment scenarios [6–10, 20, 21]. Most previous evaluations have focused on single-model prompting or direct comparisons between LLM-generated recommendations and expert decisions. Less is known about whether agentic systems, tool use, and multi-agent architectures improve treatment recommendation quality in oncology. Liu et al. [22] developed EvoMDT, a system composed of a multimodal ontology-normalized knowledge base, a five-agent workflow, and a self-improvement loop after each task, in which prompts are optimized based on the system’s own feedback about its outputs. The system was evaluated on several question-answering benchmarks and on retrospective data from 405 real patients with lung, breast, or liver cancer, or lymphoma. Each case included a structured summary of the patient’s condition and expert treatment plans, which served as the reference for evaluation. EvoMDT achieved response quality comparable to that of physicians, particularly in safety and completeness, and showed stable performance across lymphoma cases. It also provided an advantage in",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 5139,
+      "char_end": 6646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7a6a6c55b2bbce65fd1dd7892b4107b",
+      "kind": "paragraph",
+      "text": "response time compared with clinicians. Other attempts include combining GPT-4 with multimodal precision oncology tools [23], using general medical calculation tools [24], risk-prediction tools [25], and domain-specific retrieval pipelines [26]. To the best of our knowledge, how models behave when provided with different combinations of tools and different degrees of autonomy remains underexplored. In principle, access to tools such as web search, PubMed search, and full-text retrieval may allow LLMs to retrieve up-to-date evidence and guidelines. Similarly, multi-agent architectures may decompose complex clinical tasks into more manageable subtasks, such as systemic therapy, surgery, radiotherapy, and complementary exams. However, these approaches also introduce new failure modes. A model must know when to search, how to formulate useful queries, how to assess source relevance, how to integrate retrieved evidence with patient-specific information, and how to avoid overconfident or unsupported conclusions. Therefore, the benefit of tool use and agentic decomposition cannot be assumed and must be evaluated empirically. A second challenge is evaluation. Clinical treatment recommendations are difficult to score using exact-match labels or simple global judgments because correct answers are often partial, contextdependent, and multidimensional. Rubric-based evaluation provides a flexible alternative by decomposing response quality into multiple criteria, allowing models to receive credit for desirable",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 6648,
+      "char_end": 8170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f94c7bcd1d900e6e0da94b62dd96e120",
+      "kind": "paragraph",
+      "text": "clinical recommendations while being penalized for unsafe, unsupported, or inappropriate content. This approach has been used in recent medical LLM benchmarks such as HealthBench and Health- Bench Professional [27, 28]. However, expert-authored rubrics are expensive to create, especially in specialized domains such as oncology. This study addresses four research questions:RQ1:How accurately can current frontier LLMs generate breast cancer treatment recommendations from real clinical cases?RQ2:How do external 2",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 8172,
+      "char_end": 8687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd78eb1dd278555a620bea4215c863e5",
+      "kind": "paragraph",
+      "text": "tools, multi-agent decomposition, fact checking, and increased agent autonomy affect recommendation quality, and do these effects vary across models?RQ3:How does system performance vary across breast cancer stages and clinical domains, including systemic therapy, surgery, radiotherapy, and complementary exams?RQ4:What clinically relevant failure modes persist in the recommendations generated by top-performing agentic systems? We evaluate agentic systems for breast cancer treatment recommendation generation using real clinical cases and case-specific rubric-based scoring. We make four main contributions. First, we benchmark seven treatment recommendation pipelines, including single-LLM baselines, tool-augmented systems, and multi-agent architectures with increasing agent autonomy, using a curated dataset of",
+      "order": 13,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 8689,
+      "char_end": 9506,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95f873c11767df51ee63b5747cd61617",
+      "kind": "heading",
+      "text": "breast cancer cases spanning stages I to IV and 1,147 case-specific rubrics grounded in real on-",
+      "order": 14,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "breast cancer cases spanning stages I to IV and 1,147 case-specific rubrics grounded in real on-"
+      ],
+      "char_start": 9508,
+      "char_end": 9604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7c2a25d26cf05ab3dddd1927bf3cbe5",
+      "kind": "paragraph",
+      "text": "cologists’ decisions. Second, we introduce AIRG as a pragmatic workflow for generating evaluation rubrics in specialized clinical domains where expert input is scarce or costly. Third, we provide a detailed oncologist-led error analysis of responses generated by a top-performing model-pipeline combination to characterize clinically relevant failure modes. Fourth, we release the source code for our experiments to support reproducibility and future work on clinically grounded evaluation of medical AI systems.",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "breast cancer cases spanning stages I to IV and 1,147 case-specific rubrics grounded in real on-"
+      ],
+      "char_start": 9606,
+      "char_end": 10118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71271c47b5026b9e11faf746f6b71aac",
+      "kind": "heading",
+      "text": "Methods",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 10120,
+      "char_end": 10127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76661e01780330cf40a8265c2212e4e9",
+      "kind": "paragraph",
+      "text": "Data collection.The raw data were collected from a private oncology clinic in Curitiba, Brazil. The sampled cases consisted of patients with histologically confirmed invasive breast cancer who attended the institution between 2023 and 2025. Cases were sampled from the electronic health record (EHR) database and were included if, after careful review of the clinical notes, they contained sufficient clinical, pathological, biomarker, staging, and treatment information, and if the clinical decisions made by the oncologist responsible for the case were clearly stated. In some cases, clinical decisions included recommendations from the institutional multidisciplinary tumor board (MTB), which were also considered a reference for the case. The MTB is a standard multidisciplinary decision-making process used in several health institutions worldwide and, when applicable, may involve clinical oncologists, breast surgeons, radiation oncologists, radiologists, pathologists, geneticists, and other specialists involved in cancer care. MTB sessions are dedicated to complex cases in which clear guidelines or robust scientific evidence are not available, or in which available resources are not ideal and a clinical decision must be made. After sampling and EHR review, a total of 72 cases were selected to build the evaluation dataset. These cases included 18 patients representing each breast cancer stage: I, II, III, and IV . A team of five medical students supervised by a certified physician reviewed the clinical notes from",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 10129,
+      "char_end": 11660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:855975986f15016feb0bbac38513cc26",
+      "kind": "paragraph",
+      "text": "each case and created a structured case summary, including demographic data, diagnosis, histopathological diagnosis, biomarkers, and patient performance status scores. Each summary was followed by a set of clinical decisions made for that patient’s care, including systemic therapies, surgical treatments, radiotherapy, and complementary exams ordered. Toolkit for AI models.LLMs are often equipped with tools to expand their utility across various tasks. In this study, two tools were used in the form of Model Context Protocol (MCP) servers: web search, powered by Parallel.ai [29]; and PubMed search, provided through the official PubMed public API [30]. MCP [31] is an open-source project hosted by the Linux Foundation [32] that allows AI applications to connect to external data sources, tools, and workflows in a consistent way. Several companies offer web search tools for agentic systems, including OpenAI [33], Google [34], Exa.ai [35], Tavily [36], and Parallel.ai [29]. For this study, the Parallel.ai search tool was selected because of its performance in several published benchmarks and its cost efficiency [37]. Comparing different web search tools was beyond the scope of this study. The National Center for Biotechnology Information provides a public API [30] that allows automated systems to search the PubMed database, retrieve article information and abstracts, and, for open-access publications, retrieve the full manuscript. This API service was converted into an MCP server through an open-source implementation [38], which was customized for this study.",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 11662,
+      "char_end": 13240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2719c408b2ac07b9145098c583bfbe04",
+      "kind": "paragraph",
+      "text": "3",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 13242,
+      "char_end": 13243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5a6b1d82c77fd427187e061bdfcd003",
+      "kind": "paragraph",
+      "text": "Rubric generation.The use of rubrics in this study was directly inspired by the HealthBench [27] and HealthBench Professional [28] benchmarks developed by OpenAI. A rubric consists of a criterion and an associated score. The criterion defines an attribute of the text being evaluated that may be present or absent. The score is a value ranging from -10 to +10, indicating the extent to which that attribute is desirable or undesirable in textual responses for the task at hand. Ideally, rubrics should be written directly by domain experts and peer-reviewed to improve consistency. In practice, however, expert availability is often limited and costly, making rubric development a frequent bottleneck in healthcare evaluation tasks. In this study, we proposeAsymmetric Information Rubric Generation (AIRG)as a practical workflow for generating case-specific clinical rubrics when expert input is scarce or expensive. In natural language processing tasks where model outputs must be evaluated along dimensions that cannot be captured by rule-based scoring or straightforward manual review, rubric-based evaluation can use an LLM-as-a-judge to assess each rubric individually and assign scores accordingly. However, rubrics generated only from the input case, without grounding in a gold-standard reference, does not add value for model evaluation because they lack a trustworthy basis for comparison. This workflow addresses this limitation by giving the rubric generator access to privileged information that is not available to the model being evaluated. We hypothesize that this asymmetry allows the",
+      "order": 20,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 13245,
+      "char_end": 14846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e949e8518420f4df591bf73529965811",
+      "kind": "paragraph",
+      "text": "generated rubrics to be grounded in reference information and to better reflect clinically meaningful aspects of response quality in the final evaluation scores. In practice, this approach may mitigate the cost of expert rubric creation by using other textual sources of reference information, provided that they are accessible only to the rubric generator. Prior work has explored rubric-based LLM evaluation, including physician-authored clinical rubrics [27, 28], reference-guided LLM judges [39], self-adaptive rubrics [40], multi-agent rubric generation for dialogue systems [41], grounding on similar previous queries [42], dataset- and instance-specific rubrics generation with no reference [43], and automatic extraction of evaluation criteria from gold answers [44]. Our process differs from these approaches by operationalizing this idea in a clinically grounded oncology setting, where the rubric generator has privileged access to real treatment decisions extracted from the EHR and also to literature-search tools, while evaluated systems receive only the case summary. This creates an intentional information asymmetry designed to mitigate the need for fully expert-authored rubrics while preserving reference grounding. Concretely, a frontier LLM (‘gemini-3.5-flash’) configured with high reasoning effort was provided with the case summary, the reference clinical decisions made by healthcare providers for that case, and access to web search and PubMed search tools. The model was prompted to generate a set of",
+      "order": 21,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 14848,
+      "char_end": 16375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f3172466b18670a1f0000307d1868c4",
+      "kind": "paragraph",
+      "text": "rubrics for evaluating the quality of treatment recommendations for each case. The prompt instructed the model to cover all relevant aspects of treatment recommendations, including recommended interventions, non-recommended interventions, and treatment alternatives, based on scientific references and official breast cancer guidelines. Rubrics were also grouped in four categories: systemic therapy, radiotherapy, surgical therapy, and complementary exams. 4",
+      "order": 22,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 16377,
+      "char_end": 16836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f10171591b6576cc9c6b6c65cfc71db2",
+      "kind": "caption",
+      "text": "Figure 1: The three multi-agent pipelines evaluated for generating treatment recommendations: di-",
+      "order": 23,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 16838,
+      "char_end": 16935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff8377be9c2e3466347817a1841aef83",
+      "kind": "paragraph",
+      "text": "vide and conquer, divide and conquer with fact checker, and divide and conquer with autonomously spawned subagents and a fact checker. Tools are represented by their keys: web search; web fetch, for fetching entire webpages; search articles, to run queries in the PubMed database and retrieve papers and their abstracts; and get full text of pmc article, to retrieve a full manuscript from PMC. Treatment recommendation pipelines.Seven different pipelines for generating treatment recommendations were compared and they are visually represented inFigures 1 and 2for better understanding. They include: •Baseline: a single LLM with no tools, prompted to generate treatment recommendations from a case summary. •LLM with web search (WS): a single LLM with access to the web search tool. •LLM with PubMed search (PM): a single LLM with access to the PubMed search tool. •LLM with PubMed search and PMC manuscripts (PM+PMC): a single LLM with access to the PubMed search tool and the PMC tool for retrieving the complete manuscripts of open-access articles. •Divide and conquer (D&C): a multi-agent architecture comprising one main orchestrator agent and four subagents dedicated to specific topics in breast cancer treatment recommendation generation: systemic therapy, radiotherapy, surgical treatment, and complementary exams. Each subagent had access to web search, PubMed search, and PMC full-text retrieval. •Divide and conquer with fact checker (D&C+FC): the same architecture as D&C, with a handoff to a fact checker agent. This agent receives an initial version of the treatment rec-",
+      "order": 24,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 16937,
+      "char_end": 18525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd304ce7d5018b628f0b35733fdc5d31",
+      "kind": "paragraph",
+      "text": "ommendations and is prompted to check factual claims and identify inconsistencies before generating the final version. The fact checker also has access to all tools but does not have access to previous tool outputs or reasoning traces from the orchestrator agent. •Divide and conquer with fact checker and auto-spawning agents (D&C+SA): a multiagent architecture that, instead of using predefined subagents, can autonomously spawn subagents with customized instructions to generate treatment recommendations. Each subagent has access to the search tools, and the generated recommendations also pass through the fact checker agent before the final output is produced. 5",
+      "order": 25,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 18527,
+      "char_end": 19195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16eb34fb27d4d3c03541c2fd6bce7d60",
+      "kind": "caption",
+      "text": "Figure 2: The three multi-agent pipelines evaluated for generating treatment recommendations: di-",
+      "order": 26,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 19197,
+      "char_end": 19294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ba397f90a0818db307c9d282df3016a",
+      "kind": "paragraph",
+      "text": "vide and conquer, divide and conquer with fact checker, and divide and conquer with autonomously spawned subagents and a fact checker. Tools are represented by their keys: web search; web fetch, for fetching entire webpages; search articles, to run queries in the PubMed database and retrieve papers and their abstracts; and get full text of pmc article, to retrieve a full manuscript from PMC. 6",
+      "order": 27,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 19296,
+      "char_end": 19692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dd08d02d7864b41c21f1fe3f8251d2f",
+      "kind": "paragraph",
+      "text": "LLMs evaluated.Some of the most recent models from major providers were selected for evaluation: gemini-2.5-flash, gemini-3.1-pro-preview, and gemini-3.5-flash from Google; gpt-5.5-2026-",
+      "order": 28,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Methods"
+      ],
+      "char_start": 19694,
+      "char_end": 19880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53acd00d226d17b8731ccd1c795f8bc5",
+      "kind": "heading",
+      "text": "23 from OpenAI; and claude-opus-4-8 from Anthropic. All models were used with their default",
+      "order": 29,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "23 from OpenAI; and claude-opus-4-8 from Anthropic. All models were used with their default"
+      ],
+      "char_start": 19882,
+      "char_end": 19973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f152092c097afac29cf904a8deef2e8",
+      "kind": "paragraph",
+      "text": "reasoning-effort settings. Due to cost constraints, experiments with OpenAI and Anthropic models were limited, but included at least the baseline and the best-performing pipeline identified using Google models. Metrics.We used the example-level scoring procedure proposed in HealthBench [27]. For each examplei∈ {1, . . . , N}, the model-generated answer is evaluated against a set ofMi rubric criteria. Each criterionjhas an associated point valuep ij ∈[−10,10], where positive values indicate desirable attributes and negative values indicate undesirable attributes. A grader model determines whether each criterion is satisfied by the answer. LetI ij be an indicator variable equal to 1 when criterionjis satisfied for examplei, and 0 otherwise. The score for exampleiis then computed as: si = MiX j=1",
+      "order": 30,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "23 from OpenAI; and claude-opus-4-8 from Anthropic. All models were used with their default"
+      ],
+      "char_start": 19975,
+      "char_end": 20779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c77908066b7ecc7a7399bfcd2b11a09a",
+      "kind": "heading",
+      "text": "Iijpij",
+      "order": 31,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Iijpij"
+      ],
+      "char_start": 20781,
+      "char_end": 20787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:135610b9940d1409869580d13c357bf3",
+      "kind": "paragraph",
+      "text": "MiX j=1 max(0, pij) . Thus, the numerator represents the total number of points earned by the response, including both positive points for desirable criteria and negative points for undesirable criteria that are present. The denominator corresponds to the maximum attainable positive score for that example. Finally, the overall scoreSis computed as the clipped mean of the example-level scores: S= clip",
+      "order": 32,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Iijpij"
+      ],
+      "char_start": 20789,
+      "char_end": 21192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a72ec4603acd5378f84fb7e700b3830",
+      "kind": "paragraph",
+      "text": "1 N NX i=1 si,0,1 ! . This clipping step ensures that the final aggregate score remains bounded between 0 and 1, even though individual example-level scores may be negative when responses satisfy criteria with negative point values. To estimate uncertainty around the aggregate score, we computed the standard deviation ofSusing nonparametric bootstrapping over examples. The same procedure was applied separately to each rubric category to estimate its contribution to the final score. For category-specific scores, rubrics were first filtered by category name, and the score was then computed using only the rubrics assigned to that category. Error analysis.We conducted a qualitative error analysis of model-generated responses through detailed manual review by one certified oncologist. Each response was examined comprehensively, with errors categorized using both prespecified and emergent categories. Prespecified categories included fabricated references, citation errors, inappropriate or missing clinical recommendations, and incorrect, incomplete, or absent justifications for otherwise appropriate recommendations. Additional error categories were created when necessary during review. The goal of this analysis was to characterize model failures as precisely and comprehensively as possible, capturing both factual and clinical reasoning errors. The specialist also tracked the time needed to complete the task. Source code.The source code is available athttps://github.com/GRUPOMED4U/breast_ cancer_agents_paper.",
+      "order": 33,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Iijpij"
+      ],
+      "char_start": 21194,
+      "char_end": 22720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9769369d4b8eb27f1ad5ecd092eb777",
+      "kind": "heading",
+      "text": "Results",
+      "order": 34,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 22722,
+      "char_end": 22729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e843fb7f00c32f57687742e61edfaf91",
+      "kind": "paragraph",
+      "text": "The final evaluation dataset included 72 breast cancer cases, with 18 cases from each clinical stage: stage I, stage II, stage III, and stage IV . Across all cases, the AIRG workflow generated 1,147 casespecific rubrics for evaluating treatment recommendations. The median number of rubrics per case was 15 [IQR 14-18], with a minimum of 11 and a maximum of 27 rubrics per case. 7",
+      "order": 35,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 22731,
+      "char_end": 23111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:664d7cd299adcab23c4a7458a26d43a1",
+      "kind": "paragraph",
+      "text": "Rubrics were distributed across four clinical categories: systemic therapy, radiotherapy, surgical therapy, and complementary exams. Systemic therapy accounted for 450 (39%) of all rubrics, radiotherapy for 178 (16%), surgical therapy for 174 (15%), and complementary exams for 345 (30%). The distribution of rubrics across categories is also available inTable 1.",
+      "order": 36,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 23113,
+      "char_end": 23476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83795f4184d7f7537d7662f368b3474b",
+      "kind": "caption",
+      "text": "Table 1: Distribution of generated rubrics by clinical category.",
+      "order": 37,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 23478,
+      "char_end": 23542,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa46ff9e8c64ee65da157384f147baf7",
+      "kind": "paragraph",
+      "text": "Rubric category Number of rubrics Percentage Systemic therapy 450 39% Radiotherapy 178 16% Surgical therapy 174 15% Complementary exams 345 30% Total 1,147 100% We evaluated three language models from Google across seven treatment recommendation pipelines, resulting in 21 model-pipeline combinations. In addition, one model from OpenAI was evaluated on baseline, web search, PubMed search and D&C+SA pipelines; and one from Anthropic was evaluated using the baseline and D&C+SA pipelines. The overall benchmark scores are shown in",
+      "order": 38,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 23544,
+      "char_end": 24075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:878b23f073ee6ecb224147b3c3f277d9",
+      "kind": "caption",
+      "text": "Figure 3. The relationship between cost per task, global score, pipeline, and model is reported in",
+      "order": 39,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24077,
+      "char_end": 24175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4d5621c91effb754c7b368d08044e77",
+      "kind": "paragraph",
+      "text": "Figure 4, and their relation with model release date inFigure 5. The values used for cost estimation are available in the appendix asTable A.1. The highest overall score was achieved by Claude Opus 4.8 using the D&C+SA pipeline pipeline, with a score of 0.594±0.025, but the difference between the most recent frontier models is small.",
+      "order": 40,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24177,
+      "char_end": 24512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52fc25f0fcedb6f273307cc6882f8c59",
+      "kind": "caption",
+      "text": "Figure 3: Overall benchmark performance across models and treatment recommendation pipelines.",
+      "order": 41,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24514,
+      "char_end": 24607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4bf0676d85cc6c375453bb0c089f1ed",
+      "kind": "paragraph",
+      "text": "Scores were computed using the aggregate rubric-based evaluation procedure, with uncertainty estimated by nonparametric bootstrapping over examples. 8",
+      "order": 42,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24609,
+      "char_end": 24759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0768c8af325c67c6f7051615c6b6ffe9",
+      "kind": "caption",
+      "text": "Figure 4: Overall benchmark performance across models and treatment recommendation pipelines",
+      "order": 43,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24761,
+      "char_end": 24853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:172c5096e5bb847b0daad842e1bcaa9a",
+      "kind": "paragraph",
+      "text": "and their relation with cost per example is USD.",
+      "order": 44,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24855,
+      "char_end": 24903,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c9f5581927248cda5cb588d41f883fa",
+      "kind": "caption",
+      "text": "Figure 5: Performance across treatment recommendation pipelines, models and their release date.",
+      "order": 45,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 24905,
+      "char_end": 25000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cd255f03bd08f6513af4e79252de666",
+      "kind": "paragraph",
+      "text": "Pipeline-level performance relative to baseline is summarized inFigure 6. Compared with the baseline single-LLM pipeline, the addition of external tools revealed mixed results. The access to tools or the increase in agent autonomy was not necessarily followed by performance gains and varied by model. In some cases, performance deteriorated after providing access to the web search and PubMed search tools (see gemini-2.5-flash results). 9",
+      "order": 46,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 25002,
+      "char_end": 25442,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a92773347872e823d56c76a772f36f83",
+      "kind": "caption",
+      "text": "Figure 6: Performance gains relative to baseline per pipeline and model.",
+      "order": 47,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 25444,
+      "char_end": 25516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3996622477d1de731ae89aaaf1838a3f",
+      "kind": "paragraph",
+      "text": "To examine which clinical domains contributed most to the final scores, we computed categoryspecific scores for systemic therapy, radiotherapy, surgical therapy, and complementary exams. We provide a plot with decomposed scores related to D&A+SA, our best performing pipeline, inFigure 7and a table including results from all experiments is provided in the supplementary material as Table A.2. Higher scores were concentrated in systemic therapy related rubrics, which is also the biggest in total rubric count. The absolute differences between model scores were also higher in the systemic therapy category, with values ranging from 0.170 to 0.242. 10",
+      "order": 48,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 25518,
+      "char_end": 26170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdddbdb7397ac7bd331a202ff69abaaf",
+      "kind": "caption",
+      "text": "Figure 7: Performance gains relative to baseline per pipeline and model.",
+      "order": 49,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 26172,
+      "char_end": 26244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dad2498b1e13054c981b67cafc97828",
+      "kind": "paragraph",
+      "text": "We also evaluated performance separately by breast cancer stage. Results are shown inTable 2. Across all models and pipelines, mean performance was highest for stage I, with a score of 0.545, and lowest for stage III, with a score of 0.441. Performance differences by stage may reflect variation in clinical complexity, the degree of guideline standardization, and the number of acceptable treatment alternatives. In particular, stages II and III cases showed lower performance, which may be consistent with the greater diversity of breast cancer treatment decisions.",
+      "order": 50,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 26246,
+      "char_end": 26813,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1bb87e121a50fd632576d2c40756859",
+      "kind": "caption",
+      "text": "Table 2: Benchmark scores stratified by breast cancer stage.",
+      "order": 51,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 26815,
+      "char_end": 26875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ec58a509521522b591851efacffab5e",
+      "kind": "paragraph",
+      "text": "Stage Number of cases Mean score",
+      "order": 52,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Results"
+      ],
+      "char_start": 26877,
+      "char_end": 26909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bad113342cfb4d8289e5084f16ee724",
+      "kind": "heading",
+      "text": "18 0.545±0.064",
+      "order": 53,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "18 0.545±0.064"
+      ],
+      "char_start": 26911,
+      "char_end": 26925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b427a38894d0ab0b78891806212bc8b6",
+      "kind": "heading",
+      "text": "18 0.481±0.075",
+      "order": 54,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "18 0.481±0.075"
+      ],
+      "char_start": 26927,
+      "char_end": 26941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da5562c2a757e4acf7235f74796410cd",
+      "kind": "heading",
+      "text": "18 0.441±0.076",
+      "order": 55,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "18 0.441±0.076"
+      ],
+      "char_start": 26943,
+      "char_end": 26957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef8c10bdeab5c26852d86e50ac1d00da",
+      "kind": "heading",
+      "text": "18 0.534±0.070",
+      "order": 56,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "18 0.534±0.070"
+      ],
+      "char_start": 26959,
+      "char_end": 26973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:204aa785d816c244e28c0bfc42f89910",
+      "kind": "paragraph",
+      "text": "A detailed error analysis was performed by a certified oncologist over 10 responses generated by gemini-3.5-flash using the D&C+SA pipeline. This model-pipeline combination was selected because it was among the top-performing approaches in the quantitative benchmark. The objective of the error analysis was to verify every claim made by the generative model, identify, quantify and group errors. The error analysis identified 8 recurrent failure modes. These included: incorrect or incomplete justification; incorrect or missing clinical recommendations; citation errors and reference fabrication; overconfident statements; and outdated clinical claims. Error count and small description of each failure mode are shown inTable 3. The oncologist took 15 hours and 45 minutes to review the clinical recommendations generated for the 10 sampled cases, 1 hour and 35 minutes per case on average, ranging from 45 minutes to 2 hours and 30 minutes spent in a single case depending on complexity.",
+      "order": 57,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "18 0.534±0.070"
+      ],
+      "char_start": 26975,
+      "char_end": 27965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4487c774627eeb2368c9037c918a855",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 58,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Discussion"
+      ],
+      "char_start": 27967,
+      "char_end": 27977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e9a564e29b30d1884316df392c53e0d",
+      "kind": "paragraph",
+      "text": "In this study, we evaluated agentic systems for generating breast cancer treatment recommendations using a clinically grounded benchmark derived from real cancer cases. Overall, our findings suggest that recent frontier language models can produce clinically relevant treatment recommendations, but that their performance remains far from sufficient for clinical use without careful review of 11",
+      "order": 59,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Discussion"
+      ],
+      "char_start": 27979,
+      "char_end": 28374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15d40511351085ef117f0e2e2f47c863",
+      "kind": "caption",
+      "text": "Table 3: Frequency of error types identified in the error analysis. Numbers refer to errors found in",
+      "order": 60,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Discussion"
+      ],
+      "char_start": 28376,
+      "char_end": 28476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc6893fc84e05153d7036c5da129edd2",
+      "kind": "paragraph",
+      "text": "a sample of 10 clinical recommendations generated by gemini-3.5-flash in the D&C+SA pipeline with cases representing all four breast cancer stages. Error type Count % Description Incorrect justification 17 22.7 The clinical recommendation was accurate, but the rationale behind it was not. Incorrect clinical recommendation",
+      "order": 61,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Discussion"
+      ],
+      "char_start": 28478,
+      "char_end": 28801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a9edb3e5703dc10028dbe49fbc73001",
+      "kind": "heading",
+      "text": "20.0 Wrong or imprecise recommendation.",
+      "order": 62,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "20.0 Wrong or imprecise recommendation."
+      ],
+      "char_start": 28803,
+      "char_end": 28842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:666a2aee50723dea08014adb4aa588b4",
+      "kind": "paragraph",
+      "text": "Citation error 12 16.0 The reference exists, but the claims made related to the citation are not correct. Missing clinical recommendation",
+      "order": 63,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "20.0 Wrong or imprecise recommendation."
+      ],
+      "char_start": 28844,
+      "char_end": 28981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbae36a3eceb3fa4469aa032e7b5406c",
+      "kind": "heading",
+      "text": "16.0 A relevant clinical recommendation for the case",
+      "order": 64,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "16.0 A relevant clinical recommendation for the case"
+      ],
+      "char_start": 28983,
+      "char_end": 29035,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9121ec8c4cb1e39ef0fd78baed25d606",
+      "kind": "paragraph",
+      "text": "was not included. Overconfident clinical statement",
+      "order": 65,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "16.0 A relevant clinical recommendation for the case"
+      ],
+      "char_start": 29037,
+      "char_end": 29087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0381b2e5bb9c8290cb178a1a9d1c378",
+      "kind": "heading",
+      "text": "10.7 Expressed overconfidence while the scientific",
+      "order": 66,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific"
+      ],
+      "char_start": 29089,
+      "char_end": 29139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71f9ba639cc88414ead0cb5d5c6884d3",
+      "kind": "paragraph",
+      "text": "evidence shows uncertainty or the case summary misses important information to support it. Incomplete justification 5 6.7 Justification was partially correct, but missed important information. Outdated clinical claim 4 5.3 Answer includes an accurate claim, although outdated for current standards. Reference fabrication 2 2.7 Mentions documents that do not exist. every recommendation. The best-performing model-pipeline combination achieved a global score of 0.594, indicating that even the strongest evaluated systems failed to satisfy a substantial proportion of case-specific clinical criteria. Previous work has shown that, in a relatively short time, LLMs have improved substantially, achieved very high scores on medical licensing examinations [1, 2], and reached early-career physician performance [3]. In some cases, general-purpose LLMs even surpass specialized clinical AI tools on medical benchmarks [4]. However, their ability to provide medical advice to the general public may not translate into similarly reliable performance [45, 46], and the fabrication of medical facts still imposes a serious risk in clinical practice [3]. In challenging medical tasks, although some models may outperform physicians in answer accuracy, their reasoning may not align with their final answers, especially in tasks involving image comprehension [47]. Models can also be highly sensitive to simple adversarial transformations, such as prompt variations, which may negatively affect response quality, even in models specifically trained for medical tasks [48, 49]. Moreover,",
+      "order": 67,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific"
+      ],
+      "char_start": 29141,
+      "char_end": 30716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbac5f06851c5349acd3212f3937387e",
+      "kind": "paragraph",
+      "text": "performance can remain remarkably unaffected by the removal of key information from the prompt, highlighting the presence of shortcuts and flawed associations in model predictions [49]. The heterogeneity observed in studies involving LLMs naturally persists in multi-agent setups. A central finding of this study was that increased system complexity did not uniformly translate into better performance. Although the highest overall score was obtained with the D&C + SA pipeline, which combines autonomous subagent spawning with a fact-checking step, the benefits of tools and multi-agent architectures varied considerably across models. In some cases, adding web search, PubMed search, or multi-agent decomposition improved performance; in others, it produced little benefit or even degraded performance. This suggests that agentic architecture should not be treated as a universally beneficial design choice, but rather as a model-dependent and task-dependent intervention. The mixed effect of tool use is particularly important. External tools are often assumed to improve clinical reasoning by giving models access to up-to-date evidence, scientific literature, and guidelinerelated information [24]. However, our results suggest that access to information alone is not enough. Models must also be able to formulate appropriate queries, select relevant sources, interpret retrieved evidence correctly, and integrate that evidence into patient-specific recommendations. This may explain why weaker models appeared to benefit less from tool access or, in some cases,",
+      "order": 68,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific"
+      ],
+      "char_start": 30718,
+      "char_end": 32285,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47370d567bc06fe3683562e41cb6fcd1",
+      "kind": "paragraph",
+      "text": "performed worse after tools were introduced. Tool use increases the cognitive and procedural complexity of the task: the model must decide when to search, what to search for, which retrieved information is trustworthy, and how to reconcile external evidence with the details of the case. As shown inFigure 5, although the number of datapoints is small, performance seems to increase as 12",
+      "order": 69,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific"
+      ],
+      "char_start": 32287,
+      "char_end": 32675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d39d11fa1acc5d34db8d8f03a7ff314",
+      "kind": "paragraph",
+      "text": "newer models are released. In our setup, newer models also appeared more capable of autonomously interacting with tools and coordinating subagents. This finding favors pipelines that provide more autonomy to agents rather than predefining roles and information flow. It is also aligned with findings suggesting that LLMs have become increasingly capable of handling longer software tasks over time [50, 51]. The results also suggest that the optimal architecture may depend on the base model. More capable models may be able to exploit complex multi-agent workflows, whereas less capable models may perform better with simpler prompting strategies. This has practical implications for the design of clinical AI systems: architecture should be selected empirically for each model and task, rather than assumed to generalize across model families.",
+      "order": 70,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific"
+      ],
+      "char_start": 32677,
+      "char_end": 33522,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e8d4ddfc2dea8cd7f5ba6ec632583b5",
+      "kind": "heading",
+      "text": "Rubric-based evaluation and AIRG",
+      "order": 71,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Rubric-based evaluation and AIRG"
+      ],
+      "char_start": 33524,
+      "char_end": 33556,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a763db3ae95a55f9b1cb21f48792481f",
+      "kind": "paragraph",
+      "text": "A second contribution of this work is the use of Asymmetric Information Rubric Generation (AIRG) to generate case-specific evaluation criteria. In clinical domains, evaluation is difficult because correct answers are often nuanced, context-dependent, and not reducible to exact string matching or simple classification labels. Rubric-based evaluation provides a more flexible framework because it can reward partially correct recommendations, penalize unsafe or inappropriate recommendations, and evaluate multiple dimensions of response quality. Several groups have explored automatic rubric generation pipelines related to AIRG. Kim et al. [39] developed an automatically generated rubric dataset designed to contain diverse and fine-grained assessment rubrics representing user demands. Although their focus was on inducing LLM evaluation capabilities during training, they used 50 sampled seed rubrics that were augmented and incorporated into the training data. Fan et al. [40] used human-made rubrics to train a model to generate rubrics more closely aligned with human judgment, while also highlighting GPT-4 as a cheaper automatic generation option. Chen et al. [41] introduced an agentic system with access to domainspecific knowledge bases and verification loops to generate rubrics for medical dialogue systems. Dhole and Agichtein [42] also incorporated retrieval-augmented generation into the rubric generation pipeline. Wang and Blanco [43] proposed a strategy that involves neither reference answers nor",
+      "order": 72,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Rubric-based evaluation and AIRG"
+      ],
+      "char_start": 33558,
+      "char_end": 35076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de3b5d97f905e2bccad949b179395924",
+      "kind": "paragraph",
+      "text": "human-authored rubrics. Yu et al. [44] started from expert-authored gold answers and their factual elements to generate instance-specific criteria. The key idea behind AIRG is that the rubric generator has access to privileged reference information that is not available to the evaluated model. This approach also allows evaluation pipelines to scale using data that are already available in electronic health records. In this study, the rubric generator was a frontier model (gemini-3.5-flash) with high reasoning effort and received the case summary, the actual clinical decisions, and access to search tools. In contrast, the evaluated models received only the case summary and the pipeline-specific resources under evaluation. This asymmetry is intended to make the rubrics more clinically grounded than rubrics generated from the input case alone. However, AIRG should be interpreted as a pragmatic evaluation strategy rather than a replacement for expert-authored rubrics. Automatically generated rubrics may omit important criteria, include criteria of limited clinical relevance, assign inappropriate weights, or encode errors derived from the reference decision or the rubric-generating model. Future work should directly validate AIRG against physician-authored rubrics, measure agreement between human experts and LLM-generated criteria, and test whether AIRG scores correlate with expert global judgments of recommendation quality.",
+      "order": 73,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Rubric-based evaluation and AIRG"
+      ],
+      "char_start": 35078,
+      "char_end": 36521,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd13cf1fbdbf067d3a7b3d13331907b6",
+      "kind": "heading",
+      "text": "Clinical-domain and stage-specific performance",
+      "order": 74,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Clinical-domain and stage-specific performance"
+      ],
+      "char_start": 36523,
+      "char_end": 36569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83f356f43b7afe69326db94b500087ae",
+      "kind": "paragraph",
+      "text": "The category-specific results suggest that model performance was not uniform across clinical domains. Scores were higher for systemic therapy-related rubrics, while performance in surgery, radiotherapy, and complementary exams appeared more variable. This may reflect differences in the amount of available evidence, the degree of guideline standardization, the way recommendations are documented in clinical notes, or the relative frequency of these topics in model pretraining and instruction-tuning data. 13",
+      "order": 75,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Clinical-domain and stage-specific performance"
+      ],
+      "char_start": 36571,
+      "char_end": 37081,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95f18e34eaba7ec7043f1b6a29c73498",
+      "kind": "paragraph",
+      "text": "Performance also differed across breast cancer stages. Stage I cases showed the highest mean performance, while stage III cases showed the lowest. This pattern is clinically plausible because earlier-stage breast cancer often involves more standardized decision pathways, whereas stage II and especially stage III cases may require more complex integration of tumor biology, local disease extent, neoadjuvant treatment decisions, surgical planning, radiotherapy indications, genetic testing, and patient-specific factors. These findings align with previously published results in which intermediate-risk profiles and tumor grades had higher discordance rates between clinicians and LLM generated recommendations [9, 10]. Future benchmarks should not report only aggregate performance. Stratification by clinical stage, treatment domain, and case complexity may reveal important weaknesses that are hidden by global scores. For clinical deployment, such stratified evaluation is essential because average performance may obscure poor performance in precisely the cases where decision support would be most valuable.",
+      "order": 76,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Clinical-domain and stage-specific performance"
+      ],
+      "char_start": 37083,
+      "char_end": 38197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d416181bac206cc990ca612bf19082b8",
+      "kind": "heading",
+      "text": "Error analysis and clinical safety",
+      "order": 77,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Error analysis and clinical safety"
+      ],
+      "char_start": 38199,
+      "char_end": 38233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8567894bd0ce2b9a346e4dfbfbdcb1",
+      "kind": "paragraph",
+      "text": "The qualitative error analysis provides an important complement to the quantitative benchmark. Even among high-performing model-pipeline combinations, the oncologist review identified multiple clinically relevant failure modes, including incorrect recommendations, missing recommendations, incorrect or incomplete justifications, citation errors, reference fabrication, outdated claims, and overconfident statements. This finding highlights a major limitation of relying only on aggregate scores. A model may achieve a relatively high benchmark score while still producing errors that would be unacceptable in clinical practice. In particular, overconfident statements and incorrect justifications are concerning because they may make an answer appear more reliable than it is. Citation errors are also important because they may create a false impression of evidence-based reasoning even when the cited source does not support the claim. The time required for manual error analysis also illustrates the difficulty of evaluating clinical generative AI systems. The oncologist spent 15 hours and 45 minutes reviewing 10 responses, corresponding to approximately 1 hour and 35 minutes per case. This reinforces the need for scalable evaluation methods, but it also shows why fully automated evaluation should be periodically audited by specialists. A practical evaluation workflow may require both broad automated benchmarking and smaller, high-resolution expert error analyses. Critical errors and long reviewing time may",
+      "order": 78,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Error analysis and clinical safety"
+      ],
+      "char_start": 38235,
+      "char_end": 39755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6027bbc6b982d8b28c9372ba6cf0d9e0",
+      "kind": "paragraph",
+      "text": "hinder practical utility as healthcare providers rarely can dedicate such time and might prefer to manually search on trusted sources. As models improve and their responses become more elaborate, identifying gaps and errors becomes increasingly difficult, effortful, and expensive, especially in high-stakes domains such as healthcare. It is essential for the research community to define evaluation strategies that are reliable, scalable, and capable of testing systems with rapidly evolving capabilities. Marro et al. [52] proposed a strategy that frames evaluation as an adversarial game, in which correctness is understood as resistance to falsification rather than agreement with a trusted source. In the mathematical domain, they demonstrated that a much less powerful model, GPT-3.5, was able to correctly benchmark GPT-5.2. In medicine, applying this idea is particularly challenging because there is often no predefined logical structure for distinguishing true from false. Nevertheless, this remains an open research direction worth pursuing.",
+      "order": 79,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Error analysis and clinical safety"
+      ],
+      "char_start": 39757,
+      "char_end": 40809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b61d4c7214d1afad080c0363a9fd6a7",
+      "kind": "heading",
+      "text": "Implications for clinical AI system design",
+      "order": 80,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Implications for clinical AI system design"
+      ],
+      "char_start": 40811,
+      "char_end": 40853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51474ce40b8aa09cdeb7e8a753c47fbe",
+      "kind": "paragraph",
+      "text": "Our results have several implications for the development of LLM-based clinical decision-support systems. First, model capability remains a major determinant of performance. Architectural improvements such as tool use, decomposition, fact checking, and autonomous subagent creation may help, but they do not compensate reliably for weaker base models. Second, retrieval and tool-use systems should be evaluated as complete pipelines, not as isolated components. A system with access to PubMed or web search may still fail if the model retrieves irrelevant evidence, misinterprets the literature, or applies evidence inappropriately to the case. 14",
+      "order": 81,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Implications for clinical AI system design"
+      ],
+      "char_start": 40855,
+      "char_end": 41502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2539c67bcc668fcd14cca86aafb326e1",
+      "kind": "paragraph",
+      "text": "Third, fact-checking agents should not be assumed to eliminate errors. In this study, fact-checking was associated with performance gains in some settings, but errors persisted even in outputs generated by pipelines that included a fact-checking step. Future work should investigate whether factcheckers need access to the full reasoning trace, previous tool outputs, or structured intermediate claims to be more effective. Fourth, multi-agent autonomy may be most useful when the task can be decomposed into clinically meaningful subtasks. Breast cancer treatment naturally involves systemic therapy, surgery, radiotherapy, and complementary exams, making it a favorable setting for divide-and-conquer architectures. Whether similar gains would occur in less decomposable clinical tasks remains uncertain.",
+      "order": 82,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Implications for clinical AI system design"
+      ],
+      "char_start": 41504,
+      "char_end": 42310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0332077e77ce09d430dd93d2d2b9060",
+      "kind": "heading",
+      "text": "Strengths and limitations",
+      "order": 83,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Strengths and limitations"
+      ],
+      "char_start": 42312,
+      "char_end": 42337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d90c402832f074b90b482fe6d9b3d97",
+      "kind": "paragraph",
+      "text": "A major strength of this study is the use of real breast cancer cases from clinical practice, including cases across all four disease stages. Another strength is the evaluation of multiple models and multiple pipeline architectures, which allowed us to assess not only model performance but also the interaction between model choice and system design. The combination of quantitative rubricbased scoring with qualitative oncologist-led error analysis provides a more complete view of system behavior than either method alone. This study also has several limitations. First, the dataset was derived from a single private oncology clinic, which may limit generalizability to other institutions, countries, resource settings, and clinical practice patterns. Second, the reference decisions were based on real clinical decisions rather than independent consensus review by multiple oncologists. Although this increases clinical realism, it also means that the reference standard may reflect local practice and individual decision-making. Third, the rubrics were automatically generated. Although AIRG was designed to ground rubrics in reference information, the generated criteria may contain omissions, inappropriate weights, or model-introduced biases. Fourth, the LLM-as-a-judge evaluation itself may introduce errors, especially in nuanced clinical cases. Fifth, experiments with some frontier models were limited by cost, preventing a fully balanced comparison across all models and pipelines. Sixth, no adversarial",
+      "order": 84,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Strengths and limitations"
+      ],
+      "char_start": 42339,
+      "char_end": 43855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d801f5aa0f4e05f87f6258347f4f874",
+      "kind": "paragraph",
+      "text": "transformations were performed to assess the robustness of model generations. We hypothesize that scores would also be vulnerable to such transformations, as changes in prompt wording, formatting, missing information, or distractor information may substantially affect model outputs. Finally, the study did not systematically evaluate different reasoning-effort settings, prompt variants, tool configurations, or fact-checker designs.",
+      "order": 85,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Strengths and limitations"
+      ],
+      "char_start": 43857,
+      "char_end": 44291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ffff99bf455ff35aadaae100d499a44",
+      "kind": "heading",
+      "text": "Future work",
+      "order": 86,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Future work"
+      ],
+      "char_start": 44293,
+      "char_end": 44304,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4738e5f73101d3ce2de72d82b03c526",
+      "kind": "paragraph",
+      "text": "Future studies should validate AIRG in other clinical domains and compare its outputs against expert-authored rubrics. One possible validation strategy would be to apply AIRG to datasets with existing human-written rubrics or ideal completions, then compare automatically generated rubrics with the original expert criteria and assess agreement in final model rankings. Further work should also investigate how to improve tool use in clinical agentic systems. This includes better query generation, source selection, evidence ranking, guideline retrieval, structured citation verification, and explicit separation between evidence extraction and recommendation synthesis. Another important direction is to evaluate whether fact-checking agents become more effective when they receive structured intermediate claims, retrieved sources, or the outputs of previous subagents. Finally, future benchmarks should include prospective clinical review, multi-specialist adjudication, and assessment of potential harm. Since clinical recommendations can be partially correct yet still unsafe, evaluation frameworks should explicitly measure not only factual correctness but also clinical appropriateness, uncertainty calibration, omission of necessary care, and risk of misleading justification.",
+      "order": 87,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Future work"
+      ],
+      "char_start": 44306,
+      "char_end": 45591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31655b66bc2d59c4e6063ecc009d1805",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 88,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Conclusion"
+      ],
+      "char_start": 45593,
+      "char_end": 45603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bee8f2632bb4c43ce7fab17caf48401c",
+      "kind": "paragraph",
+      "text": "In summary, this study shows that agentic LLM systems can generate clinically relevant breast cancer treatment recommendations, but their performance remains inconsistent and dependent on 15",
+      "order": 89,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Conclusion"
+      ],
+      "char_start": 45605,
+      "char_end": 45795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2dd19ee521e72f9c04626a3a0c62206",
+      "kind": "paragraph",
+      "text": "both the base model and system architecture. Tool use and multi-agent workflows can improve performance in some settings, but they are not universally beneficial and may introduce additional failure modes. AIRG offers a practical approach for scalable rubric-based evaluation in specialized clinical domains, but it requires further validation. Overall, these findings support the continued development of clinically grounded benchmarks, hybrid automated-human evaluation workflows, and safer architectures for medical AI decision support. Author contributions",
+      "order": 90,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "Conclusion"
+      ],
+      "char_start": 45797,
+      "char_end": 46357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5132055a440b459ddd2ebe955a5bc38",
+      "kind": "heading",
+      "text": "A.A. was responsible for conceptualization, formal analysis, investigation, methodology, soft-",
+      "order": 91,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "A.A. was responsible for conceptualization, formal analysis, investigation, methodology, soft-"
+      ],
+      "char_start": 46359,
+      "char_end": 46453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdd4c01ad4339ca3883e47687e072bbf",
+      "kind": "paragraph",
+      "text": "ware, validation, visualization, and writing - original draft preparation. N.H.B. contributed with conceptualization and data curation. H.K., S.M.C.R., F.N.G., and J.C.F.R. contributed with data curation. L.E.S.O. contributed with funding acquisition and supervision. All authors contributed to final review and editing. Ethical statement The study was approved by the institutional review board/ethics committee under protocol CAAE",
+      "order": 92,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "A.A. was responsible for conceptualization, formal analysis, investigation, methodology, soft-"
+      ],
+      "char_start": 46455,
+      "char_end": 46887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a0228d104531fb2bfb3de643ffd8934",
+      "kind": "heading",
+      "text": "of Hospital das Cl´ınicas, Universidade Federal do Paran´a, Curitiba - Paran´a.",
+      "order": 93,
+      "page_number": 16,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "A.A. was responsible for conceptualization, formal analysis, investigation, methodology, soft-",
+        "of Hospital das Cl´ınicas, Universidade Federal do Paran´a, Curitiba - Paran´a."
+      ],
+      "char_start": 46889,
+      "char_end": 46968,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66bd6cbd29c7812d8e7b3193a6fe8fdf",
+      "kind": "paragraph",
+      "text": "All the procedures in this study were in accordance with the 1975 Helsinki Declaration, updated in",
+      "order": 94,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "A.A. was responsible for conceptualization, formal analysis, investigation, methodology, soft-",
+        "of Hospital das Cl´ınicas, Universidade Federal do Paran´a, Curitiba - Paran´a."
+      ],
+      "char_start": 46970,
+      "char_end": 47068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff1a0828e3ff8c21dc0246abafc41d87",
+      "kind": "heading",
+      "text": "In addition, the study complied with the Data Use Consent Term, ensuring that all patient data",
+      "order": 95,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "In addition, the study complied with the Data Use Consent Term, ensuring that all patient data"
+      ],
+      "char_start": 47070,
+      "char_end": 47164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcc1bdaf1a10ac0ed0be696f8f72ae6b",
+      "kind": "paragraph",
+      "text": "were accessed, handled, and analyzed exclusively for scientific purposes under strict confidentiality and data protection requirements.",
+      "order": 96,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "10.7 Expressed overconfidence while the scientific",
+        "In addition, the study complied with the Data Use Consent Term, ensuring that all patient data"
+      ],
+      "char_start": 47166,
+      "char_end": 47301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ad2ad2873801e0c35d8d0a45231a213",
+      "kind": "heading",
+      "text": "References",
+      "order": 97,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 47303,
+      "char_end": 47313,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f240ef55fa49c7bd7c150097750ecd91",
+      "kind": "reference",
+      "text": "[1] Singhal K, Azizi S, Tu T, Mahdavi SS, Wei J, Chung HW, et al. Large language models encode clinical knowledge. Nature. 2023;620(7972):172–180. Available from:http://dx. doi.org/10.1038/s41586-023-06291-2. [2] Price Per Token. MedQA Leaderboard 2026 - Compare AI Model Scores — pricepertoken.com; 2026. [Accessed 04-07-2026].https://pricepertoken.com/leaderboards/ benchmark/medqa. [3] Chen P, Cai J, Zhou J, Chen S, Xu C, Yuan L, et al. Multidisciplinary blinded randomized expert evaluation of large language models for clinical diagnosis and management. Communications Medicine. 2026 Apr;6(1). Available from:http://dx.doi.org/10.1038/s43856-",
+      "order": 98,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 47315,
+      "char_end": 47963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:311870867b0a000cfd7be09d2a581be4",
+      "kind": "heading",
+      "text": "01576-9.",
+      "order": 99,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "01576-9."
+      ],
+      "char_start": 47965,
+      "char_end": 47973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce0d359212dd54be3d2f84a29fb8b508",
+      "kind": "paragraph",
+      "text": "[4] Vishwanath K, Alyakin A, Ghosh M, Hage A, Neifert SN, Orillac C, et al. General-purpose large language models outperform specialized clinical AI tools on medical benchmarks. Nature Medicine. 2026. Available from:http://dx.doi.org/10.1038/s41591-026-04431-5. [5] Feng J, Patel V , Heagerty P, Mai Y , Sivaraman V , V ossler P, et al.. Expert Evaluation of Clinical AI Tools on Real Point-of-Care Clinical Queries; 2026. Available from:https://arxiv. org/abs/2606.28960. [6] Sorin V , Klang E, Sklair-Levy M, Cohen I, Zippel DB, Balint Lahat N, et al. Large language model (ChatGPT) as a support tool for breast tumor board. npj Breast Cancer. 2023 May;9(1). Available from:http://dx.doi.org/10.1038/s41523-023-00557-8. [7] Lukac S, Dayan D, Fink V , Leinert E, Hartkopf A, Veselinovic K, et al. Evaluating ChatGPT as an adjunct for the multidisciplinary tumor board decision-making in primary breast cancer cases. Archives of Gynecology and Obstetrics. 2023;308(6):1831–1844. Available from: http://dx.doi.org/10.1007/s00404-023-07130-5. [8] Griewing S, Gremke N, Wagner U, Lingenfelder M, Kuhn S, Boekhoff J. Challenging Chat- GPT 3.5 in Senology—An Assessment of Concordance with Breast Cancer Tumor Board Decision Making. Journal of Personalized Medicine. 2023 Oct;13(10):1502. Available from: http://dx.doi.org/10.3390/jpm13101502. 16",
+      "order": 100,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "01576-9."
+      ],
+      "char_start": 47975,
+      "char_end": 49316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac7e528c7171519f37eb0aa639c28819",
+      "kind": "paragraph",
+      "text": "[9] KARABU ˘GA B, B ¨UY ¨UKK ¨OR M, KARABU ˘GA EK, AYDEMIR E, KAY A OB, YILMAZ ME, et al. Large Language Models as Decision-support Tools for Adjuvant Therapy Planning in Early-stage Hormone Receptor–positive Breast Cancer. Cancer Diagnosis & Prognosis.",
+      "order": 101,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "01576-9."
+      ],
+      "char_start": 49318,
+      "char_end": 49571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ce60e76c69c73635031da3976184001",
+      "kind": "heading",
+      "text": "May;6(3):548–558. Available from:http://dx.doi.org/10.21873/cdp.10555.",
+      "order": 102,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "May;6(3):548–558. Available from:http://dx.doi.org/10.21873/cdp.10555."
+      ],
+      "char_start": 49573,
+      "char_end": 49643,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5bce1dc176b038a8d94240bfab0f4d9",
+      "kind": "paragraph",
+      "text": "[10] Stalp JL, Denecke A, Jentschke M, Hillemanns P, Klapdor R. Quality of ChatGPT-",
+      "order": 103,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "May;6(3):548–558. Available from:http://dx.doi.org/10.21873/cdp.10555."
+      ],
+      "char_start": 49645,
+      "char_end": 49728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f108e8e2b1cb0cdbe143b376625b23e",
+      "kind": "heading",
+      "text": "Generated Therapy Recommendations for Breast Cancer Treatment in Gynecology. Cur-",
+      "order": 104,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Generated Therapy Recommendations for Breast Cancer Treatment in Gynecology. Cur-"
+      ],
+      "char_start": 49730,
+      "char_end": 49811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4c7b319b7a30a4577f76fa078a71b01",
+      "kind": "paragraph",
+      "text": "rent Oncology. 2024;31(7):3845–3854. Available from:http://dx.doi.org/10.3390/ curroncol31070284. [11] COSSU M, CUNIOLO L, DIAZ R, OLIV A M, CORNACCHIA C, MURELLI F, et al.",
+      "order": 105,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Generated Therapy Recommendations for Breast Cancer Treatment in Gynecology. Cur-"
+      ],
+      "char_start": 49813,
+      "char_end": 49985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14136de23c4a01237281ed294b1efca7",
+      "kind": "heading",
+      "text": "BREAST AI-PLAN: Prompt-Driven AI Assistance for Breast Surgery Planning – A Retro-",
+      "order": 106,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "BREAST AI-PLAN: Prompt-Driven AI Assistance for Breast Surgery Planning – A Retro-"
+      ],
+      "char_start": 49987,
+      "char_end": 50069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f17c156438b82193b9bd1acdcd17bd25",
+      "kind": "paragraph",
+      "text": "spective Single-center Study. In Vivo. 2025;39(6):3271-7. Available from:https://iv. iiarjournals.org/content/39/6/3271. [12] Rao A, Kim J, Kamineni M, Pang M, Lie W, Dreyer KJ, et al. Evaluating GPT as an Adjunct for Radiologic Decision Making: GPT-4 Versus GPT-3.5 in a Breast Imaging Pilot. Journal of the American College of Radiology. 2023 Oct;20(10):990–997. Available from:http: //dx.doi.org/10.1016/j.jacr.2023.05.003. [13] Haver HL, Ambinder EB, Bahl M, Oluyemi ET, Jeudy J, Yi PH. Appropriateness of Breast Cancer Prevention and Screening Recommendations Provided by ChatGPT. Radiology. 2023 May;307(4). Available from:http://dx.doi.org/10.1148/radiol.230424. [14] Shankar R, Sundar V , Goh Z, Sin PY , Tan EY . Performance of large language models for extracting clinical data from breast cancer pathology reports: a systematic review. npj Digital Medicine. 2026 May. Available from:http://dx.doi.org/10.1038/s41746-026-",
+      "order": 107,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BREAST AI-PLAN: Prompt-Driven AI Assistance for Breast Surgery Planning – A Retro-"
+      ],
+      "char_start": 50071,
+      "char_end": 51002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0912abbb70009cb003d6edb1f2d4f289",
+      "kind": "heading",
+      "text": "x.",
+      "order": 108,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "x."
+      ],
+      "char_start": 51004,
+      "char_end": 51006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae38cd5b543264001fdfca132949bc1c",
+      "kind": "paragraph",
+      "text": "[15] KUS F. Artificial Intelligence (ChatGPT-4o) in Adjuvant Treatment Decision-Making",
+      "order": 109,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "x."
+      ],
+      "char_start": 51008,
+      "char_end": 51094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5b70b40e133134f47ccd48b9a6dda83",
+      "kind": "heading",
+      "text": "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations",
+      "order": 110,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations"
+      ],
+      "char_start": 51096,
+      "char_end": 51176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8e17865a60005c29f79d55643e53645",
+      "kind": "paragraph",
+      "text": "and NCCN/ESMO Guidelines. International Journal of Hematology and Oncology. 2025 Mar:68–74. Available from:http://dx.doi.org/10.4999/uhod.258149. [16] Tun HM, Naing L, Malik OA, Rahman HA. Artificial Intelligence (AI)-based tools in the diagnosis and management of prostate cancer: a systematic review and meta-analysis. Prostate Cancer and Prostatic Diseases. 2025 Dec. Available from:http://dx.doi.org/10.1038/ s41391-025-01060-w. [17] Lechien JR, Chiesa-Estomba CM, Baudouin R, Hans S. Accuracy of ChatGPT in head and neck oncological board decisions: preliminary findings. European Archives of Oto- Rhino-Laryngology. 2023 Nov;281(4):2105–2114. Available from:http://dx.doi.org/",
+      "order": 111,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations"
+      ],
+      "char_start": 51178,
+      "char_end": 51860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a36876b0ceafa3d9ca05bc5edc6b3fcc",
+      "kind": "heading",
+      "text": "1007/s00405-023-08326-w.",
+      "order": 112,
+      "page_number": 17,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations",
+        "1007/s00405-023-08326-w."
+      ],
+      "char_start": 51862,
+      "char_end": 51886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a00809552f02ef364aaa2084d2863c4",
+      "kind": "paragraph",
+      "text": "[18] Schmidl B, H ¨utten T, Pigorsch S, St ¨ogbauer F, Hoch CC, Hussain T, et al. Assessing the role of advanced artificial intelligence as a tool in multidisciplinary tumor board decisionmaking for recurrent/metastatic head and neck cancer cases – the first study on ChatGPT 4o and a comparison to ChatGPT 4.0. Frontiers in Oncology. 2024;14. Available from:http: //dx.doi.org/10.3389/fonc.2024.1455413. [19] Zabaleta J, Aguinagalde B, Lopez I, Fernandez-Monge A, Lizarbe JA, Mainer M, et al. Utility of Artificial Intelligence for Decision Making in Thoracic Multidisciplinary Tumor Boards. Journal of Clinical Medicine. 2025 Jan;14(2):399. Available from:http://dx.doi.org/",
+      "order": 113,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations",
+        "1007/s00405-023-08326-w."
+      ],
+      "char_start": 51888,
+      "char_end": 52564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9695586f1e663c57c8568147f40fab58",
+      "kind": "heading",
+      "text": "3390/jcm14020399.",
+      "order": 114,
+      "page_number": 17,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations",
+        "3390/jcm14020399."
+      ],
+      "char_start": 52566,
+      "char_end": 52583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59a09fa36cc588c067c2bfa3c0518a37",
+      "kind": "paragraph",
+      "text": "[20] Griewing S, Knitza J, Boekhoff J, Hillen C, Lechner F, Wagner U, et al. Evolution of publicly available large language models for complex decision-making in breast cancer care. Archives of Gynecology and Obstetrics. 2024 May;310(1):537–550. Available from:http://dx.doi. org/10.1007/s00404-024-07565-4. [21] Ah-thiane L, Heudel PE, Campone M, Robert M, Brillaud-Meflah V , Rousseau C, et al.",
+      "order": 115,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "for Stage II Colon Cancer: A Comparative Analysis with Clinician Recommendations",
+        "3390/jcm14020399."
+      ],
+      "char_start": 52585,
+      "char_end": 52981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcc111565923770c1a1cf61fe7473925",
+      "kind": "heading",
+      "text": "Large Language Models as Decision-Making Tools in Oncology: Comparing Artificial In-",
+      "order": 116,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Large Language Models as Decision-Making Tools in Oncology: Comparing Artificial In-"
+      ],
+      "char_start": 52983,
+      "char_end": 53067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33a06d1877cc02bafc9750f07de22742",
+      "kind": "paragraph",
+      "text": "telligence Suggestions and Expert Recommendations. JCO Clinical Cancer Informatics. 17",
+      "order": 117,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Large Language Models as Decision-Making Tools in Oncology: Comparing Artificial In-"
+      ],
+      "char_start": 53069,
+      "char_end": 53155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:deae34f3dd3c468f73ee5ddd1c79dd96",
+      "kind": "paragraph",
+      "text": "2025;(9):e2400230. PMID:. Available from:https://ascopubs.org/doi/abs/10.1200/",
+      "order": 118,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Large Language Models as Decision-Making Tools in Oncology: Comparing Artificial In-"
+      ],
+      "char_start": 53157,
+      "char_end": 53235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fe0d7fbafc80663947b1210bd98546c",
+      "kind": "heading",
+      "text": "24-00230.",
+      "order": 119,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "24-00230."
+      ],
+      "char_start": 53237,
+      "char_end": 53246,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3fadaf38758e7a6e0ad2d39b6f74e36",
+      "kind": "paragraph",
+      "text": "[22] Liu Q, Hu Z, Huang T, Niu Y , Zhang X, Ma S, et al. EvoMDT: a self-evolving multi-agent system for structured clinical decision-making in multi-cancer. npj Digital Medicine. 2026 Jan;9(1). Available from:http://dx.doi.org/10.1038/s41746-025-02304-8. [23] Ferber D, El Nahhas OSM, W ¨olflein G, Wiest IC, Clusmann J, Leßmann ME, et al. Development and validation of an autonomous artificial intelligence agent for clinical decision-making in oncology. Nature Cancer. 2025;6(8):1337–1349. Available from:http://dx.doi.org/",
+      "order": 120,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "24-00230."
+      ],
+      "char_start": 53248,
+      "char_end": 53773,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a6af8d82ca463bd75a269d1f102d1cc",
+      "kind": "heading",
+      "text": "1038/s43018-025-00991-6.",
+      "order": 121,
+      "page_number": 18,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "24-00230.",
+        "1038/s43018-025-00991-6."
+      ],
+      "char_start": 53775,
+      "char_end": 53799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89a7e34c4d2873e1bfc975eb72855a78",
+      "kind": "paragraph",
+      "text": "[24] Goodell AJ, Chu SN, Rouholiman D, Chu LF. Large language model agents can use tools to perform clinical calculations. npj Digital Medicine. 2025 Mar;8(1). Available from:http: //dx.doi.org/10.1038/s41746-025-01475-8. [25] Liu F, Wu J, Zhou H, Gu X, Zhu J, Pan J, et al.. RiskAgent: Synergizing Language Models with Validated Tools for Evidence-Based Risk Prediction; 2026. Available from:https: //arxiv.org/abs/2503.03802. [26] Ferber D, Wiest IC, W ¨olflein G, Ebert MP, Beutel G, Eckardt JN, et al. GPT-4 for Information Retrieval and Comparison of Medical Oncology Guidelines. NEJM AI. 2024 May;1(6). Available from:http://dx.doi.org/10.1056/AIcs2300235. [27] Arora RK, Wei J, Hicks RS, Bowman P, Qui ˜nonero-Candela J, Tsimpourlas F, et al.. Health-",
+      "order": 122,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "24-00230.",
+        "1038/s43018-025-00991-6."
+      ],
+      "char_start": 53801,
+      "char_end": 54559,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:771c33554b2322bf9b1b902c8ccabbe5",
+      "kind": "heading",
+      "text": "Bench: Evaluating Large Language Models Towards Improved Human Health; 2025. Avail-",
+      "order": 123,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Bench: Evaluating Large Language Models Towards Improved Human Health; 2025. Avail-"
+      ],
+      "char_start": 54561,
+      "char_end": 54644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96c4c9b993358e1fefe7b2aa4441680a",
+      "kind": "paragraph",
+      "text": "able from:https://arxiv.org/abs/2505.08775. [28] Hicks RS, Trofimov M, Lim D, Arora RK, Tsimpourlas F, Bowman P, et al.. HealthBench",
+      "order": 124,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Bench: Evaluating Large Language Models Towards Improved Human Health; 2025. Avail-"
+      ],
+      "char_start": 54646,
+      "char_end": 54778,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d4cdb309b3b5dc111d4d023d7f5c9c0",
+      "kind": "heading",
+      "text": "Professional: Evaluating Large Language Models on Real Clinician Chats; 2026. Available",
+      "order": 125,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Professional: Evaluating Large Language Models on Real Clinician Chats; 2026. Available"
+      ],
+      "char_start": 54780,
+      "char_end": 54867,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1974aca0d5c5815cf14efac628127b99",
+      "kind": "paragraph",
+      "text": "from:https://arxiv.org/abs/2604.27470. [29] Parallel ai. Parallel Web Systems — Infrastructure for intelligence on the web — parallel.ai;. [Accessed 10-06-2026].https://parallel.ai/. [30] National Center for Biotechnology Information. APIs - Develop - NCBI — ncbi.nlm.nih.gov;. [Accessed 10-06-2026].https://www.ncbi.nlm.nih.gov/home/develop/api/. [31] Model Context Protocol — github.com;. [Accessed 10-06-2026].https://github.com/ modelcontextprotocol. [32] Linux Foundation. Linux Foundation - Decentralized innovation, built with trust — linuxfoundation.org;. [Accessed 10-06-2026].https://www.linuxfoundation.org/. [33] OpenAI. Web search — OpenAI API — developers.openai.com;. [Accessed 10-06-2026]. https://developers.openai.com/api/docs/guides/tools-web-search. [34] Google. Gemini API — Google AI for Developers — Tools — Google search — ai.google.dev;. [Accessed 10-06-2026].https://ai.google.dev/gemini-api/docs/ google-search. [35] Exa Labs. Exa — exa.ai;. [Accessed 10-06-2026].https://exa.ai/. [36] Tavily. Tavily — tavily.com;. [Accessed 10-06-2026].https://www.tavily.com/. [37] Parallel ai. Parallel Quality Benchmarks — Parallel Web Systems — Infrastructure for intelligence on the web — parallel.ai;. [Accessed 10-06-2026].https://parallel.ai/ benchmarks. [38] Wang S. PubMed MCP Server - GitHub - aeghnnsw/pubmed-mcp — github.com; 2025. [Accessed 10-06-2026].https://github.com/aeghnnsw/pubmed-mcp. [39] Kim S, Shin J, Cho Y , Jang J, Longpre S, Lee H, et al.. Prometheus: Inducing Fine-grained Evaluation Capability in Language Models; 2024. Available from:https://arxiv.org/",
+      "order": 126,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Professional: Evaluating Large Language Models on Real Clinician Chats; 2026. Available"
+      ],
+      "char_start": 54869,
+      "char_end": 56465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ded31823f0a2e8fc211b334f05ab6b4c",
+      "kind": "paragraph",
+      "text": "abs/2310.08491. 18",
+      "order": 127,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Professional: Evaluating Large Language Models on Real Clinician Chats; 2026. Available"
+      ],
+      "char_start": 56467,
+      "char_end": 56485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7b762c83c6c765721d5ed638f9a8482",
+      "kind": "paragraph",
+      "text": "[40] Fan Z, Wang W, W X, Zhang D. SedarEval: Automated Evaluation using Self-Adaptive Rubrics. In: Al-Onaizan Y , Bansal M, Chen YN, editors. Findings of the Association for",
+      "order": 128,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Professional: Evaluating Large Language Models on Real Clinician Chats; 2026. Available"
+      ],
+      "char_start": 56487,
+      "char_end": 56660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83064edf0c3d1ed42d2b415c56539670",
+      "kind": "heading",
+      "text": "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-",
+      "order": 129,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-"
+      ],
+      "char_start": 56662,
+      "char_end": 56746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c7b84469007a499d44ebb8ea393b8b5",
+      "kind": "paragraph",
+      "text": "tional Linguistics; 2024. p. 16916-30. Available from:https://aclanthology.org/2024. findings-emnlp.984/. [41] Chen Y , Maiga A, Rahmani HA, Yilmaz E. Automated Rubrics for Reliable Evaluation of Medical Dialogue Systems; 2026. Available from:https://arxiv.org/abs/2601.15161. [42] Dhole KD, Agichtein E. RubricRAG: Towards Interpretable and Reliable LLM Evaluation via Domain Knowledge Retrieval for Rubric Generation; 2026. Available from:https://arxiv. org/abs/2603.20882. [43] Wang Z, Blanco E. Generating and Refining Dynamic Evaluation Rubrics for LLM-as-a-Judge;",
+      "order": 130,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-"
+      ],
+      "char_start": 56748,
+      "char_end": 57317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f54f8ab7808ad2fe4888fd6fe2074b90",
+      "kind": "heading",
+      "text": "Available from:https://arxiv.org/abs/2605.30568.",
+      "order": 131,
+      "page_number": 19,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-",
+        "Available from:https://arxiv.org/abs/2605.30568."
+      ],
+      "char_start": 57319,
+      "char_end": 57367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d73427b26f2308c33d7db479e7e2ed72",
+      "kind": "paragraph",
+      "text": "[44] Yu F, Seedat N, Herrmannova D, Schilder F, Schwarz JR. Beyond Pointwise Scores: Decomposed Criteria-Based Evaluation of LLM Responses; 2025. Available from:https: //arxiv.org/abs/2509.16093. [45] Bean AM, Payne RE, Parsons G, Kirk HR, Ciro J, Mosquera-G ´omez R, et al. Reliability of LLMs as medical assistants for the general public: a randomized preregistered study. Nature Medicine. 2026 Feb;32(2):609–615. Available from:http://dx.doi.org/10.1038/ s41591-025-04074-y. [46] Draelos RL, Afreen S, Blasko B, Brazile TL, Chase N, Desai DP, et al. Large language models provide unsafe answers to patient-posed medical questions. npj Digital Medicine. 2026 Feb;9(1). Available from:http://dx.doi.org/10.1038/s41746-026-02428-5. [47] Jin Q, Chen F, Zhou Y , Xu Z, Cheung JM, Chen R, et al. Hidden flaws behind expert-level accuracy of multimodal GPT-4 vision in medicine. npj Digital Medicine. 2024;7(1). Available from:http://dx.doi.org/10.1038/s41746-024-01185-7. [48] Alkaeed M, Qayyum A, Kashreef NA, Bilal M, Qadir J. Same Patient, Different Words, Different Diagnosis? Evaluating Semantic Stability in Clinical LLMs; 2026. Available from: https://arxiv.org/abs/2605.30646. [49] Gu Y , Fu J, Liu X, Valanarasu JMJ, Codella NCF, Tan R, et al. Evaluating the robustness and readiness of large frontier models in health AI applications. Nature Medicine. 2026. Available from:http://dx.doi.org/10.1038/s41591-026-04501-8. [50] Kwa T, West B, Becker J, Deng A, Garcia K, Hasin M, et al.. Measuring AI Ability to Complete",
+      "order": 132,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-",
+        "Available from:https://arxiv.org/abs/2605.30568."
+      ],
+      "char_start": 57369,
+      "char_end": 58892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcc82dd95fe903f3ff32e7655cbad470",
+      "kind": "paragraph",
+      "text": "Long Software Tasks; 2026. Available from:https://arxiv.org/abs/2503.14499. [51] METR. Task-Completion Time Horizons of Frontier AI Models; 2026.https://metr.org/ time-horizons/. [52] Marro S, Yu J, Malfa EL, Deb O, Li J, Yang Y , et al.. Benchmarking at the Edge of Comprehension; 2026. Available from:https://arxiv.org/abs/2602.14307. 19",
+      "order": 133,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-",
+        "Available from:https://arxiv.org/abs/2605.30568."
+      ],
+      "char_start": 58894,
+      "char_end": 59233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6966d40a23b05a4b9df14d71d1d8a461",
+      "kind": "paragraph",
+      "text": "A Supplementary material Table A.1: Token pricing used for cost estimation. Prices are reported in US dollars per one million tokens.",
+      "order": 134,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Computational Linguistics: EMNLP 2024. Miami, Florida, USA: Association for Computa-",
+        "Available from:https://arxiv.org/abs/2605.30568."
+      ],
+      "char_start": 59235,
+      "char_end": 59368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b83697a56bb9c18fb5980381136b174c",
+      "kind": "heading",
+      "text": "Model Input Cached input Output",
+      "order": 135,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Model Input Cached input Output"
+      ],
+      "char_start": 59370,
+      "char_end": 59401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41aea9211bd1c07f7cf023b7b41d8237",
+      "kind": "paragraph",
+      "text": "Gemini 3.5 Flash 1.50 0.15 9.00 Gemini 2.5 Flash 0.30 0.30 2.50 Gemini 3.1 Pro Preview 2.00 0.20 12.00 GPT-5.5 5.00 0.50 30.00 Claude Opus 4.8 5.00 0.50 25.00 20",
+      "order": 136,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Input Cached input Output"
+      ],
+      "char_start": 59403,
+      "char_end": 59564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:141196079d70215e545f81ddc88837f9",
+      "kind": "paragraph",
+      "text": "Table A.2: Token pricing used for cost estimation. Prices are reported in US dollars per one million tokens. Systemic t.: systemic therapy; radiot.: radiotherapy; compl. ex.: complemmentary exams. Systemic T. Surgery Radiot. Compl. Ex.",
+      "order": 137,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Input Cached input Output"
+      ],
+      "char_start": 59566,
+      "char_end": 59801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:286f9e86b666b9cdc973702211b0105d",
+      "kind": "heading",
+      "text": "Pipeline Model",
+      "order": 138,
+      "page_number": 21,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Pipeline Model"
+      ],
+      "char_start": 59803,
+      "char_end": 59817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8216b3da9358ef9d77c74c5ea82c38c",
+      "kind": "paragraph",
+      "text": "D&C Gemini 3.5 Flash 0.213 0.084 0.096 0.126 Gemini 3.1 Pro Preview 0.178 0.104 0.092 0.091 Gemini 2.5 Flash 0.164 0.102 0.104 0.099 D&C+FC Gemini 3.5 Flash 0.232 0.104 0.102 0.146 Gemini 3.1 Pro Preview 0.177 0.107 0.091 0.111 Gemini 2.5 Flash 0.147 0.089 0.091 0.078 D&C+SA Claude Opus 4.8 0.242 0.105 0.106 0.142 Gemini 3.5 Flash 0.235 0.109 0.104 0.133 GPT-5.5 0.221 0.100 0.113 0.143 Gemini 3.1 Pro Preview 0.193 0.113 0.103 0.104 Gemini 2.5 Flash 0.170 0.083 0.071 0.107 PubMed GPT-5.5 0.229 0.098 0.112 0.125 Gemini 3.5 Flash 0.217 0.112 0.102 0.117 Gemini 3.1 Pro Preview 0.195 0.110 0.106 0.090 Gemini 2.5 Flash 0.116 0.089 0.084 0.073 PubMed + PMC Gemini 3.5 Flash 0.223 0.106 0.101 0.115 Gemini 3.1 Pro Preview 0.204 0.104 0.104 0.092 Gemini 2.5 Flash 0.138 0.104 0.089 0.068 Web search Gemini 3.5 Flash 0.227 0.105 0.103 0.135 GPT-5.5 0.216 0.111 0.115 0.127 Gemini 3.1 Pro Preview 0.193 0.101 0.102 0.099 Gemini 2.5 Flash 0.127 0.098 0.104 0.064 Baseline Claude Opus 4.8 0.227 0.136 0.182 0.000 Gemini 3.5 Flash 0.215 0.117 0.098 0.094 GPT-5.5 0.206 0.103 0.118 0.100 Gemini 3.1 Pro Preview 0.197 0.103 0.109 0.083 Gemini 2.5 Flash 0.123 0.103 0.097 0.082 21",
+      "order": 139,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Pipeline Model"
+      ],
+      "char_start": 59819,
+      "char_end": 60990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 21,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 21
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.12051",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 21,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

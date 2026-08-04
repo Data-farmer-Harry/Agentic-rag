@@ -1,0 +1,4656 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "9939859851b36a1c27302646566725be88bb5d40c7d1ee536f090e7098f08e2e",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:a17c31b8dde0e4c1b13f219bae2994e8",
+      "kind": "heading",
+      "text": "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization"
+      ],
+      "char_start": 0,
+      "char_end": 61,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5833e1a3e5162683cc37b87ee74d73b",
+      "kind": "paragraph",
+      "text": "for Robust Quantitative Trading Jie Mao1,∗, Changlun Li1,2,∗, Xiang Li1, Qiqi Duan2, Jinhui Yuan1, Xiang Liu1, Yuyu Luo1,2,Jing Tang 1,Xiaowen Chu 1,Nan Tang 1,2,† 1HKUST(GZ) 2Paradoox AI Research ∗Equal contribution.†Corresponding author:nantang@hkust-gz.edu.cn",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization"
+      ],
+      "char_start": 63,
+      "char_end": 325,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea98f2a6dcfdc7c613ea696e1cf4a486",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Abstract"
+      ],
+      "char_start": 327,
+      "char_end": 335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df260c60f4cc2d550a17b8d9dfe32b40",
+      "kind": "paragraph",
+      "text": "Quantitative strategy optimization remains largely manual, requiring domain experts to identify weak signals, tune risk-control rules, and repeatedly validate iterative revisions. Large language models can accelerate this process, but directly relying on them to rewrite trading strategies often introduces hallucinated edits, strategy drift, and backtest overfitting. We proposeEVOQUANT, a self-EvolvingVerifier-guided framework for strategyOptimization inQuantitative trading. Our method utilize LLMs to deeply diagnoses performance bottlenecks, generates semantically controlled candidate edits, selects the best strategy through a multi-stage verification pipeline, and distills optimization experience into reusable knowledge for continual self-improvement. We evaluate our method using seven representative strategies: four from the A-share market and three from the Crypto market. Experimental results show that our method significantly improves the Sharpe ratio across all tested strategies: the average test Sharpe increases from −0.298 to 0.538, and the best-performing strategy achieves a 199% relative improvement. Ablation studies and stress tests under stricter conditions further validate the effectiveness and robustness of the framework1. Overall, this work transforms quantitative strategy optimization from costly manual trial-and-error into an automated and verifiable iterative paradigm, offering a new path for applying large language models to financial strategy research.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Abstract"
+      ],
+      "char_start": 337,
+      "char_end": 1832,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe718357b780f321e81b096b5e7dca8e",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 1834,
+      "char_end": 1846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7047fb78685425f8a470952813b9a29f",
+      "kind": "paragraph",
+      "text": "Quantitative strategy development is fundamentally an iterative scientific process: researchers propose a testable market hypothesis, implement a trading rule, validate its performance through rigorous backtesting, diagnose failure modes, revise 1Our code is available at https://anonymous.4open. science/r/EVOQUANT. the hypothesis, and repeat this cycle continuously to adapt to non-stationary market regimes (Noormohammadzadehmaleki et al., 2026; Zhou et al., 2025; Li et al., 2025a,b). As summarized in Figure 1(a), traditional manual optimization of quantitative strategies is constrained by scarce domain expertise, repetitive labor-intensive analysis, low iteration efficiency, and performance bottlenecks that are difficult to overcome (Wang et al., 2023; Yu et al., 2023). As shown in Figure 1(b), Modern large language model (LLM) agents promise to dramatically accelerate this iterative loop by automating code generation, hypothesis testing, and strategy refinement (Luo et al., 2025; Tang et al., 2025a; Dong et al., 2025). Nevertheless, the direct application of general-purpose large language models (LLMs) to quantitative finance introduces new critical challenges. Specifically, these models are prone to generating hallucinatory trading rules, producing unverifiable and unexecutable strategy modifications, and failing to provide transparent causal explanations for their proposed changes (Wu et al., 2025; Li et al., 2024a). A system that generates many candidates can look impressive by exploiting",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 1848,
+      "char_end": 3365,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfe6950f8b25f38209e1272589b785af",
+      "kind": "paragraph",
+      "text": "noisy validation windows, low trade counts, or unreported degrees of freedom (White, 2000; Bailey et al., 2015; Harvey, 2013). Therefore,the central problem is not simply to generate strategies, but to improve strategies under a protocol that records, verifies, and rejects unsafe edits. Existing LLM-driven quantitative finance studies focus on autonomous trading strategy construction and alpha factor mining (Kou et al., 2024; Tang et al., 2025b; Wang et al., 2026; Li et al., 2025c; Tian et al., 2025). In contrast, we study a more practically impactful yet understudied problem: the systematic improvement of existing deployed quantitative strategies. Figure 1(c) illustrates the workflow and advantages of our proposed optimization framework. Our framework takes a user-provided 1",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 3367,
+      "char_end": 4153,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:336b8ed5f34453d929d3ac06d22cad70",
+      "kind": "table",
+      "text": "arXiv:2607.12455v1  [cs.AI]  14 Jul 2026",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 4155,
+      "char_end": 4195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e633db10f33e5a4eff19e11d15d3e23c",
+      "kind": "caption",
+      "text": "Figure 1: Motivation. Compared with manual human optimization and vanilla LLM rewriting,EVOQUANTprovides",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 4197,
+      "char_end": 4301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28f404f9d6c0141ad0d5222325a9f3e3",
+      "kind": "paragraph",
+      "text": "a verifier-guided closed loop for controlled and reliable strategy improvement. quantitative strategy as input. Unlike unconstrained generative search, we formulate automated strategy optimization as a closed-loop scientific process. In this process, the system explicitly represents the underlying hypothesis, diagnoses current failure modes, guides the LLM to generate controlled optimization hypotheses step by step, and adopts a modification only after it survives a rigorous multistage verification pipeline. The proposed method implements this design through four technical principles. (i) It converts raw strategy logic into a typed strategy genome. This genome serves as an editable intermediate representation that supports interventions ranging from parameter tuning and local structural repair to logic rewriting. (ii) It builds an LLM-based strategy risk-diagnosis agent. By integrating backtest evidence across multiple time periods, the agent analyzes failure modes from the perspectives of trading behavior, risk exposure, and market compatibility, thereby identifying the core weaknesses of the current strategy. (iii) Candidate generation is conditioned on the diagnostic results and organized into a hierarchy of increasingly expressive edits. Guided by the LLM, the system progresses from conservative local tuning to structural reconstruction, strategy-family migration, and hypothesis rewriting. Each candidate is emitted as an explicit edit plan over the strategy genome, enabling drift constraints during optimization and post-hoc",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 4303,
+      "char_end": 5856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4e5eb3682b5259070d6513124cbfd09",
+      "kind": "paragraph",
+      "text": "provenance auditing. (iv) An out-of-sample-aware verifier and an adaptive promotion engine jointly screen candidates through hard admission rules and robustness penalties. A candidate replaces the current incumbent only after passing all verification stages. In addition, a built-in knowledgedistillation module continuously distills effective experience from the optimization process into a reusable strategy knowledge base, enabling continual self-improvement of the system. We evaluate whether the proposed iterative process improves quantitative strategies across both equity and cryptocurrency markets while mitigating single-asset artifacts and optimization overfitting. Across seven representative strategies, the system consistently improves test performance, raising the average Sharpe ratio from −0.298 to 0.538, with the best-performing strategy achieving a 199% relative improvement. Ablation and stress-test results further show that diagnosis, LLM-based candidate generation, adaptive promotion, and reusable memory each contribute to robust optimization gains. Our contributions are: • Evidence-constrained strategy evolution.We formulate automated quantitative strategy improvement as evidence-constrained program evolution, where user-provided strategies are represented as structured trading genomes that support localized, executable, and provenance-preserving edits. 2",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 5858,
+      "char_end": 7246,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6794b2e146a0332d2a8686b7dfde62b",
+      "kind": "paragraph",
+      "text": "• LLM-enabled verifier-guided optimization protocol.We develop a verifier-guided optimization framework that uses LLMs for failure-mode diagnosis and hierarchical candidate synthesis, while integrating out-of-sample-aware verification, adaptive promotion, and memory-based experience reuse into a unified auditable loop. • Long-horizon cross-market evaluation.We provide a long-horizon empirical evaluation across A-share and Bitcoin strategies, including before–after performance comparisons, component ablations, transaction-cost stress tests, and walk-forward validation.",
+      "order": 11,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Introduction"
+      ],
+      "char_start": 7248,
+      "char_end": 7822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7042d5bf449e97a6b64515f904fa8170",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 12,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Related Work"
+      ],
+      "char_start": 7824,
+      "char_end": 7836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33a12d380ab240422faedc386cf123d3",
+      "kind": "paragraph",
+      "text": "Backtest overfitting and data snooping.Financial machine learning has long recognized that repeated strategy search can inflate apparent performance through data snooping and backtest overfitting (White, 2000; Bailey et al., 2015). Practical treatments emphasize leakage-aware validation (Schwendner, 2020), and recent theory quantifies in-sample to out-of-sample Sharpe decay (Jacquier et al., 2025). Our work addresses this concern by logging rejected candidates, exposing low-trade failures, tracking validation–test behavior, and reporting non-degradation rather than only the best discovered strategy. LLM agents and iterative refinement.LLM agents can reason, act, and revise outputs through feedback loops (Yao et al., 2022; Shinn et al., 2023; Madaan et al., 2023), and recent finance agents extend this pattern to market analysis, factor mining, and tool-augmented trading (Zhang et al., 2024; Li et al., 2024b; Zhang et al., 2025). Newer benchmarks and critiques highlight instability and weak deployment evidence in LLM trading agents (Zhang et al., 2026; Ye et al., 2026).EVO- QUANTdiffers by grounding each strategy edit in chronological backtests, trade-coverage checks, cost assumptions, and risk-sensitive promotion. Programmatic strategy search.Programmatic strategy search has moved from evolutionary and symbolic alpha discovery (Kakushadze et al., 2016; Cui et al., 2021) toward automated formulaic-alpha mining with reinforcement learning, LLM agents, structure-aware search, and dedicated evaluation",
+      "order": 13,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Related Work"
+      ],
+      "char_start": 7838,
+      "char_end": 9359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ef9f2f208402ab02e18ef4e120e6bd0",
+      "kind": "paragraph",
+      "text": "protocols (Shi et al., 2024; Zhao et al., 2024; Tang et al., 2025b; Ding et al., 2025; Chen et al., 2025; Yang et al., 2026; Wang et al., 2026). These approaches scale candidate generation and assessment, but broad search spaces can blur whether a gain reflects principled refinement of an initial market hypothesis or selection among many degrees of freedom.EVOQUANTinstead treats optimization as constrained program evolution from a user-provided strategy, with typed genome edits, diagnosis-conditioned generation, out-of-sampleaware promotion gates, and an explicit audit trail.",
+      "order": 14,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Related Work"
+      ],
+      "char_start": 9361,
+      "char_end": 9943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00c44e337c3877bfd64ea329ab950094",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Methodology"
+      ],
+      "char_start": 9945,
+      "char_end": 9956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:464127d633821135349aef39aac2bb3c",
+      "kind": "paragraph",
+      "text": "EVOQUANTcasts quantitative strategy optimization asverifier-guided program evolution. As shown in Figure 2, the system contains four modules: strategy ingestion and representation, baseline evidence construction, a diagnostic–generative optimization loop, and final strategy refinement/output. The core design of our framework emphasizes practical execution over pure generation. The large language model proposes strategy revisions within controllable scopes, and components including the backtester and verifier jointly determine whether such revisions are admissible. At round t, the incumbent genome gt is evaluated into an evidence pack Et. The optimization loop diagnoses the current bottleneck, generates candidates Ct, and promotes only a verified candidate: gt+1 = ( c⋆ t ,ifc ⋆ t is accepted byΠ, gt,otherwise. where c⋆ t is the best verified candidate selected from Ct, and Π denotes the promotion rule later specified in Module 3. The loop adopts a conservative design: failed candidates are stored with rejection reasons and later used to avoid repeating unproductive edits.",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Methodology"
+      ],
+      "char_start": 9958,
+      "char_end": 11045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1856ece104dff45ea14564c390f0640",
+      "kind": "heading",
+      "text": "Module 1: Strategy Ingestion and",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Methodology",
+        "Module 1: Strategy Ingestion and"
+      ],
+      "char_start": 11047,
+      "char_end": 11079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d85fac42475e95a960159c8ef8a49c4",
+      "kind": "heading",
+      "text": "Representation",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 11081,
+      "char_end": 11095,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5826409fbdc71173316d83601ae0e580",
+      "kind": "paragraph",
+      "text": "EVOQUANTfirst normalizes the user strategy into a typed intermediate representation called astrategy genome. This module performs four steps. First, it parses raw code or rule text into an abstract syntax tree. Second, it tags trading semantics such as signals, entry conditions, risk rules, position sizing, and exits. Third, it factors the strategy into editable layers. Finally, it recompiles the genome to ensure that the representation remains 3",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 11097,
+      "char_end": 11547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b40023fb132c9143247fa7980315d305",
+      "kind": "caption",
+      "text": "Figure 2:EVOQUANTworkflow organized into four modules. Module 1 normalizes raw strategy code or logic into",
+      "order": 20,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 11549,
+      "char_end": 11655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c6598e38f0163895091863d40b2a4c9",
+      "kind": "paragraph",
+      "text": "a typed strategy genome. Module 2 constructs chronological baseline evidence. Module 3 performs the iterative diagnostic–generative loop, including bottleneck diagnosis, controlled candidate editing, verification, and promotion with memory update. Module 4 outputs the best verified strategy, optimization trajectory, and report. executable. Formally, the parser Φ maps a strategy sto Φ(s) =g=",
+      "order": 21,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 11657,
+      "char_end": 12050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dced7432d4631008a8da20fc0f2834b8",
+      "kind": "paragraph",
+      "text": "gsig, grisk, gpos, gentry, gexit, ξ",
+      "order": 22,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 12052,
+      "char_end": 12087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:805b8c09ba9be62d777c01ec1b027e39",
+      "kind": "paragraph",
+      "text": ", where ξ stores provenance, strategy family, parent identifiers, and mutation history. The output of this module is not merely a parsed program, but an editable research object. Later edits must specify the target layer, satisfy non-anticipativity and exposure constraints, and compile back to executable strategy semanticsg.",
+      "order": 23,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation"
+      ],
+      "char_start": 12089,
+      "char_end": 12415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:703be364dae3c8810010eb02b5637754",
+      "kind": "heading",
+      "text": "Module 2: Baseline Evaluation and",
+      "order": 24,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Representation",
+        "Module 2: Baseline Evaluation and"
+      ],
+      "char_start": 12417,
+      "char_end": 12450,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8aa654ea6308231c772bcd7112ef9a8",
+      "kind": "heading",
+      "text": "Evidence Construction",
+      "order": 25,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Evidence Construction"
+      ],
+      "char_start": 12452,
+      "char_end": 12473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e94102d63cd943765979a2056a717e0",
+      "kind": "paragraph",
+      "text": "EVOQUANTnext measures the original strategy before attempting to improve it. The evaluator loads real market data, constructs chronological splits, and runs the incumbent genome under the same execution assumptions used for all future candidates. It records both scalar metrics and behavioral profiles, producing E(g) = n MX , Ptrade",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Evidence Construction"
+      ],
+      "char_start": 12475,
+      "char_end": 12808,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d9af53a49b50c257aca90d31db618c4",
+      "kind": "heading",
+      "text": ", Pregime",
+      "order": 27,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        ", Pregime"
+      ],
+      "char_start": 12810,
+      "char_end": 12819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f63e4f14a223c9b028ba671cf49ecddf",
+      "kind": "paragraph",
+      "text": "X o",
+      "order": 28,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        ", Pregime"
+      ],
+      "char_start": 12821,
+      "char_end": 12824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9966eaafd5a38a893da52c36d4189531",
+      "kind": "heading",
+      "text": "X∈{train,val,test}",
+      "order": 29,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "X∈{train,val,test}"
+      ],
+      "char_start": 12826,
+      "char_end": 12844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d04a3520758fa498e27f563a8ea0ee03",
+      "kind": "paragraph",
+      "text": "∪ {δoos, Cconc, Hrisk}. Here, MX comprises performance metrics such as return, Sharpe ratio, maximum drawdown, trade count, win rate, and related statistics. P trade",
+      "order": 30,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "X∈{train,val,test}"
+      ],
+      "char_start": 12846,
+      "char_end": 13011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbfa6ec92b55ff4ca44d238ca7674a9f",
+      "kind": "heading",
+      "text": "char-",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "char-"
+      ],
+      "char_start": 13013,
+      "char_end": 13018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee6b7fbbbe49b780962436135c4a1399",
+      "kind": "paragraph",
+      "text": "acterizes trading behaviors including trade sparsity, holding period distributions, and return concentration, while P regime",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "char-"
+      ],
+      "char_start": 13020,
+      "char_end": 13144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35606a540d417e935856166bd6b164e4",
+      "kind": "heading",
+      "text": "quantifies the strategy’s sensi-",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "quantifies the strategy’s sensi-"
+      ],
+      "char_start": 13146,
+      "char_end": 13178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9ab8cbdaf48af6a13d5264e1a13eff7",
+      "kind": "paragraph",
+      "text": "tivity to different market regimes. The metric δoos reflects the degradation from validation to out-ofsample (OOS) performance, and Hrisk documents abnormal risk phenomena, such as excessive stoploss triggering or truncated upside returns. This module provides comprehensive evidence for the downstream diagnostic loop, enabling the system to assess not only whether a strategy underperforms, but also to elucidate the specific failure modes underlying any observed weaknesses.",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "quantifies the strategy’s sensi-"
+      ],
+      "char_start": 13180,
+      "char_end": 13657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6f1411978627ec19d4c607d0693bef5",
+      "kind": "heading",
+      "text": "Module 3: Strategy Optimization Pipeline",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "quantifies the strategy’s sensi-",
+        "Module 3: Strategy Optimization Pipeline"
+      ],
+      "char_start": 13659,
+      "char_end": 13699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72d6f74c6a2676dfa40e97410702f001",
+      "kind": "heading",
+      "text": "Bottleneck Diagnosis and Search Planning.It",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Bottleneck Diagnosis and Search Planning.It"
+      ],
+      "char_start": 13701,
+      "char_end": 13744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2dfff8cfa1e6112017529038ec021593",
+      "kind": "paragraph",
+      "text": "starts by turning Evidence pack statistics into a bottleneck diagnosis and a concrete search plan. zt =B(E t,M t), pt = (ot, ℓt,O t,F t, Kt). The diagnosis is implemented by large language models through rule-based evidence verification and in-depth analysis. It identifies failure modes such as risk-rule alpha truncation, regime mismatch, validation decay and so on. The search 4",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Bottleneck Diagnosis and Search Planning.It"
+      ],
+      "char_start": 13746,
+      "char_end": 14127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65ba390a9c1d07ce2d68aabf929fc4a5",
+      "kind": "paragraph",
+      "text": "plan then specifies the round objective ot, search level ℓt, allowed operators Ot, forbidden shortcuts Ft, and candidate budgetK t. The diagnosis constrains the generator’s action space. For example, If the bottleneck is validation– OOS decay, the plan favors simplification, robustness repair, and parameter smoothing rather than adding more regime-specific conditions. The search level progresses fromrepairtobridge,redesign, and finallyfamily migration. This keeps the adaptivity of AutoML and LLM-as-optimizer loops (Hutter et al., 2011; Akiba et al., 2019; Yang et al., 2023; Guo et al., 2024), but makes each search step accountable to a financial failure mode.",
+      "order": 38,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Bottleneck Diagnosis and Search Planning.It"
+      ],
+      "char_start": 14129,
+      "char_end": 14796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06765b41436b1f0aa522b8246fb251d4",
+      "kind": "heading",
+      "text": "Candidate Generation and Controlled Edit-",
+      "order": 39,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Candidate Generation and Controlled Edit-"
+      ],
+      "char_start": 14798,
+      "char_end": 14839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65b9a24fe4f3abcd6bd96b480a4a57c6",
+      "kind": "paragraph",
+      "text": "ing.Given the search plan,EVOQUANTbuilds a candidate-generation prompt from four artifacts: the current genome, a compressed EvidencePack, the bottleneck diagnosis, and retrieved memory cases. The LLM must return a controlled edit plan with fields for target layer, operation, patch content, mechanism rationale, expected metric movement, and safety constraints. A candidate is accepted for testing only if it satisfies the typed edit contract: ct,i = ∆t,i(gt), ∆t,i ∈ T(pt,M t), dG(gt, ct,i)≤ϵ ℓt,I(c t,i) = 1. Here ∆t,i is an edit operator,dG measures semantic drift from the incumbent, and I checks executable and financial invariants. In practice, parameter repair adjusts lookback windows, thresholds, stop widths, and position caps; bridge edits modify entry filters, exit rules, or signal combinations; redesign rewrites the strategy graph around a coherent market mechanism. Family migration, the highest-tier modification, shifts to a nearby strategy family after repeated local failures. Before evaluation, candidates are compiled, deduplicated by genome hash, and diversified so that one round does not spend all budget on near-identical edits.",
+      "order": 40,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Candidate Generation and Controlled Edit-"
+      ],
+      "char_start": 14841,
+      "char_end": 15996,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:192afe656ba3a1879f7a33fd45ce1969",
+      "kind": "heading",
+      "text": "OOS-Aware Verification, Promotion, and Mem-",
+      "order": 41,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "OOS-Aware Verification, Promotion, and Mem-"
+      ],
+      "char_start": 15998,
+      "char_end": 16041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1270e69621bc0a0f052db578195825e9",
+      "kind": "paragraph",
+      "text": "ory.The verifier evaluates candidates in parallel under the same data split and execution assumptions as the incumbent. It first applies hard gates that are intentionally simple and difficult to game: G(c) = 1⇐ ⇒Nval(c)≥n min, Noos(c)≥n min, MDDoos(c)≤ ¯d, dG(gt, c)≤ϵ ℓt,I(c) = 1. These gates remove non-executable, zero-trade, overly drifting, and high-drawdown candidates before any soft scoring. Gated candidates are then ranked with a compact score: Q(c) =w v∆Sval +w o∆Soos +w r∆Roos −λ dPdd −λ gPgap −λ sPstress. Here S denotes Sharpe, R denotes return, P denotes the penalty and all deltas are candidateminus-incumbent. The penalties capture OOS (outof-sample) drawdown expansion, validation–OOS discrepancy, and lightweight stress probes such as fee/slippage perturbation, one-bar delay, and parameter jitter. The score deliberately separates validation improvement from out-of-sample audit behavior, so a fluent rewrite that wins only on validation is not automatically promotable. The promotion engine assigns each candidate to ADOPT,INCUBATE, orREJECT. ADOPTreplaces the incumbent only when the candidate passes hard gates and exceeds an adaptive score threshold. IN- CUBATEstores candidates that show a plausible mechanism but insufficient evidence, whileREJECT records failure reasons such as zero trades, OOS collapse, excessive drift, or abnormal drawdown. After the decision, Memory module stores the diagnosis, search plan, edit summary, candidate evidence, decision, and failure reason. This memory is",
+      "order": 42,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "OOS-Aware Verification, Promotion, and Mem-"
+      ],
+      "char_start": 16043,
+      "char_end": 17563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a0637ca9218707c1a1a1d2eff77362e",
+      "kind": "paragraph",
+      "text": "first distilled and persisted in the strategy repository, serving dual purposes in subsequent iterations: retrieving proven optimization paradigms and blacklisting recurrent failure mechanisms, thereby enabling continuous self-improvement of the system.",
+      "order": 43,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "OOS-Aware Verification, Promotion, and Mem-"
+      ],
+      "char_start": 17565,
+      "char_end": 17818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8412124b2be40638700b1c3dfc0d2c0c",
+      "kind": "heading",
+      "text": "Module 4: Iterative Refinement and Final",
+      "order": 44,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "OOS-Aware Verification, Promotion, and Mem-",
+        "Module 4: Iterative Refinement and Final"
+      ],
+      "char_start": 17820,
+      "char_end": 17860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:455070b9c9e7561133448bf42512401d",
+      "kind": "heading",
+      "text": "Strategy Output",
+      "order": 45,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Strategy Output"
+      ],
+      "char_start": 17862,
+      "char_end": 17877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7096d75be96da2e5c0946f44d158f7f8",
+      "kind": "paragraph",
+      "text": "The final module manages convergence and output. It tracks the best verified genome observed across the trajectory, g⋆ t = arg max g∈Ht Qaudit(g), where Ht contains adopted and incubated candidates observed so far. If local repairs fail repeatedly, the controller escalates to bridge edits, redesign, and finally family migration. The loop stops when the round budget is exhausted, the audit score converges, or no admissible search level passes verification. The final output includes the optimized strategy code g⋆, a pre/post backtest report, and the full optimization trajectory with diagnoses, edit plans, promotion decisions, and memory records. 5",
+      "order": 46,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Strategy Output"
+      ],
+      "char_start": 17879,
+      "char_end": 18532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d49134963075d906ddb3db251148691",
+      "kind": "heading",
+      "text": "Experimental Protocol",
+      "order": 47,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Experimental Protocol"
+      ],
+      "char_start": 18534,
+      "char_end": 18555,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:395b3876a930dff0f81dfaac4fc4efb2",
+      "kind": "paragraph",
+      "text": "Data and LLM Backend.All experimental data are obtained from the AKShare database2. We use daily historical data for both the A-share market and Bitcoin from 1/1/2020 to 31/12/2025. For all components that require large language model inference, we use the DeepSeek-R1 model (Suma and Dauncey, 2025). Each optimization run lasts",
+      "order": 48,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Experimental Protocol"
+      ],
+      "char_start": 18557,
+      "char_end": 18885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40a45a4785ac6f4674a59692a6857e43",
+      "kind": "heading",
+      "text": "iterations.",
+      "order": 49,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "iterations."
+      ],
+      "char_start": 18887,
+      "char_end": 18898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39f49874724d85ae5d3c0be966c58fa9",
+      "kind": "paragraph",
+      "text": "A-share Main Task.We evaluate four representative A-share quantitative strategies: an EMA-RSI trend-continuation strategy, a Bollinger Band-RSI mean-reversion strategy, a volume-breakout strategy, and a low-volatility quality-stock strategy. We randomly sample 30 stocks as the experimental universe and independently optimize each strategy– stock pair. For each strategy family, the final performance is computed as an equal-weighted portfolio over the 30 optimized stock-level strategies. All core empirical conclusions for the A-share market are based on these portfolio-level backtest results. Bitcoin Main Task.We further evaluate three Bitcoin trading strategies: a MACD-RSI-Bollinger Band strategy, an ATR trend-breakout strategy, and an oversold-reversal strategy. This experiment examines whether the proposed optimization framework can adapt to an alternative asset class with substantially different volatility and trend characteristics, while still improving strategy performance. Ablation Studies.To isolate where the optimization gains come from, we organize the ablation study into two groups. The first group,setting variations, changes the search or selection configuration while keeping the overall pipeline intact:Simple thresholdreplaces adaptive promotion with a fixed threshold rule,Parameter onlyrestricts candidate generation to parameter-level tuning, andRandom mutation onlyreplaces diagnosis-conditioned generation with random edits. The second group, pipeline variations, removes major functional mod-",
+      "order": 50,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "iterations."
+      ],
+      "char_start": 18900,
+      "char_end": 20429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66313282f5b3630cad7d10e7e46c70e1",
+      "kind": "paragraph",
+      "text": "ules from the full system:w/o promotion engine disables adaptive candidate adoption,w/o rule diagnosisremoves rule-based failure-mode diagnosis, andw/o memorydisables both retrieval from and writing to historical optimization experience. All ablations are conducted on the A-share volumebreakout task (See Table 2). Robustness and Walk-Forward Tests.We per- 2https://akshare.akfamily.xyz/ form robustness and walk-forward tests on the Ashare volume-breakout strategy. For robustness, we double the transaction cost and slippage assumptions, and change the “train/validation/test” split points. For walk-forward tests, we use two distinct rolling windows (2020-2023, 2021-latest) compared to the original (2020-2025).",
+      "order": 51,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "iterations."
+      ],
+      "char_start": 20431,
+      "char_end": 21147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd835fd6ef98db56a2c2b0dc1f31218a",
+      "kind": "heading",
+      "text": "Results",
+      "order": 52,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results"
+      ],
+      "char_start": 21149,
+      "char_end": 21156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a1007c5be7740601536bafe2ccc3088",
+      "kind": "heading",
+      "text": "Main A-Share Results",
+      "order": 53,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main A-Share Results"
+      ],
+      "char_start": 21158,
+      "char_end": 21178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d45eff8f1143abc26d1bcfcb958bfa80",
+      "kind": "caption",
+      "text": "Table 1 reports the comparative results of the four",
+      "order": 54,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main A-Share Results"
+      ],
+      "char_start": 21180,
+      "char_end": 21231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2989c9704dd44c57cac41ab7a3534d91",
+      "kind": "paragraph",
+      "text": "quantitative strategies on the test set before and after optimization.We mainly report the performance of the strategy on the test set before and after optimization, because the test set is an important indicator for evaluating whether the optimized strategy has generalization ability. Figure 3(a, b) present the comparison of the main quantitative strategies across all time periods. The remaining figures can be found in the appendix. All four strategy-family portfolios improve Sharpe after optimization, with Sharpe uplifts from −0.298 to 0.538 and an average uplift of 0.829. Annual return also improves for all four strategies, with an average return uplift of 13.38 percentage points. Drawdown behavior is more divergent: EMA-RSI and low-volatility quality reduce MDD, while Bollinger reversion and volume breakout trade higher return for larger drawdown. The overall result shows thatEVOQUANT improves risk-adjusted performance broadly, but does not trivially optimize by only suppressing risk.",
+      "order": 55,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main A-Share Results"
+      ],
+      "char_start": 21233,
+      "char_end": 22236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c888b8c7fee88d6c893e24034c7e580c",
+      "kind": "heading",
+      "text": "Main Bitcoin Results",
+      "order": 56,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main Bitcoin Results"
+      ],
+      "char_start": 22238,
+      "char_end": 22258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c18cf2bb6610e858ffda9bd564ad82a7",
+      "kind": "caption",
+      "text": "Table 1 and Figure 3(c) report the Bitcoin re-",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main Bitcoin Results"
+      ],
+      "char_start": 22260,
+      "char_end": 22306,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b11b249a9bbea326749b7874d3a0620b",
+      "kind": "paragraph",
+      "text": "sults. All three original Bitcoin strategies start with negative test Sharpe. Optimization improves all three: MACD-RSI-Bollinger improves by 1.383 Sharpe points and becomes positive-Sharpe, oversold reversal improves by 1.516 and also becomes positive-Sharpe, while ATR trend breakout remains negative but improves by 0.486. Unlike the A-share portfolios, all three Bitcoin strategies reduce MDD, by 2.05 to 9.68 percentage points, suggesting that the verified edits improve both payoff quality and downside control in this market.",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Main Bitcoin Results"
+      ],
+      "char_start": 22308,
+      "char_end": 22840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfe0a1b49b03fdc498f88959ec3080ff",
+      "kind": "heading",
+      "text": "Ablation Study",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Ablation Study"
+      ],
+      "char_start": 22842,
+      "char_end": 22856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d80bb20153ba3a6663e33dc95aa5482",
+      "kind": "caption",
+      "text": "Table 2 isolates the main mechanisms on the fixed",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Results",
+        "Ablation Study"
+      ],
+      "char_start": 22858,
+      "char_end": 22907,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab9acf9060cc39e4d5611eda27728b5d",
+      "kind": "heading",
+      "text": "stock A-share volume-breakout task. The full",
+      "order": 61,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "stock A-share volume-breakout task. The full"
+      ],
+      "char_start": 22909,
+      "char_end": 22953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7597830fcbc1ef013f8e9c7f84a2e828",
+      "kind": "paragraph",
+      "text": "system achieves Sharpe uplift 0.982. Removing the promotion engine reduces Sharpe uplift to 0.128, 6",
+      "order": 62,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "stock A-share volume-breakout task. The full"
+      ],
+      "char_start": 22955,
+      "char_end": 23055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00ea684851fe946ca9388b448b461a1b",
+      "kind": "paragraph",
+      "text": "Market Strategy family Sharpe↑Return (%)↑MDD (%)↓",
+      "order": 63,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "stock A-share volume-breakout task. The full"
+      ],
+      "char_start": 23057,
+      "char_end": 23106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23f54fac00628cc9618020faef520989",
+      "kind": "heading",
+      "text": "Base Opt.∆Base Opt.∆Base Opt.∆",
+      "order": 64,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Base Opt.∆Base Opt.∆Base Opt.∆"
+      ],
+      "char_start": 23108,
+      "char_end": 23138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:169d4139c209e7f23c7e07a77fb1b539",
+      "kind": "heading",
+      "text": "A-share",
+      "order": 65,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A-share"
+      ],
+      "char_start": 23140,
+      "char_end": 23147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1330742511a29c65405a00f9a1a052b5",
+      "kind": "paragraph",
+      "text": "Bollinger Reversion 0.351 0.966 0.615 4.89 9.02 4.13 5.01 6.71 1.70 EMA-RSI Trend -0.465 0.367 0.832 1.64 16.83 15.19 14.36 10.41 -3.95 Low-V ol Quality -0.500 0.386 0.885 1.58 17.86 16.28 9.30 8.26 -1.04",
+      "order": 66,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A-share"
+      ],
+      "char_start": 23149,
+      "char_end": 23353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95b0c142f4d34104d4a785de69b1f5ab",
+      "kind": "heading",
+      "text": "olume Breakout -0.493 0.489 0.982 -2.21 15.74 17.95 4.81 6.62 1.81",
+      "order": 67,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout -0.493 0.489 0.982 -2.21 15.74 17.95 4.81 6.62 1.81"
+      ],
+      "char_start": 23355,
+      "char_end": 23421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fddaf6f4e48aa0dc89f9c2615e22d443",
+      "kind": "heading",
+      "text": "Crypto",
+      "order": 68,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Crypto"
+      ],
+      "char_start": 23423,
+      "char_end": 23429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95c44a931931b5f5355c309f55fd81a1",
+      "kind": "equation",
+      "text": "MACD-RSI Bollinger -1.118 0.265 1.383 -13.27 5.42 18.69 18.22 8.54 -9.68 ATR Trend Breakout -1.536 -1.050 0.486 -14.48 -9.67 4.81 14.06 12.01 -2.05 Oversold Reversal -0.838 0.679 1.516 -8.37 11.56 19.93 16.53 12.17 -4.36",
+      "order": 69,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Crypto"
+      ],
+      "char_start": 23431,
+      "char_end": 23651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eabb0c4b2f1ba8fb2f833d7120b17971",
+      "kind": "caption",
+      "text": "Table 1: Main results across A-share and cryptocurrency strategy families. ∆ is computed as Opt.(optimized) minus",
+      "order": 70,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Crypto"
+      ],
+      "char_start": 23653,
+      "char_end": 23766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f3184f0c1a8da98ec190b848eeebf23",
+      "kind": "paragraph",
+      "text": "Base (original). Arrows indicate the preferred direction for each metric. Positive ∆ is desirable for Sharpe and Return, while negative∆is desirable for MDD. train val testOriginal Optimized 60 40 20 0 20",
+      "order": 71,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Crypto"
+      ],
+      "char_start": 23768,
+      "char_end": 23972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f787be4cd8f49d76065f1a5d22f92871",
+      "kind": "paragraph",
+      "text": "40",
+      "order": 72,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Crypto"
+      ],
+      "char_start": 23974,
+      "char_end": 23976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed7b24c220a3ff92764ba0f1c3d1520a",
+      "kind": "heading",
+      "text": "01-01 2025-12-31",
+      "order": 73,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-01 2025-12-31"
+      ],
+      "char_start": 23978,
+      "char_end": 23994,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0af63e247baafe05ffde10e269342e9",
+      "kind": "heading",
+      "text": "Trading Date",
+      "order": 74,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 23996,
+      "char_end": 24008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1737107b8e15ddd409735022dd7edad",
+      "kind": "paragraph",
+      "text": "(c)  Bitcoin Oversold Reversal 40 20 10 0 10",
+      "order": 75,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24010,
+      "char_end": 24054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e6e952116b6a6f4845c53bdbc106865",
+      "kind": "heading",
+      "text": "01-02 2025-12-30",
+      "order": 76,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 24056,
+      "char_end": 24072,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bee8960259dc86d6e1323a6d5a3007b9",
+      "kind": "heading",
+      "text": "Trading Date",
+      "order": 77,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24074,
+      "char_end": 24086,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7594826c571afdbacc7b820318319245",
+      "kind": "paragraph",
+      "text": "(a)  A-share Volume Breakout 30 20 10 0 10",
+      "order": 78,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24088,
+      "char_end": 24130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46f55335dcb3e5630952544aec4c29db",
+      "kind": "heading",
+      "text": "01-02 2025-12-30",
+      "order": 79,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 24132,
+      "char_end": 24148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a72dbedb1ee2aa8c395093194febee3",
+      "kind": "paragraph",
+      "text": "(b)  A-share Low-Vol Quality",
+      "order": 80,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 24150,
+      "char_end": 24178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f93dd795a7c50867e39998e7783926f",
+      "kind": "heading",
+      "text": "Trading Date",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24180,
+      "char_end": 24192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9672fa743b83e3addf87d98a02105f01",
+      "kind": "paragraph",
+      "text": "Return (%) Return (%) Return (%) 30",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24194,
+      "char_end": 24229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57cdb52acb8aa7ea81a7e85624964264",
+      "kind": "caption",
+      "text": "Figure 3: Return curves of the original and optimized strategies on three representative tasks from 2020 to 2025: (a)",
+      "order": 83,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24231,
+      "char_end": 24348,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4179c0a8a347cb45607198db9c96921f",
+      "kind": "paragraph",
+      "text": "A-share V olume Breakout, (b) A-share Low-V ol Quality, and (c) Bitcoin Oversold Reversal. Shaded regions denote the train, validation, and test periods.",
+      "order": 84,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 24350,
+      "char_end": 24503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca9e821365ff176db4bd7fbfa0d0a98a",
+      "kind": "heading",
+      "text": "olume Breakout Sharpe∆Return∆MDD∆",
+      "order": 85,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆"
+      ],
+      "char_start": 24505,
+      "char_end": 24538,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ac977bb888ff053236d200ef344cc90",
+      "kind": "paragraph",
+      "text": "EVOQUANTFully loaded 0.982 17.95 1.81 Setting variations Simple threshold 0.053 3.39 3.34 Parameter only 0.274 6.59 -0.21 Random mutation only 0.645 13.05 2.34 Pipeline variations w/o promotion engine 0.128 4.32 2.72 w/o rule diagnosis 0.693 9.99 -2.76 w/o memory 0.782 15.95 -2.19",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆"
+      ],
+      "char_start": 24540,
+      "char_end": 24821,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81509d32a66cbfd0a6f2629346973645",
+      "kind": "caption",
+      "text": "Table 2: Ablations on the A-share volume-breakout task.",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆"
+      ],
+      "char_start": 24823,
+      "char_end": 24878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3830e90c0764cbd53dd15e29ba4d938b",
+      "kind": "paragraph",
+      "text": "Returns and MDD are annualized percentage values. while simple-threshold promotion reaches only",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆"
+      ],
+      "char_start": 24880,
+      "char_end": 24975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dde512c39d79a242accae7212fe35351",
+      "kind": "heading",
+      "text": "These results demonstrate that adaptive",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": 4,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "These results demonstrate that adaptive"
+      ],
+      "char_start": 24977,
+      "char_end": 25016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9537bd84431c9cd82003f28f3e6ee907",
+      "kind": "paragraph",
+      "text": "promotion serves as a core enabler. Simply expanding candidate pools cannot yield performance gains, since the non-promotion configuration involves more edits on average yet achieves markedly inferior results. Candidate generation also plays an important role, although its effect is more nuanced. Restricting the search to parameter-only edits improves the Sharpe ratio by 0.274, indicating that local tuning alone cannot explain the full performance gain. The random-mutation baseline achieves an average improvement of 0.645. While this baseline remains competitive, it still underperforms the full system and is more prone to severe strategy drift and weak interpretability. Removing the rule-diagnosis module reduces the improvement to0.693, and removing the shared-memory mechanism further changes the improvement to 0.782. These results confirm that both diagnosis-guided search and memorybased experience reuse contribute materially to the overall system.",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "These results demonstrate that adaptive"
+      ],
+      "char_start": 25018,
+      "char_end": 25981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fe46fd1ea9746d310c7ee486b11e1d1",
+      "kind": "heading",
+      "text": "Robustness and Walk-Forward",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "Robustness and Walk-Forward"
+      ],
+      "char_start": 25983,
+      "char_end": 26010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72988d4e0ee630cad85dd109d5589f98",
+      "kind": "caption",
+      "text": "Table 3 reports stress and rolling evaluations.",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "Robustness and Walk-Forward"
+      ],
+      "char_start": 26012,
+      "char_end": 26059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19f4a32c3ee9276836cb5fc3a6a09581",
+      "kind": "paragraph",
+      "text": "Under doubled fee/slippage assumptions, mean Sharpe uplift remains 0.700 , indicating that the gains are not purely a friction artifact. Under an alternative chronological split, the uplift falls to",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "Robustness and Walk-Forward"
+      ],
+      "char_start": 26061,
+      "char_end": 26259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18d5bbf0f48dd20be86b86fdcca527d3",
+      "kind": "heading",
+      "text": "but remains positive improvement. Rolling",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "but remains positive improvement. Rolling"
+      ],
+      "char_start": 26261,
+      "char_end": 26302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:450b416cb0b648ad909a8f8a05545ff7",
+      "kind": "paragraph",
+      "text": "walk-forward evaluation also remains positive: the 2020–2023 window yields 0.370 uplift and the later-start window yields 0.545 uplift. The reduced magnitude under split shifts and rolling windows is expected; the important result is that performance weakens without collapsing. 7",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "but remains positive improvement. Rolling"
+      ],
+      "char_start": 26304,
+      "char_end": 26584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b5dce11baf78d40b76b8801f6d89191",
+      "kind": "paragraph",
+      "text": "Protocol Strategy Sharpe↑Return (%)↑MDD (%)↓",
+      "order": 96,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout Sharpe∆Return∆MDD∆",
+        "but remains positive improvement. Rolling"
+      ],
+      "char_start": 26586,
+      "char_end": 26630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b754e1135084929cd98125992975adb",
+      "kind": "heading",
+      "text": "Base Opt.∆Base Opt.∆Base Opt.∆",
+      "order": 97,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Base Opt.∆Base Opt.∆Base Opt.∆"
+      ],
+      "char_start": 26632,
+      "char_end": 26662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e09d4bf18f9eab0ef4457f74e866436",
+      "kind": "paragraph",
+      "text": "Robustness testing 2x fee/slip Bollinger Reversion 0.647 1.025 0.378 8.71 11.40 2.69 2.62 2.25 -0.37 MA-RSI Trend -0.855 -0.202 0.653 -5.33 7.13 12.46 10.22 7.51 -2.71 Low-V ol Quality -0.633 0.504 1.136 -2.79 13.98 16.77 5.95 5.53 -0.42",
+      "order": 98,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Base Opt.∆Base Opt.∆Base Opt.∆"
+      ],
+      "char_start": 26664,
+      "char_end": 26901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7548627a27964016b51fc75a07a24a3",
+      "kind": "heading",
+      "text": "olume Breakout -0.384 0.133 0.517 -1.07 9.04 10.11 1.19 3.10 1.91",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout -0.384 0.133 0.517 -1.07 9.04 10.11 1.19 3.10 1.91"
+      ],
+      "char_start": 26903,
+      "char_end": 26968,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0aea802cd27fa0013c52271eef362af",
+      "kind": "paragraph",
+      "text": "Split shift Bollinger Reversion 0.596 0.848 0.252 5.92 8.54 2.62 3.72 2.77 -0.95 EMA-RSI Trend -0.391 0.263 0.653 -4.77 7.95 12.72 18.24 12.74 -5.50 Low-V ol Quality -0.100 0.359 0.459 6.05 12.32 6.27 10.99 7.98 -3.01",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout -0.384 0.133 0.517 -1.07 9.04 10.11 1.19 3.10 1.91"
+      ],
+      "char_start": 26970,
+      "char_end": 27187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c2e575940888bd377ea1607d6a7aece",
+      "kind": "heading",
+      "text": "olume Breakout -0.048 -0.001 0.047 4.94 4.86 -0.08 5.95 9.25 3.30",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout -0.048 -0.001 0.047 4.94 4.86 -0.08 5.95 9.25 3.30"
+      ],
+      "char_start": 27189,
+      "char_end": 27254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfb0c3ab9b587d24c8ecf8a05373d1f4",
+      "kind": "heading",
+      "text": "Walk-forward",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Walk-forward"
+      ],
+      "char_start": 27256,
+      "char_end": 27268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d567ade8eb39bb1f6fd0af1961a360b8",
+      "kind": "paragraph",
+      "text": "2020–2023 Bollinger Reversion 0.099 0.355 0.256 1.09 5.51 4.42 1.00 1.44 0.44 EMA-RSI Trend -0.408 0.440 0.848 4.26 21.03 16.77 5.38 4.76 -0.62 Low-V ol Quality -0.156 0.306 0.462 8.00 11.13 3.13 4.02 4.19 0.17",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Walk-forward"
+      ],
+      "char_start": 27270,
+      "char_end": 27480,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:158dfbe55ad972ea50d1b7a234662153",
+      "kind": "heading",
+      "text": "olume Breakout 0.159 0.196 0.038 1.15 1.43 0.28 0.00 0.03 0.03",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout 0.159 0.196 0.038 1.15 1.43 0.28 0.00 0.03 0.03"
+      ],
+      "char_start": 27482,
+      "char_end": 27544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6f6b2ceece1f11ee1052931cafac609",
+      "kind": "paragraph",
+      "text": "2021–latest Bollinger Reversion 0.334 0.602 0.269 6.14 7.39 1.25 2.76 3.22 0.46 EMA-RSI Trend -1.014 -0.063 0.951 -8.81 11.30 20.11 10.27 7.87 -2.40 Low-V ol Quality -0.563 0.136 0.699 -2.19 16.29 18.48 3.18 5.31 2.13",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout 0.159 0.196 0.038 1.15 1.43 0.28 0.00 0.03 0.03"
+      ],
+      "char_start": 27546,
+      "char_end": 27763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a4feb7e5833ae4c6b4c52722d90b538",
+      "kind": "heading",
+      "text": "olume Breakout 0.113 0.486 0.373 1.15 15.34 14.19 0.20 2.75 2.55",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout 0.113 0.486 0.373 1.15 15.34 14.19 0.20 2.75 2.55"
+      ],
+      "char_start": 27765,
+      "char_end": 27829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:467688a78aba48509255e70a4b918e95",
+      "kind": "caption",
+      "text": "Table 3: Robustness and rolling walk-forward portfolio results on the controlled slice. Returns and MDD are",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout 0.113 0.486 0.373 1.15 15.34 14.19 0.20 2.75 2.55"
+      ],
+      "char_start": 27831,
+      "char_end": 27938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f2ed1ee6996703f2b85abc23072653d",
+      "kind": "paragraph",
+      "text": "annualized percentage values.",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "olume Breakout 0.113 0.486 0.373 1.15 15.34 14.19 0.20 2.75 2.55"
+      ],
+      "char_start": 27940,
+      "char_end": 27969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25583fb63400448b253ee93daae28a21",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Discussion"
+      ],
+      "char_start": 27971,
+      "char_end": 27981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89b8d513b0763615e0e4f85c912a6f2f",
+      "kind": "paragraph",
+      "text": "Capability across strategies and markets.The results suggest thatEVOQUANTcan optimize multiple strategy families rather than a single handpicked rule. In the A-share market, the method improves diverse equity strategies after aggregating stock-level optimizations into portfolio-level results. In the cryptocurrency market, it also improves Bitcoin strategies with different volatility and trend characteristics, indicating broader applicability across market settings. Improvement is not just random edits.The ablation study indicates that the main benefit does not come from blindly perturbing strategy parameters or rules. Random mutation can occasionally find useful changes, but it lacks the failure-mode diagnosis, mechanism-aware hypothesis generation, and rejection feedback needed for reliable optimization. In contrast, LLM-guided strategy optimization contributes by turning backtest evidence into targeted edit hypotheses, explaining why an edit should help, and embedding those hypotheses in an evidence-aware promotion protocol. Verification is central to the contribution.The gains should be interpreted as risk-adjusted improvements under explicit evidence gates, not as universal drawdown reduction. Some A-share strategies accept higher drawdown in exchange for larger return and Sharpe, while the robustness tests show that the effect weakens under stricter settings without disappearing. This positions LLMenabled strategy optimization as a verification problem as much as a generation problem: fluent edits",
+      "order": 110,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Discussion"
+      ],
+      "char_start": 27983,
+      "char_end": 29510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:920112b96e93f67a68fe559b3c9a2d74",
+      "kind": "paragraph",
+      "text": "are easy to produce, but trustworthy evidence requires chronological validation, provenance tracking, adaptive promotion, and visible rejection logs.",
+      "order": 111,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Discussion"
+      ],
+      "char_start": 29512,
+      "char_end": 29661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cc30ead5542e14c2248e01938022528",
+      "kind": "heading",
+      "text": "Conclusion and Future Work",
+      "order": 112,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Conclusion and Future Work"
+      ],
+      "char_start": 29663,
+      "char_end": 29689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:027120bcb8eb007f323e1ec8cd20135e",
+      "kind": "paragraph",
+      "text": "This paper studied automated quantitative strategy optimization as a verifier-guided programevolution problem. Across A-share and Bitcoin strategies,EVOQUANTimproves risk-adjusted performance while keeping the optimization process auditable through explicit evidence gates and recorded edit decisions. Future work can extend the evaluation to more realistic execution assumptions, larger investable universes, and stronger verifiers that combine statistical robustness tests with domain-specific financial constraints. These extensions would further clarify the boundary between useful automated strategy improvement and overfitting-driven search. 8",
+      "order": 113,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Conclusion and Future Work"
+      ],
+      "char_start": 29691,
+      "char_end": 30340,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65b8cd3341dbaf191a7cbf4836bc1245",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Limitations"
+      ],
+      "char_start": 30342,
+      "char_end": 30353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08c636dbb18b8519dc170b57c9193c2d",
+      "kind": "paragraph",
+      "text": "This study is a research prototype, not an investment recommendation. The backtests use local daily data and simplified execution assumptions. Although we stress fees and slippage, real trading introduces liquidity, market impact, survivorship, corporate action, borrow, and operational constraints. The A-share evaluation uses randomly sampled available symbols rather than a fully investable historical universe with delisting reconstruction. The LLM comparison is also limited by local model/API configuration and budget. These limitations do not invalidate the system contribution, but they bound the financial interpretation of the results.",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Limitations"
+      ],
+      "char_start": 30355,
+      "char_end": 31000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b70b5426a01287ff27d8260300f435f",
+      "kind": "heading",
+      "text": "Ethical Considerations",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Ethical Considerations"
+      ],
+      "char_start": 31002,
+      "char_end": 31024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:253c78de29a08bf8bfaca69f3e0a0f5a",
+      "kind": "paragraph",
+      "text": "This work studies automated strategy optimization for quantitative trading. The methods are evaluated exclusively on historical backtests and do not constitute financial advice or a live trading system. No personally identifiable information, proprietary data, or confidential market data were used. All equity and cryptocurrency price data used in experiments are publicly available daily OHLCV records. Any third-party models, APIs, datasets, or market data sources used by the artifact remain subject to their original licenses and terms of use. The paper does not claim that the presented system is safe for deployment in real financial markets. As discussed in the Limitations section, the evaluation relies on simplified execution assumptions that do not account for liquidity, market impact, or survivorship bias. Practitioners who build on this work bear full responsibility for compliance with applicable financial regulations and risk management requirements.",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Ethical Considerations"
+      ],
+      "char_start": 31026,
+      "char_end": 31995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce26e2a784f963638bc6cc475a426ce1",
+      "kind": "heading",
+      "text": "References",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "References"
+      ],
+      "char_start": 31997,
+      "char_end": 32007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63ff590b3fc09a43ef013ddb02bd0eab",
+      "kind": "heading",
+      "text": "Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru",
+      "order": 119,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru"
+      ],
+      "char_start": 32009,
+      "char_end": 32061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17e30d1aa4c2a33bce6b5abdc107b8c8",
+      "kind": "paragraph",
+      "text": "Ohta, and Masanori Koyama. 2019. Optuna: A nextgeneration hyperparameter optimization framework. InKnowledge Discovery and Data Mining, pages 2623–2631. ACM. David H. Bailey, David H. Bailey, J. M. Borwein, J. M. Borwein, J. M. Borwein, Marcos López de Prado, and Q. Zhu. 2015. Mathematical appendices to: ’the probability of backtest overfitting’.Journal of Computational Finance, 20(4).",
+      "order": 120,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru"
+      ],
+      "char_start": 32063,
+      "char_end": 32451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47d2036e2d713a729d35c989647a342e",
+      "kind": "heading",
+      "text": "Binqi Chen, Hongjun Ding, Ning Shen, Jinsheng",
+      "order": 121,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Binqi Chen, Hongjun Ding, Ning Shen, Jinsheng"
+      ],
+      "char_start": 32453,
+      "char_end": 32498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7154c90d4bd73b220b7bf534260e1f2d",
+      "kind": "paragraph",
+      "text": "Huang, Taian Guo, Luchen Liu, and Ming Zhang.",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Binqi Chen, Hongjun Ding, Ning Shen, Jinsheng"
+      ],
+      "char_start": 32500,
+      "char_end": 32545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6af66f1d08a97c93beb2a7d80a32296",
+      "kind": "heading",
+      "text": "Alphasage: Structure-aware alpha mining",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Binqi Chen, Hongjun Ding, Ning Shen, Jinsheng",
+        "Alphasage: Structure-aware alpha mining"
+      ],
+      "char_start": 32547,
+      "char_end": 32586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7aefc0bcf66adb6e804c6552e84f4e72",
+      "kind": "paragraph",
+      "text": "via gflownets for robust exploration.arXiv preprint arXiv:2509.25055.",
+      "order": 124,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Binqi Chen, Hongjun Ding, Ning Shen, Jinsheng",
+        "Alphasage: Structure-aware alpha mining"
+      ],
+      "char_start": 32588,
+      "char_end": 32657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8ae143c868d21b580644efcd7b02cf8",
+      "kind": "heading",
+      "text": "Can Cui, Wei Wang, Meihui Zhang, Gang Chen, Zhao-",
+      "order": 125,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Can Cui, Wei Wang, Meihui Zhang, Gang Chen, Zhao-"
+      ],
+      "char_start": 32659,
+      "char_end": 32708,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b55fd141e1fd387ff6024a86a46cfae7",
+      "kind": "paragraph",
+      "text": "jing Luo, and Beng Chin Ooi. 2021. Alphaevolve: A learning framework to discover novel alphas in quantitative investment. InSIGMOD Conference, pages 2208–2216. ACM. Hongjun Ding, Binqi Chen, Jinsheng Huang, Taian Guo,",
+      "order": 126,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Can Cui, Wei Wang, Meihui Zhang, Gang Chen, Zhao-"
+      ],
+      "char_start": 32710,
+      "char_end": 32927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74d972c35e51c7d003eadc8a9dca8a57",
+      "kind": "heading",
+      "text": "Zhengyang Mao, Guoyi Shao, Lutong Zou, Luchen",
+      "order": 127,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zhengyang Mao, Guoyi Shao, Lutong Zou, Luchen"
+      ],
+      "char_start": 32929,
+      "char_end": 32974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c973cce770c8fdfeb9f2275b05977621",
+      "kind": "paragraph",
+      "text": "Liu, and Ming Zhang. 2025. Alphaeval: A comprehensive and efficient evaluation framework for formula alpha mining.arXiv.org.",
+      "order": 128,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zhengyang Mao, Guoyi Shao, Lutong Zou, Luchen"
+      ],
+      "char_start": 32976,
+      "char_end": 33100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:249f6c1bb5429f13d244156549c0f023",
+      "kind": "heading",
+      "text": "Yihong Dong, Xue Jiang, Jiaru Qian, Tian Wang, Kechi",
+      "order": 129,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yihong Dong, Xue Jiang, Jiaru Qian, Tian Wang, Kechi"
+      ],
+      "char_start": 33102,
+      "char_end": 33154,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e29d46cf46512b1f84076cb4fe6c7af7",
+      "kind": "paragraph",
+      "text": "Zhang, Zhi Jin, and Ge Li. 2025. A survey on code generation with llm-based agents.arXiv.org.",
+      "order": 130,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yihong Dong, Xue Jiang, Jiaru Qian, Tian Wang, Kechi"
+      ],
+      "char_start": 33156,
+      "char_end": 33249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f039cc14babe0fbbd014213466607be3",
+      "kind": "heading",
+      "text": "Qingyan Guo, Rui Wang, Junliang Guo, Bei Li, Kaitao",
+      "order": 131,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Qingyan Guo, Rui Wang, Junliang Guo, Bei Li, Kaitao"
+      ],
+      "char_start": 33251,
+      "char_end": 33302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1e0ceba680c1225a96e09c1a6eb828b",
+      "kind": "heading",
+      "text": "Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yu-",
+      "order": 132,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yu-"
+      ],
+      "char_start": 33304,
+      "char_end": 33350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc99b34ff808c7723ff380d9579018ab",
+      "kind": "paragraph",
+      "text": "jiu Yang. 2024. Connecting large language models with evolutionary algorithms yields powerful prompt optimizers.International Conference on Learning Representations. Campbell R. Harvey. 2013. ... and the cross-section of expected returns.Review of Financial Studies, 29(1):5–68. Frank Hutter, Holger H. Hoos, and Kevin Leyton-Brown.",
+      "order": 133,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yu-"
+      ],
+      "char_start": 33352,
+      "char_end": 33684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd4586e163cedb51c874e5391656639a",
+      "kind": "heading",
+      "text": "Sequential model-based optimization for gen-",
+      "order": 134,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yu-",
+        "Sequential model-based optimization for gen-"
+      ],
+      "char_start": 33686,
+      "char_end": 33730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6126eddbd28a8cd16b1cea356f4a7f65",
+      "kind": "paragraph",
+      "text": "eral algorithm configuration. InLearning and Intelligent Optimization, pages 507–523. Springer Berlin Heidelberg.",
+      "order": 135,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Song, Xu Tan, Guoqing Liu, Jiang Bian, and Yu-",
+        "Sequential model-based optimization for gen-"
+      ],
+      "char_start": 33732,
+      "char_end": 33845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc4363c567e4a179f34b4fbc471afbc6",
+      "kind": "heading",
+      "text": "Antoine Jacquier, Johannes Muhle-Karbe, and Joe Mul-",
+      "order": 136,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Antoine Jacquier, Johannes Muhle-Karbe, and Joe Mul-"
+      ],
+      "char_start": 33847,
+      "char_end": 33899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57103a372d74a6d5b56e067600dae5c6",
+      "kind": "paragraph",
+      "text": "ligan. 2025. In-sample and out-of-sample sharpe ratios for linear predictive models.arXiv preprint arXiv:2501.03938.",
+      "order": 137,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Antoine Jacquier, Johannes Muhle-Karbe, and Joe Mul-"
+      ],
+      "char_start": 33901,
+      "char_end": 34017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8cd3a3517daeb71f18da798ee317005",
+      "kind": "heading",
+      "text": "Zura Kakushadze, Geoffrey Lauprete, and Igor Tulchin-",
+      "order": 138,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zura Kakushadze, Geoffrey Lauprete, and Igor Tulchin-"
+      ],
+      "char_start": 34019,
+      "char_end": 34072,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba438c1e320254095da7102a89a9021c",
+      "kind": "paragraph",
+      "text": "sky. 2016. 101 formulaic alphas.SSRN Electronic Journal, 2016(84):72–81. Zhizhuo Kou, Holam Yu, Jingshu Peng, and Lei Chen.",
+      "order": 139,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zura Kakushadze, Geoffrey Lauprete, and Igor Tulchin-"
+      ],
+      "char_start": 34074,
+      "char_end": 34197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:074d89ce4eae70e41e6a4f71000172f0",
+      "kind": "heading",
+      "text": "Automate strategy finding with llm in quant",
+      "order": 140,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zura Kakushadze, Geoffrey Lauprete, and Igor Tulchin-",
+        "Automate strategy finding with llm in quant"
+      ],
+      "char_start": 34199,
+      "char_end": 34242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ced01dc0e7532b1fcd2ae5f75a5ec96",
+      "kind": "paragraph",
+      "text": "investment.Conference on Empirical Methods in Natural Language Processing, 1:3.",
+      "order": 141,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zura Kakushadze, Geoffrey Lauprete, and Igor Tulchin-",
+        "Automate strategy finding with llm in quant"
+      ],
+      "char_start": 34244,
+      "char_end": 34323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:facafc0aaf5a9605355ba23d88e56f70",
+      "kind": "heading",
+      "text": "Changlun Li, Yao Shi, Chen Wang, Qiqi Duan, Runke",
+      "order": 142,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Changlun Li, Yao Shi, Chen Wang, Qiqi Duan, Runke"
+      ],
+      "char_start": 34325,
+      "char_end": 34374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f82a884543719405434baac0edeb58b",
+      "kind": "paragraph",
+      "text": "Ruan, Weijie Huang, Haonan Long, Lijun Huang, Nan Tang, and Yuyu Luo. 2025a. Time travel is cheating: Going live with deepfund for real-time fund investment benchmarking.arXiv.org, 38. Junyi Li, Jie Chen, Ruiyang Ren, Xiaoxue Cheng, Wayne Xin Zhao, Jian-Yun Nie, and Ji-Rong Wen. 2024a. The dawn after the dark: An empirical study on factuality hallucination in large language models. InAnnual Meeting of the Association for Computational Linguistics, pages 10879–10899. Association for Computational Linguistics. 9",
+      "order": 143,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Changlun Li, Yao Shi, Chen Wang, Qiqi Duan, Runke"
+      ],
+      "char_start": 34376,
+      "char_end": 34891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33a3e2b640b577c7b5918ca65862885b",
+      "kind": "paragraph",
+      "text": "Xiang Li, Penglei Sun, Wanyun Zhou, Zikai Wei, Yongqi Zhang, and Xiaowen Chu. 2025b. Finkario: Event-enhanced automated construction of financial knowledge graph.arXiv.org.",
+      "order": 144,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Changlun Li, Yao Shi, Chen Wang, Qiqi Duan, Runke"
+      ],
+      "char_start": 34893,
+      "char_end": 35065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af96f68601b8303c748f775abeaf3155",
+      "kind": "heading",
+      "text": "Yuante Li, Xu Yang, Xiao Yang, Minrui Xu, Xisen",
+      "order": 145,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yuante Li, Xu Yang, Xiao Yang, Minrui Xu, Xisen"
+      ],
+      "char_start": 35067,
+      "char_end": 35114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6af03ad8ad572b192572f087eaeb8f70",
+      "kind": "paragraph",
+      "text": "Wang, Weiqing Liu, and Jiang Bian. 2025c. R&d-agent-quant: a multi-agent framework for data-centric factors and model joint optimization. arXiv.org, 38.",
+      "order": 146,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yuante Li, Xu Yang, Xiao Yang, Minrui Xu, Xisen"
+      ],
+      "char_start": 35116,
+      "char_end": 35268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7aada9f4e24c54f2be93a0e108663b3c",
+      "kind": "heading",
+      "text": "Zhiwei Li, Ran Song, Caihong Sun, Wei Xu, Zhengtao",
+      "order": 147,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zhiwei Li, Ran Song, Caihong Sun, Wei Xu, Zhengtao"
+      ],
+      "char_start": 35270,
+      "char_end": 35320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75c48a9cedca89524066de43b953377c",
+      "kind": "paragraph",
+      "text": "Yu, and Ji-Rong Wen. 2024b. Can large language models mine interpretable financial factors more effectively? a neural-symbolic factor mining agent model. InAnnual Meeting of the Association for Computational Linguistics, pages 3891–3902. Association for Computational Linguistics.",
+      "order": 148,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Zhiwei Li, Ran Song, Caihong Sun, Wei Xu, Zhengtao"
+      ],
+      "char_start": 35322,
+      "char_end": 35602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec309b98fc7b2a76e4092831a8cdc059",
+      "kind": "heading",
+      "text": "Junyu Luo, Weizhi Zhang, Ye Yuan, Yusheng Zhao, Jun-",
+      "order": 149,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Junyu Luo, Weizhi Zhang, Ye Yuan, Yusheng Zhao, Jun-"
+      ],
+      "char_start": 35604,
+      "char_end": 35656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3e45ae19c391418a8ade50041236253",
+      "kind": "heading",
+      "text": "wei Yang, Yiyang Gu, Bohan Wu, Binqi Chen, Ziyue",
+      "order": 150,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "wei Yang, Yiyang Gu, Bohan Wu, Binqi Chen, Ziyue"
+      ],
+      "char_start": 35658,
+      "char_end": 35706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5133badf7191d84fc9c618c90573a42",
+      "kind": "paragraph",
+      "text": "Qiao, Qingqing Long, and 1 others. 2025. Large language model agent: A survey on methodology, applications and challenges.arXiv.org.",
+      "order": 151,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "wei Yang, Yiyang Gu, Bohan Wu, Binqi Chen, Ziyue"
+      ],
+      "char_start": 35708,
+      "char_end": 35840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb5a10af811c968593144a178a544765",
+      "kind": "heading",
+      "text": "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler",
+      "order": 152,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler"
+      ],
+      "char_start": 35842,
+      "char_end": 35890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eacae08111d8016f699248407bda58d",
+      "kind": "paragraph",
+      "text": "Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, and 1 others. 2023. Self-refine: Iterative refinement with self-feedback.Neural Information Processing Systems, pages 46534–46594. Deniz Noormohammadzadehmaleki, Sina Abbaskhani, Amirfarhad Farhadi, and Azadeh Zamanifar. 2026. Artificial intelligence methods for financial market prediction: A systematic review.Computers & electrical engineering, 134:111110. Peter Schwendner. 2020.Advances in Financial Machine Learning, volume 20. Informa UK Limited.",
+      "order": 153,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler"
+      ],
+      "char_start": 35892,
+      "char_end": 36438,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae56988257fc66a73547233e5eaf6813",
+      "kind": "heading",
+      "text": "Hao Shi, Cuicui Luo, Weili Song, Xinting Zhang, and",
+      "order": 154,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Hao Shi, Cuicui Luo, Weili Song, Xinting Zhang, and"
+      ],
+      "char_start": 36440,
+      "char_end": 36491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1bbbb9e41db8daf80689da1ef82938b",
+      "kind": "paragraph",
+      "text": "Xiang Ao. 2024. Alphaforge: A framework to mine and dynamically combine formulaic alpha factors. AAAI Conference on Artificial Intelligence. Noah Shinn, Federico Cassano, Beck Labash, A. Gopinath, Karthik Narasimhan, and Shunyu Yao.",
+      "order": 155,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Hao Shi, Cuicui Luo, Weili Song, Xinting Zhang, and"
+      ],
+      "char_start": 36493,
+      "char_end": 36725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:870e2f0a2e2c63054b4d5867fd36071a",
+      "kind": "heading",
+      "text": "Reflexion: Language agents with verbal rein-",
+      "order": 156,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Hao Shi, Cuicui Luo, Weili Song, Xinting Zhang, and",
+        "Reflexion: Language agents with verbal rein-"
+      ],
+      "char_start": 36727,
+      "char_end": 36771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7ada3b86cc6a2bd257eb50a5bbf866b",
+      "kind": "paragraph",
+      "text": "forcement learning.Neural Information Processing Systems, pages 8634–8652. Adam Suma and Sam Dauncey. 2025. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning.arXiv.org.",
+      "order": 157,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Hao Shi, Cuicui Luo, Weili Song, Xinting Zhang, and",
+        "Reflexion: Language agents with verbal rein-"
+      ],
+      "char_start": 36773,
+      "char_end": 36974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a300766a46c5dbadd4e0df02fe8d6b00",
+      "kind": "heading",
+      "text": "Wang Tang, Heng Wei Zhang, Jianuo Huang, Shaowen",
+      "order": 158,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wang Tang, Heng Wei Zhang, Jianuo Huang, Shaowen"
+      ],
+      "char_start": 36976,
+      "char_end": 37024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8931d3bc0cf80662bb39bb22f3736cb",
+      "kind": "paragraph",
+      "text": "Wang, Feifan Yu, Hui Yang, and Yu Wang. 2025a. Agentbuilder: Automating agent creation via large language model-driven systems.Neurocomputing,",
+      "order": 159,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wang Tang, Heng Wei Zhang, Jianuo Huang, Shaowen"
+      ],
+      "char_start": 37026,
+      "char_end": 37168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a13512ff22f0db92aa19e68dfde38b59",
+      "kind": "heading",
+      "text": "130476.",
+      "order": 160,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "130476."
+      ],
+      "char_start": 37170,
+      "char_end": 37177,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e78a3e783d99bc797e62b0de44af4bf",
+      "kind": "paragraph",
+      "text": "Ziyi Tang, Zechuan Chen, Jiarui Yang, Jiayao Mai,",
+      "order": 161,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "130476."
+      ],
+      "char_start": 37179,
+      "char_end": 37228,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b845254a7eab0adfe2ec1468041299f",
+      "kind": "heading",
+      "text": "Yongsen Zheng, Keze Wang, Jinrui Chen, and Liang",
+      "order": 162,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yongsen Zheng, Keze Wang, Jinrui Chen, and Liang"
+      ],
+      "char_start": 37230,
+      "char_end": 37278,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23121ebb79e01694cb3dbfedc55e50ff",
+      "kind": "paragraph",
+      "text": "Lin. 2025b. Alphaagent: Llm-driven alpha mining with regularized exploration to counteract alpha decay. InKnowledge Discovery and Data Mining, pages 2813–2822. ACM.",
+      "order": 163,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yongsen Zheng, Keze Wang, Jinrui Chen, and Liang"
+      ],
+      "char_start": 37280,
+      "char_end": 37444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13c53bd50872721694027b1e91e2ce8d",
+      "kind": "heading",
+      "text": "Qiushi Tian, Churong Liang, Kairan Hong, and Runnan",
+      "order": 164,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Qiushi Tian, Churong Liang, Kairan Hong, and Runnan"
+      ],
+      "char_start": 37446,
+      "char_end": 37497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c0430cf116462c58345ceeefc29210e",
+      "kind": "heading",
+      "text": "2025. Agent-based genetic algorithm for crypto",
+      "order": 165,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Qiushi Tian, Churong Liang, Kairan Hong, and Runnan",
+        "2025. Agent-based genetic algorithm for crypto"
+      ],
+      "char_start": 37499,
+      "char_end": 37545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b77d1905c3b9e825afe9c47710bb7c2c",
+      "kind": "paragraph",
+      "text": "trading strategy optimization.arXiv.org.",
+      "order": 166,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Qiushi Tian, Churong Liang, Kairan Hong, and Runnan",
+        "2025. Agent-based genetic algorithm for crypto"
+      ],
+      "char_start": 37547,
+      "char_end": 37587,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92491cbb688e4c349c889d4c64c05c6c",
+      "kind": "heading",
+      "text": "Sai Wang, Hang Yuan, Leon Zhou, L. Ni, H. Shum, and",
+      "order": 167,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Sai Wang, Hang Yuan, Leon Zhou, L. Ni, H. Shum, and"
+      ],
+      "char_start": 37589,
+      "char_end": 37640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b88b828850d6708b78a78c28aa7da66b",
+      "kind": "paragraph",
+      "text": "Jian Guo. 2023. Alpha-gpt: Human-ai interactive alpha mining for quantitative investment.Conference on Empirical Methods in Natural Language Processing.",
+      "order": 168,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Sai Wang, Hang Yuan, Leon Zhou, L. Ni, H. Shum, and"
+      ],
+      "char_start": 37642,
+      "char_end": 37794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c707baf656c51222781d3a185e22695",
+      "kind": "heading",
+      "text": "Yanlong Wang, Jian Xu, Hongkang Zhang, Shao-Lun",
+      "order": 169,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yanlong Wang, Jian Xu, Hongkang Zhang, Shao-Lun"
+      ],
+      "char_start": 37796,
+      "char_end": 37843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba35c72d803c0091c3d9498ad1939246",
+      "kind": "paragraph",
+      "text": "Huang, Danny Dongning Sun, and Xiao-Ping Zhang.",
+      "order": 170,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yanlong Wang, Jian Xu, Hongkang Zhang, Shao-Lun"
+      ],
+      "char_start": 37845,
+      "char_end": 37892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c29777acd7908ac2cbc995f8b259c130",
+      "kind": "heading",
+      "text": "Factorminer: A self-evolving agent with skills",
+      "order": 171,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yanlong Wang, Jian Xu, Hongkang Zhang, Shao-Lun",
+        "Factorminer: A self-evolving agent with skills"
+      ],
+      "char_start": 37894,
+      "char_end": 37940,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05759634084f8faa3b3432164f1f7826",
+      "kind": "paragraph",
+      "text": "and experience memory for financial alpha discovery. arXiv.org. Halbert White. 2000. A reality check for data snooping. Econometrica, 68(5):1097–1126. Yilin Wu, Han Yuan, Li Zhang, and Zheng Ma. 2025. Natural language inference as a judge: Detecting factuality and causality issues in language model selfreasoning for financial analysis. InProceedings of The 10th Workshop on Financial Technology and Natural Language Processing, pages 210–220. Association for Computational Linguistics. Chengrun Yang, Xuezhi Wang, Yifeng Lu, Hanxiao Liu, Quoc V . Le, Denny Zhou, and Xinyun Chen. 2023. Large language models as optimizers.International Conference on Learning Representations.",
+      "order": 172,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yanlong Wang, Jian Xu, Hongkang Zhang, Shao-Lun",
+        "Factorminer: A self-evolving agent with skills"
+      ],
+      "char_start": 37942,
+      "char_end": 38619,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4336b1e6c5dd7599dd23d1647fa49453",
+      "kind": "heading",
+      "text": "Han Yang, Dong Hao, Zhuohan Wang, Qi Shi, and",
+      "order": 173,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Han Yang, Dong Hao, Zhuohan Wang, Qi Shi, and"
+      ],
+      "char_start": 38621,
+      "char_end": 38666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:117cb76bceab85b5811cb5b62aa02a6e",
+      "kind": "paragraph",
+      "text": "Xingtong Li. 2026. Alpha discovery via grammarguided learning and search.arXiv.org.",
+      "order": 174,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Han Yang, Dong Hao, Zhuohan Wang, Qi Shi, and"
+      ],
+      "char_start": 38668,
+      "char_end": 38751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96d1981c293700641509f584375b9c13",
+      "kind": "heading",
+      "text": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak",
+      "order": 175,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak"
+      ],
+      "char_start": 38753,
+      "char_end": 38801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c3b067f58224de741e4c6fd18379a84",
+      "kind": "paragraph",
+      "text": "Shafran, Karthik Narasimhan, and Yuan Cao. 2022. React: Synergizing reasoning and acting in language models.arXiv preprint arXiv:2210.03629. Yuxuan Ye, Jun Han, Ao Hu, Juncheng Bu, Yiyi Chen,",
+      "order": 176,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak"
+      ],
+      "char_start": 38803,
+      "char_end": 38994,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f4540b72f338b3d9bc2b646c00b3397",
+      "kind": "heading",
+      "text": "Liangjian Wen, Danilo Mandic, Danny Dongning",
+      "order": 177,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Liangjian Wen, Danilo Mandic, Danny Dongning"
+      ],
+      "char_start": 38996,
+      "char_end": 39040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5588296e25da102f1ad71fd645b7a54f",
+      "kind": "paragraph",
+      "text": "Sun, Xu Yinghui, and Zenglin Xu. 2026. The alpha illusion: Reported alpha from llm trading agents should not be treated as deployment evidence.arXiv preprint arXiv:2605.16895.",
+      "order": 178,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Liangjian Wen, Danilo Mandic, Danny Dongning"
+      ],
+      "char_start": 39042,
+      "char_end": 39217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c77b0c838f03abbddb2519eb4208b7b3",
+      "kind": "heading",
+      "text": "Yangyang Yu, Haohang Li, Zhi Chen, Yuechen",
+      "order": 179,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yangyang Yu, Haohang Li, Zhi Chen, Yuechen"
+      ],
+      "char_start": 39219,
+      "char_end": 39261,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42367fdd24feca97a6d6fc49a845471c",
+      "kind": "paragraph",
+      "text": "Jiang, Yang Li, Jordan W Suchow, Denghui Zhang, and Khaldoun Khashanah. 2023. Finmem: A performance-enhanced llm trading agent with layered memory and character design.IEEE Transactions on Big Data.",
+      "order": 180,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Yangyang Yu, Haohang Li, Zhi Chen, Yuechen"
+      ],
+      "char_start": 39263,
+      "char_end": 39461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:021fee1ee2dd8172b07387ec7686a68e",
+      "kind": "heading",
+      "text": "Junjie Zhang, Shuoling Liu, Tongzhe Zhang, and",
+      "order": 181,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Junjie Zhang, Shuoling Liu, Tongzhe Zhang, and"
+      ],
+      "char_start": 39463,
+      "char_end": 39509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0233ae21fa30382d750692db80e8c2c",
+      "kind": "paragraph",
+      "text": "Yuchen Shi. 2025. A survey on large language modelbased alpha mining.Frontiers of Information Technology & Electronic Engineering, pages 1809–1821. 10",
+      "order": 182,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Junjie Zhang, Shuoling Liu, Tongzhe Zhang, and"
+      ],
+      "char_start": 39511,
+      "char_end": 39661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04a5edf325736897b828c97147dd7ece",
+      "kind": "heading",
+      "text": "Wentao Zhang, Lingxuan Zhao, Haochong Xia, Shuo",
+      "order": 183,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Lingxuan Zhao, Haochong Xia, Shuo"
+      ],
+      "char_start": 39663,
+      "char_end": 39710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0e66e716d220cdb2917ea71f89bdc5a",
+      "kind": "paragraph",
+      "text": "Sun, Jiaze Sun, Molei Qin, Xinyi Li, Yuqing Zhao, Yilei Zhao, Xinyu Cai, and 1 others. 2024. A multimodal foundation agent for financial trading: Toolaugmented, diversified, and generalist. InProceedings of the 30th acm sigkdd conference on knowledge discovery and data mining, pages 4314–4325. ACM.",
+      "order": 184,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Lingxuan Zhao, Haochong Xia, Shuo"
+      ],
+      "char_start": 39712,
+      "char_end": 40011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ba4114cfe970b1017a8f09fe992540c",
+      "kind": "heading",
+      "text": "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun",
+      "order": 185,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun"
+      ],
+      "char_start": 40013,
+      "char_end": 40063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9538b3c0592b6d613e2006444ab8497",
+      "kind": "paragraph",
+      "text": "You, Huaiyu Jia, Yilei Zhao, Bo An, and Shuo Sun.",
+      "order": 186,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun"
+      ],
+      "char_start": 40065,
+      "char_end": 40114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c375db3d38ec4967fc86d76fa0c1e538",
+      "kind": "heading",
+      "text": "Alphaforgebench: Benchmarking end-to-end",
+      "order": 187,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun",
+        "Alphaforgebench: Benchmarking end-to-end"
+      ],
+      "char_start": 40116,
+      "char_end": 40156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daa97e8fe3a86fa2c7701f47347583e2",
+      "kind": "paragraph",
+      "text": "trading strategy design with large language models. arXiv.org. Junjie Zhao, Chengxi Zhang, Min Qin, and Peng Yang.",
+      "order": 188,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun",
+        "Alphaforgebench: Benchmarking end-to-end"
+      ],
+      "char_start": 40158,
+      "char_end": 40272,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0631b32fba9f8322e66d209b9acc9fd3",
+      "kind": "heading",
+      "text": "Quantfactor reinforce: Mining steady formu-",
+      "order": 189,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun",
+        "Quantfactor reinforce: Mining steady formu-"
+      ],
+      "char_start": 40274,
+      "char_end": 40317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:185301b80a765369e358d39d08289ce1",
+      "kind": "paragraph",
+      "text": "laic alpha factors with variance-bounded reinforce. IEEE Transactions on Signal Processing.",
+      "order": 190,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wentao Zhang, Mingxuan Zhao, Jincheng Gao, Jieshun",
+        "Quantfactor reinforce: Mining steady formu-"
+      ],
+      "char_start": 40319,
+      "char_end": 40410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6980984136c17c89dfae7a1ba85482d4",
+      "kind": "heading",
+      "text": "Wanyun Zhou, Saizhuo Wang, Mihai Cucuringu, Zi-",
+      "order": 191,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wanyun Zhou, Saizhuo Wang, Mihai Cucuringu, Zi-"
+      ],
+      "char_start": 40412,
+      "char_end": 40459,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85ecdbc9308dee94d42f2a8abd3c2424",
+      "kind": "paragraph",
+      "text": "hao Zhang, Xiang Li, Jian Guo, Chao Zhang, and Xiaowen Chu. 2025. Deltalag: Learning dynamic lead-lag patterns in financial markets. InInternational Conference on AI in Finance, pages 422–430. ACM.",
+      "order": 192,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Wanyun Zhou, Saizhuo Wang, Mihai Cucuringu, Zi-"
+      ],
+      "char_start": 40461,
+      "char_end": 40658,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfc7177da62ad354aa2853fb823e2231",
+      "kind": "heading",
+      "text": "A Prompt Templates",
+      "order": 193,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A Prompt Templates"
+      ],
+      "char_start": 40660,
+      "char_end": 40678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8cd192f1f005dc5fe26919b61740c01",
+      "kind": "paragraph",
+      "text": "This appendix lists the prompt templates used by EVOQUANTfor LLM-enabled candidate generation and diagnosis. All prompts were used verbatim in the frontier LLM experiments reported in Section 5.4.",
+      "order": 194,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A Prompt Templates"
+      ],
+      "char_start": 40680,
+      "char_end": 40876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6dcd8408e20b5ca26400528fc282f3c",
+      "kind": "heading",
+      "text": "A.1 Diagnosis Prompt",
+      "order": 195,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.1 Diagnosis Prompt"
+      ],
+      "char_start": 40878,
+      "char_end": 40898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ef5c3a7e0618d1a24804b7e13cc21e4",
+      "kind": "paragraph",
+      "text": "The diagnosis prompt receives the evidence pack (returns, Sharpe, drawdown, trade counts, recent rejection reasons) and produces a structured bottleneck report.",
+      "order": 196,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.1 Diagnosis Prompt"
+      ],
+      "char_start": 40900,
+      "char_end": 41060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6a84e3aa10778e304b5a60a59715b80",
+      "kind": "heading",
+      "text": "Promotion Explanation Prompt Template",
+      "order": 197,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 41062,
+      "char_end": 41099,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef184bbd3474f8e42ef57d762b38d6a1",
+      "kind": "paragraph",
+      "text": "You are a quantitative strategy analyst. Given the following backtest evidence pack for strategy {strategy_name}: Train Sharpe : {train_sharpe:.3f} Val Sharpe : {val_sharpe:.3f} Test Sharpe : {test_sharpe:.3f} Max Drawdown : {max_dd:.2%} Trade Count : {n_trades} Recent rejections: {rejection_summary} Identify the top-2 bottlenecks from: [sparse_entry, delayed_exit, excessive_drawdown, low_trend_filter, overfit_validation, parameter_sensitivity] Return a JSON object: { \"bottlenecks\": [\"<bottleneck_1>\", \"<bottleneck_2>\"], \"rationale\": \"<one sentence per bottleneck>\" }",
+      "order": 198,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 41101,
+      "char_end": 41673,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebf5eea7ae0795ee96c31c472dab5589",
+      "kind": "heading",
+      "text": "A.2 LLM Candidate Generation Prompt",
+      "order": 199,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.2 LLM Candidate Generation Prompt"
+      ],
+      "char_start": 41675,
+      "char_end": 41710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f654d82792c2b3a418bacc131f498260",
+      "kind": "paragraph",
+      "text": "The candidate generation prompt receives the current genome and the diagnosed bottlenecks, and proposes a single edited genome as a JSON diff.",
+      "order": 200,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.2 LLM Candidate Generation Prompt"
+      ],
+      "char_start": 41712,
+      "char_end": 41854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32c2984cf68773f4008f1e76ca766061",
+      "kind": "heading",
+      "text": "Promotion Explanation Prompt Template",
+      "order": 201,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 41856,
+      "char_end": 41893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74c2b3dfd205c6a7147578a25aa64b57",
+      "kind": "paragraph",
+      "text": "You are a quantitative strategy engineer. Current genome (JSON): {genome_json} Diagnosed bottlenecks: {bottlenecks} Propose ONE targeted edit to address the primary bottleneck.",
+      "order": 202,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 41895,
+      "char_end": 42071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:def46189e996fada277ec7303043c66b",
+      "kind": "heading",
+      "text": "Constraints",
+      "order": 203,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42073,
+      "char_end": 42084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32242832cc323c752fd8971703225407",
+      "kind": "list_item",
+      "text": "- Do NOT change the core hypothesis of the strategy.",
+      "order": 204,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42086,
+      "char_end": 42138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ebbc4c92695be6f84292a3d384389db",
+      "kind": "list_item",
+      "text": "- Only modify parameters or add/remove a single indicator.",
+      "order": 205,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42140,
+      "char_end": 42198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8310b8ad87bc922efd63d0989ee2ba7",
+      "kind": "list_item",
+      "text": "- Keep trade count above 20 per year.",
+      "order": 206,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42200,
+      "char_end": 42237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09920da1d39d019747ded1631f7f97a9",
+      "kind": "paragraph",
+      "text": "Return ONLY a JSON patch in the format: {",
+      "order": 207,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42239,
+      "char_end": 42280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e18febe1154f8a0112e01bef925b0a6",
+      "kind": "table",
+      "text": "\"layer\": \"<signal|risk|position|exit>\",",
+      "order": 208,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42282,
+      "char_end": 42321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25c2425d80e38e2a07c9ad5b9c64d3b4",
+      "kind": "paragraph",
+      "text": "\"field\": \"<field_name>\", \"old_value\": <old>, \"new_value\": <new>, \"rationale\": \"<one sentence>\" }",
+      "order": 209,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Constraints"
+      ],
+      "char_start": 42323,
+      "char_end": 42419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b52c2a6c5d0d6de4cbeef4b52fdfe4cc",
+      "kind": "heading",
+      "text": "A.3 Promotion Explanation Prompt",
+      "order": 210,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.3 Promotion Explanation Prompt"
+      ],
+      "char_start": 42421,
+      "char_end": 42453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18fb7c54014f740d058a0ff8a2b40051",
+      "kind": "paragraph",
+      "text": "When a candidate is promoted,EVOQUANToptionally queries the LLM for a human-readable explanation of the change, which is stored in the audit trail.",
+      "order": 211,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "A.3 Promotion Explanation Prompt"
+      ],
+      "char_start": 42455,
+      "char_end": 42602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14f09f1462fea23893fa48b746aef99e",
+      "kind": "heading",
+      "text": "Promotion Explanation Prompt Template",
+      "order": 212,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 42604,
+      "char_end": 42641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fddd0c6f7506c863c8bbfa36b64666e",
+      "kind": "paragraph",
+      "text": "The following genome edit was accepted by the verifier: Layer : {layer} Field : {field} Old value: {old_value} New value: {new_value} Val Sharpe before: {val_before:.3f} Val Sharpe after : {val_after:.3f} Summarize in one sentence why this edit is likely beneficial, referencing the strategy hypothesis.",
+      "order": 213,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Promotion Explanation Prompt Template"
+      ],
+      "char_start": 42643,
+      "char_end": 42946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d65b4bcf8e7569d7d1422194a2fc498d",
+      "kind": "heading",
+      "text": "B Additional Experimental Results",
+      "order": 214,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B Additional Experimental Results"
+      ],
+      "char_start": 42948,
+      "char_end": 42981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76a4ae27bbad09ce5c166e5b517a46db",
+      "kind": "paragraph",
+      "text": "This appendix provides supplementary experimental results that support the claims in the main paper but were omitted from the main text due to space constraints.",
+      "order": 215,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B Additional Experimental Results"
+      ],
+      "char_start": 42983,
+      "char_end": 43144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9767b89bf098d58fea195404d7f496b5",
+      "kind": "heading",
+      "text": "B.1 Main A-Share and Bitcoin Results",
+      "order": 216,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.1 Main A-Share and Bitcoin Results"
+      ],
+      "char_start": 43146,
+      "char_end": 43182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:809967c8f9ee5a4e2d4e1a96bc47f197",
+      "kind": "caption",
+      "text": "Figure 4 shows that the optimized strategies gener-",
+      "order": 217,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.1 Main A-Share and Bitcoin Results"
+      ],
+      "char_start": 43184,
+      "char_end": 43235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ab1014d68da9af4f72fec187ddc82b3",
+      "kind": "paragraph",
+      "text": "ally achieve stronger return trajectories than their original counterparts across both A-share and Bitcoin tasks. For the A-share EMA-RSI Trend and Bollinger Reversion strategies, optimization leads to higher cumulative returns throughout the validation and test periods, with especially clear gains in the later test window. For Bitcoin strategies, the effect is more divergent: the optimized MACD-RSI Bollinger strategy improves substantially and ends with a higher return, whereas the optimized ATR Trend Breakout strategy underperforms the original strategy in the test period despite remaining profitable. 11",
+      "order": 218,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.1 Main A-Share and Bitcoin Results"
+      ],
+      "char_start": 43237,
+      "char_end": 43850,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3537ebda9b8c18dbf920aa9f464f7960",
+      "kind": "heading",
+      "text": "Original Optimized",
+      "order": 219,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Original Optimized"
+      ],
+      "char_start": 43852,
+      "char_end": 43870,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f13e9e54b0c961b62e1cb48621a6e2d3",
+      "kind": "paragraph",
+      "text": "800 600 400 200 0",
+      "order": 220,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Original Optimized"
+      ],
+      "char_start": 43872,
+      "char_end": 43889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c8331777b453b9597574566e61461d4",
+      "kind": "heading",
+      "text": "01-01 2025-12-31",
+      "order": 221,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-01 2025-12-31"
+      ],
+      "char_start": 43891,
+      "char_end": 43907,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4573e37ac990eae0886692bcbbb5eecb",
+      "kind": "heading",
+      "text": "Trading Date",
+      "order": 222,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 43909,
+      "char_end": 43921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2103b54ebafbacb5dfe11869da0618c",
+      "kind": "heading",
+      "text": "(d)  Bitcoin ATR Trend Breakout",
+      "order": 223,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "(d)  Bitcoin ATR Trend Breakout"
+      ],
+      "char_start": 43923,
+      "char_end": 43954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0e4e813b2914f97f924763281178237",
+      "kind": "paragraph",
+      "text": "100 80 60 40 20 0 20",
+      "order": 224,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "(d)  Bitcoin ATR Trend Breakout"
+      ],
+      "char_start": 43956,
+      "char_end": 43976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84ce49a2f3f546113fe6c2b44b9caf72",
+      "kind": "heading",
+      "text": "01-01 2025-12-31",
+      "order": 225,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-01 2025-12-31"
+      ],
+      "char_start": 43978,
+      "char_end": 43994,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:741a002a88691fae1f93aaa9bb13a68f",
+      "kind": "heading",
+      "text": "Trading Date",
+      "order": 226,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 43996,
+      "char_end": 44008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a297ed5c315f7f1ba1a23904f61091a7",
+      "kind": "paragraph",
+      "text": "(c)  Bitcoin MACD-RSI Bollinger 60 40 20 0 20",
+      "order": 227,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Trading Date"
+      ],
+      "char_start": 44010,
+      "char_end": 44055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd3e9968ce3c4b750b308b76a9b318bd",
+      "kind": "heading",
+      "text": "01-02 2025-12-30",
+      "order": 228,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44057,
+      "char_end": 44073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cce68870f51fa8a37e45161442689c10",
+      "kind": "paragraph",
+      "text": "(a)  A-share EMA-RSI Trend 30 25 20 15",
+      "order": 229,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44075,
+      "char_end": 44113,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79da363699c70ce1723cd5e6c2dd3515",
+      "kind": "paragraph",
+      "text": "10",
+      "order": 230,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44115,
+      "char_end": 44117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea5ad768e991d422e1f007e289d92297",
+      "kind": "paragraph",
+      "text": "5 0",
+      "order": 231,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44119,
+      "char_end": 44122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fac13937790b15f11dcd08deb452757",
+      "kind": "heading",
+      "text": "01-02 2025-12-30",
+      "order": 232,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44124,
+      "char_end": 44140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07f1bea60fc57779b28296e19058b054",
+      "kind": "paragraph",
+      "text": "(b)  A-share Bollinger Reversion train val test 40",
+      "order": 233,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44142,
+      "char_end": 44192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8425b752b2f7b9291cf11557ee8dfea9",
+      "kind": "caption",
+      "text": "Figure 4: Return curves of the original and optimized strategies on four representative tasks from 2020 to 2025: (a)",
+      "order": 234,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44194,
+      "char_end": 44310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e1e05fdfdf876168d0dcae6e260ba2b",
+      "kind": "paragraph",
+      "text": "A-share EMA-RSI Trend, (b) A-share Bollinger Reversion, (c) Bitcoin MACD-RSI Bollinger, and (d) Bitcoin ATR Trend Breakout. Shaded regions denote the train, validation, and test periods. bollinger reversion ema rsi trend low vol quality volume breakout",
+      "order": 235,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30"
+      ],
+      "char_start": 44312,
+      "char_end": 44564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:408aa9c273e9b7555f19b4f9af41d728",
+      "kind": "heading",
+      "text": "0",
+      "order": 236,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "0"
+      ],
+      "char_start": 44566,
+      "char_end": 44567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64e9162feeeb0eb4b4e6ea9917598d16",
+      "kind": "heading",
+      "text": "2",
+      "order": 237,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "2"
+      ],
+      "char_start": 44569,
+      "char_end": 44570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf492054a74e7a0726afacea523fe9a1",
+      "kind": "heading",
+      "text": "4",
+      "order": 238,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "4"
+      ],
+      "char_start": 44572,
+      "char_end": 44573,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a64a36860067a4406f3c9c3c4d520d4a",
+      "kind": "heading",
+      "text": "6",
+      "order": 239,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "6"
+      ],
+      "char_start": 44575,
+      "char_end": 44576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fcfe7621a040ca3c97ac98a148899c74",
+      "kind": "heading",
+      "text": "8",
+      "order": 240,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "8"
+      ],
+      "char_start": 44578,
+      "char_end": 44579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1914f86eced0b5907a832efa574ff13",
+      "kind": "heading",
+      "text": "0Mean test Sharpe uplift",
+      "order": 241,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "0Mean test Sharpe uplift"
+      ],
+      "char_start": 44581,
+      "char_end": 44605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc1ca77ed8298e89743377177c323355",
+      "kind": "paragraph",
+      "text": "Risk-adjusted improvement by A-share strategy family",
+      "order": 242,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "0Mean test Sharpe uplift"
+      ],
+      "char_start": 44607,
+      "char_end": 44659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ec2a803a49d2a3ff451c933066b2edd",
+      "kind": "caption",
+      "text": "Figure 5: Distribution of per-symbol test Sharpe uplift",
+      "order": 243,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "0Mean test Sharpe uplift"
+      ],
+      "char_start": 44661,
+      "char_end": 44716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18d938088879aa065b2f2be5b1670c1b",
+      "kind": "paragraph",
+      "text": "(seed 42, all 120 A-share tasks).",
+      "order": 244,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "01-02 2025-12-30",
+        "0Mean test Sharpe uplift"
+      ],
+      "char_start": 44718,
+      "char_end": 44751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:877048e17276b347aecbee8b4368c06b",
+      "kind": "heading",
+      "text": "B.2 Per-Symbol Sharpe Uplift Distribution",
+      "order": 245,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.2 Per-Symbol Sharpe Uplift Distribution"
+      ],
+      "char_start": 44753,
+      "char_end": 44794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a68277d1f5ab492d3addd894e230ae4",
+      "kind": "caption",
+      "text": "Figure 5 shows the full distribution of per-symbol",
+      "order": 246,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.2 Per-Symbol Sharpe Uplift Distribution"
+      ],
+      "char_start": 44796,
+      "char_end": 44846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a944ebcc003af4b719a627cb9cf8af8",
+      "kind": "paragraph",
+      "text": "test Sharpe uplift across all 120 A-share tasks (i.e., task counted by the multiplication of 30 A-share stocks and 4 typical strategies) in the canonical seed-42 run. The distribution is right-skewed, with a long tail of large improvements and a small mass of degradations, consistent with the 115/120 nondegradation rate reported in the main text. The mean test Sharpe uplift is positive in every case, indicating that the gains are not driven by a single strategy type. The improvement is strongest for the V olume Breakout family, followed by Low-V ol Quality and EMA-RSI Trend, while Bollinger Reversion shows a smaller but still clear uplift. Overall, these results suggest that the verifier-guided optimization process can generalize across different A-share strategy families rather than only benefiting one specific signal design.",
+      "order": 247,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.2 Per-Symbol Sharpe Uplift Distribution"
+      ],
+      "char_start": 44848,
+      "char_end": 45686,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f58277e8966afeea94a07bb3b9489fa3",
+      "kind": "heading",
+      "text": "200 400 600 800 1000 1200 1400",
+      "order": 248,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "200 400 600 800 1000 1200 1400"
+      ],
+      "char_start": 45688,
+      "char_end": 45718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d1b5316c974d1b99ed10e333da601af",
+      "kind": "heading",
+      "text": "Count",
+      "order": 249,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Count"
+      ],
+      "char_start": 45720,
+      "char_end": 45725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc903b11445aa6dfb9a7e56ae3b8d015",
+      "kind": "paragraph",
+      "text": "trade coverage is too sparse across OOS sp risk-adjusted quality is below target strategy is unstable across regimes and ne current gains are not transferring OOS and Rejected / non-adopted iteration reason proxies",
+      "order": 250,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Count"
+      ],
+      "char_start": 45727,
+      "char_end": 45941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e093199cf9581dcc2d1c57d083214d77",
+      "kind": "caption",
+      "text": "Figure 6: Distribution of rejection reasons for non-",
+      "order": 251,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Count"
+      ],
+      "char_start": 45943,
+      "char_end": 45995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92447a719ae8195efe4a66574cdf640a",
+      "kind": "paragraph",
+      "text": "adopted candidate strategies. Rejected candidates fail because: trade coverage is too sparse, below-target riskadjusted quality, instability across regimes, or current gains that do not transfer out of sample.",
+      "order": 252,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "Count"
+      ],
+      "char_start": 45997,
+      "char_end": 46206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5cb75a2cf7b5bc5af0e8a105d37eb445",
+      "kind": "heading",
+      "text": "B.3 Rejection Reasons",
+      "order": 253,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.3 Rejection Reasons"
+      ],
+      "char_start": 46208,
+      "char_end": 46229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f84fff42249bc98a51f7279fc6c8107",
+      "kind": "paragraph",
+      "text": "We further analyzed the rejection reasons across all experiments to characterize the optimizer’s failure modes and the verifier’s screening behavior. The rejection analysis (see Figure 6) reveals how the verifier filters unsafe or unreliable candidate strategies. The most frequent rejection reason is sparse trade coverage across OOS splits, indicating that many candidates do not generate enough outof-sample trades to support reliable evaluation. A smaller number of candidates are rejected because their risk-adjusted quality falls below the target or because their performance is unstable across market regimes. Only a few candidates are rejected solely because current-window gains fail to transfer OOS. 12",
+      "order": 254,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "EVOQUANT: Self-Evolving Verifier-Guided Strategy Optimization",
+        "B.3 Rejection Reasons"
+      ],
+      "char_start": 46231,
+      "char_end": 46943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 12,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 12
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.12455",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 12,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

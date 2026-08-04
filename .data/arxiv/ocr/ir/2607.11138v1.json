@@ -1,0 +1,4822 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "f322b360ec2222112f8d4cd9e133ccafa717d4d20ed416f671bce6cc1c47b672",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:8ec3bc4ad642daf58ccdf42146053a5b",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 1,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:992b13b1357a50e4bfefaa8c82846718",
+      "kind": "heading",
+      "text": "A Formal Hierarchical Architecture for Agentic",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic"
+      ],
+      "char_start": 3,
+      "char_end": 49,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13b9c86eb17c93dfaa6b577ea5db2227",
+      "kind": "paragraph",
+      "text": "Orchestration with Stack-Based Execution and",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic"
+      ],
+      "char_start": 51,
+      "char_end": 95,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0438dd42fe7986f9e06e327a554de53b",
+      "kind": "heading",
+      "text": "Lazy Discovery",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Lazy Discovery"
+      ],
+      "char_start": 97,
+      "char_end": 111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ff091ae7559b55b2f1a3a34e62d3b4a",
+      "kind": "paragraph",
+      "text": "Prashant Devadiga, Abhishek, Adithya Mishra, Alok Singh, Amisha Sinha, Asit Desai, Gaurang Dahad, Harshit Bhushan, Mandati Pramod Reddy , Prakhar Gupta, Rupesh Patil, and Siddhi Behere Abstract—The rapid expansion of capabilities in Large Language Model (LLM) agents has exposed a critical architectural bottleneck: when agents are given access to a flat, monolithic registry of tools, the model must evaluate hundreds or thousands of options simultaneously. This leads to decision-space explosion, context window saturation, and degraded routing accuracy. To address these limitations, this paper presents a hierarchical, skill-based architecture for agentic orchestration. Capabilities are organized as a rooted tree where internal nodes make routing decisions and leaf nodes execute deterministic tasks. The runtime enforces a single-step execution loop governed by a Last-In-First-Out (LIFO) stack, giving the agent a form of memory akin to a Pushdown Automaton, therefore enabling it to track nested execution contexts and resume deterministically from any depth. Capability discovery follows a manifest-driven, lazy-loading protocol: only the immediate children of the active node are loaded, so memory and prompt costs scale with the explored path rather than the global registry. By replacing global memory with localized stack frames, the architecture prevents outputs from one execution branch from leaking into another, establishing the isolation guarantees required for deployment in regulated enterprise environments. We also discuss UPI Help, an AI-powered digital payments support product,",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Lazy Discovery"
+      ],
+      "char_start": 113,
+      "char_end": 1717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1094466de2ebda28b8026fde33e10778",
+      "kind": "paragraph",
+      "text": "as a motivating production deployment context. We provide a mathematical formalization of the orchestration state, detailed algorithmic analysis of the execution loop, and controlled benchmarks comparing flat and hierarchical routing under increasing tool catalogs, multi-step workflow pressure, and visible schema-token exposure per LLM call. ✦",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Lazy Discovery"
+      ],
+      "char_start": 1719,
+      "char_end": 2064,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8786bca3908618ad479c91da8ee3590",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 2066,
+      "char_end": 2078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2dcd2a6dc4b9ebe2f4971ac9d53f1ad",
+      "kind": "paragraph",
+      "text": "The integration of Large Language Models (LLMs) with external, deterministic capabilities (such as Application Programming Interfaces (APIs), database queries, and scripts) has enabled autonomous, goal-directed agents [2]. While early paradigms showed that interleaving reasoning with tool execution improves grounding and task completion, scaling these systems to enterprise-grade workflows exposes foundational architectural limitations [3]. The primary limitation of contemporary LLM agents is the assumption of a flat capability space. Conventional agents initialize with a registry containing all accessible tools [4]. At a scale encompassing hundreds or thousands of distinct capabilities, this inducesdecision-space explosion: the model must parse and choose among a large set of mostly irrelevant tools, increasing latency and degrading semantic routing accuracy [5]. Benchmarks confirm that large, nonhierarchical API arrays containing overlapping syntactic •Leadership: Prashant Devadiga. •Agentic Architecture: Abhishek, Alok Singh, Asit Desai, Gaurang Dahad, Harshit Bhushan, Prakhar Gupta. •Engineering: Adithya Mishra, Amisha Sinha, Mandati Pramod Reddy, Rupesh Patil, Siddhi Behere. •Evaluation: Abhishek, Gaurang Dahad, Harshit Bhushan. conventions increase reasoning failures and hallucinated tool invocations [6]. To distribute cognitive load, many systems adoptmultiagent orchestrationframeworks [7]. By deploying multiple specialized LLM agents that communicate via natural language, systems can theoretically tackle highly complex",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 2080,
+      "char_end": 3631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c32ef865e1d673d37fd4bcd8921df04",
+      "kind": "paragraph",
+      "text": "objectives [8]. However, these often rely on unstructured conversational message-passing for orchestration, which obscures execution state and makes routing and recovery difficult at scale, leading to unpredictable agent loops and network-wide context saturation [9]. In addition, standard autonomous agents lack deterministic process control primitives (explicit call stacks and isolated memory frames) commonly used in operating systems to support nested execution and robust recovery [10]. In production, minor network disruptions or unexpected sub-tool outputs can derail long-running agentic loops, and untrusted outputs can pollute the global reasoning context, which is incompatible with high-trust deployments [3]. The design presented in this paper is motivated by production requirements observed in UPI Help, an AIpowered digital payments support product for UPI transaction queries, complaint resolution, and mandate management [11]. In such settings, agentic orchestration must not",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 3633,
+      "char_end": 4627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad8e4345363a963586b11543f3c37722",
+      "kind": "table",
+      "text": "arXiv:2607.11138v1  [cs.AI]  13 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 4629,
+      "char_end": 4669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4563bb9eff4d7a8ba211656c2f3a0472",
+      "kind": "paragraph",
+      "text": "2 only route accurately, but also preserve auditability, enforce capability boundaries, and support controlled execution of sensitive payment-support flows. To address these interconnected bottlenecks across both flat-tool augmented models and unstructured multi-agent networks, we present aHierarchical Skill-Based Architecture. To establish academic rigor, we explicitly distinguish a “Skill” from a standard “Tool”: a “Tool” is an isolated API endpoint exposed directly to the reasoning model, while a “Skill” is a contextually-bound node within a strict structural hierarchy. In this framework, capabilities are organized as an arbitrary-depth tree in which each node is either a decision-making skill(responsible for localized orchestration and delegation) or anexecutable skill(providing deterministic leaf-level execution). The runtime mechanism is decoupled from capability definitions and executes a single-step loop governed by a LIFO stack. This stack discipline gives the agent a contextfree memory structure (akin to a Pushdown Automaton), supporting nested execution and deterministic return semantics [12]. To avoid prompt bloat, capability discovery is manifest-driven and lazy: a node only loads the operational metadata of its immediate children when invoked. As a result, cognitive and computational load scales with the explored path, not the global capability set. Finally, capabilities are added declaratively via localized manifests, enabling horizontal (new siblings) and vertical (deeper sub-",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 4671,
+      "char_end": 6188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7dd7e0883cae3565b96e64bbbb1ce3cd",
+      "kind": "paragraph",
+      "text": "orchestrators) scaling without modifying the core routing loop.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION"
+      ],
+      "char_start": 6190,
+      "char_end": 6253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9bcf3d364303e04d3a1075b760a6a74",
+      "kind": "heading",
+      "text": "Paper Organization",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION",
+        "Paper Organization"
+      ],
+      "char_start": 6255,
+      "char_end": 6273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7858d81a65de4332b8bc8bd1dc0b288",
+      "kind": "paragraph",
+      "text": "We will discuss the overall structure and details of our work as follows: Section 2 reviews related literature and situates our work within the broader context of multi-agent architectures and formal automata theory. Section 3 formulates the problem mathematically. Section 4 formalizes the system model and state representation. Section 5 presents the execution semantics and stack-based control loop. Section",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "INTRODUCTION",
+        "Paper Organization"
+      ],
+      "char_start": 6275,
+      "char_end": 6685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5855e5ce4922a1e7ec7403da92eba61b",
+      "kind": "heading",
+      "text": "describes capability discovery and lazy loading via local-",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "describes capability discovery and lazy loading via local-"
+      ],
+      "char_start": 6687,
+      "char_end": 6745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e7e83835940f0a429e2ee42b703643a",
+      "kind": "paragraph",
+      "text": "ized manifests. Section 7 analyzes architectural properties and security guarantees. Section 8 presents UPI Help as a production deployment context. Section 9 reports experimental evaluation against flat baselines. Section 10 provides complexity and performance analysis. Section 11 discusses system constraints and limitations, Section 12 concludes the paper, and Section 13 lists contributors.",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "describes capability discovery and lazy loading via local-"
+      ],
+      "char_start": 6747,
+      "char_end": 7142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8489856c722c6e75bf4026fc99c732e5",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK"
+      ],
+      "char_start": 7144,
+      "char_end": 7155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:261b8bb427da0e727dfd91ce286f4f23",
+      "kind": "paragraph",
+      "text": "We situate our architecture at the intersection of tool integration, multi-agent orchestration, automata-based formal verification, and capability discovery.",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK"
+      ],
+      "char_start": 7157,
+      "char_end": 7314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab548129b324cd4777c60ec3cad4c38d",
+      "kind": "heading",
+      "text": "Context and Scope: Tool Integration and Modularity",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Context and Scope: Tool Integration and Modularity"
+      ],
+      "char_start": 7316,
+      "char_end": 7366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54f38ad8c3fc7c561b5e2864a9ac6ddb",
+      "kind": "paragraph",
+      "text": "The paradigm of equipping language models with external tools was heavily popularized by frameworks such as Toolformer [2], which utilized self-supervised fine-tuning to train models to emit API calls during text generation. While foundational, these systems operated entirely within flat integration schemas, suffering from rapid context saturation when exposed to vast operational libraries [13]. To mitigate this, subsequent embodied architectures, most notably Voyager [14], introduced the concept of an ever-growing, composable skill library, proving that modularizing taskspecific code into retrievable discrete units drastically mitigates catastrophic forgetting. As the scale of required APIs surged to the millions, systems like TaskMatrix.AI [13] demonstrated that static prompt injection of tools was impossible, necessitating external metadata retrieval mechanisms. Consequently, hierarchical orchestration emerged. Frameworks such as AnyTool [5] developed self-reflective, hierarchical agents capable of navigating large-scale API ecosystems without incurring prompt bloat. Concurrently, compiler-inspired frameworks like LLMCompiler [15] proved the efficacy of permanently decoupling the high-level task planner from the deterministic execution units, achieving massive reductions in latency. Our implemented architecture builds upon these concepts by enforcing a strict bifurcation between decision-making orchestration nodes and executable deterministic leaves.",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Context and Scope: Tool Integration and Modularity"
+      ],
+      "char_start": 7368,
+      "char_end": 8845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e22dce3d59fc7e27b60d997ef6ec9f25",
+      "kind": "heading",
+      "text": "Multi-Agent Orchestration Architectures",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Multi-Agent Orchestration Architectures"
+      ],
+      "char_start": 8847,
+      "char_end": 8886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0edfceecec388574331649bee255126c",
+      "kind": "paragraph",
+      "text": "Multi-agent orchestration frameworks, such as AutoGen [7] and MetaGPT [8], distribute work across specialized agents, where orchestration is typically implemented as conversational message-passing. Systems such as ChatDev [9] show that role specialization (e.g., planner, coder, reviewer) can improve output quality, but this makes it difficult to recover deterministically, audit execution paths, or prevent longhorizon conversational drift. Our architecture addresses this by treating decision-making skills as nodes in a governed hierarchical call stack with explicit return semantics, rather than as conversational peers.",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Multi-Agent Orchestration Architectures"
+      ],
+      "char_start": 8888,
+      "char_end": 9513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:108a869d86c92573e6a7b0289bbdca58",
+      "kind": "heading",
+      "text": "Theoretical Automata and Agentic Memory",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Theoretical Automata and Agentic Memory"
+      ],
+      "char_start": 9515,
+      "char_end": 9554,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf6d8e204b03c584ba44a5a5cda3ae6d",
+      "kind": "paragraph",
+      "text": "The stability of long-horizon agents is shaped by their memory model. Prior work has related common agentic frameworks to the Chomsky hierarchy: agents that rely solely on a flat, rolling context resemble Regular Agents (Finite State Machines), while agents with explicit LIFO memory can represent context-free control patterns (Probabilistic Pushdown Automata) [12]. Systems such as MemGPT [10] further argue for operating-system-inspired context management, such as paging and interrupts, which enable deterministic and lossless context switching. Our work adopts this lens to formalize and implement stack-based control with localized memory frames.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Theoretical Automata and Agentic Memory"
+      ],
+      "char_start": 9556,
+      "char_end": 10208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6785636f85166c6f7e24fe68f7e8ece",
+      "kind": "heading",
+      "text": "Capability Discovery and Governance",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Capability Discovery and Governance"
+      ],
+      "char_start": 10210,
+      "char_end": 10245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5809a5c597363b883a518ffdd3dbeca9",
+      "kind": "paragraph",
+      "text": "In decentralized ecosystems, hard-coding capabilities into an agent’s core loop limits scalability and operational agility [17]. The industry has rapidly shifted toward dynamic capability discovery using standardized declarative manifests. The Model Context Protocol (MCP) by Anthropic [18] formalizes this by introducing JSON-RPC communication rules where agents discover contextual tools dynamically. These protocols mirror classical database optimization research, specifically the workload-driven, lazy discovery of data dependencies [19].",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Capability Discovery and Governance"
+      ],
+      "char_start": 10247,
+      "char_end": 10790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34d0fa39a6b686dedc0e35316ad4d4b4",
+      "kind": "paragraph",
+      "text": "3",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Capability Discovery and Governance"
+      ],
+      "char_start": 10792,
+      "char_end": 10793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e58181fe5918020721674010312ba77a",
+      "kind": "heading",
+      "text": "Our Contributions",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Our Contributions"
+      ],
+      "char_start": 10795,
+      "char_end": 10812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39f0d9da3f9114329607e9761128e2a7",
+      "kind": "paragraph",
+      "text": "Taken together, existing approaches still commonly expose large flat tool spaces, rely on informal conversational routing, or lack explicit stack-like control and localized memory needed for deep, auditable workflows [3], [6]. To address this gap, we present a hierarchical orchestration architecture with the following contributions:",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "RELATEDWORK",
+        "Our Contributions"
+      ],
+      "char_start": 10814,
+      "char_end": 11148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4018d78946164375365cacac06a86dd0",
+      "kind": "heading",
+      "text": "Formal System Model:We propose a topological",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Formal System Model:We propose a topological"
+      ],
+      "char_start": 11150,
+      "char_end": 11194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26875f7fc315354aa105f3ee41a06065",
+      "kind": "paragraph",
+      "text": "capability tree that permanently decouples probabilistic decision-making orchestrators from deterministic execution leaves.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Formal System Model:We propose a topological"
+      ],
+      "char_start": 11196,
+      "char_end": 11319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fed2d9888d3ce11a9ccd30f80a851709",
+      "kind": "heading",
+      "text": "Stack-Based Execution Semantics:We implement a",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Stack-Based Execution Semantics:We implement a"
+      ],
+      "char_start": 11321,
+      "char_end": 11367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f18471d82bb6478c3b135e854d7c958",
+      "kind": "paragraph",
+      "text": "single-step, context-free execution loop governed by a LIFO stack, mathematically elevating the agentic workflow to a Pushdown Automaton capable of lossless resumption.",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Stack-Based Execution Semantics:We implement a"
+      ],
+      "char_start": 11369,
+      "char_end": 11537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ab33d9c0f47340de945dc821491b36b",
+      "kind": "heading",
+      "text": "Manifest-Driven Lazy Discovery:We establish a",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Manifest-Driven Lazy Discovery:We establish a"
+      ],
+      "char_start": 11539,
+      "char_end": 11584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8db2fc40b903ddd164fd0575ef40470",
+      "kind": "paragraph",
+      "text": "localized discovery protocol that restricts capability loading to the active execution path, mitigating prompt bloat.",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Manifest-Driven Lazy Discovery:We establish a"
+      ],
+      "char_start": 11586,
+      "char_end": 11703,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:885cc27575a5d50634cd4e25f84df95d",
+      "kind": "heading",
+      "text": "Execution Isolation and Enterprise Governance",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Execution Isolation and Enterprise Governance"
+      ],
+      "char_start": 11705,
+      "char_end": 11750,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8e2ff68823a689dce2f23e13eea62e0",
+      "kind": "paragraph",
+      "text": "We demonstrate that hierarchical capability fencing structurally prevents prompt injection persistence, making the architecture viable for high-trust domains.",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Execution Isolation and Enterprise Governance"
+      ],
+      "char_start": 11752,
+      "char_end": 11910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d858dd3fa9d86dfdc5398ca77140f604",
+      "kind": "heading",
+      "text": "Declarative, Routing-Agnostic Scaling:We provide",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Declarative, Routing-Agnostic Scaling:We provide"
+      ],
+      "char_start": 11912,
+      "char_end": 11960,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2d7e5db88958d133f29e14e0582d74a",
+      "kind": "paragraph",
+      "text": "a framework where adding new functionality (scaling either horizontally with new sibling tools or vertically with deeper sub-orchestrators) is achieved via purely declarative means using JSON manifests, requiring zero modifications to the core orchestration logic.",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Declarative, Routing-Agnostic Scaling:We provide"
+      ],
+      "char_start": 11962,
+      "char_end": 12226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1232d824d86a3fe4c72ae4f93d15fcf",
+      "kind": "heading",
+      "text": "Production Deployment Context:We discuss UPI",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Production Deployment Context:We discuss UPI"
+      ],
+      "char_start": 12228,
+      "char_end": 12272,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab3d2161503eed4aaec7aba918bb1afe",
+      "kind": "paragraph",
+      "text": "Help as a motivating production setting for applying these ideas in digital payments support.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Production Deployment Context:We discuss UPI"
+      ],
+      "char_start": 12274,
+      "char_end": 12367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28145bb90a19e2befc545f0fca3924f8",
+      "kind": "heading",
+      "text": "Empirical Evaluation:We benchmark flat ver-",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Empirical Evaluation:We benchmark flat ver-"
+      ],
+      "char_start": 12369,
+      "char_end": 12412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25a52c7b07401c63648ecfad7a071a0a",
+      "kind": "paragraph",
+      "text": "sus hierarchical routing on prompt scalability, visible schema exposure, workflow pressure, and production-adjacent UPI flows, showing that hierarchy bounds per-step context while accuracy depends on tree design.",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Empirical Evaluation:We benchmark flat ver-"
+      ],
+      "char_start": 12414,
+      "char_end": 12626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82990d2a131d07d80e892c44ef076847",
+      "kind": "heading",
+      "text": "PROBLEMFORMULATION",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION"
+      ],
+      "char_start": 12628,
+      "char_end": 12646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a487f7225e4d8add48cbf7e6fc67f01",
+      "kind": "paragraph",
+      "text": "We formalize two bottlenecks in flat-registry agent architectures and derive design objectives for a hierarchical solution.",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION"
+      ],
+      "char_start": 12648,
+      "char_end": 12771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfedeff560825220ed0fb6430077e649",
+      "kind": "heading",
+      "text": "Contextual Saturation",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 12773,
+      "char_end": 12794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4db36f1cf805f9acbc172b91f2c37fc2",
+      "kind": "paragraph",
+      "text": "LetVrepresent the global set of all available deterministic capabilities (tools or APIs) within an enterprise system,",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 12796,
+      "char_end": 12913,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fad7ea4469c8ba8de67b7701a76768c",
+      "kind": "table",
+      "text": "where the total scale is defined as|V|=N. In a standard",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 12915,
+      "char_end": 12970,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd4e0d28c8967abfb277aeee722b222c",
+      "kind": "paragraph",
+      "text": "flat-agent architecture, denoted asA flat, the agent acts as a single centralized orchestrator node connected directly to all Nleaves. To enable autonomous semantic routing, the inference engine must embed the metadata and functional schema of every tool into the active context windowΩat every reasoning stept. The token footprint of the prompt is thus defined as:",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 12972,
+      "char_end": 13337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cded1c8100cc38562c6abdb9c8500624",
+      "kind": "table",
+      "text": "|Ωt|flat =",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13339,
+      "char_end": 13349,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd4e80a541d210e5288822f231118bba",
+      "kind": "paragraph",
+      "text": "X v∈V",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13351,
+      "char_end": 13356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a98410b3351bd87497578e429362342e",
+      "kind": "table",
+      "text": "|schema(v)|+|H t|(1)",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13358,
+      "char_end": 13378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0cf903ff2e1a70adb3496950edb09eb",
+      "kind": "paragraph",
+      "text": "whereH t represents the accumulated dialogue history. As",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13380,
+      "char_end": 13436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28f372eab364a0b40531fb8ee86da922",
+      "kind": "table",
+      "text": "Ngrows, the condition|Ω t| ≥L max (the LLM’s token",
+      "order": 53,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13438,
+      "char_end": 13488,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd9b22830bb66417c7a83fb9215149e3",
+      "kind": "paragraph",
+      "text": "limit) is eventually met. Even before strict token exhaustion, exposing the model toNsimultaneous capabilities triggers adecision-space explosion, degrading routing accuracy and inducing hallucinated tool calls [6].",
+      "order": 54,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Contextual Saturation"
+      ],
+      "char_start": 13490,
+      "char_end": 13705,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbd112aaef91f73e3a46cb2ab9940bfa",
+      "kind": "heading",
+      "text": "Linear State Fragility",
+      "order": 55,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Linear State Fragility"
+      ],
+      "char_start": 13707,
+      "char_end": 13729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03b309f8c627fb27f70fb70f429578d0",
+      "kind": "paragraph",
+      "text": "Standard autonomous agents treat execution state entirely as an unstructured, append-only dialogue array: H=⟨m 0, m1, m2, . . . , mt⟩(2) Because this representation has no hierarchical depth indicators or localized memory partitions, it behaves like a Regular Agent (Finite State Machine). If a multi-step subtask fails at stept, the flat context history provides no explicit mechanism to resume from the start of that sub-task.",
+      "order": 56,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Linear State Fragility"
+      ],
+      "char_start": 13731,
+      "char_end": 14159,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:254b77aa3dcdaf087663478a18408645",
+      "kind": "heading",
+      "text": "Design Objectives",
+      "order": 57,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Design Objectives"
+      ],
+      "char_start": 14161,
+      "char_end": 14178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af55fe4454da4721f303c16684fcb898",
+      "kind": "paragraph",
+      "text": "To resolve these interconnected bottlenecks, the objective of the proposed architecture is to replaceA flat with a graphbased frameworkA hierarchical that satisfies two strict conditions:",
+      "order": 58,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PROBLEMFORMULATION",
+        "Design Objectives"
+      ],
+      "char_start": 14180,
+      "char_end": 14367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a8e22c834659bc0214d3023bc66e282",
+      "kind": "heading",
+      "text": "Sub-Linear Prompt Scaling:The context window",
+      "order": 59,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Sub-Linear Prompt Scaling:The context window"
+      ],
+      "char_start": 14369,
+      "char_end": 14413,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f678e5828f04cb37ec930cc3697e6768",
+      "kind": "table",
+      "text": "|Ωt|must scale entirely independent of the global",
+      "order": 60,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Sub-Linear Prompt Scaling:The context window"
+      ],
+      "char_start": 14415,
+      "char_end": 14464,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fc3110138225e872610361c08dda5c3",
+      "kind": "paragraph",
+      "text": "registry sizeN.",
+      "order": 61,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Sub-Linear Prompt Scaling:The context window"
+      ],
+      "char_start": 14466,
+      "char_end": 14481,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffb30ca45cb4df3954399bcd22531b83",
+      "kind": "heading",
+      "text": "Context-Free State Resumption:The system must",
+      "order": 62,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Context-Free State Resumption:The system must"
+      ],
+      "char_start": 14483,
+      "char_end": 14528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f087d70a92b7c96135800d0ae4eafdf",
+      "kind": "paragraph",
+      "text": "incorporate pushdown memory primitives (a call stack) to isolate localized task data and enable deterministic error recovery without contaminating the global dialogue historyH.",
+      "order": 63,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Context-Free State Resumption:The system must"
+      ],
+      "char_start": 14530,
+      "char_end": 14706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82b4b55d880b818f748104a7bd7911c6",
+      "kind": "heading",
+      "text": "SYSTEMMODEL ANDTOPOLOGICALARCHI-",
+      "order": 64,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMMODEL ANDTOPOLOGICALARCHI-"
+      ],
+      "char_start": 14708,
+      "char_end": 14740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:450444685a2008eb0aba0c4ae8e24532",
+      "kind": "heading",
+      "text": "TECTURE",
+      "order": 65,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "TECTURE"
+      ],
+      "char_start": 14742,
+      "char_end": 14749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fca0904e13ef6cee1db5ad430d932756",
+      "kind": "paragraph",
+      "text": "The system relies on a structural abstraction that decouples the statefulness of the multi-agent workflow from the underlying reasoning engine. We formalize the architectural topology and the centralized state representation that support arbitrary-depth orchestration.",
+      "order": 66,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "TECTURE"
+      ],
+      "char_start": 14751,
+      "char_end": 15019,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a6d5c95d3e1f09633003b94fa71aa0f",
+      "kind": "heading",
+      "text": "The Capability Tree",
+      "order": 67,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "TECTURE",
+        "The Capability Tree"
+      ],
+      "char_start": 15021,
+      "char_end": 15040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bbb9bde6e45270430bd8a6e1f44d9f4",
+      "kind": "paragraph",
+      "text": "The architecture represents all systemic operations as a finite, rooted treeT= (V, E, r), whereVrepresents the set of all available skills,E⊆V×Vrepresents the localized parent-child invocation relationships, andr∈Vis the root orchestrator skill. To enforce strict separation of concerns, the system mandates that every skillv∈Vmust resolve to one of two mutually exclusive functional types:",
+      "order": 68,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "TECTURE",
+        "The Capability Tree"
+      ],
+      "char_start": 15042,
+      "char_end": 15432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0782d57b54aee596b91d311f398c4001",
+      "kind": "heading",
+      "text": "Decision-Making Skill (v δ):An internal orchestra-",
+      "order": 69,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Decision-Making Skill (v δ):An internal orchestra-"
+      ],
+      "char_start": 15434,
+      "char_end": 15484,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb257ff51f3d94c02bcb5b8a94a2e8c1",
+      "kind": "paragraph",
+      "text": "tor node where the set of childrenchildren(v δ)̸=∅. These nodes do not interact with external systems directly; their sole responsibility is localized reasoning, planning, and delegating intents to their immediate child sub-skills.",
+      "order": 70,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Decision-Making Skill (v δ):An internal orchestra-"
+      ],
+      "char_start": 15486,
+      "char_end": 15717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db38e8735c8148d3bcc4cbd16ab7626a",
+      "kind": "heading",
+      "text": "Executable Skill (v ϵ):A terminal leaf node im-",
+      "order": 71,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Executable Skill (v ϵ):A terminal leaf node im-"
+      ],
+      "char_start": 15719,
+      "char_end": 15766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d092c76a689420798903992b9fbcb8d",
+      "kind": "paragraph",
+      "text": "plementing deterministic, functional logic (e.g.,",
+      "order": 72,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Executable Skill (v ϵ):A terminal leaf node im-"
+      ],
+      "char_start": 15768,
+      "char_end": 15817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94a3bfd19b825ae6591f26d8a7bf1b65",
+      "kind": "paragraph",
+      "text": "4 API requests, SQL database queries, computational scripts). These nodes execute pre-defined Python routines and possess no children (children(vϵ) =∅). The hierarchical depthd(v)represents the edge distance from the root orchestratorrto the current nodev.",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Executable Skill (v ϵ):A terminal leaf node im-"
+      ],
+      "char_start": 15819,
+      "char_end": 16075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f00a159a9e51d655bd63d6597f4d43f",
+      "kind": "heading",
+      "text": "State Representation and Directed Graph Memory",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Executable Skill (v ϵ):A terminal leaf node im-",
+        "State Representation and Directed Graph Memory"
+      ],
+      "char_start": 16077,
+      "char_end": 16123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61219071ef4435afec32b929f90bfb72",
+      "kind": "paragraph",
+      "text": "Standard LLM wrappers typically pass lists of dialogue dictionaries to the inference endpoint. To support arbitrarydepth nested workflows without losing operational context, our architecture maintains a centralized state and represents execution as a state graph. Rather than relying on procedural, hard-coded execution paths, the orchestration logic is defined by uniform transitions between execution states, with edges capturing conditional routing logic. Instead of maintaining a single global memory scratchpad, the global stateSpersists across transitions and is constrained to routing and top-level interactions. The state is mathematically formulated as a tuple: S=⟨M,Γ, p call⟩(3)",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Executable Skill (v ϵ):A terminal leaf node im-",
+        "State Representation and Directed Graph Memory"
+      ],
+      "char_start": 16125,
+      "char_end": 16814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d60a231c366c49030d1f7d9165a922b",
+      "kind": "heading",
+      "text": "Where",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Where"
+      ],
+      "char_start": 16816,
+      "char_end": 16821,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac9072883f912797688bc41000715223",
+      "kind": "paragraph",
+      "text": "•Mrepresents the core conversation state, maintaining the ordered array of human-agent interaction histories, specific chat identifiers, and standardized user metadata. •Γdefines theSkill Path Stack, an ordered LIFO list of active operational frames, explicitly providing the pushdown memory required for recursive tool invocation across graph cycles. •p call represents thePending Skill Call, a pointer defining the identifier, input schema, and target destination of the next node queued for execution.",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Where"
+      ],
+      "char_start": 16823,
+      "char_end": 17327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b69aadd779586e38a68531ffcd1dfc2",
+      "kind": "heading",
+      "text": "The Skill Context Frame",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Where",
+        "The Skill Context Frame"
+      ],
+      "char_start": 17329,
+      "char_end": 17352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b9974e9a5134e3a44741477e1de469a",
+      "kind": "paragraph",
+      "text": "Every element within the LIFO stackΓis instantiated as aSkillContextobject. This object acts as a localized execution snapshot, capturing the metadata of an active node and logically isolating memory at the branch level as control flows through the state graph. Let a context frame γi ∈Γbe defined as: γi =⟨id, ρ,parent, τ, oself ,O acc⟩(4) Here,idis the operational skill name, andρis the absolute file system path mapping the node to its directory. The parentmaintains a back-reference to the calling orchestrator. The parameterτdictates the conditional edge logic that the primary execution loop applies to this frame. Crucially, memory is bifurcated within the frame itself. oself represents the output produced by the skill upon its own completion. Conversely,O acc introduces alocalized output accumulator. As the state graph routes execution back to a parent node, the localized accumulator preserves the results of its immediate children. This graphbound, frame-based memory reduces cross-branch contamination and controls data visibility during complex multistep traversals.",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Where",
+        "The Skill Context Frame"
+      ],
+      "char_start": 17354,
+      "char_end": 18437,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7fa48142ecdc7e97886aab95a56bcb5",
+      "kind": "heading",
+      "text": "EXECUTIONSEMANTICS ANDTHECONTROL",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXECUTIONSEMANTICS ANDTHECONTROL"
+      ],
+      "char_start": 18439,
+      "char_end": 18471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:520c0ab034d9dd967a93a57b559285e4",
+      "kind": "heading",
+      "text": "AUTOMATON",
+      "order": 81,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON"
+      ],
+      "char_start": 18473,
+      "char_end": 18482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:223a6ffb889220f6e2a89bc2101b10c0",
+      "kind": "paragraph",
+      "text": "The execution runtime fundamentally discards the traditional approach of embedding hard-coded conditional logic for every possible tool combination. Instead, it relies on a uniform, single-step execution loop constructed via a formal state machine graph. This loop identically evaluates state transitions regardless of hierarchical depth, governed entirely by the data resident inΓandp call.",
+      "order": 82,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON"
+      ],
+      "char_start": 18484,
+      "char_end": 18875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:024405f0726cdc21a2cee0db4200b20d",
+      "kind": "heading",
+      "text": "The Stack-Pending Invariant",
+      "order": 83,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "The Stack-Pending Invariant"
+      ],
+      "char_start": 18877,
+      "char_end": 18904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b636bfd9ad3df4a5376917ab17aacac0",
+      "kind": "paragraph",
+      "text": "To ensure predictable execution tracing and auditable state reconstruction, the runtime preserves a mathematical invariant throughout the execution lifecycle: Proposition 1 (Stack-Pending Invariant):If the pending invocation pointerp call is populated with a valid target node v, andv̸=r(whereris the root), then the top frame of the stackγ top ∈Γstrictly corresponds to the execution context of parent(v). This invariant guarantees that whenever control is passed to a new skill, its parent’s state is safely preserved on the stack, mimicking the execution context preservation required for verifiable context switching in programmatic function calls.",
+      "order": 84,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "The Stack-Pending Invariant"
+      ],
+      "char_start": 18906,
+      "char_end": 19558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1170ed22bd9a2aef998621649b1ecb7",
+      "kind": "heading",
+      "text": "Single-Step Orchestration Algorithm",
+      "order": 85,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Single-Step Orchestration Algorithm"
+      ],
+      "char_start": 19560,
+      "char_end": 19595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99c0d5da6a23f34b5f8c3f1cf0c543ed",
+      "kind": "paragraph",
+      "text": "The core operational loop is encapsulated within the primary skill processing node. Upon entry, the node dynamically delegates execution based on the functional type parameterτof the active skill. The control flow is formalized in Algorithm 1.",
+      "order": 86,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Single-Step Orchestration Algorithm"
+      ],
+      "char_start": 19597,
+      "char_end": 19840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:234b57ac72cb8804626902789996e8e5",
+      "kind": "heading",
+      "text": "Analysis of Flow Control Mechanisms",
+      "order": 87,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Analysis of Flow Control Mechanisms"
+      ],
+      "char_start": 19842,
+      "char_end": 19877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea4bea2ba65aa7e81679ac5bdce69e61",
+      "kind": "caption",
+      "text": "Algorithm 1 is designed so that the LLM makeslocal",
+      "order": 88,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Analysis of Flow Control Mechanisms"
+      ],
+      "char_start": 19879,
+      "char_end": 19929,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08391bd70254630d1cd0a4f87c7430d8",
+      "kind": "paragraph",
+      "text": "decisions(which child skill to invoke), while control-flow book-keeping (how to return, what state is visible, and when to terminate) is handled by the runtime. This division improves predictability during deep traversals and reduces the chance of navigation errors [3]. Automatic Execution Bubbling:When an executable leaf completes its deterministic processing (Algorithm 1, Line 22), the runtime returns control to the parent by restoring the parent frame from the LIFO stack, rather than asking the LLM to infer the correct next hop. This makes the return path deterministic: the model cannot “skip levels,” branch into unrelated capabilities, or lose its place in a nested workflow. In practice, this is a key mechanism for auditability and for preventing spurious transitions in longhorizon executions. Localized Output Bubbling:A defining aspect of this architecture is that the child results are appended only to the parent frame’s localized accumulatorO acc, not to a global scratchpad. As a result, each decision-making node conditions on exactly the outputs it explicitly requested from its immediate children. This enforces a clear datavisibility boundary between branches of the capability tree, limiting cross-branch interference and reducing the blast radius of malformed or adversarial tool outputs.",
+      "order": 89,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Analysis of Flow Control Mechanisms"
+      ],
+      "char_start": 19931,
+      "char_end": 21246,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b0e26203ac76777ad0d11bacadb6832",
+      "kind": "paragraph",
+      "text": "5",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "AUTOMATON",
+        "Analysis of Flow Control Mechanisms"
+      ],
+      "char_start": 21248,
+      "char_end": 21249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cecae5774489542cf1bff47fc32cc4f",
+      "kind": "heading",
+      "text": "Algorithm 1Uniform Single-Step Execution Loop",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Algorithm 1Uniform Single-Step Execution Loop"
+      ],
+      "char_start": 21251,
+      "char_end": 21296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1617576305abc9f028dd4893c6a09a02",
+      "kind": "paragraph",
+      "text": "Require:Initialized StateSwithΓ =∅, p call =r Ensure:A deterministic terminal output and updated global stateS",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Algorithm 1Uniform Single-Step Execution Loop"
+      ],
+      "char_start": 21298,
+      "char_end": 21408,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c528ada7e0b295e5fbc97fc73bdb4b7c",
+      "kind": "heading",
+      "text": "whilep call ̸=Nonedo",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "whilep call ̸=Nonedo"
+      ],
+      "char_start": 21410,
+      "char_end": 21430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb364f35cf8c22cf45ec3e8298ed88e0",
+      "kind": "heading",
+      "text": "Lets←p call",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Lets←p call"
+      ],
+      "char_start": 21432,
+      "char_end": 21443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c58dfeef13ec215ad26dcd12fb934531",
+      "kind": "heading",
+      "text": "Clearp call inS",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Clearp call inS"
+      ],
+      "char_start": 21445,
+      "char_end": 21460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29184e3efea6960defcb97651a9dd7b9",
+      "kind": "heading",
+      "text": "Let contextγ s ←InitializeContext(s)",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Let contextγ s ←InitializeContext(s)"
+      ],
+      "char_start": 21462,
+      "char_end": 21498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eefbd85b79d0e6587562659a3cc70be6",
+      "kind": "heading",
+      "text": "ifγ s.τ=Decision-Makingthen",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "ifγ s.τ=Decision-Makingthen"
+      ],
+      "char_start": 21500,
+      "char_end": 21527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7eaba4eae3e5c96e5d8109b6e2e52db7",
+      "kind": "heading",
+      "text": "Pushγ s ontoS.Γ",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Pushγ s ontoS.Γ"
+      ],
+      "char_start": 21529,
+      "char_end": 21544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb39170372183bf7cbb9e1556df63a68",
+      "kind": "heading",
+      "text": "M child ←LazyDiscoverManifest(s)",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "M child ←LazyDiscoverManifest(s)"
+      ],
+      "char_start": 21546,
+      "char_end": 21578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf230002e2aa8726f4fcb29be78bd72f",
+      "kind": "heading",
+      "text": "prompt←CompilePrompt(M child, γs.Oacc)",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "prompt←CompilePrompt(M child, γs.Oacc)"
+      ],
+      "char_start": 21580,
+      "char_end": 21618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d537df66639e7da52efb9fc6ed17f8a",
+      "kind": "heading",
+      "text": "response←LLM.Generate(prompt)",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "response←LLM.Generate(prompt)"
+      ],
+      "char_start": 21620,
+      "char_end": 21649,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fefc989a5e05984af82688627559582f",
+      "kind": "heading",
+      "text": "ifresponse.type=SKILL_CALLthen",
+      "order": 102,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "ifresponse.type=SKILL_CALLthen"
+      ],
+      "char_start": 21651,
+      "char_end": 21681,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:246bd520cb9242ccd5a6c6be2a1c3869",
+      "kind": "heading",
+      "text": "S.p call ←BuildPath(s, response.target)",
+      "order": 103,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "S.p call ←BuildPath(s, response.target)"
+      ],
+      "char_start": 21683,
+      "char_end": 21722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cb224ab326b5f50384ad48c511526c2",
+      "kind": "heading",
+      "text": "else ifresponse.type=OUTPUTthen",
+      "order": 104,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "else ifresponse.type=OUTPUTthen"
+      ],
+      "char_start": 21724,
+      "char_end": 21755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1efba551ebff08be2c0852f3f4908738",
+      "kind": "heading",
+      "text": "ifresponse.AllTasksComplete=Truethen",
+      "order": 105,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "ifresponse.AllTasksComplete=Truethen"
+      ],
+      "char_start": 21757,
+      "char_end": 21793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18cbaff16b804fb50bd8d6e955024ee6",
+      "kind": "heading",
+      "text": "returnresponse.output",
+      "order": 106,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "returnresponse.output"
+      ],
+      "char_start": 21795,
+      "char_end": 21816,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cccbb63a75afcec8c716e8678ee1e4fb",
+      "kind": "heading",
+      "text": "else",
+      "order": 107,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "else"
+      ],
+      "char_start": 21818,
+      "char_end": 21822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41b9ed1419c067e06916ad24b53d9ac0",
+      "kind": "heading",
+      "text": "γ parent ←Pop(S.Γ)",
+      "order": 108,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "γ parent ←Pop(S.Γ)"
+      ],
+      "char_start": 21824,
+      "char_end": 21842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5801fd5fbd0b18646ead7d61c904931",
+      "kind": "heading",
+      "text": "S.p call ←γ parent",
+      "order": 109,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "S.p call ←γ parent"
+      ],
+      "char_start": 21844,
+      "char_end": 21862,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bb36aba1d5d9bb7b2d7d4c3c02ec6fe",
+      "kind": "heading",
+      "text": "Appendresponse.output toγ parent.Oacc",
+      "order": 110,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Appendresponse.output toγ parent.Oacc"
+      ],
+      "char_start": 21864,
+      "char_end": 21901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9298377491886adb3e29596e38791892",
+      "kind": "heading",
+      "text": "end if",
+      "order": 111,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end if"
+      ],
+      "char_start": 21903,
+      "char_end": 21909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18737a9381f645dabea879b726e1a0a9",
+      "kind": "heading",
+      "text": "end if",
+      "order": 112,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end if"
+      ],
+      "char_start": 21911,
+      "char_end": 21917,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38015aef62eb3bed72778e54db6d98c1",
+      "kind": "heading",
+      "text": "else ifγ s.τ=Executablethen",
+      "order": 113,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "else ifγ s.τ=Executablethen"
+      ],
+      "char_start": 21919,
+      "char_end": 21946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:804ad3be36ff007191c722eb65fc3ef0",
+      "kind": "heading",
+      "text": "result←ExecuteDeterministicLogic(s)",
+      "order": 114,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "result←ExecuteDeterministicLogic(s)"
+      ],
+      "char_start": 21948,
+      "char_end": 21983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4439b0353a821627a98f92abb211762b",
+      "kind": "heading",
+      "text": "γ parent ←Peek(S.Γ)",
+      "order": 115,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "γ parent ←Peek(S.Γ)"
+      ],
+      "char_start": 21985,
+      "char_end": 22004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d37453772b5605bf0fde4626ff9cfbfc",
+      "kind": "heading",
+      "text": "Appendresulttoγ parent.Oacc",
+      "order": 116,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Appendresulttoγ parent.Oacc"
+      ],
+      "char_start": 22006,
+      "char_end": 22033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85d8bdd9ca45440d9b4bcd7f297fa3bc",
+      "kind": "heading",
+      "text": "S.p call ←γ parent",
+      "order": 117,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "S.p call ←γ parent"
+      ],
+      "char_start": 22035,
+      "char_end": 22053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01fd0e4078f209594607cf56aaae8971",
+      "kind": "heading",
+      "text": "Pop(S.Γ)",
+      "order": 118,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Pop(S.Γ)"
+      ],
+      "char_start": 22055,
+      "char_end": 22063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab7c7a63f2238c0b59d6b823dcf18e43",
+      "kind": "heading",
+      "text": "end if",
+      "order": 119,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end if"
+      ],
+      "char_start": 22065,
+      "char_end": 22071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:746da7025c273ad261f635c69498d58b",
+      "kind": "heading",
+      "text": "end while",
+      "order": 120,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end while"
+      ],
+      "char_start": 22073,
+      "char_end": 22082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78be50682add02ab3c2273e182a0c3d2",
+      "kind": "paragraph",
+      "text": "Global Task Completion Routing:The loop supports a completion flag (e.g.,AllTasksComplete) so that once the global objective is resolved, execution can terminate without bubbling a final answer through every ancestor frame. This preserves the stack discipline for partial sub-task completion, while avoiding unnecessary additional LLM turns when a leaf (or intermediate) skill has already produced the final user-facing result. Conversely, if the global objective is not yet met, the runtime assumes only a localized sub-task is finished and correctly pops the stack to return control to the parent frame.",
+      "order": 121,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end while"
+      ],
+      "char_start": 22084,
+      "char_end": 22689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da71cdc723ae8a2abbf9a9004075d0b2",
+      "kind": "heading",
+      "text": "CAPABILITYDISCOVERY ANDMANIFESTDISCI-",
+      "order": 122,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "CAPABILITYDISCOVERY ANDMANIFESTDISCI-"
+      ],
+      "char_start": 22691,
+      "char_end": 22728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:885f597054858d738d6786ddc598b797",
+      "kind": "heading",
+      "text": "PLINE",
+      "order": 123,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE"
+      ],
+      "char_start": 22730,
+      "char_end": 22735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c681537ed900bcf1dea397d43d2d5ce",
+      "kind": "paragraph",
+      "text": "A defining aspect of the architecture is the decoupling of the runtime engine from the specific programmatic capabilities it executes. Standard agents often use monolithic global registries, loading large sets of API schemas into the system prompt at initialization [4]. In contrast, our approach uses progressive disclosure powered by localized JSON manifests and a lazy-loading discipline.",
+      "order": 124,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE"
+      ],
+      "char_start": 22737,
+      "char_end": 23128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2c524bb58b97cd9cd42d600a8980185",
+      "kind": "heading",
+      "text": "Localized Manifest Architecture",
+      "order": 125,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 23130,
+      "char_end": 23161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99ccff0e128cfc86940db857bb1a595b",
+      "kind": "paragraph",
+      "text": "Each decision-making skill directory carries alocalized child manifest, conventionallyskills_info.json, that lists only its immediate, direct children (not the global registry). The file is a JSON object mapping skill keys to entries; lazy discovery parses only the manifest at the active pathρ(each nested orchestrator or leaf level repeats the same pattern). A manifestentryis defined by: M={id,desc, τ,Σ in,Σ out, µ}(5) mapping toname,description, metadata.has_sub_skills(τ: decision-making vs. executable),input_schema,output_schema, and governance fields inmetadata(e.g.,requires_auth, is_terminal).",
+      "order": 126,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 23163,
+      "char_end": 23767,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44cf399761c152174067e905867c53a6",
+      "kind": "caption",
+      "text": "Listing 1 excerpts our UPI Help deployment: the",
+      "order": 127,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 23769,
+      "char_end": 23816,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e97a975fc2e16f5256c3071a5a7ae3df",
+      "kind": "paragraph",
+      "text": "root orchestrator entrymandate(has_sub_skills: true, empty schemas) and a mandate-level executable leafmandate_summary(has_sub_skills:false, populated schemas). The leaf entry is taken from skills/mandate/skills_info.json; both entries illustrate the same manifest schema. { \"mandate\": { \"name\": \"mandate\", \"description\": \"Handles UPI mandate (AutoPay) operations...\", \"input_schema\": {}, \"output_schema\": {}, \"metadata\": { \"has_sub_skills\": true, \" requires_auth\": true } }, \"mandate_summary\": { \"name\": \"mandate_summary\", \"description\": \"Fetches and lists all UPI mandates.\", \"input_schema\": { \"type\": \"object\", \"properties\": { \"mobile_number_hash\": {\"type\": \"string\"} } }, \"output_schema\": { \"type\": \"object\" }, \"metadata\": { \"has_sub_skills\": false, \"mcp_tool \": true } } }",
+      "order": 128,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 23818,
+      "char_end": 24595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9758cafedeafe459206d4a55fdabc66e",
+      "kind": "caption",
+      "text": "Listing 1:Excerpt ofskills_info.json.",
+      "order": 129,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 24597,
+      "char_end": 24634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:023b45b0c7da8dae9f50dfd37b123547",
+      "kind": "paragraph",
+      "text": "By defining capabilities within localized manifests, the architecture aligns with modern capability protocols such as the Model Context Protocol (MCP) [18]. Capabilities are exposed only when contextually relevant, analogous to the use of standardized API specifications such as OpenAPI [26].",
+      "order": 130,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Localized Manifest Architecture"
+      ],
+      "char_start": 24636,
+      "char_end": 24928,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a379fe93c8f6fa2d3e0773df91865ca1",
+      "kind": "heading",
+      "text": "Lazy Discovery Logic",
+      "order": 131,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Lazy Discovery Logic"
+      ],
+      "char_start": 24930,
+      "char_end": 24950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3feb0e3f06cd422428f88e4d0aa119d2",
+      "kind": "paragraph",
+      "text": "The discovery module is triggered only when the execution loop enters a new decision-making node. The discovery protocol executes a strict localized parse, as outlined in",
+      "order": 132,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Lazy Discovery Logic"
+      ],
+      "char_start": 24952,
+      "char_end": 25122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6fb50756ac7e5d2a00e3b51ec8bae01",
+      "kind": "caption",
+      "text": "Algorithm 2.",
+      "order": 133,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Lazy Discovery Logic"
+      ],
+      "char_start": 25124,
+      "char_end": 25136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbe2fb13e0ce4f49792f5a08cdf46248",
+      "kind": "paragraph",
+      "text": "This lazy-loading approach is consistent with classical database methodologies in which query evaluation can benefit from workload-driven, on-demand discovery of data dependencies [19]. By ensuring that the memory footprint and the LLM context prompt scale with the explored execution branch, the system mitigates the context-saturation problem.",
+      "order": 134,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Lazy Discovery Logic"
+      ],
+      "char_start": 25138,
+      "char_end": 25483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a0082442ad563dce78444df054a2081",
+      "kind": "paragraph",
+      "text": "6 Algorithm 2Lazy Capability Discovery Require:Current skill nodevwith pathρand functional typeτ",
+      "order": 135,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PLINE",
+        "Lazy Discovery Logic"
+      ],
+      "char_start": 25485,
+      "char_end": 25581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce21c5f0e28d170c963fe8d1880163ad",
+      "kind": "heading",
+      "text": "ifv.τ=Executablethen",
+      "order": 136,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "ifv.τ=Executablethen"
+      ],
+      "char_start": 25583,
+      "char_end": 25603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcbe38aea609823d1f72103ae757a03b",
+      "kind": "heading",
+      "text": "return∅▷Executable nodes have no children",
+      "order": 137,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "return∅▷Executable nodes have no children"
+      ],
+      "char_start": 25605,
+      "char_end": 25646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8f851cb693003b31edd455ff321d086",
+      "kind": "heading",
+      "text": "else ifv.τ=Decision-Makingthen",
+      "order": 138,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "else ifv.τ=Decision-Makingthen"
+      ],
+      "char_start": 25648,
+      "char_end": 25678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f402bf68dd323babc6c87429cae4fb2",
+      "kind": "heading",
+      "text": "M raw ←ParseJSON(ρ+’/skills_info.json’)",
+      "order": 139,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "M raw ←ParseJSON(ρ+’/skills_info.json’)"
+      ],
+      "char_start": 25680,
+      "char_end": 25719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cd120ecdd76c617070e6959f56e0d6c",
+      "kind": "heading",
+      "text": "Children← ∅",
+      "order": 140,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Children← ∅"
+      ],
+      "char_start": 25721,
+      "char_end": 25732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5bc3a88cf0d5485f58bc7e79e4da0e9",
+      "kind": "heading",
+      "text": "foreachc∈M raw do",
+      "order": 141,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "foreachc∈M raw do"
+      ],
+      "char_start": 25734,
+      "char_end": 25751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73945bf9390ce34bb61af197eda6d13b",
+      "kind": "heading",
+      "text": "▷Construct standardized manifest for child per",
+      "order": 142,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "▷Construct standardized manifest for child per"
+      ],
+      "char_start": 25753,
+      "char_end": 25799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:753da9fa3e9c911c9ca0c42aefc8c64c",
+      "kind": "paragraph",
+      "text": "equation 5",
+      "order": 143,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "▷Construct standardized manifest for child per"
+      ],
+      "char_start": 25801,
+      "char_end": 25811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0789a61235a2b90d9a0b4a82a3656dfc",
+      "kind": "heading",
+      "text": "m child ← {id:c.id,desc:c.desc, τ:c.τ,Σ in",
+      "order": 144,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "m child ← {id:c.id,desc:c.desc, τ:c.τ,Σ in"
+      ],
+      "char_start": 25813,
+      "char_end": 25855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b6d51b5bb4fdab296b691972d85a305",
+      "kind": "heading",
+      "text": "Σin,Σ out :c.Σ out, µ:c.µ}",
+      "order": 145,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "m child ← {id:c.id,desc:c.desc, τ:c.τ,Σ in",
+        "Σin,Σ out :c.Σ out, µ:c.µ}"
+      ],
+      "char_start": 25857,
+      "char_end": 25883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f330bc68da7a8e32d05384892a797e00",
+      "kind": "heading",
+      "text": "Appendm child toChildren",
+      "order": 146,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Appendm child toChildren"
+      ],
+      "char_start": 25885,
+      "char_end": 25909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7eaee37b0f2fd298f90baa10aa8c78df",
+      "kind": "heading",
+      "text": "end for",
+      "order": 147,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end for"
+      ],
+      "char_start": 25911,
+      "char_end": 25918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a8c6c8e8704d16eb4b212714bf55df4",
+      "kind": "heading",
+      "text": "returnChildren",
+      "order": 148,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "returnChildren"
+      ],
+      "char_start": 25920,
+      "char_end": 25934,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3cb0b2284f95373d1edbcde042444ff",
+      "kind": "heading",
+      "text": "end if",
+      "order": 149,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "end if"
+      ],
+      "char_start": 25936,
+      "char_end": 25942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f335bd962febf9869ff5b9c9c51573b",
+      "kind": "heading",
+      "text": "ARCHITECTURALPROPERTIES ANDSECURITY",
+      "order": 150,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "ARCHITECTURALPROPERTIES ANDSECURITY"
+      ],
+      "char_start": 25944,
+      "char_end": 25979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:799b8a753a93489b3c9c44b97d642e53",
+      "kind": "heading",
+      "text": "GUARANTEES",
+      "order": 151,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES"
+      ],
+      "char_start": 25981,
+      "char_end": 25991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77ff71a744b8336bd184d0fb93bafcc4",
+      "kind": "paragraph",
+      "text": "The stack-based architecture provides structural properties that are useful beyond basic multi-agent orchestration. By combining explicit memory boundaries with declarative metadata, the framework supports secure and extensible enterprise deployments.",
+      "order": 152,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES"
+      ],
+      "char_start": 25993,
+      "char_end": 26244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:384ead4f09e9490fad0863ea615125c3",
+      "kind": "heading",
+      "text": "Routing-Agnostic Extensibility",
+      "order": 153,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Routing-Agnostic Extensibility"
+      ],
+      "char_start": 26246,
+      "char_end": 26276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f445d09b978491433e5f2b894c3f06d3",
+      "kind": "paragraph",
+      "text": "A primary implication of this architecture is the decoupling of routing logic from the functional capability set. Scaling vertically (adding deeper sub-orchestrators) or horizontally (adding sibling executable tools) can be achieved by adding localized directories and appending declarative JSON entries to the parent’s manifest, without modifying the core orchestration loop. This separation of concerns supports decentralized capability development while reducing regressions in the central routing logic.",
+      "order": 154,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Routing-Agnostic Extensibility"
+      ],
+      "char_start": 26278,
+      "char_end": 26785,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abe58a0500d32a5a43e70d18cc4f2252",
+      "kind": "heading",
+      "text": "Capability Fencing and Attack Surface Reduction",
+      "order": 155,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 26787,
+      "char_end": 26834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9617d3d68a103e4353c01c7e39d3ef53",
+      "kind": "paragraph",
+      "text": "This mechanism limits theavailable actionsat each step by restricting which capabilities are visible to the decisionmaking model. As established in Section 6, the lazy discovery protocol restricts the context window to the immediate children of the active orchestrator. Beyond computational efficiency, this structural isolation supports the principle of least privilege [18] and reduces the attack surface for unintended tool invocation. LetVrepresent the global set of all system capabilities,",
+      "order": 156,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 26836,
+      "char_end": 27331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea140b2cda3817520ee062660ba48983",
+      "kind": "table",
+      "text": "where|V|=N, and letΩ t denote the aggregate schema rep-",
+      "order": 157,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 27333,
+      "char_end": 27388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:283fbdb7899d3d24439d4ea3a1de819e",
+      "kind": "paragraph",
+      "text": "resentation injected into the LLM context at inference stept. Because the active node only loads its immediate children,",
+      "order": 158,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 27390,
+      "char_end": 27510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7444b1c603318f92d10cdd57a6978ddf",
+      "kind": "table",
+      "text": "we have|Ω t|hierarchical ≪ |Ωt|flat in typical deployments. This",
+      "order": 159,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 27512,
+      "char_end": 27576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01994c0c40fd3b646867dc6df7884812",
+      "kind": "paragraph",
+      "text": "bounds the decision space to the node’s local out-degree and limits the ability of a compromised or hallucinating node to invoke unrelated capabilities outside its current scope.",
+      "order": 160,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Capability Fencing and Attack Surface Reduction"
+      ],
+      "char_start": 27578,
+      "char_end": 27756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10ad1c61f036cca25395be527cd35a0f",
+      "kind": "heading",
+      "text": "Execution Isolation and Prompt Injection Mitigation",
+      "order": 161,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Execution Isolation and Prompt Injection Mitigation"
+      ],
+      "char_start": 27758,
+      "char_end": 27809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6296a2293217ffd5b82cb8dc754ec588",
+      "kind": "paragraph",
+      "text": "This mechanism limitsinformation flowacross steps by scoping intermediate outputs to stack frames and controlling how results bubble upward. The hierarchical isolation of nodes replicates the security architecture established in systems like MemGPT [10], which draw heavily from operating-system process isolation. When an executable leaf node runs a script to fetch external data (e.g., retrieving an untrusted user email), the raw payload is processed entirely within that terminal node’s isolated execution frame. Because the state graph’s transition logic relies on schema contracts and type validation to bubble outputs into the parent’s localized accumulator (Oacc), untrusted strings can be constrained to leaf-level handling. Thus the orchestrator receives only the validated intent injected into its isolated memory frame. This compartmentalization reduces the likelihood of indirect prompt injection persisting across the global reasoning state [10].",
+      "order": 162,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "GUARANTEES",
+        "Execution Isolation and Prompt Injection Mitigation"
+      ],
+      "char_start": 27811,
+      "char_end": 28771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a91df628fc62abf18a7be401163e8e3",
+      "kind": "heading",
+      "text": "PRODUCTIONDEPLOYMENTCONTEXT: UPI",
+      "order": 163,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "PRODUCTIONDEPLOYMENTCONTEXT: UPI"
+      ],
+      "char_start": 28773,
+      "char_end": 28805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9deb611159ce835063f595900a00f8d2",
+      "kind": "heading",
+      "text": "HELP",
+      "order": 164,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP"
+      ],
+      "char_start": 28807,
+      "char_end": 28811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ccccc6ca1346017e6e5911f7bd2f219",
+      "kind": "paragraph",
+      "text": "Although the architecture is formalized generically, it is motivated by deployment requirements from UPI Help, an AI-powered support product for UPI-related transaction assistance, complaint resolution, and mandate management [11]. This section uses UPI Help as a production context to illustrate why hierarchical orchestration, lazy discovery, and localized execution state are useful in regulated paymentsupport environments.",
+      "order": 165,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP"
+      ],
+      "char_start": 28813,
+      "char_end": 29240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:611f447be0580bce1caa4c391666afe4",
+      "kind": "heading",
+      "text": "Agentic Architecture in UPI Help",
+      "order": 166,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Agentic Architecture in UPI Help"
+      ],
+      "char_start": 29242,
+      "char_end": 29274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4da868a3d53e3cce3af1d448439b4db",
+      "kind": "paragraph",
+      "text": "UPI Help can be viewed as a domain-specific agentic system in which user requests are first routed to broad paymentsupport domains and then delegated to narrower operational capabilities. For example, high-level user intents may involve transaction status checks, dispute or complaint workflows, or recurring-payment mandate operations. A monolithic agent would expose all of these capabilities at once, while the hierarchical architecture separates them into localized decision-making skills and deterministic executable skills. This allows the root orchestrator to select the relevant domain, after which only that domain’s immediate sub-skills are exposed for subsequent routing.",
+      "order": 167,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Agentic Architecture in UPI Help"
+      ],
+      "char_start": 29276,
+      "char_end": 29958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5a194102c5b41a7b8d91f73ccdc9a4b",
+      "kind": "heading",
+      "text": "Observed Benefits over Monolithic Routing",
+      "order": 168,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Observed Benefits over Monolithic Routing"
+      ],
+      "char_start": 29960,
+      "char_end": 30001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7621de0761f4fc247408a8bf4af3d02",
+      "kind": "paragraph",
+      "text": "Controlled benchmarks in the UPI Help deployment context (Section 9) indicate that hierarchical orchestration can improve routing stability by reducing irrelevant tool exposure and preserving local task context. On mandate and payment query families where the skill tree is fully populated, the hierarchical implementation achieves 100% route-level success with lower per-query LLM latency than a flat terminal baseline. At large synthetic catalog sizes (N≥256 tools with 800-character schemas), flat routing becomes context-infeasible while hierarchical routing remains viable by bounding visible schema tokens per call. Qualitatively, transaction-status queries benefit from domain-first routing: the root selects the payment domain before exposing transaction-specific executables, rather than presenting mandate and complaint tools simultaneously. Mandate flows similarly narrow the decision space to mandate-specific skills, preserving intermediate outputs within localized frames. Multi-step resolutions (e.g., fetch",
+      "order": 169,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Observed Benefits over Monolithic Routing"
+      ],
+      "char_start": 30003,
+      "char_end": 31025,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c4a6130cfa46cf223472d2923070ba8",
+      "kind": "paragraph",
+      "text": "7 metadata, check status, escalate complaint) rely on stackbased return semantics so child results bubble to the parent orchestrator without reconstructing execution paths from flat dialogue history.",
+      "order": 170,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Observed Benefits over Monolithic Routing"
+      ],
+      "char_start": 31027,
+      "char_end": 31226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a063ea73bb19698b14d5cc3ab40a63f0",
+      "kind": "heading",
+      "text": "Governance and Security Controls",
+      "order": 171,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Governance and Security Controls"
+      ],
+      "char_start": 31228,
+      "char_end": 31260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0f68bd17ec52a19d957aaa1c929b043",
+      "kind": "paragraph",
+      "text": "The production setting also motivates governance controls that are difficult to enforce cleanly in flat registries. Capability fencing limits which tools are visible at each step, reducing unintended cross-domain invocation. Localized execution frames limit how intermediate outputs and untrusted tool results propagate through the system. Sensitive flows, such as mandate modification or complaint escalation, can be guarded through schema validation, confirmation requirements, audit logging, and manifest-level governance metadata. These controls align the architecture with the operational requirements of high-trust payment-support systems while keeping the formal model independent of product-specific implementation details.",
+      "order": 172,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "HELP",
+        "Governance and Security Controls"
+      ],
+      "char_start": 31262,
+      "char_end": 31993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0835229c8cda06fbb1f1cfc86ce869c7",
+      "kind": "heading",
+      "text": "EXPERIMENTALEVALUATION",
+      "order": 173,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION"
+      ],
+      "char_start": 31995,
+      "char_end": 32017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cac5bde99f1a449a461012f879e9b408",
+      "kind": "paragraph",
+      "text": "We evaluate the hierarchical architecture against a flatregistry baseline using controlled benchmarks that isolate routing architecture while holding the LLM, decision protocol, and scoring methodology constant.",
+      "order": 174,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION"
+      ],
+      "char_start": 32019,
+      "char_end": 32230,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6099437b7a1d28f3d882979885acf464",
+      "kind": "heading",
+      "text": "Evaluation Goals and Scope",
+      "order": 175,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Evaluation Goals and Scope"
+      ],
+      "char_start": 32232,
+      "char_end": 32258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ef897101d9e5d855466ed0e8998fbf5",
+      "kind": "paragraph",
+      "text": "The evaluation addresses three questions: (1) does hierarchical lazy discovery bound per-step prompt and schema exposure asNgrows? (2) under multi-step workflow pressure with noisy chat history, does hierarchy maintain comparable task success with smaller prompts? (3) in productionadjacent UPI flows, how do coverage and latency compare where skill trees are complete versus incomplete? We donotclaim universal accuracy superiority for hierarchy, full end-to-end production parity between implementations, or multi-model generalization. Synthetic benchmarks stress catalog scale; real-flow tests measure route-level correctness, not complete business-task completion.",
+      "order": 176,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Evaluation Goals and Scope"
+      ],
+      "char_start": 32260,
+      "char_end": 32928,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:638ad9b03d03ed8410a89a2b914a0227",
+      "kind": "heading",
+      "text": "Experimental Setup",
+      "order": 177,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Experimental Setup"
+      ],
+      "char_start": 32930,
+      "char_end": 32948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa1fd753e89c3fad6b07fa17f1f0cc92",
+      "kind": "paragraph",
+      "text": "Architectures.The flat baseline (A flat) presents allNtool schemas at every routing step. The hierarchical baseline (Ahierarchical) routes through a fixed skill tree with branching factork=4and depth 2–4, exposing only immediate children at each decision node via localized manifests. Protocol.Both architectures use the same LLM instance, temperature 0, and plain JSON output validated against a shared Pydantic schema (not provider function-calling), isolating architectural effects from parsing-mode differences. Scenario modes.We test:exact(tool name given verbatim; establishes routing ceiling),semantic(overlapping descriptions),clean_semantic(mutually exclusive domains), agentic(action + tool + argument extraction), andworkflow(ordered two-step tasks with four blocks of irrelevant chat history). Synthetic sweeps useN∈ {16,32,64,128} for routing-accuracy modes (400-char schemas) andN∈ {16,64,128,256,512}for the generated scale-up harness (800-char schemas). Metrics.At the task level we report task success rate and LLM calls per task. At the decision level we report parse, validation, wrong-action, wrong-choice, and wrongargument rates. For efficiency we report input tokens per task andvisible tool schema tokens per LLM call, the tokens attributable to tool metadata (name, description, JSON schema) included in a single model request at step t, i.e., the size of the routing menu visible inΩ t, not the global registry sizeN.",
+      "order": 178,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Experimental Setup"
+      ],
+      "char_start": 32950,
+      "char_end": 34393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6618b3b547a7feb5027b40ef8a243b62",
+      "kind": "heading",
+      "text": "Prompt Scalability and Context Feasibility",
+      "order": 179,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Prompt Scalability and Context Feasibility"
+      ],
+      "char_start": 34395,
+      "char_end": 34437,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ec1ee90f7b20a934a813566a9ac89f8",
+      "kind": "caption",
+      "text": "Table 1 reports the generated scale-up harness (800-char",
+      "order": 180,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Prompt Scalability and Context Feasibility"
+      ],
+      "char_start": 34439,
+      "char_end": 34495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d03669046593d36fd5a84d33b949defa",
+      "kind": "paragraph",
+      "text": "schemas per tool,k=4, tree depth 4 for hierarchy). Flat routing presents allNschemas in one call; hierarchy uses four sequential routing calls at depth 4. Flat input and visible-schema tokens grow approximately linearly with N; hierarchical per-step schema exposure remains bounded (138–1,111 tokens per call in this configuration). AtN=256andN=512, flat routing incurs 100% parse/validate failure (context limit exceeded), while hierarchy remains feasible with under 3k input tokens per task. At N=128, flat uses∼28kinput tokens versus∼1.7kfor hierarchy (∼16×reduction) while both achieve 100% routing success in this controlled task. A complementaryagentic stress atN=256with 800-char schemas (Table 4) shows flat prompts reaching∼278kcharacters with 0% success, versus hierarchical∼8.9kcharacters per decision with 70% task success, thus confirming feasibility under realistic schema pressure beyond the generated scale-up harness alone.",
+      "order": 181,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Prompt Scalability and Context Feasibility"
+      ],
+      "char_start": 34497,
+      "char_end": 35437,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdab602b5ea5ab5c6699141a90550358",
+      "kind": "heading",
+      "text": "Workflow Pressure and Routing Errors",
+      "order": 182,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Workflow Pressure and Routing Errors"
+      ],
+      "char_start": 35439,
+      "char_end": 35475,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf5a8e2d5ccc8e99f439898b895d7b54",
+      "kind": "caption",
+      "text": "Table 2 reports fullworkflow-mode sweeps with noisy chat",
+      "order": 183,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Workflow Pressure and Routing Errors"
+      ],
+      "char_start": 35477,
+      "char_end": 35533,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:272127188bff2c60eb98a20fe4caea79",
+      "kind": "paragraph",
+      "text": "history (30 trials perN, 800-char schemas, four historyrepeat blocks, two ordered tool calls per scenario). AtN≥32within context limits, both architectures converge to∼0.73task success, but hierarchical prompts remain an order of magnitude smaller (e.g., 5.3k vs. 140k characters atN=128, a∼26×reduction). Hierarchical runs exhibit near-zero wrong-action and wrong-choice rates; residual failures are primarily wrong arguments (∼0.027). Workflow stress runs use more sequential LLM calls for hierarchy (∼10calls/task vs.∼2for flat atN=128) but keep total input tokens per task lower (10.9k vs. 56.4k in the efficiency harness).",
+      "order": 184,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Workflow Pressure and Routing Errors"
+      ],
+      "char_start": 35535,
+      "char_end": 36162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c3ad4a6150750269d3721c636bc28e5",
+      "kind": "heading",
+      "text": "Agentic Routing and High-Schema Pressure",
+      "order": 185,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Agentic Routing and High-Schema Pressure"
+      ],
+      "char_start": 36164,
+      "char_end": 36204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:004f86538936d605a829420f4fcbb570",
+      "kind": "caption",
+      "text": "Table 3 summarizesagenticmode (action + tool + argument",
+      "order": 186,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Agentic Routing and High-Schema Pressure"
+      ],
+      "char_start": 36206,
+      "char_end": 36261,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eff606e59b52ea694cb6459ac92a2821",
+      "kind": "paragraph",
+      "text": "extraction, corrected schema, 400-char payloads, 10 trials perN). Both architectures achieve∼0.7–0.8task success at N≤128, but flat wrong-action and wrong-argument rates are roughly4×higher than hierarchy (0.2 vs. 0.048 per decision).",
+      "order": 187,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Agentic Routing and High-Schema Pressure"
+      ],
+      "char_start": 36263,
+      "char_end": 36497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49d22d3d273d732fa027a31b38237bec",
+      "kind": "heading",
+      "text": "Semantic and Clean-Semantic Routing",
+      "order": 188,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 36499,
+      "char_end": 36534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b2fd491f767e2591edbe996f8c05600",
+      "kind": "paragraph",
+      "text": "We evaluate routing under semantic pressure using two diagnostic modes (k=4, 30 trials perN, 400-char schemas). Semanticmode uses overlapping tool descriptions so multiple tools might sound alike or use the same keywords",
+      "order": 189,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 36536,
+      "char_end": 36756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:165391d338b9432ae1828360796f6cba",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 190,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 36758,
+      "char_end": 36759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2020b4a53c42d1d986dd4fa93789368",
+      "kind": "caption",
+      "text": "TABLE 1:Scale-up routing under increasing catalog sizeN(generated catalogs, 800-char schemas, hierarchical depth 4).",
+      "order": 191,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 36761,
+      "char_end": 36877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:599844d74aab3064dca39743dc0471c3",
+      "kind": "paragraph",
+      "text": "Arch.NSuccess Calls Input tok. Schema tok./call LLM ms Flat (all tools visible per call) flat 16 1.0 1.0 3,650 2,223 702 flat 64 1.0 1.0 14,162 8,895 1,511 flat 128 1.0 1.0 28,178 17,791 2,584 flat 256 0.0 1.0 49,787 35,583 –(context limit) flat 512 0.0 1.0 99,451 71,167 –(context limit) Hierarchical (lazy children only) hierarchical 16 1.0 4.0 1,332 138 2,067 hierarchical 64 1.0 4.0 1,528 138 2,051 hierarchical 128 1.0 4.0 1,733 277 2,087 hierarchical 256 1.0 4.0 2,147 555 2,159 hierarchical 512 1.0 4.0 2,875 1,111 2,116",
+      "order": 192,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 36879,
+      "char_end": 37406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e2a50986d384036b41390a27c962505",
+      "kind": "caption",
+      "text": "TABLE 2:Workflow routing with noisy chat history (t=30trials, all testedN).",
+      "order": 193,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 37408,
+      "char_end": 37483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43352dd2381995703820a66752d787c2",
+      "kind": "paragraph",
+      "text": "Arch.NSuccess Prompt chars Wrong act. Wrong choice Wrong args Schema tok./call flat 16 0.74 18,515 0.12 0.12 0.12 2,238 flat 32 0.73 35,923 0.13 0.13 0.13 4,550 flat 64 0.73 70,727 0.13 0.13 0.13 9,176 flat 128 0.73 140,335 0.13 0.13 0.13 18,428 hierarchical 16 0.73 1,809 0 0 0.03 76 hierarchical 32 0.73 2,308 0 0 0.03 127 hierarchical 64 0.73 3,306 0 0 0.03 229 hierarchical 128 0.73 5,302 0 0 0.03 433",
+      "order": 194,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 37485,
+      "char_end": 37890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb700674862d15e216446da931e04a00",
+      "kind": "caption",
+      "text": "TABLE 3:Agentic routing across tool countN(400-char schemas).",
+      "order": 195,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 37892,
+      "char_end": 37953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49367cbc300c06797bb2149a0efcb9fb",
+      "kind": "paragraph",
+      "text": "Arch.NSuccess Prompt chars Wrong act. Wrong args flat 16 0.90 10,133 0.0 0.10 flat 32 0.70 21,135 0.2 0.30 flat 64 0.70 43,139 0.2 0.30 flat 128 0.50 87,147 0.3 0.40 hier. 16 1.00 1,117 0.0 0.0 hier. 32 0.70 1,476 0.05 0.05 hier. 64 0.70 2,193 0.05 0.05 hier. 128 0.70 3,628 0.05 0.05",
+      "order": 196,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 37955,
+      "char_end": 38239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79e89490e6395a2a4056bfd2755c7bb8",
+      "kind": "caption",
+      "text": "TABLE 4:Agentic routing atN=256with 800-char schemas (context-",
+      "order": 197,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 38241,
+      "char_end": 38303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe448a67f186d210897754d8ea62b4fa",
+      "kind": "paragraph",
+      "text": "limit stress).",
+      "order": 198,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "EXPERIMENTALEVALUATION",
+        "Semantic and Clean-Semantic Routing"
+      ],
+      "char_start": 38305,
+      "char_end": 38319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef1acb3bef4853378665a60a6f6e660b",
+      "kind": "heading",
+      "text": "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+      "order": 199,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs"
+      ],
+      "char_start": 38321,
+      "char_end": 38371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7dddaa4c7e142ebff882e7f9c279269",
+      "kind": "paragraph",
+      "text": "flat 0.0 277,659 1.0 0.0 0.0 hier. 0.7 8,867 0.0 0.05 0.05 (Ex. ’payment,’ ’fraud,’ ’FAQ,’ and ’mandate’)and the user request doesn’t explicitly name which tool it needs. Whileclean_semanticmode uses mutually exclusive domains (cards, loans, investments, insurance) and prompts list the names of the options apart from their descriptions to make the choices less ambiguous. These tests isolatehierarchy design quality, not general architecture superiority: flat sees full tool-level evidence in one prompt while hierarchy makes lossy top-level choices first. Semantic (overlapping domains).Table 5 shows flat routing at 100% success forN=16–128as prompts grow to 88.2k characters, which is expected when the full catalog fits in context and requests are clean synthetic retrieval tasks. Hierarchy scores 0.83/0.83/0.67/0.73 acrossN, with wrongchoice rates of 0.06–0.14 and zero parse or validate failures. All hierarchical failures occur at thefirst routing depth: the dominant pattern ismandateexpected butpayment selected (e.g., “autopay subscriptions”), which removes the correct branch before leaf tools are visible. This supports a design warning about overlapping domain boundaries, not a claim that hierarchy is inherently inferior. Clean semantic.Table 6 shows flat routing still at 100% success; hierarchy reaches 1.0/0.97/0.87/0.77 atN=16– 128withzero wrong-choice errors. Remaining failures are validate-format errors (0–0.08): the model returns descriptions appended to option names rather than selecting the wrong branch. Prompts remain∼17×smaller than flat",
+      "order": 200,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs"
+      ],
+      "char_start": 38373,
+      "char_end": 39943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7c6fe8bc1ff353684c38100595c15e0",
+      "kind": "paragraph",
+      "text": "atN=128(5.1k vs. 86.3k characters), indicating that tree design and prompt discipline matter more than architecture alone.",
+      "order": 201,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs"
+      ],
+      "char_start": 39945,
+      "char_end": 40067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1628af002a9a30340228dc01d9689350",
+      "kind": "caption",
+      "text": "Table 7 summarizes hierarchical success across modes.",
+      "order": 202,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs"
+      ],
+      "char_start": 40069,
+      "char_end": 40122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3fe7c9345161fa1e3c87123ac6bade8f",
+      "kind": "paragraph",
+      "text": "Clean domain design closes most of the overlap deficit (e.g., N=128: 0.73→0.77) by eliminating wrong-branch errors; the residual gap is largely prompt-format hygiene. Production router tests (Table 8) echo the overlappingdomain pattern: orchestrator success is 0.925 overall, with autopay-subscription phrasing at 70% (3/10 misroutes to payment/QA) while clear-intent families reach 100%.",
+      "order": 203,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs"
+      ],
+      "char_start": 40124,
+      "char_end": 40512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59b586b0b34003258bb2f655cc679415",
+      "kind": "heading",
+      "text": "Production-Adjacent UPI Flows",
+      "order": 204,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 40514,
+      "char_end": 40543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd5e19bdb8044e9da84d42b0df79b9a7",
+      "kind": "paragraph",
+      "text": "We additionally benchmarked production-adjacent implementations on a 45-query UPI Help suite (mandate, payment, fraud, FAQ, boundary phrasing), 5 trials per query, measuringroute-levelsuccess. Table 9 reports theobserved results. Theobservedhierarchical skill-tree implementation seems strong and fast with lower LLM latency than flat, with overall success of0.93, comparable to flat (0.87) while retaining faster LLM-time routing on covered paths; boundary phrasing (0.40 hierarchical vs. 0.60 flat) remains the main unresolved weakness for both systems. The flat terminal baseline still shows higher wall-clock latency overall due to database and tool runtime overhead, and instability on some",
+      "order": 205,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 40545,
+      "char_end": 41240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dec972ef65ec2f5b312c3b65db382e8",
+      "kind": "paragraph",
+      "text": "9",
+      "order": 206,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 41242,
+      "char_end": 41243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec6be523bfd36daaaebd81ab6c7ed078",
+      "kind": "caption",
+      "text": "TABLE 5:Semantic overlapping-intent routing (k=4, 400-char schemas, 30 trials perN).",
+      "order": 207,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 41245,
+      "char_end": 41329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6727047e47c66f327955162c8caf698a",
+      "kind": "paragraph",
+      "text": "Arch.NSuccess Prompt chars Options Parse fail Valid. fail Wrong choice flat 16 1.0 9,507 16.0 0.0 0.0 0.0 flat 32 1.0 20,770 32.0 0.0 0.0 0.0 flat 64 1.0 43,259 64.0 0.0 0.0 0.0 flat 128 1.0 88,243 128.0 0.0 0.0 0.0 hierarchical 16 0.83 1,236 3.1 0.0 0.0 0.06 hierarchical 32 0.83 1,814 3.4 0.0 0.0 0.06 hierarchical 64 0.67 3,049 4.7 0.0 0.0 0.14 hierarchical 128 0.73 6,084 7.3 0.0 0.0 0.11",
+      "order": 208,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 41331,
+      "char_end": 41723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:156d17068d13eb3044bda03fa5937578",
+      "kind": "caption",
+      "text": "TABLE 6:Clean semantic routing (k=4, 400-char schemas, 30 trials perN).",
+      "order": 209,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 41725,
+      "char_end": 41796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28eee9626c9182a59284bd1ba3debfa3",
+      "kind": "paragraph",
+      "text": "Arch.NSuccess Prompt chars Options Parse fail Valid. fail Wrong choice flat 16 1.0 9,304 16.0 0.0 0.0 0.0 flat 32 1.0 20,320 32.0 0.0 0.0 0.0 flat 64 1.0 42,326 64.0 0.0 0.0 0.0 flat 128 1.0 86,339 128.0 0.0 0.0 0.0 hierarchical 16 1.0 1,073 2.7 0.0 0.0 0.0 hierarchical 32 0.97 1,705 3.3 0.0 0.01 0.0 hierarchical 64 0.87 2,899 4.4 0.0 0.05 0.0 hierarchical 128 0.77 5,147 6.4 0.0 0.08 0.0",
+      "order": 210,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 41798,
+      "char_end": 42188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe464c1ab0c7af87589ca3432d2d0c35",
+      "kind": "caption",
+      "text": "TABLE 7:Hierarchical task success: semantic vs. clean_semantic (∆=",
+      "order": 211,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 42190,
+      "char_end": 42256,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc87588872f084d19414f2c4411066c6",
+      "kind": "paragraph",
+      "text": "clean−semantic). Nsemantic clean_semantic∆Flat (both)",
+      "order": 212,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Arc. Suc. PromptChars ParseFail WrongAct WrongArgs",
+        "Production-Adjacent UPI Flows"
+      ],
+      "char_start": 42258,
+      "char_end": 42311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c42eac0cce1863c869cef2be9f8f4123",
+      "kind": "heading",
+      "text": "0.83 1.00 +0.17 1.0",
+      "order": 213,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.83 1.00 +0.17 1.0"
+      ],
+      "char_start": 42313,
+      "char_end": 42332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac04bf2bc33727776a66edbac627acbe",
+      "kind": "heading",
+      "text": "0.83 0.97 +0.14 1.0",
+      "order": 214,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.83 0.97 +0.14 1.0"
+      ],
+      "char_start": 42334,
+      "char_end": 42353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc3c09c358d77ab0ad6dbf1da908ecab",
+      "kind": "heading",
+      "text": "0.67 0.87 +0.20 1.0",
+      "order": 215,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.67 0.87 +0.20 1.0"
+      ],
+      "char_start": 42355,
+      "char_end": 42374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86dbe4d106b6c3fe282e795425e50520",
+      "kind": "heading",
+      "text": "0.73 0.77 +0.03 1.0",
+      "order": 216,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.73 0.77 +0.03 1.0"
+      ],
+      "char_start": 42376,
+      "char_end": 42395,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fde8405aac6331b41a3fc3345ce37b5c",
+      "kind": "caption",
+      "text": "TABLE 8:Production router-only benchmark (real prompts, 10 trials",
+      "order": 217,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.73 0.77 +0.03 1.0"
+      ],
+      "char_start": 42397,
+      "char_end": 42462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ab40491aa90bdcedb8f8d5afa632951",
+      "kind": "paragraph",
+      "text": "per router). Router Success Parse/validate fail orchestrator 0.925 0.0 payment 0.950 0.05 mandate 1.000 0.0 fraud 0.967 0.0 mandate detail queries (autopay subscription phrasing). This comparison is not apples-to-apples end-to-end: it reflects current deployment coverage as much as architecture. The UPI Help motivation (Section 8) should be read together with these coverage gaps.",
+      "order": 218,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.73 0.77 +0.03 1.0"
+      ],
+      "char_start": 42464,
+      "char_end": 42846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eecc8fc1e6192135a847aa7bd910d238",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 219,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.73 0.77 +0.03 1.0",
+        "Discussion"
+      ],
+      "char_start": 42848,
+      "char_end": 42858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:272111d4017cd1f098af1889779d33aa",
+      "kind": "paragraph",
+      "text": "Choose hierarchical routing when tool catalogs may grow, schemas are rich, multi-step workflows matter, and domain categories can be kept mutually exclusive. Choose flat routing whenNis bounded, tool descriptions are distinct, and operational simplicity outweighs scale headroom. Flat routing can be very accurate on clean synthetic retrieval while the full catalog fits in context (Section 9), but becomes risky asN, schema size, and history grow. Hierarchy buys context feasibility and bounded decision space; accuracy requires deliberate tree design, non-overlapping top-level domains, and strict option-name output discipline.",
+      "order": 220,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "0.73 0.77 +0.03 1.0",
+        "Discussion"
+      ],
+      "char_start": 42860,
+      "char_end": 43490,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84482b165ec01c2a4f6b9ff8f1acb8e8",
+      "kind": "heading",
+      "text": "COMPLEXITY ANDPERFORMANCEANALYSIS",
+      "order": 221,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS"
+      ],
+      "char_start": 43492,
+      "char_end": 43525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd8868c72a9326df54c1d71978785bfc",
+      "kind": "paragraph",
+      "text": "Empirical evaluation (Section 9) confirms that per-step visible schema exposure is bounded under hierarchy and that flat routing becomes context-infeasible at largeNunder rich schemas. The following analysis formalizes these observations in terms of prompt size, inference cost, stack memory, and discovery overhead.",
+      "order": 222,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS"
+      ],
+      "char_start": 43527,
+      "char_end": 43843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d2ba86b308f8f5769fbb67d0f97ae34",
+      "kind": "heading",
+      "text": "Prompt Complexity and Token Efficiency",
+      "order": 223,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Prompt Complexity and Token Efficiency"
+      ],
+      "char_start": 43845,
+      "char_end": 43883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4932d4f9d849cb7412d70195da700ce",
+      "kind": "table",
+      "text": "LetN=|V|be the total number of tools, and letS avg be",
+      "order": 224,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Prompt Complexity and Token Efficiency"
+      ],
+      "char_start": 43885,
+      "char_end": 43938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:347f7f6ee3ce1279b9146f36fedc10da",
+      "kind": "paragraph",
+      "text": "the average token length of a tool schema. In a standard flat-agent architecture containingNexecutable tools, the inference engine must embed the metadata and schemas for allNtools into the system prompt during every execution cycle. The prompt complexity per decision step is O(N·S avg ). AsNgrows, this term can dominate the context window and cause context saturation. In the hierarchical architecture, assume a balancedk-ary skill tree, wherekis the maximum local branching factor. The depth of the tree is approximatelylog k N. At any given decision step, the lazy discovery protocol exposes at mostkchild schemas. Thus, the prompt complexity per reasoning cycle is bounded byO(k·S avg ), which is entirely independent of the global registry sizeN. The total schematoken cost to reach a leaf node is bounded by: Ctotal = logk NX d=1 k·S avg =O(k·S avg ·log k N)(6) IfS avg is treated as a bounded constant, this simplifies toO(klog k N). This logarithmic path cost allows large capability sets to be handled without exposing the model to the full registry at each decision step, thereby preventing attention bottlenecks and avoiding token exhaustion.",
+      "order": 225,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Prompt Complexity and Token Efficiency"
+      ],
+      "char_start": 43940,
+      "char_end": 45095,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7445e9c9a62fb92b661b2a2a50f883b4",
+      "kind": "heading",
+      "text": "Inference Latency and Time Complexity",
+      "order": 226,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Inference Latency and Time Complexity"
+      ],
+      "char_start": 45097,
+      "char_end": 45134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f21468fe7a8d73925e0f5e20117cfcc3",
+      "kind": "paragraph",
+      "text": "The computational cost of transformer-based LLMs scales approximately quadratically with input sequence length because of self-attention. In a flat architecture, the schema portion of the prompt has lengthO(N·S avg ), giving a schema-related attention cost of approximatelyO((N·",
+      "order": 227,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Inference Latency and Time Complexity"
+      ],
+      "char_start": 45136,
+      "char_end": 45414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7c761ff702526550fd279a868352c30",
+      "kind": "paragraph",
+      "text": "10",
+      "order": 228,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Inference Latency and Time Complexity"
+      ],
+      "char_start": 45416,
+      "char_end": 45418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be25e02e5a83e3f5bbfa0944dbb9b9d2",
+      "kind": "caption",
+      "text": "TABLE 9:Real-flow route-level success by query category (45-query suite, 5 trials each).",
+      "order": 229,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Inference Latency and Time Complexity"
+      ],
+      "char_start": 45420,
+      "char_end": 45508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53e5e41d88f18657fa534ca65efdbb50",
+      "kind": "paragraph",
+      "text": "Category System Success Calls/q Tokens/q LLM ms/q Wall ms/q mandate_summary hierarchical 1.00 3.10 5,690 1,477 1,486 mandate_summary flat terminal 0.70 2.50 4,606 2,511 2,946 mandate_action hierarchical 1.00 3.40 6,452 1,821 1,832 mandate_action flat terminal 1.00 3.00 5,602 2,967 3,100 payment hierarchical 1.00 5.40 9,711 2,627 2,641 payment flat terminal 0.90 1.60 3,236 2,248 3,446 fraud hierarchical 0.97 2.20 2870 2,130 2,150 fraud flat terminal 1.00 2.00 2,870 2,130 2,158 qa hierarchical 1.00 2.50 4,000 1,500 1,520 qa flat terminal 1.00 2.60 8,175 5,972 9,093 boundary hierarchical 0.40 4.00 6,840 1,997 2,008 boundary flat terminal 0.60 1.80 3,088 2,238 2,648 Savg )2)per reasoning step. In the hierarchical architecture, the corresponding per-step schema cost is approximately O((k·S avg )2). However, the hierarchy introduces a latency trade-off. Smaller prompts reduce per-step inference cost, but the total number of sequential LLM calls scales proportionally with tree depth. Therefore, optimizing the tree layout (placing high-frequency executables closer to the root while keeping the local branching factorkmanageable) is an important design consideration [32], [33].",
+      "order": 230,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Inference Latency and Time Complexity"
+      ],
+      "char_start": 45510,
+      "char_end": 46696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27ab34c8fb7bc7d5b8604de0f4d24411",
+      "kind": "heading",
+      "text": "Space Complexity and Stack Memory Bounds",
+      "order": 231,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Space Complexity and Stack Memory Bounds"
+      ],
+      "char_start": 46698,
+      "char_end": 46738,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0eed0e10d9748a1bbf8b9f233029238d",
+      "kind": "paragraph",
+      "text": "Traditional ReAct agents [21] maintain a flat, rolling dialogue history. As the agent explores deep multi-tool workflows, the memory array grows monotonically, yielding a space complexity ofO(A)whereAis the total number of actions taken. Our architecture uses a LIFO stackΓcoupled with localized output accumulatorsO acc residing within each frame. Let Dbe the maximum depth of the capability tree, and letB bound the retained output footprint per frame (for example, the number or summarized size of child outputs). At any point during execution, the active stack contains at most Dframes, yielding an active memory bound ofO(D·B). When an orchestrator concludes its localized task and returns its aggregated output, its frame and intermediate scratchpad data can be discarded, preventing unbounded context growth. Under lazy manifest loading,active orchestration memory (loaded schemas, manifests, stack frames, and intermediate outputs along the current path) scales with local branching and depth rather than global registry sizeN, whereas a flat agent that eagerly materializes the full tool registry incursO(N)active metadata when all schemas are held in memory. The stack-frame overhead is negligible relative to large tool schemas at enterprise scale.",
+      "order": 232,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Space Complexity and Stack Memory Bounds"
+      ],
+      "char_start": 46740,
+      "char_end": 47999,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85fa33c741b1d4b3ed6cbba6fc522133",
+      "kind": "heading",
+      "text": "Discovery Overhead",
+      "order": 233,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Discovery Overhead"
+      ],
+      "char_start": 48001,
+      "char_end": 48019,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2176cf8161ee4a340bc48597994a1dad",
+      "kind": "paragraph",
+      "text": "Lazy discovery introduces a localized parsing step (Algorithm 2) to load the child manifest atρwhen entering a new decision node. This adds a disk I/O overhead bounded byO(1)per traversal step, which is typically small compared to the reduction in LLM inference cost from omitting irrelevant tools. Furthermore, simple memory-caching of the discovered metadata amortizes this disk access cost to near zero on subsequent traversals.",
+      "order": 234,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "COMPLEXITY ANDPERFORMANCEANALYSIS",
+        "Discovery Overhead"
+      ],
+      "char_start": 48021,
+      "char_end": 48452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a974bc41abf215e4390d147d90017b6e",
+      "kind": "heading",
+      "text": "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+      "order": 235,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS"
+      ],
+      "char_start": 48454,
+      "char_end": 48486,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd4a1cfc5370f69a93e443b8ca241430",
+      "kind": "paragraph",
+      "text": "Despite the structural predictability and security enhancements introduced by the framework, the reliance on language models and localized memory arrays presents specific theoretical constraints that warrant critical analysis.",
+      "order": 236,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS"
+      ],
+      "char_start": 48488,
+      "char_end": 48714,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf4ef3c7f5357dbfcabc5ae5e07c30ce",
+      "kind": "heading",
+      "text": "Localized Token Accumulation Limits",
+      "order": 237,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Localized Token Accumulation Limits"
+      ],
+      "char_start": 48716,
+      "char_end": 48751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:effaf8d128ea06b305a45ae377c0e341",
+      "kind": "paragraph",
+      "text": "While capability fencing aggressively reduces the size of the immediate tool schema provided to the LLM, the accumulation of execution history presents an inherent token scaling constraint. By replacing global output accumulation with localized, per-frame accumulators (O acc), the architecture successfully bounds the rolling context window vertically; a parent node only processes the outputs of its immediate children, preventing deep-tree traversals from saturating the orchestrator’s token limits. However, the system assumes that the compiled sequence of localized child responses will remain within the context window of the immediate parent. For exceptionally wide fan-out workflows, where a single decision-making node delegates to dozens of executable sub-skills, token exhaustion remains a vulnerability. Future iterations addressing massive fan-outs may require the integration of modular episodic summarization techniques [23].",
+      "order": 238,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Localized Token Accumulation Limits"
+      ],
+      "char_start": 48753,
+      "char_end": 49693,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a47ab39e23474f4e0dac61563029742a",
+      "kind": "heading",
+      "text": "Probabilistic Flow Control and State Thrashing",
+      "order": 239,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Probabilistic Flow Control and State Thrashing"
+      ],
+      "char_start": 49695,
+      "char_end": 49741,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33650c5d4ccafdbec778577fcc630e91",
+      "kind": "paragraph",
+      "text": "A critical constraint of the current implementation is reliance on the LLM to signal whether a delegated task is complete. Because this completion flag is produced by a probabilistic model, it introduces a semantic failure mode into an otherwise deterministic control loop. While the stack-pending invariant ensures that premature or incorrect returns simply hand control back to the parent (enabling retries), repeated misclassification of completion can cause local oscillationwithin a branch (“thrashing”), potentially leading to long or non-terminating loops. A stronger solution is to add explicit validators or constraint checkers [24] that verify completion conditions programmatically before allowing a stack transition.",
+      "order": 240,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Probabilistic Flow Control and State Thrashing"
+      ],
+      "char_start": 49743,
+      "char_end": 50471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbf980b63ed3bdc0387f98619a607c6f",
+      "kind": "heading",
+      "text": "Benchmark and Evaluation Limitations",
+      "order": 241,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Benchmark and Evaluation Limitations"
+      ],
+      "char_start": 50473,
+      "char_end": 50509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:720cdae18345e0cc18c7854e54edbfb9",
+      "kind": "paragraph",
+      "text": "The experimental evaluation (Section 9) uses a single LLM and inference-server configuration; results may not transfer across models. Synthetic catalogs stress scale (N, schema size) more than production messiness (overlapping policies,",
+      "order": 242,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Benchmark and Evaluation Limitations"
+      ],
+      "char_start": 50511,
+      "char_end": 50747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04e4153c0e1de655924eca9e6baa5056",
+      "kind": "paragraph",
+      "text": "11 boundary phrasing, stateful corrections). Route-level success does not imply end-to-end business-task completion. Real-flow comparisons between implementations reflect different domain coverage (e.g., missing fraud/QA routes in the hierarchical tree) and are not a controlled architectural isolate. Hierarchy accuracy is sensitive to overlapping toplevel domains and prompt-format discipline, not inherently to depth or lazy loading, thus poorly designed trees can underperform flat routing despite smaller prompts.",
+      "order": 243,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "SYSTEMCONSTRAINTS ANDLIMITATIONS",
+        "Benchmark and Evaluation Limitations"
+      ],
+      "char_start": 50749,
+      "char_end": 51267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:269c40c4a20156f9fab0bd4d58dfaa16",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 244,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "CONCLUSION"
+      ],
+      "char_start": 51269,
+      "char_end": 51279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7176a6c74ba510a47c72f1cff9d2cdaf",
+      "kind": "paragraph",
+      "text": "This paper presented the formalization and implementation of a hierarchical, skill-based architecture for orchestrating arbitrary-depth multi-agent workflows. By replacing monolithic tool registries with a localized, manifest-driven capability tree, the framework reduces decision-space explosion and supports lazy capability loading. A uniform, stackbased execution loop aligns the framework with a contextfree control model (Pushdown Automata), enabling deterministic workflow resumption and explicit state tracking. Separating execution logic from capability declarations allows the system to scale via declarative manifest updates without altering the orchestration engine. Capability fencing and localized execution boundaries also reduce the risk of indirect prompt injection, supporting governance requirements in high-trust enterprise environments. Controlled benchmarks show that hierarchical routing bounds visible schema tokens per LLM call and remains context-feasible at N=512with rich schemas, where flat routing fails; under workflow pressure, hierarchy can match flat task success while reducing prompt size by an order of magnitude. Semantic tests further show that hierarchy is sensitive to overlapping domain design but does not collapse at moderateN when trials are sufficient; clean hierarchies eliminate wrongbranch errors, leaving mostly fixable format-validation failures. The UPI Help deployment context illustrates how these requirements arise in real payment-support systems. Overall, the architecture provides a practical blueprint for",
+      "order": 245,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "CONCLUSION"
+      ],
+      "char_start": 51281,
+      "char_end": 52844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7252e3af0e6d990c3adee41f4054336",
+      "kind": "paragraph",
+      "text": "moving LLM-based agents from prototypes to auditable and scalable production systems.",
+      "order": 246,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "CONCLUSION"
+      ],
+      "char_start": 52846,
+      "char_end": 52931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a6fd3ded3bf4a3f39e89ce587976ceb",
+      "kind": "heading",
+      "text": "CONTRIBUTORS",
+      "order": 247,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "CONTRIBUTORS"
+      ],
+      "char_start": 52933,
+      "char_end": 52945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6a5deb1ed049c509e1474bc84fed702",
+      "kind": "heading",
+      "text": "Leadership:Prashant Devadiga",
+      "order": 248,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Leadership:Prashant Devadiga"
+      ],
+      "char_start": 52947,
+      "char_end": 52975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b24b39ff3f129d6d5fe1cf1c93e274c",
+      "kind": "paragraph",
+      "text": "Agentic Architecture:Abhishek, Alok Singh, Asit Desai,",
+      "order": 249,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Leadership:Prashant Devadiga"
+      ],
+      "char_start": 52977,
+      "char_end": 53031,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f832e3292de2a27f1803e72fef9c2ea",
+      "kind": "heading",
+      "text": "Gaurang Dahad, Harshit Bhushan, Prakhar Gupta",
+      "order": 250,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Gaurang Dahad, Harshit Bhushan, Prakhar Gupta"
+      ],
+      "char_start": 53033,
+      "char_end": 53078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:730663704b3120b6fdd4b7f40348a2c0",
+      "kind": "heading",
+      "text": "Engineering:Adithya Mishra, Amisha Sinha, Mandati",
+      "order": 251,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Engineering:Adithya Mishra, Amisha Sinha, Mandati"
+      ],
+      "char_start": 53080,
+      "char_end": 53129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4733ffc1b18e42a90b97ea8234baa8d9",
+      "kind": "heading",
+      "text": "Pramod Reddy, Rupesh Patil, Siddhi Behere",
+      "order": 252,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Pramod Reddy, Rupesh Patil, Siddhi Behere"
+      ],
+      "char_start": 53131,
+      "char_end": 53172,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d98dd26520ea0cd4f4157fd84834353",
+      "kind": "heading",
+      "text": "Evaluation:Abhishek, Gaurang Dahad, Harshit Bhushan",
+      "order": 253,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Evaluation:Abhishek, Gaurang Dahad, Harshit Bhushan"
+      ],
+      "char_start": 53174,
+      "char_end": 53225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bbae91dcbddc7314546c75197354c62",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 254,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "REFERENCES"
+      ],
+      "char_start": 53227,
+      "char_end": 53237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79753d1b15ced1a4f510b0e42256ea06",
+      "kind": "reference",
+      "text": "[1] A. Vaswaniet al., “Attention Is All You Need,” inProc. Advances in Neural Information Processing Systems (NeurIPS), vol. 30, 2017. [2] T. Schicket al., “Toolformer: Language Models Can Teach Themselves to Use Tools,”arXiv preprint arXiv:2302.04761, 2023. [3] X. Liuet al., “AgentBench: Evaluating LLMs as Agents,” inProc. International Conference on Learning Representations (ICLR), 2024. [4] Y. Qinet al., “ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs,” inProc. International Conference on Learning Representations (ICLR), 2024. [5] Y. Du, F. Wei, and H. Zhang, “AnyTool: Self-Reflective, Hierarchical Agents for Large-Scale API Calls,” inProc. International Conference on Machine Learning (ICML), 2024. [6] Q. Xuet al., “On the Tool Manipulation Capability of Open-source Large Language Models,”arXiv preprint arXiv:2305.16504, 2023. [7] Q. Wuet al., “AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation Framework,”arXiv preprint arXiv:2308.08155, 2023. [8] S. Honget al., “MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework,” inProc. International Conference on Learning Representations (ICLR), 2024. [9] C. Qianet al., “Communicative Agents for Software Development,” inProc. Annual Meeting of the Association for Computational Linguistics (ACL), 2024. [10] C. Packeret al., “MemGPT: Towards LLMs as Operating Systems,” arXiv preprint arXiv:2310.08560, 2023. [11] National Payments Corporation of India, “UPI Help,” 2025. [Online]. Available: https://upihelp.npci.org.in. [Accessed: May 12,",
+      "order": 255,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "REFERENCES"
+      ],
+      "char_start": 53239,
+      "char_end": 54807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57be2fe8445109feee382cdeaaff44e8",
+      "kind": "paragraph",
+      "text": "2026]. [12] M. Sipser,Introduction to the Theory of Computation, 3rd ed. Cengage Learning, 2012. [13] Y. Lianget al., “TaskMatrix.AI: Completing Tasks by Connecting Foundation Models with Millions of APIs,”arXiv preprint arXiv:2303.16434, 2023. [14] G. Wanget al., “Voyager: An Open-Ended Embodied Agent with Large Language Models,”arXiv preprint arXiv:2305.16291, 2023. [15] S. Kimet al., “An LLM Compiler for Parallel Function Calling,” in Proc. International Conference on Machine Learning (ICML), 2024. [16] Y. Shen, K. Song, X. Tan, D. Li, W. Lu, and Y. Zhuang, “Hugging- GPT: Solving AI Tasks with ChatGPT and Its Friends in Hugging Face,” inProc. Advances in Neural Information Processing Systems (NeurIPS), vol. 36, 2023. [17] W. Chenet al., “AgentVerse: Facilitating Multi-Agent Collaboration and Exploring Emergent Behaviors,” inProc. International Conference on Learning Representations (ICLR), 2024. [18] Anthropic, “Model Context Protocol Specification,” 2025. [Online]. Available: https://modelcontextprotocol.io. [Accessed: Mar. 13, 2026]. [19] G. Graefe, “Query Evaluation Techniques for Large Databases,” ACM Computing Surveys (CSUR), vol. 25, no. 2, pp. 73–170, 1993. [20] N. Chomsky, “Three Models for the Description of Language,”IRE Transactions on Information Theory, vol. 2, no. 3, pp. 113–124, 1956. [21] S. Yaoet al., “ReAct: Synergizing Reasoning and Acting in Language Models,” inProc. International Conference on Learning Representations (ICLR), 2023. [22] J. Weiet al., “Chain-of-Thought Prompting Elicits Reasoning in",
+      "order": 256,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "REFERENCES"
+      ],
+      "char_start": 54809,
+      "char_end": 56356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:036dfebf61e0d2817a0fd7b225a1c21d",
+      "kind": "paragraph",
+      "text": "Large Language Models,” inProc. Advances in Neural Information Processing Systems (NeurIPS), vol. 35, 2022. [23] J. S. Parket al., “Generative Agents: Interactive Simulacra of Human Behavior,” inProc. 36th Annual ACM Symposium on User Interface Software and Technology (UIST), 2023. [24] Z. Liet al., “Formal-LLM: Integrating Formal Language and Natural Language for Controllable LLM-based Agents,”arXiv preprint arXiv:2402.00798, 2024. [25] S. Yaoet al., “Tree of Thoughts: Deliberate Problem Solving with Large Language Models,” inProc. Advances in Neural Information Processing Systems (NeurIPS), 2023. [26] OpenAPI Initiative, “OpenAPI Specification v3.1.0,” 2021. [Online]. Available: https://spec.openapis.org/oas/v3.1.0. [Accessed: Mar. 13, 2026]. [27] F. Pezoaet al., “Foundations of JSON Schema,” inProc. 25th International Conference on World Wide Web (WWW), 2016. [28] J. H. Saltzer and M. D. Schroeder, “The Protection of Information in Computer Systems,”Proceedings of the IEEE, vol. 63, no. 9, pp. 1278–1308, 1975. [29] F. Perez and I. Ribeiro, “Ignore Previous Prompt: Attack Techniques for Language Models,”arXiv preprint arXiv:2211.09527, 2022. [30] Y. Liuet al., “Prompt Injection Attack Against LLM-Integrated Applications,”arXiv preprint arXiv:2306.05499, 2023. [31] OpenAI, “GPT-4 Technical Report,”arXiv preprint arXiv:2303.08774, 2023. [32] J. Zhanget al., “AFlow: Automating Agentic Workflow Generation,”arXiv preprint arXiv:2410.10762, 2024. [33] H. Zhouet al., “AnaFlow: Agentic LLM-based Workflow for",
+      "order": 257,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "REFERENCES"
+      ],
+      "char_start": 56358,
+      "char_end": 57885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86a414602f4162070a9506ce97becc25",
+      "kind": "heading",
+      "text": "Reasoning-Driven Explainable Analog Circuit Sizing,”arXiv",
+      "order": 258,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Reasoning-Driven Explainable Analog Circuit Sizing,”arXiv"
+      ],
+      "char_start": 57887,
+      "char_end": 57944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d1cdf312a57dfecb1e38c47af89fb9e",
+      "kind": "paragraph",
+      "text": "preprint arXiv:2502.02533, 2025.",
+      "order": 259,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "A Formal Hierarchical Architecture for Agentic",
+        "Reasoning-Driven Explainable Analog Circuit Sizing,”arXiv"
+      ],
+      "char_start": 57946,
+      "char_end": 57978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 11,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 11
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.11138",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 11,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

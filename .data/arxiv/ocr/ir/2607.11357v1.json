@@ -1,0 +1,3946 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "0761bd6a02fc0b5a7b5352c37d89b743cef019c0c924b21b5b75499745da3cc4",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:1fe8a0eaee994350d0fc5fdd696fb04d",
+      "kind": "paragraph",
+      "text": "OpsMem: Dual-Memory Reasoning with",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 34,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a23637dff9db4257b27f58e80f4757f0",
+      "kind": "heading",
+      "text": "Cross-Memory Resonance for Failure Diagnosis",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis"
+      ],
+      "char_start": 36,
+      "char_end": 80,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72e3eefdd7f8e6aafd6317402c6247ad",
+      "kind": "paragraph",
+      "text": "Yongqian Sun†, Rongchen Gao †, Yu Luo †, Wenwei Gu †, Shenglin Zhang †∗ Qingyi Guo §, Qiuai Fu ‡, Yaoliang Wu‡, Dan Pei § †Nankai University §Tsinghua University ‡Huawei Technologies Co., Ltd. Abstract—Failure diagnosis in modern software systems requires iterative evidence acquisition and hypothesis reasoning guided by operational experience. Existing LLM-based methods improve diagnosis through agentic reasoning or knowledge augmentation, but they often lack a mechanism to coordinate the evolving diagnostic state with operational experience during iterative diagnosis. We proposeOpsMem, a dual-memory framework that maintains a short-term memory for the current diagnostic state and a long-term memory for reusable operational experience.OpsMemuses cross-memory resonance to activate staterelevant long-term memory, conditions multi-agent diagnosis on the short-term and activated long-term memories, and consolidates reusable experience from solved incidents back into longterm memory. Experiments on a real-world Huawei microservice failure diagnosis dataset show thatOpsMemoutperforms representative agentic-reasoning and knowledge-augmented baselines, improving Match and Relevant by up to 46.88% and 18.39% over the strongest baseline, respectively. Index Terms—failure diagnosis, large language models, multiagent systems, agent memory",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis"
+      ],
+      "char_start": 82,
+      "char_end": 1430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e5496c8c2085ae9a21e67b1b1a24d28",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 1432,
+      "char_end": 1444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e97c4352d505abdd06e7db757cb163d",
+      "kind": "paragraph",
+      "text": "Failure diagnosis is critical for maintaining the reliability of modern software systems, as engineers must quickly identify root causes and restore affected services when failures occur [1]. Traditionally, this task has relied heavily on manual inspection and expert experience, which is costly, time-consuming, and difficult to scale in today’s large-scale distributed environments [2]. To automate this process, prior studies have explored data-driven methods based on machine learning and deep learning [3], [4]. Although these methods have shown promise in specific scenarios, they often depend on stable data distributions, predefined failure patterns, and sufficient labeled data [5]. As a result, they suffer from limited generalizability and interpretability, making them difficult to apply reliably in real-world operations [6]. Recent advances in large language models (LLMs) have demonstrated remarkable capabilities in language understanding, knowledge utilization, and complex reasoning [7], [8]. With these capabilities, LLMs can process diverse operational information and perform diagnostic reasoning, providing new opportunities for improving failure diagnosis [9]–[12]. In realworld operations, engineers diagnose failures through iterative evidence collection, observation analysis, and hypothesis refinement guided by operational experience [13]. ∗Shenglin Zhang is the corresponding author. To support such iterative diagnosis, ReAct [14] enables LLMs to interleave reasoning and actions, forming a feedback",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 1446,
+      "char_end": 2975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f65fb85c1de30c5e46ae27ef999c82c",
+      "kind": "paragraph",
+      "text": "loop between evidence acquisition and hypothesis refinement. However, in traditional ReAct-style diagnosis, the evolving diagnostic trajectory is often accumulated as a linear sequence of thoughts, actions, and observations in the context window. As the trajectory grows longer, such linear context becomes less reliable, making long-horizon diagnosis unstable [15], [16]. GoS [13] highlights typical long-horizon failures, including evidence fabrication, context drift, and failed backtracking, and mitigates them by organizing evidence and hypotheses into a structured belief state. Nevertheless, reliable diagnosis still requires operational experience for guidance. Although LLMs acquire broad parametric knowledge during training, such knowledge is often insufficient for real-world failure diagnosis, which relies heavily on system-specific operational experience [17]. Existing methods usually incorporate such experience through retrieval, where a diagnosis query is used to retrieve relevant knowledge as auxiliary context. Typical implementations include VectorRAG [18], which retrieves semantically similar document chunks, and graph-based RAG [19]–[21], which exploits structured relations for retrieval. Regardless of the retrieval form, deciding what knowledge to expose to the context is critical: missing relevant knowledge provides limited guidance, while irrelevant knowledge causes context pollution [22]. Moreover, as observations and hypotheses evolve during diagnosis, statically retrieved knowledge can",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 2977,
+      "char_end": 4502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7a4073180e5950be844195bcae14a5",
+      "kind": "paragraph",
+      "text": "be weakly aligned with the current diagnostic state. As illustrated in Fig. 1, agentic-reasoning and knowledgeaugmented methods address two complementary aspects of failure diagnosis. Agentic-reasoning methods emphasize diagnostic state, while knowledge-augmented methods emphasize operational experience. However, effective diagnosis requires the two to be tightly coupled: the current diagnostic state should activate relevant experience to guide reasoning. For example, when current state contains evidence of sleeping database connections, it should activate experience about idleslot occupation rather than generic overload. This motivates a dual-memory perspective. Building such a framework faces challenges.(1) Memory Representation.Modeling incidentspecific states and cross-incident experience with different granularities.(2) Memory Coordination.Bridging dynamic diagnostic states with relevant experience during reasoning.(3) Memory Consolidation.Incorporating new experience while avoiding unreliable memory accumulation. 1",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 4504,
+      "char_end": 5540,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0934d5f371e1fc8026f41e3929fbc7e2",
+      "kind": "table",
+      "text": "arXiv:2607.11357v1  [cs.AI]  13 Jul 2026",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 5542,
+      "char_end": 5582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1240e25abb15549929868dc1a736c23",
+      "kind": "paragraph",
+      "text": "OpsMem (Our Approach) STM",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "INTRODUCTION"
+      ],
+      "char_start": 5584,
+      "char_end": 5609,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d61d694004bc325d8ae527b9e07625e2",
+      "kind": "heading",
+      "text": "Cross-Memory",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Cross-Memory"
+      ],
+      "char_start": 5611,
+      "char_end": 5623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:771cafbadbf42b7cc10a71b6f18143af",
+      "kind": "heading",
+      "text": "Resonance",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Resonance"
+      ],
+      "char_start": 5625,
+      "char_end": 5634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:383b0be8d639ec2e1d404e94466a9bea",
+      "kind": "heading",
+      "text": "Guided Diagnosis Loop",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Guided Diagnosis Loop"
+      ],
+      "char_start": 5636,
+      "char_end": 5657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ca0ccb4d8f3b9b851e562b216b14f5f",
+      "kind": "heading",
+      "text": "Plan",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Plan"
+      ],
+      "char_start": 5659,
+      "char_end": 5663,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5147f288a8f8b46078c7f9d6320631b9",
+      "kind": "heading",
+      "text": "Analyze",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Analyze"
+      ],
+      "char_start": 5665,
+      "char_end": 5672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5c6dcc6c58e81f5a083bc6bb8847ce4",
+      "kind": "heading",
+      "text": "AcquireUpdate",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "AcquireUpdate"
+      ],
+      "char_start": 5674,
+      "char_end": 5687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:906d32e7f5428f3303b3b79487c74970",
+      "kind": "paragraph",
+      "text": "LTM",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "AcquireUpdate"
+      ],
+      "char_start": 5689,
+      "char_end": 5692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdf1d99e32fdb6b4e30b03c177d9be03",
+      "kind": "heading",
+      "text": "Runbooks",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Runbooks"
+      ],
+      "char_start": 5694,
+      "char_end": 5702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5ab7bd823f58c88cfc70f6b8694b84f",
+      "kind": "heading",
+      "text": "Manuals",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Manuals"
+      ],
+      "char_start": 5704,
+      "char_end": 5711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d89c0e54f5b8eea153391147f43b1c7a",
+      "kind": "heading",
+      "text": "Notes",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Notes"
+      ],
+      "char_start": 5713,
+      "char_end": 5718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddb38f91ccdb3ef22a554dfc7df87602",
+      "kind": "heading",
+      "text": "Cases",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Cases"
+      ],
+      "char_start": 5720,
+      "char_end": 5725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d591122c05ad974f978902f6ebc3a459",
+      "kind": "heading",
+      "text": "Diagnosis",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Diagnosis"
+      ],
+      "char_start": 5727,
+      "char_end": 5736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d754cf88dcbce6f3b4b6bd3627f0e21",
+      "kind": "heading",
+      "text": "Query",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Query"
+      ],
+      "char_start": 5738,
+      "char_end": 5743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71237b46414988f6efcb126d2861b054",
+      "kind": "heading",
+      "text": "Retrieve",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Retrieve"
+      ],
+      "char_start": 5745,
+      "char_end": 5753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8a24c906ac88c7b1767a8026c08895f",
+      "kind": "heading",
+      "text": "Retrieved Chunks",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Retrieved Chunks"
+      ],
+      "char_start": 5755,
+      "char_end": 5771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d34fbb909e2d29bd46100175d33b128",
+      "kind": "heading",
+      "text": "Chunk A",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk A"
+      ],
+      "char_start": 5773,
+      "char_end": 5780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75e3b134951f395704c85251ee043ecc",
+      "kind": "paragraph",
+      "text": "(relevant) ✓",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk A"
+      ],
+      "char_start": 5782,
+      "char_end": 5794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:738f92ee9dd67fa49fef4fc66581803c",
+      "kind": "heading",
+      "text": "Chunk B",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk B"
+      ],
+      "char_start": 5796,
+      "char_end": 5803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29c6b0e7557a93443f2d6c283d5df11e",
+      "kind": "paragraph",
+      "text": "(partial)",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk B"
+      ],
+      "char_start": 5805,
+      "char_end": 5814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dbb1d8ffd5d04fa47e44d25b6d260a9",
+      "kind": "heading",
+      "text": "Chunk C",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk C"
+      ],
+      "char_start": 5816,
+      "char_end": 5823,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:036d10d439c1d4fdac896ece3d2f842f",
+      "kind": "paragraph",
+      "text": "(irrelevant) ✗",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk C"
+      ],
+      "char_start": 5825,
+      "char_end": 5839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a70976720f356b39430ff86c16a09a5",
+      "kind": "heading",
+      "text": "Chunk D",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk D"
+      ],
+      "char_start": 5841,
+      "char_end": 5848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7aa36fd20ab4ac208047c7d3622b64b7",
+      "kind": "paragraph",
+      "text": "(irrelevant) ✗ . . .",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Chunk D"
+      ],
+      "char_start": 5850,
+      "char_end": 5870,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9a6fed3df138a58cd89ef43dcc363a5",
+      "kind": "heading",
+      "text": "Context",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Context"
+      ],
+      "char_start": 5872,
+      "char_end": 5879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:471645a48b668fc8539eae2e045315b1",
+      "kind": "heading",
+      "text": "Pollution",
+      "order": 33,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pollution"
+      ],
+      "char_start": 5881,
+      "char_end": 5890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87234a2c3c9e0f9458c0a165442327ec",
+      "kind": "heading",
+      "text": "Missing",
+      "order": 34,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Missing"
+      ],
+      "char_start": 5892,
+      "char_end": 5899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e77a0fc9f91bdfb01225a4d610cb3e08",
+      "kind": "heading",
+      "text": "Knowledge",
+      "order": 35,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge"
+      ],
+      "char_start": 5901,
+      "char_end": 5910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:635d3e0325e15eced56e157f1b781f95",
+      "kind": "heading",
+      "text": "Weak",
+      "order": 36,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Weak"
+      ],
+      "char_start": 5912,
+      "char_end": 5916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:702946811e7c0b6dad22be029096be5b",
+      "kind": "heading",
+      "text": "Alignment",
+      "order": 37,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Alignment"
+      ],
+      "char_start": 5918,
+      "char_end": 5927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7756383c3425d4fa8cc67b42d8ee01e3",
+      "kind": "heading",
+      "text": "Failed",
+      "order": 38,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Failed"
+      ],
+      "char_start": 5929,
+      "char_end": 5935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:230d20ce3c1d78f779224f38f01e21e8",
+      "kind": "heading",
+      "text": "Backtracking",
+      "order": 39,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Backtracking"
+      ],
+      "char_start": 5937,
+      "char_end": 5949,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:734ab811bbb299c98af196aaaf68b450",
+      "kind": "heading",
+      "text": "Context",
+      "order": 40,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Context"
+      ],
+      "char_start": 5951,
+      "char_end": 5958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8c76900e94d0f1ea023960cf3436bf1",
+      "kind": "heading",
+      "text": "Drift",
+      "order": 41,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Drift"
+      ],
+      "char_start": 5960,
+      "char_end": 5965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e74d569f8c85bc91f4f1b13e20f66d5",
+      "kind": "heading",
+      "text": "Evidence",
+      "order": 42,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Evidence"
+      ],
+      "char_start": 5967,
+      "char_end": 5975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:091f64105301f4ceedd05e7161869f21",
+      "kind": "heading",
+      "text": "Fabrication",
+      "order": 43,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Fabrication"
+      ],
+      "char_start": 5977,
+      "char_end": 5988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:892e87a8f07d8de7b403b8ca877364f1",
+      "kind": "heading",
+      "text": "Alarm",
+      "order": 44,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Alarm"
+      ],
+      "char_start": 5990,
+      "char_end": 5995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8dd4f48b777c1312f29efae754768d85",
+      "kind": "heading",
+      "text": "Prediction",
+      "order": 45,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Prediction"
+      ],
+      "char_start": 5997,
+      "char_end": 6007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a943cc3fc038cd813aed607ab88a6373",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 46,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agent"
+      ],
+      "char_start": 6009,
+      "char_end": 6014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3608dd035ed8bb2df8687b3cd26be194",
+      "kind": "heading",
+      "text": "Telemetry",
+      "order": 47,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Telemetry"
+      ],
+      "char_start": 6016,
+      "char_end": 6025,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8bafb65fcf273dccc817932cbb9c788",
+      "kind": "heading",
+      "text": "Diagnostic Trajectory",
+      "order": 48,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Diagnostic Trajectory"
+      ],
+      "char_start": 6027,
+      "char_end": 6048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45141629447d7d3df3c4efce99967ee7",
+      "kind": "heading",
+      "text": "Long-Horizon Diagnostic Instability",
+      "order": 49,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Horizon Diagnostic Instability"
+      ],
+      "char_start": 6050,
+      "char_end": 6085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b47f596528616e855198ba6307534c8a",
+      "kind": "paragraph",
+      "text": "Alarm Think Action Obs Think Action . . .",
+      "order": 50,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Horizon Diagnostic Instability"
+      ],
+      "char_start": 6087,
+      "char_end": 6128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a5df4d1b5f7d0727d5b1b96d7b24b68",
+      "kind": "heading",
+      "text": "Agentic-Reasoning Methods",
+      "order": 51,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 6130,
+      "char_end": 6155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4afdeefabb7353be628b1e845f0f2b5",
+      "kind": "heading",
+      "text": "Knowledge-Augmented Methods",
+      "order": 52,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 6157,
+      "char_end": 6184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cb017e49aa250c65c3b2524d827dbbb",
+      "kind": "caption",
+      "text": "Fig. 1. Motivation of OpsMem from a state–experience coupling perspective. Existing agentic-reasoning methods maintain diagnostic trajectories but suffer",
+      "order": 53,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 6186,
+      "char_end": 6339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fcc26875f35a8c8291c968a23f81fab",
+      "kind": "paragraph",
+      "text": "from long-horizon instability, whereas knowledge-augmented methods retrieve operational experience without continuously aligning it with the evolving diagnostic state. OpsMem couples short-term state memory and long-term experience memory via cross-memory resonance to guide diagnosis. To address these challenges, we proposeOpsMem, a dualmemory framework for failure diagnosis.OpsMemmaintains two graph-structured memories: a short-term memory (STM) to capture the current diagnostic state and a long-term memory (LTM) to organize reusable operational experience. During diagnosis,OpsMemuses cross-memory resonance to activate LTM subgraphs relevant to the current STM, and then performs memory-conditioned diagnosis based on both the STM and the activated LTM. After diagnosis,OpsMemconsolidates solved incidents into reusable experience, enabling the LTM to evolve while avoiding noise. Our main contributions are summarized as follows: •To the best of our knowledge,OpsMemis the first dualmemory framework that jointly models diagnostic state and operational experience for failure diagnosis. •We introduce cross-memory resonance to activate staterelevant experience, enabling the diagnostic process conditioned on both STM and LTM. •We design a long-term memory consolidation mechanism that distills solved incidents into reusable operational experience, allowing the LTM to continuously evolve. •We evaluateOpsMemon a real-world Huawei dataset, where it improves Match and Relevant by up to 46.88% and 18.39% over the strongest baseline, respectively.",
+      "order": 54,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 6341,
+      "char_end": 7898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1db2de4ba1b5bc54e8bd8e98cb4a2170",
+      "kind": "paragraph",
+      "text": "•To support reproducibility, we make all code and prompts publicly available. 1",
+      "order": 55,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 7900,
+      "char_end": 7979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29de75857dbe637cb34ef09f742e917d",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 56,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "RELATEDWORK"
+      ],
+      "char_start": 7981,
+      "char_end": 7992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b5586d9bc6b76db19f408b0b1655872",
+      "kind": "paragraph",
+      "text": "Agent-Based Failure Diagnosis.Recent studies have explored LLM-based agents for failure diagnosis. REACT[23] explore ReAct-style agents for root cause analysis. TrioXpert [5] employs multi-agent collaboration for anomaly detection, failure classification, and root cause localization, while Found- Root [12] and R-Log [24] enhance LLM reasoning through structured reasoning and reinforcement learning, respectively. GoS [13] further models diagnosis as an abductive reasoning task and maintains an explicit belief state to support failure diagnosis. However, how to incorporate operational experience into diagnosis remains underexplored in these methods. 1https://github.com/gaorch85/OpsMem Knowledge-Augmented Failure Diagnosis.Another line of work augments diagnosis with operational knowledge. RCA- Copilot [17] uses historical failure cases to support root cause analysis. Flow-of-Action [10] and OScope [2] further introduce SOP documents and historical cases to constrain diagnostic reasoning and improve interpretability. DBAIOps [11] represents database operational experience as a heterogeneous knowledge graph, while FlowXpert [9] constructs hybrid knowledge bases for troubleshooting workflow generation. However, the coordination between operational knowledge and the evolving diagnostic state remains insufficiently studied.",
+      "order": 57,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "RELATEDWORK"
+      ],
+      "char_start": 7994,
+      "char_end": 9332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:106c677ad6d7645b0241b1c1f30118cf",
+      "kind": "heading",
+      "text": "METHODOLOGY",
+      "order": 58,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "METHODOLOGY"
+      ],
+      "char_start": 9334,
+      "char_end": 9345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaa3aea46063b1eed2c2b69f0d9dd75a",
+      "kind": "paragraph",
+      "text": "We presentOpsMem, a novel dual-memory framework for failure diagnosis. As shown in Fig. 2, given the alarms from the monitoring platform,OpsMemfirst initializes a short-term memory (STM) to represent the evolving diagnostic state of the current incident. At each diagnostic round, the current STM triggers cross-memory resonance (CMR) over the longterm memory (LTM), which activates relevant operational experience for the current diagnostic state. The current STM and the activated LTM then jointly condition a multi-agent diagnosis loop, where agents plan actions, acquire evidence, analyze observations, and update the STM. The updated STM further drives the next round of CMR, keeping the activated LTM aligned with the STM until convergence. After the diagnosis is completed, a multi-agent consolidation module distills the reusable experience into LTM for future diagnosis. The remainder of this section introduces the four core components ofOpsMem. Section III-A describes the graphstructured representations of STM and LTM. Section III-B presents how CMR aligns the current diagnostic state with reusable operational experience. Section III-C explains how dual memory conditions multi-agent diagnosis. Finally, Section III-D introduces the LTM consolidation mechanism.",
+      "order": 59,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "METHODOLOGY"
+      ],
+      "char_start": 9347,
+      "char_end": 10623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a389543aa909d7588f664f63dce5cfc2",
+      "kind": "heading",
+      "text": "A. Dual-Memory Architecture",
+      "order": 60,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "A. Dual-Memory Architecture"
+      ],
+      "char_start": 10625,
+      "char_end": 10652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fb8623f4011afdd4970be99e1d4f07a",
+      "kind": "paragraph",
+      "text": "To support failure diagnosis,OpsMemmaintains two graphstructured memories: a short-term memory (STM) that captures the current diagnostic state, and a long-term memory (LTM) that organizes reusable operational experience. 2",
+      "order": 61,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "A. Dual-Memory Architecture"
+      ],
+      "char_start": 10654,
+      "char_end": 10877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0c828a25e8da882a5f4e76804b67709",
+      "kind": "paragraph",
+      "text": "Long-Term Memory (LTM)",
+      "order": 62,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "A. Dual-Memory Architecture"
+      ],
+      "char_start": 10879,
+      "char_end": 10901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2c52c1d44ac8fc725ee6ab3cb9a496b",
+      "kind": "heading",
+      "text": "Associate",
+      "order": 63,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Associate"
+      ],
+      "char_start": 10903,
+      "char_end": 10912,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7a025ad2c3970af224663797c409e85",
+      "kind": "heading",
+      "text": "Signal",
+      "order": 64,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Signal"
+      ],
+      "char_start": 10914,
+      "char_end": 10920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:989af685fea6191f408f3055c41f9dba",
+      "kind": "heading",
+      "text": "Pattern",
+      "order": 65,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern"
+      ],
+      "char_start": 10922,
+      "char_end": 10929,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d90aebebad0e60c34d0a7497c4a3ec7",
+      "kind": "heading",
+      "text": "ProcedureCase",
+      "order": 66,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "ProcedureCase"
+      ],
+      "char_start": 10931,
+      "char_end": 10944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47784c0436c728ac0e72d53b2252a5eb",
+      "kind": "heading",
+      "text": "Memory-Conditioned Multi-Agent Diagnosis",
+      "order": 67,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Memory-Conditioned Multi-Agent Diagnosis"
+      ],
+      "char_start": 10946,
+      "char_end": 10986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:838768a00673f976273ec47cc63ed1c6",
+      "kind": "heading",
+      "text": "Central",
+      "order": 68,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Central"
+      ],
+      "char_start": 10988,
+      "char_end": 10995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4425617acc25303cd3f894191913c229",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 69,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agent"
+      ],
+      "char_start": 10997,
+      "char_end": 11002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45fcab878d2f2d5a727a7abcbf80852a",
+      "kind": "heading",
+      "text": "Expert",
+      "order": 70,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Expert"
+      ],
+      "char_start": 11004,
+      "char_end": 11010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de91f85ecd21bc079e571f5647af9699",
+      "kind": "heading",
+      "text": "Agents",
+      "order": 71,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agents"
+      ],
+      "char_start": 11012,
+      "char_end": 11018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da5b388f7f231965926b476c45d5bdfa",
+      "kind": "heading",
+      "text": "Diagnostic",
+      "order": 72,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Diagnostic"
+      ],
+      "char_start": 11020,
+      "char_end": 11030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a68f37b519a2f538371a96c28433dc00",
+      "kind": "heading",
+      "text": "Tools",
+      "order": 73,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Tools"
+      ],
+      "char_start": 11032,
+      "char_end": 11037,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54b1033310372fbf9389279468a74329",
+      "kind": "heading",
+      "text": "Plan2",
+      "order": 74,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Plan2"
+      ],
+      "char_start": 11039,
+      "char_end": 11044,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45d7989b9f589142f9c049e2c6a4d327",
+      "kind": "heading",
+      "text": "Analyze4",
+      "order": 75,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Analyze4"
+      ],
+      "char_start": 11046,
+      "char_end": 11054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5cb9343a56ab298ce4f16f94fb2a8cfc",
+      "kind": "heading",
+      "text": "Acquire Evidence3Update STM5",
+      "order": 76,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Acquire Evidence3Update STM5"
+      ],
+      "char_start": 11056,
+      "char_end": 11084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0046421738d5f2510a7f0c28ce6a959c",
+      "kind": "heading",
+      "text": "Diagnostic Loop",
+      "order": 77,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Diagnostic Loop"
+      ],
+      "char_start": 11086,
+      "char_end": 11101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a7c25f3b90571d93a3fc18815b1291e",
+      "kind": "paragraph",
+      "text": "next round Cross-Memory Resonance (CMR)1",
+      "order": 78,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Diagnostic Loop"
+      ],
+      "char_start": 11103,
+      "char_end": 11143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4f94cabc118decd14c631555fb395a1",
+      "kind": "heading",
+      "text": "Metric Log Shell Prediction",
+      "order": 79,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Metric Log Shell Prediction"
+      ],
+      "char_start": 11145,
+      "char_end": 11172,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43771f48241bad5fe371c36bfb894658",
+      "kind": "heading",
+      "text": "Tool API Convergence",
+      "order": 80,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Tool API Convergence"
+      ],
+      "char_start": 11174,
+      "char_end": 11194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ff39f5fd0dfe7719e30f0bc71f8d6e2",
+      "kind": "paragraph",
+      "text": "Alarms from Monitoring Platform",
+      "order": 81,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Tool API Convergence"
+      ],
+      "char_start": 11196,
+      "char_end": 11227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e54d344b72d93416c5151621fb5f555e",
+      "kind": "heading",
+      "text": "Initialization0",
+      "order": 82,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Initialization0"
+      ],
+      "char_start": 11229,
+      "char_end": 11244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f789cbbb1875e9e8d07ceefe96a250e",
+      "kind": "heading",
+      "text": "Long-Term Memory Consolidation",
+      "order": 83,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory Consolidation"
+      ],
+      "char_start": 11246,
+      "char_end": 11276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03e7001b2e9b3da1ccc29e47db150201",
+      "kind": "heading",
+      "text": "Apply Update",
+      "order": 84,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Apply Update"
+      ],
+      "char_start": 11278,
+      "char_end": 11290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53b593127db6c6352e1047d953ee7f84",
+      "kind": "paragraph",
+      "text": "Short-Term Memory (STM)",
+      "order": 85,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Apply Update"
+      ],
+      "char_start": 11292,
+      "char_end": 11315,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7992c79e4021b9a69e8498575711864b",
+      "kind": "heading",
+      "text": "Symptom Evidence Hypothesis",
+      "order": 86,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Symptom Evidence Hypothesis"
+      ],
+      "char_start": 11317,
+      "char_end": 11344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef7ef690515b91b38fb55ab41df44d21",
+      "kind": "heading",
+      "text": "Derive Refine Support Refute",
+      "order": 87,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Derive Refine Support Refute"
+      ],
+      "char_start": 11346,
+      "char_end": 11374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1aae43b0d44136c067e1523eec465a9",
+      "kind": "paragraph",
+      "text": "s1 h1 h2e1 e2 e4 h4 h3e7 e5 e3 e6 s2s1 s5 s4 s3 s1",
+      "order": 88,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Derive Refine Support Refute"
+      ],
+      "char_start": 11376,
+      "char_end": 11426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29a1eedd7ec7e3d2f14b8690e987deea",
+      "kind": "caption",
+      "text": "Fig. 2. Overview ofOpsMem",
+      "order": 89,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Derive Refine Support Refute"
+      ],
+      "char_start": 11428,
+      "char_end": 11453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38f35947fcbea123e2c549e2332242d8",
+      "kind": "paragraph",
+      "text": "Short-Term Memory.The STM is represented as a graph Ms = (Vs,E s)that maintains the evolving diagnostic state of the current incident, following the belief-state abstraction in GoS [13]. The nodes inV s include observed symptoms, acquired evidence, and candidate hypotheses. The edges in Es encode diagnostic relations among them, such as derive, refine, support, and refute. During diagnosis, newly acquired evidence and intermediate analyses are continuously written into the STM, making it an explicit memory of what has been observed, inferred, and ruled out so far. Long-Term Memory.The LTM is represented as another graphM l = (Vl,E l)that organizes cross-incident operational experience. The node setV l contains three types of nodes: patterns, cases, and procedures. A pattern is the core node in the LTM, representing a typical failure mode as a structured association between diagnostic signals, where each signal is a normalized cue that describes a system condition, such as high memory usage. A case records a historical incident related to a pattern, while a procedure records diagnostic steps for that pattern. The weighted edge setE l associates patterns with cases and procedures, enabling matched patterns to activate both historical examples and actionable diagnostic guidance. Unlike the STM, the LTM accumulates cross-incident experience and can be repeatedly activated during diagnosis.",
+      "order": 90,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Derive Refine Support Refute"
+      ],
+      "char_start": 11455,
+      "char_end": 12863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d38228ce9c7adc79a91178db0ac343d",
+      "kind": "heading",
+      "text": "B. Cross-Memory Resonance",
+      "order": 91,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance"
+      ],
+      "char_start": 12865,
+      "char_end": 12890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc94d4e2c48cee25e323f4a57fcdaf3d",
+      "kind": "paragraph",
+      "text": "As shown in Fig. 3, cross-memory resonance (CMR) aligns the diagnostic state with operational experience. It consists of three steps: signal coupling, pattern activation, and memory propagation, which together produce an activated LTM subgraph for the subsequent diagnosis loop. Signal Coupling.CMR first extracts symptom and evidence nodes from the STM and normalizes them into query signals through an LLM. These query signals are then matched with the signals in LTM patterns. Each LTM signal receives a coupling score based on its maximum semantic similarity to the query signals, and scores below a predefined threshold are set to zero, while the remaining signals are treated as active. This step grounds LTM activation in the concrete observations already recorded in the current STM. Pattern Activation.After signal coupling, CMR lifts signallevel scores to pattern-level activation. For each pattern, CMR computes its activation score from two factors: the average score of active signals and the ratio of active signals within the pattern. The two factors respectively capture the alignment strength of activated signals and the coverage of the pattern by current observations. Only patterns whose activation scores exceed a predefined threshold are retained for subsequent propagation. In this way, LTM activation focuses on recurring diagnostic associations rather than isolated observations. Memory Propagation.Starting from the activated patterns, CMR propagates activation to associated nodes according to the edge weights. The propagation scores are used to select",
+      "order": 92,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance"
+      ],
+      "char_start": 12892,
+      "char_end": 14472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74bd8bbe4ced40fafea3985805757806",
+      "kind": "paragraph",
+      "text": "the most relevant cases and procedures. Together, activated patterns suggest diagnostic directions, cases provide historical references, and procedures guide subsequent diagnosis. Whenever the STM is updated during diagnosis, CMR is applied again to refresh the activated LTM subgraph according to the latest diagnostic state.",
+      "order": 93,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance"
+      ],
+      "char_start": 14474,
+      "char_end": 14800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f4255bfc025c0028b864a34cd2ec9b0",
+      "kind": "heading",
+      "text": "Memory-Conditioned Multi-Agent Diagnosis",
+      "order": 94,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance",
+        "Memory-Conditioned Multi-Agent Diagnosis"
+      ],
+      "char_start": 14802,
+      "char_end": 14842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:210bbb4858a8afa3aa7d658f65ab9aef",
+      "kind": "paragraph",
+      "text": "Given the current STM and the activated LTM subgraph, OpsMemperforms a memory-conditioned diagnosis loop. Both memories are serialized into each agent’s prompt to jointly condition agent actions. Each diagnostic round consists of four steps. First, inPlan, the CentralAgent plans one or more diagnostic tasks and assigns them to selected ExpertAgents. Second, inAcquire 3",
+      "order": 95,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance",
+        "Memory-Conditioned Multi-Agent Diagnosis"
+      ],
+      "char_start": 14844,
+      "char_end": 15215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28285c4bbcac6e9c778ba30161533c1b",
+      "kind": "paragraph",
+      "text": "s2s1 s5 s4 s3 s1 1",
+      "order": 96,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. Cross-Memory Resonance",
+        "Memory-Conditioned Multi-Agent Diagnosis"
+      ],
+      "char_start": 15217,
+      "char_end": 15235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:218814a96dfa8dcc66dae972d8cd4954",
+      "kind": "heading",
+      "text": "3",
+      "order": 97,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "3"
+      ],
+      "char_start": 15237,
+      "char_end": 15238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed5a3f99b64f0d2936b241d10fd63aa5",
+      "kind": "paragraph",
+      "text": "s2s1 s5 s4 s3 s1 s1 h1 h2e1 e2 e4 h4 h3e7 e5 e3 e6 s2s1 s5 s4 s3 s1",
+      "order": 98,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "3"
+      ],
+      "char_start": 15240,
+      "char_end": 15307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2311390a7400153c0e36627a678445b5",
+      "kind": "heading",
+      "text": "Signal Coupling 2 Pattern Activation 3 Memory PropagationCurrent STM Activated LTM",
+      "order": 99,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Signal Coupling 2 Pattern Activation 3 Memory PropagationCurrent STM Activated LTM"
+      ],
+      "char_start": 15309,
+      "char_end": 15391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af41fdfdd51f418614c2fba43ef7e2e6",
+      "kind": "caption",
+      "text": "Fig. 3. Cross-Memory Resonance",
+      "order": 100,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Signal Coupling 2 Pattern Activation 3 Memory PropagationCurrent STM Activated LTM"
+      ],
+      "char_start": 15393,
+      "char_end": 15423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:828d15bd639413482a7431e0ffb70e85",
+      "kind": "paragraph",
+      "text": "Evidence, the ExpertAgents iteratively invoke diagnostic tools, such as a log retrieval, to collect observations. Third, in Analyze, the ExpertAgents interpret the collected observations and return concise diagnostic reports to the CentralAgent. Finally, inUpdate STM, the CentralAgent aggregates these reports and updates the STM with new evidence, hypotheses, and diagnostic relations. After each STM update,OpsMemchecks for convergence following GoS [13]. If a sufficiently supported hypothesis is identified,OpsMemoutputs the prediction. Otherwise, the updated STM triggers another round of CMR to refresh the activated LTM subgraph for the next diagnostic round.",
+      "order": 101,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Signal Coupling 2 Pattern Activation 3 Memory PropagationCurrent STM Activated LTM"
+      ],
+      "char_start": 15425,
+      "char_end": 16092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:006a7d94c2d20defb8d0f703ae733b46",
+      "kind": "heading",
+      "text": "D. Long-Term Memory Consolidation",
+      "order": 102,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Long-Term Memory Consolidation"
+      ],
+      "char_start": 16094,
+      "char_end": 16127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25bc60ff0517428098a302f500a4fe8c",
+      "kind": "heading",
+      "text": "MetaAgent",
+      "order": 103,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "MetaAgent"
+      ],
+      "char_start": 16129,
+      "char_end": 16138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62d85050be258e694124291a9d48a2dc",
+      "kind": "heading",
+      "text": "Summarize",
+      "order": 104,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Summarize"
+      ],
+      "char_start": 16140,
+      "char_end": 16149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6ccb05b8f9de56eec82e8ead8bccad2",
+      "kind": "heading",
+      "text": "Reflect",
+      "order": 105,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Reflect"
+      ],
+      "char_start": 16151,
+      "char_end": 16158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c34850e607d46025a89f8a6574db67b",
+      "kind": "heading",
+      "text": "Review",
+      "order": 106,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Review"
+      ],
+      "char_start": 16160,
+      "char_end": 16166,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd871b4978240b4c5e4480481e2fbcb2",
+      "kind": "heading",
+      "text": "Relation",
+      "order": 107,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Relation"
+      ],
+      "char_start": 16168,
+      "char_end": 16176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a2ca73fb8474f3d6f0c0ef2028d217f",
+      "kind": "heading",
+      "text": "Synthesis",
+      "order": 108,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Synthesis"
+      ],
+      "char_start": 16178,
+      "char_end": 16187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19bf6f2fa8b6465e20c40c58feb01d10",
+      "kind": "heading",
+      "text": "Procedure",
+      "order": 109,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Procedure"
+      ],
+      "char_start": 16189,
+      "char_end": 16198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6778650b27e9620dc11048d97065a76e",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 110,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agent"
+      ],
+      "char_start": 16200,
+      "char_end": 16205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fef526b887bd1b4372045d6478d2503",
+      "kind": "heading",
+      "text": "Pattern",
+      "order": 111,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern"
+      ],
+      "char_start": 16207,
+      "char_end": 16214,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9157333bda234f045950cbda388071a",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 112,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agent"
+      ],
+      "char_start": 16216,
+      "char_end": 16221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92d59e27d301a187e240806281ae25a9",
+      "kind": "heading",
+      "text": "Case",
+      "order": 113,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Case"
+      ],
+      "char_start": 16223,
+      "char_end": 16227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4138c1fc13ed928974b11775d69a4a9",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 114,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agent"
+      ],
+      "char_start": 16229,
+      "char_end": 16234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e94108d6074d9774930c5d5fb5fe113b",
+      "kind": "heading",
+      "text": "Propose",
+      "order": 115,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Propose"
+      ],
+      "char_start": 16236,
+      "char_end": 16243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:204695fbee76a33a695a07381754bf6b",
+      "kind": "heading",
+      "text": "Locate",
+      "order": 116,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Locate"
+      ],
+      "char_start": 16245,
+      "char_end": 16251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:239d7b6ce790f39721df6a8094e66c09",
+      "kind": "heading",
+      "text": "Propose",
+      "order": 117,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Propose"
+      ],
+      "char_start": 16253,
+      "char_end": 16260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5826555f89aeab6b7ea8a21ae414be13",
+      "kind": "heading",
+      "text": "Locate",
+      "order": 118,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Locate"
+      ],
+      "char_start": 16262,
+      "char_end": 16268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5254fab69ebb0f6508fbdce0dae378a4",
+      "kind": "heading",
+      "text": "Propose",
+      "order": 119,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Propose"
+      ],
+      "char_start": 16270,
+      "char_end": 16277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1404233b5446d8a6e8ae40701d8b2661",
+      "kind": "heading",
+      "text": "Locate",
+      "order": 120,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Locate"
+      ],
+      "char_start": 16279,
+      "char_end": 16285,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56460e602b2e819b19362e0feefd8435",
+      "kind": "heading",
+      "text": "Long-Term Memory Consolidation",
+      "order": 121,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory Consolidation"
+      ],
+      "char_start": 16287,
+      "char_end": 16317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e9dff9347bbbe9133ea212dcedcd6c1",
+      "kind": "heading",
+      "text": "Fig. 4. Long-Term Memory Consolidation",
+      "order": 122,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Fig. 4. Long-Term Memory Consolidation"
+      ],
+      "char_start": 16319,
+      "char_end": 16357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d140759dfb316f9d09fd7d9f750c2d58",
+      "kind": "paragraph",
+      "text": "After a failure is resolved,OpsMeminvokes another multiagent consolidation module to update the LTM. As shown in Fig. 4, consolidation is coordinated by MetaAgent, which first summarizes the diagnostic trace and reflects on it with the final STM and the activated LTM subgraph. Based on this reflection, the MetaAgent identifies which memories need updates and invokes the corresponding memory agents. For each invoked memory agent, consolidation first locates related memory nodes in the current LTM, using the activated LTM subgraph as the context. The agent then proposes nodelevel operations based on the diagnosis summary, the final STM, and the located memory nodes. Each proposal consists of CREATEand DELETEoperations: CREATEadds new nodes, while DELETEremoves obsolete nodes. When an existing memory node needs revision, the agent deletes the old version and creates a revised one. The MetaAgent reviews all proposals to filter out unqualified updates. Finally, relation synthesis integrates the validated memory nodes into the LTM through new edges, making them reusable in future incidents.",
+      "order": 123,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Fig. 4. Long-Term Memory Consolidation"
+      ],
+      "char_start": 16359,
+      "char_end": 17460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7fd8efeb4d8df5795e64edbd8aa118f",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 124,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Fig. 4. Long-Term Memory Consolidation",
+        "EXPERIMENTS"
+      ],
+      "char_start": 17462,
+      "char_end": 17473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:829a96b64195ba5d54a68d8d0c451f61",
+      "kind": "paragraph",
+      "text": "In this section, we aim to answer the following research questions (RQs): RQ1:How effective isOpsMemfor failure diagnosis? RQ2:Does each component contribute toOpsMem? RQ3:CanOpsMemimprove over time?",
+      "order": 125,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Fig. 4. Long-Term Memory Consolidation",
+        "EXPERIMENTS"
+      ],
+      "char_start": 17475,
+      "char_end": 17674,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:856dae4dfa4f2026a055a55088fe1fc0",
+      "kind": "heading",
+      "text": "A. Experimental Setup",
+      "order": 126,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "A. Experimental Setup"
+      ],
+      "char_start": 17676,
+      "char_end": 17697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43e22bc60c8ff9b012976dd4f2fd661f",
+      "kind": "heading",
+      "text": "Datasets:To comprehensively evaluateOpsMemunder",
+      "order": 127,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Datasets:To comprehensively evaluateOpsMemunder"
+      ],
+      "char_start": 17699,
+      "char_end": 17746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bec8f4e37c8e16315ae5092ce78ef6fb",
+      "kind": "paragraph",
+      "text": "realistic failure diagnosis scenarios, we construct a dataset from Huawei’s production microservice systems. The dataset contains 120 real-world failure incidents, covering a broad spectrum of fault types across application services, resource management, databases, and infrastructures. For each incident, we collect the initial failure alarms and multi-source diagnostic observations obtained during incident handling, such as timeseries metrics, system logs, and shell-level snapshots. The label is confirmed by on-call engineers through post-incident analysis and used as the ground truth for evaluation.",
+      "order": 128,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Datasets:To comprehensively evaluateOpsMemunder"
+      ],
+      "char_start": 17748,
+      "char_end": 18355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8154c02385aea841c6aa33d17ea61ce",
+      "kind": "heading",
+      "text": "Evaluation:We adopt an LLM-as-a-Judge protocol with",
+      "order": 129,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Evaluation:We adopt an LLM-as-a-Judge protocol with"
+      ],
+      "char_start": 18357,
+      "char_end": 18408,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2977171cdaa702c9f169223f7ffbcd6",
+      "kind": "paragraph",
+      "text": "Qwen3.5-27B to evaluate diagnostic effectiveness. Following GoS [13], the judge compares each predicted root cause with the ground truth on a three-point scale: 2 for exact match, 1 for relevant, and 0 otherwise. We reportMatchas the proportion of predictions scored 2, andRelevantas the proportion of predictions scored at least 1. To improve reliability, we apply self-consistency [25] by obtaining at least five independent judgments and aggregating them via majority voting, and further validate the results by expert sampling.",
+      "order": 130,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Evaluation:We adopt an LLM-as-a-Judge protocol with"
+      ],
+      "char_start": 18410,
+      "char_end": 18941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5a718418e40f74f0841d38ff7b3129a",
+      "kind": "heading",
+      "text": "Baselines:We compareOpsMemwith two groups of",
+      "order": 131,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Baselines:We compareOpsMemwith two groups of"
+      ],
+      "char_start": 18943,
+      "char_end": 18987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1460bf78617efa49c99bde72ee360d3f",
+      "kind": "paragraph",
+      "text": "representative baselines. For agentic-reasoning methods, we include ReAct [14], which interleaves reasoning and actions, and GoS [13], which maintains a belief state for long horizon diagnosis. For knowledge-augmented methods, we equip GoS with three representative RAG strategies. VectorRAG [18] retrieves semantically similar chunks from the corpus. GraphRAG [19] builds an entity graph and uses community summaries for retrieval. LinearRAG [21] constructs a relationfree graph and retrieves passages through entity activation.",
+      "order": 132,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Baselines:We compareOpsMemwith two groups of"
+      ],
+      "char_start": 18989,
+      "char_end": 19518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bcd9c0b5c63942f153e6be3a27a30aa",
+      "kind": "heading",
+      "text": "Long-Term Memory Construction:Before evaluation,",
+      "order": 133,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory Construction:Before evaluation,"
+      ],
+      "char_start": 19520,
+      "char_end": 19568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65fe57e30ec9e17f3afd221348b1a2e8",
+      "kind": "paragraph",
+      "text": "OpsMemis initialized with an LTM built from interviews, questionnaires, and operational documents. We use GPT-5.4 to assist in extracting failure patterns, cases, and procedures from these sources. The LTM sources were finalized before 4",
+      "order": 134,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory Construction:Before evaluation,"
+      ],
+      "char_start": 19570,
+      "char_end": 19807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96c89e0fb7d9552c258d8681b5977075",
+      "kind": "paragraph",
+      "text": "evaluation, with all 120 evaluation incidents excluded. For fair comparison, all knowledge-augmented baselines use the same knowledge sources but organize them in their own retrieval formats.",
+      "order": 135,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory Construction:Before evaluation,"
+      ],
+      "char_start": 19809,
+      "char_end": 20000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:299d7d240786a11f023bf1bffd65f4d2",
+      "kind": "heading",
+      "text": "Implementation Details:For signal coupling, we encode",
+      "order": 136,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Implementation Details:For signal coupling, we encode"
+      ],
+      "char_start": 20002,
+      "char_end": 20055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d4a3347974b686dc162f361f9c43698",
+      "kind": "paragraph",
+      "text": "signals with BGE-M3 and compute cosine similarity between embeddings. Both the signal and pattern activation thresholds are set to 0.6. The two factors in pattern activation are equally weighted. At each CMR step, we retain the top-3 patterns, cases, and procedures. The diagnosis loop runs up to 3 rounds and returns the best-supported hypothesis if not converged.",
+      "order": 137,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Implementation Details:For signal coupling, we encode"
+      ],
+      "char_start": 20057,
+      "char_end": 20422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18ab682123d3e62aa27643328bd357a2",
+      "kind": "heading",
+      "text": "B. RQ1: Overall Performance",
+      "order": 138,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "B. RQ1: Overall Performance"
+      ],
+      "char_start": 20424,
+      "char_end": 20451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cc2520346622dd6fbdfc9222c95a0db",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 139,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "TABLE I"
+      ],
+      "char_start": 20453,
+      "char_end": 20460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:988bfa9bccf88cedf881331a7d80abf9",
+      "kind": "heading",
+      "text": "OVERALLPERFORMANCE(%)",
+      "order": 140,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "OVERALLPERFORMANCE(%)"
+      ],
+      "char_start": 20462,
+      "char_end": 20483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b723e92d542be6d1108f0420d6f288a8",
+      "kind": "heading",
+      "text": "Seed LLM Method Match Relevant",
+      "order": 141,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Seed LLM Method Match Relevant"
+      ],
+      "char_start": 20485,
+      "char_end": 20515,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feea86cb7a524407f48a7e20308ca8ef",
+      "kind": "heading",
+      "text": "Qwen3.5-27B",
+      "order": 142,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Qwen3.5-27B"
+      ],
+      "char_start": 20517,
+      "char_end": 20528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6066333f5277dfa93ad489ca5b5fd95",
+      "kind": "heading",
+      "text": "Agentic-Reasoning Methods",
+      "order": 143,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20530,
+      "char_end": 20555,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2c4ce0a0616d0ac4de13767a81e6bef",
+      "kind": "paragraph",
+      "text": "ReAct 20.83 49.17 GoS 30.83 55.83",
+      "order": 144,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20557,
+      "char_end": 20590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e445ca49ef4430e4630ed409da9e3bc",
+      "kind": "heading",
+      "text": "Knowledge-Augmented Methods",
+      "order": 145,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 20592,
+      "char_end": 20619,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3db96ff028e57d5e2503adc92c0e935",
+      "kind": "paragraph",
+      "text": "GoS + VectorRAG 48.33 61.67 GoS + GraphRAG 53.33 71.67 GoS + LinearRAG 53.33 72.50 OpsMem78.33 85.83",
+      "order": 146,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 20621,
+      "char_end": 20721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fabd63106a0769a4d5932b52466d52be",
+      "kind": "heading",
+      "text": "Gemma-4-31B",
+      "order": 147,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Gemma-4-31B"
+      ],
+      "char_start": 20723,
+      "char_end": 20734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b6d12bf87823f1384d9c8d691db3118",
+      "kind": "heading",
+      "text": "Agentic-Reasoning Methods",
+      "order": 148,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20736,
+      "char_end": 20761,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e20b9fe97fd733a61f294fdeb5b5f818",
+      "kind": "paragraph",
+      "text": "ReAct 22.50 58.33 GoS 29.17 51.67",
+      "order": 149,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20763,
+      "char_end": 20796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d215e6d7a93ce3318c8d204cabe2002",
+      "kind": "heading",
+      "text": "Knowledge-Augmented Methods",
+      "order": 150,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 20798,
+      "char_end": 20825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e7f56483ea89df45d900f7949275c21",
+      "kind": "paragraph",
+      "text": "GoS + VectorRAG 50.00 73.33 GoS + GraphRAG 56.67 79.17 GoS + LinearRAG 48.33 72.50 OpsMem63.33 82.50",
+      "order": 151,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 20827,
+      "char_end": 20927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:575b6dd50426084b04d557775b0ea0f0",
+      "kind": "heading",
+      "text": "GLM-4-32B",
+      "order": 152,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "GLM-4-32B"
+      ],
+      "char_start": 20929,
+      "char_end": 20938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98ec232c23c580d33bf752db2d40e22d",
+      "kind": "heading",
+      "text": "Agentic-Reasoning Methods",
+      "order": 153,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20940,
+      "char_end": 20965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb2cb2e338342cb2112bc253af1041da",
+      "kind": "paragraph",
+      "text": "ReAct 17.50 42.50 GoS 21.67 59.17",
+      "order": 154,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Agentic-Reasoning Methods"
+      ],
+      "char_start": 20967,
+      "char_end": 21000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e74c4376a5a0b9b10e02bd17a532ffc8",
+      "kind": "heading",
+      "text": "Knowledge-Augmented Methods",
+      "order": 155,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 21002,
+      "char_end": 21029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ab8834850b64d6d44722b664dbbc469",
+      "kind": "paragraph",
+      "text": "GoS + VectorRAG 34.17 66.67 GoS + GraphRAG 33.33 65.83 GoS + LinearRAG 40.00 69.17 OpsMem53.33 77.50 Table I reports the overall diagnosis performance. Across all three seed LLMs,OpsMemconsistently achieves the best results on both Match and Relevant, showing that its benefit is not tied to a specific backbone. Compared with the strongest baseline under each seed LLM,OpsMemimproves Match by",
+      "order": 156,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods"
+      ],
+      "char_start": 21031,
+      "char_end": 21424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7d1f0a666a10a4843466c6ca1a0c0db",
+      "kind": "heading",
+      "text": "66–25.00 points and Relevant by 3.33–13.33 points.",
+      "order": 157,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "66–25.00 points and Relevant by 3.33–13.33 points."
+      ],
+      "char_start": 21426,
+      "char_end": 21476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e136da97c239660e3091cf2b48c269e4",
+      "kind": "paragraph",
+      "text": "Agentic-Reasoning methods, such as ReAct [14] and GoS [13], perform worse because they mainly organize the current reasoning process but lack operational experience. Knowledge-Augmented variants improve over GoS, confirming the value of external experience. However, they still lag behindOpsMem, since retrieved knowledge is not explicitly aligned with the evolving diagnostic state. By maintaining the current diagnostic state in STM and activating state-relevant experience from LTM through CMR,OpsMembetter guides evidence acquisition and hypothesis evaluation, leading to more accurate root-cause identification.",
+      "order": 158,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "66–25.00 points and Relevant by 3.33–13.33 points."
+      ],
+      "char_start": 21478,
+      "char_end": 22094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67fab719239ba0c742abc680f9b0c6f3",
+      "kind": "heading",
+      "text": "RQ2: Ablation Study",
+      "order": 159,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Knowledge-Augmented Methods",
+        "RQ2: Ablation Study"
+      ],
+      "char_start": 22096,
+      "char_end": 22115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5354be3ed6cc9da09b1f45a921d4ce3e",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 160,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "TABLE II"
+      ],
+      "char_start": 22117,
+      "char_end": 22125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da765678fe2b8be83c9a4d79553a4d95",
+      "kind": "heading",
+      "text": "ABLATIONSTUDY(%)",
+      "order": 161,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "ABLATIONSTUDY(%)"
+      ],
+      "char_start": 22127,
+      "char_end": 22143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4dba22d915a339314af259f056c86a36",
+      "kind": "heading",
+      "text": "Seed LLM Method Match Relevant",
+      "order": 162,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Seed LLM Method Match Relevant"
+      ],
+      "char_start": 22145,
+      "char_end": 22175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e9867df400ce5215201bc1611e9e1c8",
+      "kind": "heading",
+      "text": "Qwen3.5-27B",
+      "order": 163,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Qwen3.5-27B"
+      ],
+      "char_start": 22177,
+      "char_end": 22188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a745b84db3baca1276e783fccef79d23",
+      "kind": "paragraph",
+      "text": "OpsMem78.33 85.83 w/o STM 45.00 63.33 w/o LTM 30.83 55.83 w/o CMR 56.67 68.33 w/o LTM Consolidation 70.83 80.83 Table II validates the contribution of each component. Removing LTM causes the largest degradation, confirming the importance of operational experience. Removing STM also substantially hurts performance, indicating that explicit state tracking is necessary to maintain accumulated evidence and hypotheses during long-horizon diagnosis. The drop without CMR further shows the importance of state-aware LTM activation, which aligns operational experience with the evolving diagnostic state. Removing LTM consolidation yields a smaller but consistent decline, suggesting that LTM evolution brings additional gains. Overall, both memories, their coordination, and consolidation are necessary forOpsMem.",
+      "order": 164,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Qwen3.5-27B"
+      ],
+      "char_start": 22190,
+      "char_end": 23000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbf5339f4caa6127b857601d946e94e3",
+      "kind": "heading",
+      "text": "D. RQ3: Self-Evolution via Long-Term Memory Consolidation",
+      "order": 165,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. RQ3: Self-Evolution via Long-Term Memory Consolidation"
+      ],
+      "char_start": 23002,
+      "char_end": 23059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f59f5fb7bd9d1e61f198e98cd1206b8",
+      "kind": "heading",
+      "text": "TABLE III",
+      "order": 166,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "TABLE III"
+      ],
+      "char_start": 23061,
+      "char_end": 23070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a9c53b2adcec90651f8fedf46a16519",
+      "kind": "heading",
+      "text": "SELF-EVOLUTIONACROSSINCIDENTWINDOWS",
+      "order": 167,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "SELF-EVOLUTIONACROSSINCIDENTWINDOWS"
+      ],
+      "char_start": 23072,
+      "char_end": 23107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff52c616b94a815a6b3fd5a2f10f5bea",
+      "kind": "paragraph",
+      "text": "Seed LLM Incident Range Gains vs. w/o LTM Con.",
+      "order": 168,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "SELF-EVOLUTIONACROSSINCIDENTWINDOWS"
+      ],
+      "char_start": 23109,
+      "char_end": 23155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0401e75a64ebbd9b632a613cbf87e471",
+      "kind": "heading",
+      "text": "Match Relevant",
+      "order": 169,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Match Relevant"
+      ],
+      "char_start": 23157,
+      "char_end": 23171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db8b07d05ccc506fbff112a2bf38d339",
+      "kind": "heading",
+      "text": "Qwen3.5-27B",
+      "order": 170,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Qwen3.5-27B"
+      ],
+      "char_start": 23173,
+      "char_end": 23184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffea93d90f51def5b88f982c0242f206",
+      "kind": "heading",
+      "text": "– 30 +0 +1",
+      "order": 171,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "– 30 +0 +1"
+      ],
+      "char_start": 23186,
+      "char_end": 23196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e4423e532178673d16323c2e4183701",
+      "kind": "heading",
+      "text": "– 60 +3 +1",
+      "order": 172,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "– 60 +3 +1"
+      ],
+      "char_start": 23198,
+      "char_end": 23208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86b11697575c5d6093a6d0bbf816c48d",
+      "kind": "heading",
+      "text": "– 90 +1 +3",
+      "order": 173,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "– 90 +1 +3"
+      ],
+      "char_start": 23210,
+      "char_end": 23220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca830f53ce162de016a3af698f527e64",
+      "kind": "heading",
+      "text": "– 120 +5 +1",
+      "order": 174,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "– 120 +5 +1"
+      ],
+      "char_start": 23222,
+      "char_end": 23233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9300356603219dfbcf3fc21c875bf7bc",
+      "kind": "paragraph",
+      "text": "Table III further examines whether LTM consolidation enablesOpsMemto improve over time. We process the 120 incidents sequentially and split them into four consecutive windows. After each diagnosed incident,OpsMemconsolidates validated experience into the LTM, while the w/o LTM Consolidation variant keeps the initial LTM fixed. Compared with this variant,OpsMemcorrectly diagnoses additional incidents under both Match and Relevant metrics in every window, with the largest exact-match gain appearing in the last window. This suggests that consolidated experience can be reused by subsequent diagnoses, allowing the LTM to evolve over time.",
+      "order": 175,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "– 120 +5 +1"
+      ],
+      "char_start": 23235,
+      "char_end": 23876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04d7497a90ae085820449346a28e1eec",
+      "kind": "heading",
+      "text": "E. Case Study",
+      "order": 176,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "E. Case Study"
+      ],
+      "char_start": 23878,
+      "char_end": 23891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2de46ddfbf62fb7e7e59a7c83aec8f8f",
+      "kind": "caption",
+      "text": "Fig. 5 shows one diagnosis round ofOpsMemon an",
+      "order": 177,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "E. Case Study"
+      ],
+      "char_start": 23893,
+      "char_end": 23939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95db60e7b014a4e11207075cf5973a38",
+      "kind": "paragraph",
+      "text": "anonymized real-world Huawei incident. Starting from the current STM,OpsMemactivates two relevant LTM patterns, workload saturation and idle-slot occupation, and dispatches two DBA agents for targeted checks. The workload-side evidence weakens the overload/slow-query hypotheses, while the connection-side evidence supports idle-slot occupation caused by connection-pool issues.OpsMemthen updates the STM with the new evidence and analysis. 5",
+      "order": 178,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "E. Case Study"
+      ],
+      "char_start": 23941,
+      "char_end": 24383,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09965ebadbea7340ecd7256a043985ae",
+      "kind": "paragraph",
+      "text": "Plan: Dispatch two DBA agents for workload saturation and idle-slot occupation checks.",
+      "order": 179,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "E. Case Study"
+      ],
+      "char_start": 24385,
+      "char_end": 24471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca361a405c8256fcdba34f45064134b2",
+      "kind": "heading",
+      "text": "Think: Check runners. Metric: Threads_running[5m]",
+      "order": 180,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check runners. Metric: Threads_running[5m]"
+      ],
+      "char_start": 24473,
+      "char_end": 24522,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e4b90fd38d4debf7db808b4b263a513",
+      "kind": "paragraph",
+      "text": "Obs: 3",
+      "order": 181,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check runners. Metric: Threads_running[5m]"
+      ],
+      "char_start": 24524,
+      "char_end": 24530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb6b478901a763799086006acdd24936",
+      "kind": "heading",
+      "text": "Think: Check QPS. Metric: Queries.rate[5m]",
+      "order": 182,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check QPS. Metric: Queries.rate[5m]"
+      ],
+      "char_start": 24532,
+      "char_end": 24574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fc93db5a219e49b4306d6cfd84d1084",
+      "kind": "paragraph",
+      "text": "Obs: 82/s, flat Think: Check slowlog. Log: slowlog(\"Query_time\")[10m] Obs: no hits Analyze: The workload-side evidence does not show the typical signs of active-query …",
+      "order": 183,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check QPS. Metric: Queries.rate[5m]"
+      ],
+      "char_start": 24576,
+      "char_end": 24744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96f7f98d6e468f4527c880d438efd11a",
+      "kind": "heading",
+      "text": "Think: Check slots. Metric: Threads_connected[5m]",
+      "order": 184,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check slots. Metric: Threads_connected[5m]"
+      ],
+      "char_start": 24746,
+      "char_end": 24795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e717356844e652bab7a8e09424c4b97",
+      "kind": "paragraph",
+      "text": "Obs: 135, 151",
+      "order": 185,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check slots. Metric: Threads_connected[5m]"
+      ],
+      "char_start": 24797,
+      "char_end": 24810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfedfdabc4432769e3fdc19739fb697e",
+      "kind": "heading",
+      "text": "Think: Check states. Shell: COUNT(PROCESSLIST…",
+      "order": 186,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Think: Check states. Shell: COUNT(PROCESSLIST…"
+      ],
+      "char_start": 24812,
+      "char_end": 24858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08f1fb35ad95ba8879f453483080aa5d",
+      "kind": "heading",
+      "text": "Obs: Sleep=118…",
+      "order": 187,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Obs: Sleep=118…"
+      ],
+      "char_start": 24860,
+      "char_end": 24875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a38cf6802a0334dfe5b885a10be9f2bd",
+      "kind": "paragraph",
+      "text": "Think: Check sources. Shell: GROUP Sleep BY … Obs: app_user@1 Analyze: The connection-side evidence shows a high number of occupied slots with sleep … Update STM: Update Short-Term Memory based on the DBA analyses.",
+      "order": 188,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Obs: Sleep=118…"
+      ],
+      "char_start": 24877,
+      "char_end": 25091,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b25cdbb0020a05d21565c717da100c54",
+      "kind": "heading",
+      "text": "Short-Term Memory",
+      "order": 189,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Short-Term Memory"
+      ],
+      "char_start": 25093,
+      "char_end": 25110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b79636843e1b5641a2b6149a65539076",
+      "kind": "paragraph",
+      "text": "Symptom: MySQL Conn Util reached 89.4%",
+      "order": 190,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Short-Term Memory"
+      ],
+      "char_start": 25112,
+      "char_end": 25150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bd6c29155970c46bb74fe3e848321ca",
+      "kind": "heading",
+      "text": "Hypo1: Traffic Surge Hypo2: Slow Query",
+      "order": 191,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Hypo1: Traffic Surge Hypo2: Slow Query"
+      ],
+      "char_start": 25152,
+      "char_end": 25190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6965e940660e81a6e66e1741c55856f",
+      "kind": "paragraph",
+      "text": "Evidence: Ingress traffic slightly increased Evidence: App logs show DB-conn timeout",
+      "order": 192,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Hypo1: Traffic Surge Hypo2: Slow Query"
+      ],
+      "char_start": 25192,
+      "char_end": 25276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8510ea556e4dbbe490ffacbee75698dd",
+      "kind": "heading",
+      "text": "Long-Term Memory",
+      "order": 193,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Long-Term Memory"
+      ],
+      "char_start": 25278,
+      "char_end": 25294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bc3a1ff8c7a37f0699e84673008a4d6",
+      "kind": "heading",
+      "text": "Pattern: Workload Saturation",
+      "order": 194,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Workload Saturation"
+      ],
+      "char_start": 25296,
+      "char_end": 25324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8c41027a8e92f4340a8c345a05fa476",
+      "kind": "table",
+      "text": "Conn  + Traffic  + Runner     Workload Overload",
+      "order": 195,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Workload Saturation"
+      ],
+      "char_start": 25326,
+      "char_end": 25373,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fb30503e7e7cfef48f68ec0540ef992",
+      "kind": "heading",
+      "text": "Pattern: Idle-Slot Occupation",
+      "order": 196,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Idle-Slot Occupation"
+      ],
+      "char_start": 25375,
+      "char_end": 25404,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c271d974c4d2d095283390d83dfa065",
+      "kind": "table",
+      "text": "Conn  + Timeout + Sleep       Pool Issue",
+      "order": 197,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Idle-Slot Occupation"
+      ],
+      "char_start": 25406,
+      "char_end": 25446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd1a966b4bdf83f1576db3c87f71c829",
+      "kind": "caption",
+      "text": "Fig. 5. A diagnosis round ofOpsMemon a real-world incident",
+      "order": 198,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Idle-Slot Occupation"
+      ],
+      "char_start": 25448,
+      "char_end": 25506,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a36a039ddc45a8431d6072bc75f89784",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 199,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Idle-Slot Occupation",
+        "CONCLUSION"
+      ],
+      "char_start": 25508,
+      "char_end": 25518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2c203f0715a10d86934e503dbe7f025",
+      "kind": "paragraph",
+      "text": "This paper presentsOpsMem, a dual-memory framework for failure diagnosis that couples the short-term diagnostic memory with long-term operational memory.OpsMemuses Cross- Memory Resonance to align the current diagnostic state with relevant operational experience, and conditions the diagnosis on both memories. After a failure is resolved,OpsMemdistills reusable experience into LTM, enablingOpsMemto evolve over time. Experiments on a real-world Huawei microservice dataset show thatOpsMemconsistently outperforms representative baselines, and further studies validate the effectiveness of dual-memory coordination and LTM consolidation.",
+      "order": 200,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "Pattern: Idle-Slot Occupation",
+        "CONCLUSION"
+      ],
+      "char_start": 25520,
+      "char_end": 26158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00fcb86d51dec29a791be7c587ca46d3",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 201,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "REFERENCES"
+      ],
+      "char_start": 26160,
+      "char_end": 26170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0585c8bd3cf3b30467c9ebbdb8e22bb",
+      "kind": "reference",
+      "text": "[1] Y . Sun, B. Shi, M. Mao, M. Ma, S. Xia, S. Zhang, and D. Pei, “Art: A unified unsupervised framework for incident management in microservice systems,” inProceedings of the 39th IEEE/ACM International Conference on Automated Software Engineering, 2024, pp. 1183–1194. [2] Y . Zhao, S. Zhang, Y . Sun, W. Gu, Y . Sun, L. Wang, L. Shi, C. Huang, G. Yang, L. Zhang, and D. Pei, “When llms listen to experts: Accurate failure diagnosis in operating systems,” inProceedings of the IEEE/ACM",
+      "order": 202,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "REFERENCES"
+      ],
+      "char_start": 26172,
+      "char_end": 26659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4427b6479547f639e899919783108b3",
+      "kind": "heading",
+      "text": "International Conference on Software Engineering: Software Engineer-",
+      "order": 203,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-"
+      ],
+      "char_start": 26661,
+      "char_end": 26729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b08e790901416df3ee312801fae57ef",
+      "kind": "paragraph",
+      "text": "ing in Practice, 2026. [3] X. Zhou, X. Peng, T. Xie, J. Sun, C. Ji, D. Liu, Q. Xiang, and",
+      "order": 204,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-"
+      ],
+      "char_start": 26731,
+      "char_end": 26820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b57a1cee48ed39427984da8dad6b55c7",
+      "kind": "heading",
+      "text": "He, “Latent error prediction and fault localization for microservice",
+      "order": 205,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "He, “Latent error prediction and fault localization for microservice"
+      ],
+      "char_start": 26822,
+      "char_end": 26890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9de9c442f2b6311055d8061a7ee8dab",
+      "kind": "paragraph",
+      "text": "applications by learning from system trace logs,” inProceedings of the 2019 27th ACM joint meeting on European software engineering conference and symposium on the foundations of software engineering, 2019, pp. 683–694. [4] S. Zhang, P. Jin, Z. Lin, Y . Sun, B. Zhang, S. Xia, Z. Li, Z. Zhong, M. Ma, W. Jinet al., “Robust failure diagnosis of microservice system through multimodal data,”IEEE Transactions on Services Computing, vol. 16, no. 6, pp. 3851–3864, 2023. [5] Y . Sun, Y . Luo, X. Wen, Y . Yuan, X. Nie, S. Zhang, T. Liu, and",
+      "order": 206,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "He, “Latent error prediction and fault localization for microservice"
+      ],
+      "char_start": 26892,
+      "char_end": 27428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4d8f880d486accfc2a1c2ea9609e513",
+      "kind": "heading",
+      "text": "Luo, “Trioxpert: An automated incident management framework for",
+      "order": 207,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "Luo, “Trioxpert: An automated incident management framework for"
+      ],
+      "char_start": 27430,
+      "char_end": 27493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3809b0ff70f68a0df99502936a659656",
+      "kind": "paragraph",
+      "text": "microservice system,” in2025 40th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, 2025, pp. 3239– 3250. [6] Y . Luo, J. Jiang, J. Feng, L. Tao, Q. Zhang, X. Wen, Y . Sun, S. Zhang, and D. Pei, “Opsagent: An evolving multi-agent system for incident management in microservices,”arXiv preprint arXiv:2510.24145, 2025. [7] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. Wainwright, P. Mishkin,",
+      "order": 208,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "Luo, “Trioxpert: An automated incident management framework for"
+      ],
+      "char_start": 27495,
+      "char_end": 27914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c98e7e3eb0cc882d0694d25a6521f12f",
+      "kind": "heading",
+      "text": "Zhang, S. Agarwal, K. Slama, A. Rayet al., “Training language",
+      "order": 209,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "Zhang, S. Agarwal, K. Slama, A. Rayet al., “Training language"
+      ],
+      "char_start": 27916,
+      "char_end": 27977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9e5c4fd5a44d5e3292929433863a9d9",
+      "kind": "paragraph",
+      "text": "models to follow instructions with human feedback,”Advances in neural information processing systems, vol. 35, pp. 27 730–27 744, 2022. [8] J. Achiam, S. Adler, S. Agarwal, L. Ahmad, I. Akkaya, F. L. Aleman,",
+      "order": 210,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "International Conference on Software Engineering: Software Engineer-",
+        "Zhang, S. Agarwal, K. Slama, A. Rayet al., “Training language"
+      ],
+      "char_start": 27979,
+      "char_end": 28186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d3e4bdbad1121b1fd4cdfd3e56ea05e",
+      "kind": "heading",
+      "text": "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4",
+      "order": 211,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4"
+      ],
+      "char_start": 28188,
+      "char_end": 28252,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bcc48e81e3c0cde879d6d0091c84f3f",
+      "kind": "paragraph",
+      "text": "technical report,”arXiv preprint arXiv:2303.08774, 2023. [9] B. Shi, Y . Luo, J. Wang, Y . Zhao, S. Zhang, B. Hao, C. Zhao, Y . Sun, Z. Zhang, R. Sunet al., “Flowxpert: Expertizing troubleshooting workflow orchestration with knowledge base and multi-agent coevolution,” inProceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V . 2, 2025, pp. 4839–4850. [10] C. Pei, Z. Wang, F. Liu, Z. Li, Y . Liu, X. He, R. Kang, T. Zhang, J. Chen, J. Liet al., “Flow-of-action: Sop enhanced llm-based multiagent system for root cause analysis,” inCompanion Proceedings of the ACM on Web Conference 2025, 2025, pp. 422–431. [11] W. Zhou, P. Sun, X. Zhou, Q. Zang, J. Xu, T. Zhang, G. Li, and F. Wu, “Dbaiops: A reasoning llm-enhanced database operation and maintenance system using knowledge graphs,”Proceedings of the VLDB Endowment, vol. 19, no. 6, pp. 1319–1331, 2026. [12] Z. Xie, Z. Li, X. He, S. Zhang, L. Xu, Y . Yang, T. Zhang, J. Chen, R. Shi, and D. Pei, “Foundroot: Towards foundation model for root cause analysis via structured deep thinking,” inProceedings of the IEEE/ACM 48th International Conference on Software Engineering, 2026. [13] Y . Luo, R. Gao, L. Teng, X. Wen, J. Jiang, Q. Zhang, Y . Sun, S. Zhang, J. Feng, T. Liuet al., “Graph of states: Solving abductive tasks with large language models,” inF orty-Third International Conference on Machine Learning, 2026. [14] S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. R. Narasimhan, and Y . Cao, “React: Synergizing reasoning and acting in language models,” inThe",
+      "order": 212,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4"
+      ],
+      "char_start": 28254,
+      "char_end": 29804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0801273e04646ef12cab0071477a023",
+      "kind": "paragraph",
+      "text": "eleventh international conference on learning representations, 2023. [15] N. F. Liu, K. Lin, J. Hewitt, A. Paranjape, M. Bevilacqua, F. Petroni, and P. Liang, “Lost in the middle: How language models use long contexts,” Transactions of the association for computational linguistics, vol. 12, pp. 157–173, 2024. [16] P. Laban, H. Hayashi, Y . Zhou, and J. Neville, “Llms get lost in multiturn conversation,” inInternational Conference on Learning Representations, 2026. [17] Y . Chen, H. Xie, M. Ma, Y . Kang, X. Gao, L. Shi, Y . Cao, X. Gao, H. Fan, M. Wenet al., “Automatic root cause analysis via large language models for cloud incidents,” inProceedings of the Nineteenth European Conference on Computer Systems, 2024, pp. 674–688. [18] P. Lewis, E. Perez, A. Piktus, F. Petroni, V . Karpukhin, N. Goyal, H. K ¨uttler, M. Lewis, W.-t. Yih, T. Rockt ¨aschelet al., “Retrievalaugmented generation for knowledge-intensive nlp tasks,”Advances in neural information processing systems, vol. 33, pp. 9459–9474, 2020. [19] D. Edge, H. Trinh, N. Cheng, J. Bradley, A. Chao, A. Mody, S. Truitt, D. Metropolitansky, R. O. Ness, and J. Larson, “From local to global: A graph rag approach to query-focused summarization,”arXiv preprint arXiv:2404.16130, 2024. [20] B. J. Guti ´errez, Y . Shu, W. Qi, S. Zhou, and Y . Su, “From rag to memory: Non-parametric continual learning for large language models,” 2025. [21] L. Zhuang, S. Chen, Y . Xiao, H. Zhou, Y . Zhang, H. Chen, Q. Zhang, and X. Huang, “Linearrag: Linear graph retrieval augmented generation",
+      "order": 213,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4"
+      ],
+      "char_start": 29806,
+      "char_end": 31350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6cd8d8db0833006309b6569b2459575",
+      "kind": "paragraph",
+      "text": "on large-scale corpora,”arXiv preprint arXiv:2510.10114, 2025. [22] F. Shi, X. Chen, K. Misra, N. Scales, D. Dohan, E. H. Chi, N. Sch ¨arli, and D. Zhou, “Large language models can be easily distracted by irrelevant context,” inProceedings of the 40th International Conference on Machine Learning, 2023, pp. 31 210–31 227. [23] D. Roy, X. Zhang, R. Bhave, C. Bansal, P. Las-Casas, R. Fonseca, and S. Rajmohan, “Exploring llm-based agents for root cause analysis,” in Companion proceedings of the 32nd ACM international conference on the foundations of software engineering, 2024, pp. 208–219. [24] Y . Liu, Z. Chen, S. Xu, M. He, S. Tao, W. Meng, Y . Xie, T. Han,",
+      "order": 214,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4"
+      ],
+      "char_start": 31352,
+      "char_end": 32015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:701f546ad54a5358fddbf5f8b84ba425",
+      "kind": "heading",
+      "text": "Zhao, J. Du, D. Wei, S. Zhang, and Y . Sun, “R-log: Incentivizing log",
+      "order": 215,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4",
+        "Zhao, J. Du, D. Wei, S. Zhang, and Y . Sun, “R-log: Incentivizing log"
+      ],
+      "char_start": 32017,
+      "char_end": 32086,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d6fabd999f040a22e6277091b8e6861",
+      "kind": "paragraph",
+      "text": "analysis capability in llms via reasoning-based reinforcement learning,” inProceedings of the IEEE/ACM 48th International Conference on Software Engineering: Software Engineering in Practice, 2026. [25] X. Wang, J. Wei, D. Schuurmans, Q. V . Le, E. H. Chi, S. Narang, A. Chowdhery, and D. Zhou, “Self-consistency improves chain of thought reasoning in language models,” inThe Eleventh International Conference on Learning Representations, 2023. 6",
+      "order": 216,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Cross-Memory Resonance for Failure Diagnosis",
+        "D. Almeida, J. Altenschmidt, S. Altman, S. Anadkatet al., “Gpt-4",
+        "Zhao, J. Du, D. Wei, S. Zhang, and Y . Sun, “R-log: Incentivizing log"
+      ],
+      "char_start": 32088,
+      "char_end": 32534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.11357",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

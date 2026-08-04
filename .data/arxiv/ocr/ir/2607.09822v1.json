@@ -1,0 +1,2899 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "b4a6f8265a129861ce77c03dc016428b832d27fbce38e81536a4f556ad3384f1",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:2c3ed035fc16b9be7963e95e2aca1b67",
+      "kind": "heading",
+      "text": "Memory-Conditioned Tool Calling",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling"
+      ],
+      "char_start": 0,
+      "char_end": 31,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7356415f2edb35772c8b1add80d3b573",
+      "kind": "paragraph",
+      "text": "for Camera-First Visual Agents Xiaofan Wu∗1, Xi Zeng 1, Miaoxia Chen 1, Peishan Chen 1, Shuyan Li 1, Jiyun Yao 1, Hanyong Zhong 1, Jiahao Zhu 1 1Chance AI July 2026",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling"
+      ],
+      "char_start": 33,
+      "char_end": 197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:173e51ebc6817a1d75f098100dc2e176",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Abstract"
+      ],
+      "char_start": 199,
+      "char_end": 207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67b2d109121dd30d0df6f44a7f556f7f",
+      "kind": "paragraph",
+      "text": "Recognition tells an agentwhatis in an image; personal memory affectswhat is worth looking up next. In a camera-first setting the user can send only an image, so the agent must form the lookups. We study whether personal visual memory improves agent-side tool choice and tool arguments, and thereby more user-aligned multi-tool lookups. The design uses a three-layer personal visual memory(profile, short-term focus, observations) that is loaded on each turn to condition an LLM tool-calling loop under camera-first intake, and includes conflict-aware write-back intended to refresh the user model for later captures. On 800 images paired withsyntheticmemory blocks constructed for controlled ablation, removing the full three-layer memory block reduces tool-query relevance by 0.47 points absolute (4.21→3.74 on a 5-point scale; 11.2% relative) and end-to-end utility by 0.082 absolute (0.842→0.760;",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Abstract"
+      ],
+      "char_start": 209,
+      "char_end": 1109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d148446d379e0923084ae3d1d370e13",
+      "kind": "heading",
+      "text": "7% relative). These results measure memory conditioning of tool policy under image-only",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Abstract",
+        "7% relative). These results measure memory conditioning of tool policy under image-only"
+      ],
+      "char_start": 1111,
+      "char_end": 1198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3fb58f285c043c7905817e4d68f64a9c",
+      "kind": "paragraph",
+      "text": "intake with fixed synthetic blocks, not multi-session write-back from live user histories.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Abstract",
+        "7% relative). These results measure memory conditioning of tool policy under image-only"
+      ],
+      "char_start": 1200,
+      "char_end": 1290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60a9139bca5c8dea3ad253839e084103",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Introduction"
+      ],
+      "char_start": 1292,
+      "char_end": 1304,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5b546deeae4161e5d936611b2977d61",
+      "kind": "paragraph",
+      "text": "Looking at the same garment, a fashion designer and a software engineer tend to look up different things: knowledge level, taste, past comparisons, and the next decision all shape what is worth retrieving. Visual systems are often judged by recognition—labels, matches, “what is it?”—but recognition alone does not decide which follow-up lookups to make. This paper measures one link in that process forcamera-firstagents, where the user can send only an image and the agent must form tool calls itself: personal memory→better agent tool calls→more user-aligned multi-tool lookups. A tool call is which tool to invoke and with what arguments. Better means more relevant, more specific, and better matched to the user. With memory, the agent issues more focused tool calls; focused tool calls support more useful lookups; the design also includes write-back so later images can load an updated memory block (not measured as multi-session compounding here). Many multimodal agents [2, 3, 4] search without a persistent user model. When there is no typed query, tool calls stay generic even if recognition is correct. Personal memory is one way to condition those tool calls on the user. We studymemory-conditioned tool callingfor camera-first agents: personal memory is recalled on each turn and conditions tool choice and arguments; write-back is part of the system design for later captures. The design implements the link as follows: ∗Corresponding author:xiaofan@chance.vision. 1",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Introduction"
+      ],
+      "char_start": 1306,
+      "char_end": 2787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3577fe1e2fffa0d8250ac326c5146df6",
+      "kind": "table",
+      "text": "arXiv:2607.09822v1  [cs.CV]  10 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Introduction"
+      ],
+      "char_start": 2789,
+      "char_end": 2829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8178f278afc7a88f9fc5cfd32749f488",
+      "kind": "paragraph",
+      "text": "• Memory substrate.Three layers—profile, short-term focus, and observations—encode who the user is and what they are currently exploring. Full memory means all three layers are present. • Inner loop (this turn).Memory conditions tool choice and arguments; results may refine the next tool call within the same turn. •Outer write-back (design; next capture).Background updates are intended to refresh observations and, over time, profile and short-term focus for later images; this paper does not measure multi-session compounding from write-back. Contributions.(i) We treatmemory-conditioned tool policyas the interface where personal visual memory meets camera-first multi-tool lookup, complementary to dialogue-memory work on multi-session factual recall [13, 1]. (ii) We describe a three-layer memory design (profile, short-term focus, observations) with conflict-aware observation write-back and a multi-tool loop suitable for image-only intake; write-back is a design component, not an evaluated outcome here. (iii) Undercontrolled synthetic memory blocks(not live multi-session user histories), we ablate the full three-layer memory block and its layers and report changes in tool-query relevance and end-to-end utility, isolating memory conditioning while holding visual context, tools, and the model fixed.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Introduction"
+      ],
+      "char_start": 2831,
+      "char_end": 4145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b90e693d5bc63aec8de8c0a6fcd07bfc",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work"
+      ],
+      "char_start": 4147,
+      "char_end": 4159,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29aa62825b40fb2d5798860cf0068e57",
+      "kind": "heading",
+      "text": "Multimodal Search Agents",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Multimodal Search Agents"
+      ],
+      "char_start": 4161,
+      "char_end": 4185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31175e040fa4ad82e607d1f1b426c56a",
+      "kind": "paragraph",
+      "text": "Recent work explores agent-based multimodal information seeking. ProMSA [2] uses reinforcement learning to select among image search, text search, and stopping, but assumes an image–question pair. MTA-Agent [3] provides an open recipe for multimodal deep search with automatic tool selection, typically starting from VQA-style seeds. VideoSearcher [4] extends multi-tool agentic reasoning to video deep research (with RL) and similarly relies on explicit information needs. These systems emphasize tool use and search; persistent user memory is not their primary focus. We target the complementarycamera-firstsetting: the primary input is an image, and the agent must form tool calls itself, conditioned on who the user is.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Multimodal Search Agents"
+      ],
+      "char_start": 4187,
+      "char_end": 4910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3cebb148ad63f9efc79f2b5bf973df4",
+      "kind": "heading",
+      "text": "Retrieval-Augmented Vision-Language Models",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Retrieval-Augmented Vision-Language Models"
+      ],
+      "char_start": 4912,
+      "char_end": 4954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75c566ed54ea5a9a1b70d21f25c1dc93",
+      "kind": "paragraph",
+      "text": "RAVEN [5] and related retrieval-augmented VLMs retrieve image–text pairs from large external stores using vision–language encoders [7] and approximate nearest-neighbor indices [6]. Retrieved knowledge is typically generic and static with respect to a particular user. Our agent also uses visual context as input, and adds apersonalmemory layer that conditions which tools the agent calls and what it asks them.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Retrieval-Augmented Vision-Language Models"
+      ],
+      "char_start": 4956,
+      "char_end": 5366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:356e3dc8fc91bcde476f6a8ff526f832",
+      "kind": "heading",
+      "text": "Tool-Using Language Agents",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Tool-Using Language Agents"
+      ],
+      "char_start": 5368,
+      "char_end": 5394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c67cccb7b1ea35705b61418ba63d3e3f",
+      "kind": "paragraph",
+      "text": "Tool-augmented LMs such as Toolformer [8], Gorilla [9], and ReAct [10] show that models can learn or be prompted to call external APIs and interleave reasoning with actions. We follow this paradigm for camera-first visual intake: memory is injected into the agent context so that tool selection and tool arguments—not only the final prose—are user-calibrated.",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Tool-Using Language Agents"
+      ],
+      "char_start": 5396,
+      "char_end": 5755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35c1035d6ad04372b05b1b3e8ce56fbb",
+      "kind": "heading",
+      "text": "Memory and Personalization",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Memory and Personalization"
+      ],
+      "char_start": 5757,
+      "char_end": 5783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2eee1a1a34d0160d7b6ce01dbc154437",
+      "kind": "paragraph",
+      "text": "Long-term memory for agents has been studied in dialogue and general agent settings, from hierarchical OS-style designs [11] and generative agents [12] to systems that extract, consolidate, 2",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Memory and Personalization"
+      ],
+      "char_start": 5785,
+      "char_end": 5976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0af16ad22f2e66ec69b795c44284f11f",
+      "kind": "paragraph",
+      "text": "and retrieve conversational facts at scale (e.g., Mem0 [1]). Multi-session dialogue benchmarks such as LOCOMO [13] evaluate long-horizon factual recall and consistency across conversations. Concurrent multimodal work such as PersonaVLM [15] builds long-term personalized MLLM agents that remember multimodal interaction history, retrieve it for multi-turn reasoning, and align responses to an evolving user personality. Agentic dual-layer designs such as M2A [16] couple a raw conversation log with semantic observations and use cooperating agents for online query and update of multimodal personalized memory. Parallel work on personalized search and user modeling conditions ranking or generation on profiles or interaction history [14], typically assuming typed queries rather than image-only intake. These lines primarily optimizedialogue coherence, factual recall, response-style alignment, or query-conditioned ranking: remember what the user said, resolve conflicts, and answer questions about past turns—or re-rank documents for a stated information need—with lower cost than full-context replay. For camera-first agents the agent must form tool calls from an image, often without a typed query. We ask whether personal memory changeswhat the agent asks of tools, rather than only how the final reply is phrased. In our design, memory shapes tool calls and tool calls shape what is looked up; write-back is intended to update memory for later captures. Dialogue-memory and long-term personalized MLLMs address multi-session recall and response alignment; we focus on",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Memory and Personalization"
+      ],
+      "char_start": 5978,
+      "char_end": 7552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f6406efcc0faf88a5b50457f7ef4b06",
+      "kind": "paragraph",
+      "text": "memory-conditioned tool policy under image-first intake.",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Related Work",
+        "Memory and Personalization"
+      ],
+      "char_start": 7554,
+      "char_end": 7610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b57be977cc9398048acab2ddc759028",
+      "kind": "heading",
+      "text": "Method",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Method"
+      ],
+      "char_start": 7612,
+      "char_end": 7618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:329b59d88440e37524a56b529281ecf5",
+      "kind": "heading",
+      "text": "Overview",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Method",
+        "Overview"
+      ],
+      "char_start": 7620,
+      "char_end": 7628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01db9355f93460536543c536f470317f",
+      "kind": "paragraph",
+      "text": "The design implements the link as follows: memory⇒better tool calls⇒user-aligned lookups⇒answers⇒memory (write-back; design). We describe the path that produces tool calls under camera-first intake. Client UI details and specialized interaction modes are outside the scope of this paper. The loop has two timescales (Figure 1): • Inner loop (within a turn; evaluated).Memory + visual context→ focused tool calls →results→sharper tool calls or composition. • Outer write-back (across turns; design only here).Interaction→ memory update→ better-calibrated tool calls on a later image. Experiments use fixed synthetic memory blocks and do not measure this compounding path.",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Method",
+        "Overview"
+      ],
+      "char_start": 7630,
+      "char_end": 8300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2351f4730d71aab8a7a7c3012c4231ff",
+      "kind": "heading",
+      "text": "Personal Visual Memory",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Method",
+        "Personal Visual Memory"
+      ],
+      "char_start": 8302,
+      "char_end": 8324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d8274993c8db1d734f09ace51d08b8c",
+      "kind": "paragraph",
+      "text": "The memory system has three layers that differ in timescale and granularity. It is the primary conditioning signal for the tool-calling loop (Section 3.4). Layer 1: Profile (long-term,∼800 characters).A curated natural-language summary of who the user is: knowledge level, interests, preferences, and stable identity clues. A dedicated Profile Agent runs asynchronously. It is givenuser actions only(captured images and user-issued queries), not model responses, so the profile tracks the user rather than the system’s own phrasing. Layer 2: Short-Term Focus (∼200 characters).A short summary of the user’s current interest area, updated after each interaction (e.g., “researching mid-century furniture and architectural lighting”). A brief recent-interaction digest may accompany short-term focus when available. 3",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Method",
+        "Personal Visual Memory"
+      ],
+      "char_start": 8326,
+      "char_end": 9141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:921be6ecbc79f5042449577e233999aa",
+      "kind": "heading",
+      "text": "Input",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Input"
+      ],
+      "char_start": 9143,
+      "char_end": 9148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdb0d9ff3837631919f243a768e5d1fa",
+      "kind": "paragraph",
+      "text": "image",
+      "order": 27,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Input"
+      ],
+      "char_start": 9150,
+      "char_end": 9155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34e2f2b780fd26dd4e16e22a1417ee42",
+      "kind": "heading",
+      "text": "Visual",
+      "order": 28,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Visual"
+      ],
+      "char_start": 9157,
+      "char_end": 9163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:553821979d429bde18978b4d8446922f",
+      "kind": "paragraph",
+      "text": "context Inner tool loop",
+      "order": 29,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Visual"
+      ],
+      "char_start": 9165,
+      "char_end": 9188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e565f1b484b300822923ac1b8122e892",
+      "kind": "heading",
+      "text": "Tool",
+      "order": 30,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool"
+      ],
+      "char_start": 9190,
+      "char_end": 9194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cecb6774ea08862c5a6e7bc858de545",
+      "kind": "paragraph",
+      "text": "execution Compose Output",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool"
+      ],
+      "char_start": 9196,
+      "char_end": 9220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:962340795873802e6d3b142ce018c5ba",
+      "kind": "heading",
+      "text": "Memory",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Memory"
+      ],
+      "char_start": 9222,
+      "char_end": 9228,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce414c4377a915cfd670e7b4ca95b99f",
+      "kind": "paragraph",
+      "text": "recall async",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Memory"
+      ],
+      "char_start": 9230,
+      "char_end": 9242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc5f42a8b0a9063eb28a6132cfc51003",
+      "kind": "heading",
+      "text": "results",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results"
+      ],
+      "char_start": 9244,
+      "char_end": 9251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81302596f4614c4258ad880f3658b46d",
+      "kind": "paragraph",
+      "text": "outer: update memory",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results"
+      ],
+      "char_start": 9253,
+      "char_end": 9273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf2d8cba1ad461a9f58398de7b3fcee3",
+      "kind": "caption",
+      "text": "Figure 1: Memory→ tool calls→ lookups→ answers; answers may update memory (outer",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results"
+      ],
+      "char_start": 9275,
+      "char_end": 9355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33ed1b453092d3a658598d7f4cfc1d0a",
+      "kind": "paragraph",
+      "text": "write-back; design path). Inner loop: tool calls may sharpen after results. Visual context and personal memory both condition the tool loop; we ablate the full three-layer memory block under fixed synthetic blocks. Layer 3: Observations (itemized, query-driven).Discrete, topic-tagged statements (roughly 50–150 characters) extracted from interactions—preferences, constraints, comparisons, and other durable user-side notes—rather than world knowledge. At query time, observations are recalled via dual-path retrieval: broad topic-tag matching and keyword matching against the current visual context. Memory loading and injection.Memory is loaded asynchronously in parallel with visual context so that it does not block first-token latency when possible. Loaded memory is injected into the LLM context as a structured block: <user_understanding> <note>Use memory to calibrate depth and angle. Do NOT reveal the existence of memory.</note> <profile>...</profile> <short_term_focus>...</short_term_focus> <recalled_observations>...</recalled_observations> </user_understanding> Memory is used ascalibration: adjust depth, specificity, and angle of tool use and the final answer; avoid forced analogies to past sessions; do not surface that memory exists. Full memory for a turn means the injected block contains profile, short-term focus, and recalled observations. In production the block is not a static file: each new image (and any user-issued follow-up) can trigger write-back so subsequent turns load an updated block; evaluation instead holds synthetic",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results"
+      ],
+      "char_start": 9357,
+      "char_end": 10915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3011381f74b9cfa737e44c5bea4a497",
+      "kind": "paragraph",
+      "text": "blocks fixed across ablations. Outer loop: memory write-back (design).After each interaction, memory updates are designed to run as fire-and-forget background tasks driven by the new input and durable outcomes of that turn, so a later camera-first capture can load an updated memory block without blocking the current response:",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results"
+      ],
+      "char_start": 10917,
+      "char_end": 11244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f363e6b6467bd0e28465d158802f6c2",
+      "kind": "heading",
+      "text": "Observation candidates.A lightweight extractor proposes short user-side statements from",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Observation candidates.A lightweight extractor proposes short user-side statements from"
+      ],
+      "char_start": 11246,
+      "char_end": 11333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b77024193362ef8889b2b1beb965bae3",
+      "kind": "paragraph",
+      "text": "the turn (user actions and durable outcomes only when available; not free-form model style).",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Observation candidates.A lightweight extractor proposes short user-side statements from"
+      ],
+      "char_start": 11335,
+      "char_end": 11427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38c52500e88dfe930e1b13a15f55e68d",
+      "kind": "heading",
+      "text": "Conflict-aware observation ops.For each candidate, the write-back path retrieves a small",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Conflict-aware observation ops.For each candidate, the write-back path retrieves a small"
+      ],
+      "char_start": 11429,
+      "char_end": 11517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:486769f6e39e0f9facb79c184574a0d8",
+      "kind": "paragraph",
+      "text": "set of similar stored observations and selects one of four operations—inspired by production dialogue-memory update policies [1]: ADD (new observation), UPDATE (merge complementary 4",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Conflict-aware observation ops.For each candidate, the write-back path retrieves a small"
+      ],
+      "char_start": 11519,
+      "char_end": 11701,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f303b41813134d541da06fb519e6fa0",
+      "kind": "paragraph",
+      "text": "detail into an existing observation), DELETE (drop a contradicted observation), or NOOP (redundant or low-value). This keeps the observation store compact and reduces contradictory conditioning of later tool calls.",
+      "order": 43,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Conflict-aware observation ops.For each candidate, the write-back path retrieves a small"
+      ],
+      "char_start": 11703,
+      "char_end": 11917,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f282152a9bb29bb3a88588082a21aeb5",
+      "kind": "heading",
+      "text": "Profile and short-term focus curation.Heavier profile and short-term focus rewrites run",
+      "order": 44,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Profile and short-term focus curation.Heavier profile and short-term focus rewrites run"
+      ],
+      "char_start": 11919,
+      "char_end": 12006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4fbcc452d7a4e3b0e5375aef32d6070",
+      "kind": "paragraph",
+      "text": "on a schedule or after follow-ups, still usinguser actions onlyfor profile signals. Write-back is aimed atfuture tool callson new images, not at answering questions about past dialogue turns. We describe this path for completeness of the system design; the experiments below do not measure multi-session write-back quality.",
+      "order": 45,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Profile and short-term focus curation.Heavier profile and short-term focus rewrites run"
+      ],
+      "char_start": 12008,
+      "char_end": 12331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df161824be997c02d197afcbf3683a4c",
+      "kind": "heading",
+      "text": "Visual Context",
+      "order": 46,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Visual Context"
+      ],
+      "char_start": 12333,
+      "char_end": 12347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3748f1976eb3dfc1959eb567fc2ac1c2",
+      "kind": "paragraph",
+      "text": "The agent needs a working hypothesis ofwhat is in the imagebefore calling external tools. We obtain visual context via reverse-image / visual-search style retrieval over the input (and, when the client provides a region of interest, over a cropped view as well). Returned matches and metadata seed entity names, categories, and free-text cues for the tool loop. This stage is held fixed across memory ablations; vendor-level retrieval details are omitted.",
+      "order": 47,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Visual Context"
+      ],
+      "char_start": 12349,
+      "char_end": 12804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3758d8f9f20f5df0596d79351eec73d",
+      "kind": "heading",
+      "text": "Inner Loop: Memory-Conditioned Tool Use",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Inner Loop: Memory-Conditioned Tool Use"
+      ],
+      "char_start": 12806,
+      "char_end": 12845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f815d01ef380ecd8ee381be45d759244",
+      "kind": "paragraph",
+      "text": "The inner loop is an LLM agent procedure in the spirit of ReAct-style tool use [10], and the place where memory first conditions retrieval. Given image, visual context, conversation state, and the memory block, the model either emits tool calls or streams final content—not a fixed one-shot search template. Multi-step tool use.On each step the model chooses:",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Inner Loop: Memory-Conditioned Tool Use"
+      ],
+      "char_start": 12847,
+      "char_end": 13206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:721f491cd68aaae5e8552cbc0cfbe370",
+      "kind": "heading",
+      "text": "Which toolsto invoke (possibly several in one step, executed in parallel).",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Which toolsto invoke (possibly several in one step, executed in parallel)."
+      ],
+      "char_start": 13208,
+      "char_end": 13282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2214b2ee836d129e32d022009cd55ae",
+      "kind": "heading",
+      "text": "Tool arguments—typically natural-language or keyword queries, plus tool-specific fields",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Tool arguments—typically natural-language or keyword queries, plus tool-specific fields"
+      ],
+      "char_start": 13284,
+      "char_end": 13371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71c0fd0f41361dbea3bac2335e892fcc",
+      "kind": "paragraph",
+      "text": "(e.g., location bias for places).",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Tool arguments—typically natural-language or keyword queries, plus tool-specific fields"
+      ],
+      "char_start": 13373,
+      "char_end": 13406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efaba9479aef42d5bfc9bebde2d36a15",
+      "kind": "heading",
+      "text": "Whether to stopand compose, or to call tools again after seeing results.",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Whether to stopand compose, or to call tools again after seeing results."
+      ],
+      "char_start": 13408,
+      "char_end": 13480,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bed06af6305594f20a23c1511694f09d",
+      "kind": "paragraph",
+      "text": "Later steps can tighten arguments (e.g., identify the entity, then price it; read a review cluster, then search a specific defect), so retrieval depth is adaptive rather than fixed-budget. How memory changes tool calls.Memory leaves recognition ofwhatis in the image in place; it changeswhat is worth looking up:",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Whether to stopand compose, or to call tools again after seeing results."
+      ],
+      "char_start": 13482,
+      "char_end": 13794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9381d5d88b051eee38d52231eec76e31",
+      "kind": "heading",
+      "text": "Depth: experts get technical terms and model numbers; beginners get lay language—the",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Depth: experts get technical terms and model numbers; beginners get lay language—the"
+      ],
+      "char_start": 13796,
+      "char_end": 13880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:552ed851dec0f5f2928a934c56e80571",
+      "kind": "paragraph",
+      "text": "same object, different tool arguments.",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Depth: experts get technical terms and model numbers; beginners get lay language—the"
+      ],
+      "char_start": 13882,
+      "char_end": 13920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d340e45375b0ffbe00d8d1c9809da73f",
+      "kind": "heading",
+      "text": "Angle: short-term focus steerswhichtools fire and what they query (price and reviews vs.",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Angle: short-term focus steerswhichtools fire and what they query (price and reviews vs."
+      ],
+      "char_start": 13922,
+      "char_end": 14010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf43fd19031da4bed548ce79512e6cb5",
+      "kind": "paragraph",
+      "text": "provenance vs. places).",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Angle: short-term focus steerswhichtools fire and what they query (price and reviews vs."
+      ],
+      "char_start": 14012,
+      "char_end": 14035,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb2631f878c35747112e1e6e5b1232e5",
+      "kind": "heading",
+      "text": "Restraint: dislikes and constraints suppress low-value lookups.",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Restraint: dislikes and constraints suppress low-value lookups."
+      ],
+      "char_start": 14037,
+      "char_end": 14100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7de6cca92cecc69d0d466bb2b327537",
+      "kind": "heading",
+      "text": "Continuity: recalled observations support comparison against what the user already cares",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Continuity: recalled observations support comparison against what the user already cares"
+      ],
+      "char_start": 14102,
+      "char_end": 14190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89444c9ac73b5d1b89a81ece287c2db6",
+      "kind": "paragraph",
+      "text": "about. 5",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Continuity: recalled observations support comparison against what the user already cares"
+      ],
+      "char_start": 14192,
+      "char_end": 14200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:054801a909d3976f65a177201147c35b",
+      "kind": "paragraph",
+      "text": "Tool surface.The agent exposes a multi-tool surface. The main families used in camera-first analysis are: •Web search: open-web knowledge, background, and entity facts. •Image search: reference and comparison visuals. •Video search: demonstrations and how-to content when motion or procedure matters. •Places: landmarks, venues, and nearby POIs, with optional user- vs. image-location bias. •Price: product pricing and market-oriented lookups. •Reviews: reputation and qualitative feedback for products and places. • Specialized lookups: e.g., music, artwork, or short-horizon trends when the visual context warrants them. • Memory tools: read or write short observations when the dialogue itself updates what the agent should remember. Tools run under timeouts; parallel calls are preferred when arguments do not depend on each other. Structured fields returned by tools (ratings, prices, place names, knowledge-graphlike attributes when present) are treated as higher-trust candidates than free-text snippets at composition time—there is no separate external knowledge-base verification stage.",
+      "order": 62,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Continuity: recalled observations support comparison against what the user already cares"
+      ],
+      "char_start": 14202,
+      "char_end": 15297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92f0789d9f62d76ece4da31e72eb434d",
+      "kind": "heading",
+      "text": "Composition",
+      "order": 63,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Composition"
+      ],
+      "char_start": 15299,
+      "char_end": 15310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26719702bc084f760146dc9840a3f4be",
+      "kind": "paragraph",
+      "text": "When the loop stops calling tools, the model synthesizes visual context, memory, and tool results into a structured response (text and optional structured UI fields). It is instructed to prefer structured tool attributes over unverified prose, and to calibrate depth and tone using memory without quoting the memory block.",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Composition"
+      ],
+      "char_start": 15312,
+      "char_end": 15634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:417a06e33ad8588d94b1c5d99a2458fa",
+      "kind": "heading",
+      "text": "Implementation Notes",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Implementation Notes"
+      ],
+      "char_start": 15636,
+      "char_end": 15656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5f90ed78f0c90dbe37cec0c05e170b7",
+      "kind": "paragraph",
+      "text": "The tool-calling loop and composition use a hosted multimodal LLM with native tool calling (chat-completions style API). We evaluate this mechanism in an internal camera-first visual agent at Chance AI. All reported ablations use a single fixed backend so memory on/off is not confounded with model swaps: • Gemini3FlashPreview( gemini-3-flash-preview; routedas google/gemini-3-flash-preview in our stack): Google multimodal tool-calling endpoint. Decoding uses low temperature for tool-argument emission where the API exposes it (temperature 0when available), a cap of a small number of sequential tool rounds per turn (typically≤ 5), and per-tool timeouts on the order of a few seconds. Search and lookup backends are third-party web, image, video, places, price, and review APIs; commercial connector terms are omitted. Parallel independent tool calls and asynchronous memory load keep end-to-end latency interactive. In production, after each turn, memory write-back can run in the background so the next image-only capture loads an updated profile/short-term-focus/observations block; evaluation holds synthetic blocks fixed. The XML memory schema above is the stable interface between memory and the agent loop. 6",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "results",
+        "Implementation Notes"
+      ],
+      "char_start": 15658,
+      "char_end": 16877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df924d0ae3be68ae157b3160fc423954",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 67,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments"
+      ],
+      "char_start": 16879,
+      "char_end": 16890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63d4583e68ffc09e0f19e344acf2a5ec",
+      "kind": "heading",
+      "text": "Setup and Protocol",
+      "order": 68,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 16892,
+      "char_end": 16910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:805dac8003b0f906b3a74ab60a5ec4a2",
+      "kind": "paragraph",
+      "text": "Data.Weevaluateon800real-worldimagesspanning10coarsecategories(landmarks, products, artworks, food, plants, documents, vehicles, interiors, fashion, and miscellaneous). Images used for rating are de-identified evaluation assets (not released); they are not live production user streams. Each image has: (i) annotator-written entity notes, (ii) asyntheticfull three-layer memory block (profile + short-term focus + 3–8 observations) constructed for that image category to stand in for a plausible long-term user model, and (iii) preferred lookup angles recorded for dataset construction and analysis only (shown to neither the agent nor the raters). Memory blocks are written to be coherent with the category (e.g., collector vs. beginner) but arenotextracted from multi-session user histories. This enables a controlled test ofmemory conditioning: does injecting the matched full memory block change agent tool calls relative to an empty memory block, holding image, tools, and model fixed? The study therefore isolates matched-block conditioning; it does not measure quality of automatic memory formation from live users, multi-session write-back compounding, nor degradation under deliberately mismatched memory blocks. Metrics. • Tool-query relevance∈ [1, 5]: human raters score the tool arguments produced by the agent (search strings and related lookups) for relevance, specificity, and self-containment given the image and the synthetic memory block. Rubric anchors:1= generic or off-target lookups; 3= partly on-topic but shallow or user-agnostic;5= specific, self-contained arguments that",
+      "order": 69,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 16912,
+      "char_end": 18508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68ce86004ec5d0bcf47f55051cce19ac",
+      "kind": "paragraph",
+      "text": "match both the visual entity and the memory block’s depth/angle. We report the mean of three raters per item. Tables lead with absolute score changes; relative change is ∆rel % = scorefull−score abl scorefull ×100%. In tables we shorten tool-query relevance to “Query rel.” We report means only; per-item standard deviations and confidence intervals were not logged in the release tables (a limitation noted below). • End-to-end utility∈ [0, 1]: human raters score final responses on a 1–5 Likert scale for informativeness and calibration to the memory block. For each rater, raw scores are min–max normalized to[0, 1]over that rater’s scores on the evaluation set, then averaged across the three raters and across items. Absolute utility∆(full− ablated) is the primary comparison column. • Serving constraints.Memory loads asynchronously with visual context; tool calls run in parallel when independent; write-back is designed as fire-and-forget so camera-first turns stay interactive. Latency is a design constraint, not a reported primary metric. Protocol.Ratings are from three annotators per item. Annotators were familiar with the agent interface (internal evaluation staff), which may inflate absolute scores relative to fully external raters; the same pool rated all conditions, so relative ablations remain comparable. Each item is scored independently; raters see the image, the synthetic memory block (for calibration judgments), and the agent outputs. They donotsee preferred-lookup-angle keys, and they do not see a label of which system configuration produced the output beyond the outputs",
+      "order": 70,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 18510,
+      "char_end": 20113,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b14c15a452a8ab74cd4040cae424d99",
+      "kind": "paragraph",
+      "text": "themselves. Ablations share the same images, memory blocks, tools, and model; only the named component is removed or replaced as specified below. Preferred lookup angles are withheld from both the agent and the raters; they exist only as offline dataset metadata (e.g., for constructing 7",
+      "order": 71,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 20115,
+      "char_end": 20403,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35e4a0ce6846a7c37a7a338c7bf44dc3",
+      "kind": "caption",
+      "text": "Table 1: Memory ablation (n=800; means of three raters). Full=profile + short-term focus",
+      "order": 72,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 20405,
+      "char_end": 20493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30f97c891edf4d224617aecc67d38989",
+      "kind": "list_item",
+      "text": "+ observations. Relative drops vs. full: tool-query relevance11.2%(4 .21→3.74), utility9.7%",
+      "order": 73,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 20495,
+      "char_end": 20586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3809fb92fa3a9c1469834798685862ec",
+      "kind": "paragraph",
+      "text": "(0.842→0.760). Utility∆is absolute (full−ablated). Per-item variance not reported.",
+      "order": 74,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Experiments",
+        "Setup and Protocol"
+      ],
+      "char_start": 20588,
+      "char_end": 20670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:006c2a90cea31a40c691509b3aeb26a9",
+      "kind": "heading",
+      "text": "Configuration Query rel. Utility Utility∆",
+      "order": 75,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆"
+      ],
+      "char_start": 20672,
+      "char_end": 20713,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4f8b282680c6f0106defae2d8f2ad28",
+      "kind": "paragraph",
+      "text": "With memory (full: profile + STF + obs.) 4.21 / 5.0 0.842 — w/o memory (empty: no profile/STF/obs.) 3.74 / 5.0 0.760−0.082 w/o profile (STF + observations remain) 3.92 / 5.0 0.793−0.049 w/o observations (profile + STF remain) 4.01 / 5.0 0.811−0.031 w/o memory + w/o visual context 3.41 / 5.0 0.703−0.139 balanced memory blocks or post-hoc analysis) and are not used as live scoring hints. Raters judge tool-query relevance and utility from the image, the synthetic memory block, the shared rubric anchors, and the agent outputs alone. We did not compute inter-annotator agreement (e.g., Cohen’sκor Krippendorff’sα); tables report means of three raters only. Ablation substitutes. • With memory (full): the full three-layer block—profile, short-term focus, and observations— all present. • w/o memory: empty memory block (no profile, no short-term focus, no observations); tool loop conditioned on visual context only. •w/o profile: drop profile only; short-term focus and observations remain. •w/o observations: drop observations only; profile and short-term focus remain. • w/o visual context: no reverse-image / visual-search context; the agent sees the image (and optional client tags) alone. • w/o tool loop: a single generic web query from the top visual label (“what is {label}”), no multi-tool selection. •w/o multi-tool: web search only (other tools disabled). • w/o structured trust: treat all tool text as equal; do not prefer structured fields (prices, ratings, place names) over free-text snippets. •w/o composition: concatenate tool snippets with light formatting (no LLM synthesis).",
+      "order": 76,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆"
+      ],
+      "char_start": 20715,
+      "char_end": 22311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e359f143c76658423c1125b1620f5032",
+      "kind": "paragraph",
+      "text": "We do not report a separate short-term-focus-only ablation in the release tables; short-term focus is part of the full block and remains in both partial layer ablations above. We do not use full multi-session dialogue replay as a camera-first baseline: long chat history is costly and does not match image-only intake. For write-back design we refer to dialogue-memory systems such as Mem0 [1]; the evaluation here measures tool-call personalization when the input is an image and the memory block is a controlled synthetic fixture.",
+      "order": 77,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆"
+      ],
+      "char_start": 22313,
+      "char_end": 22845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b9fb17d0687d201b8dc75bb00058734",
+      "kind": "heading",
+      "text": "Memory Ablation",
+      "order": 78,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆",
+        "Memory Ablation"
+      ],
+      "char_start": 22847,
+      "char_end": 22862,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95ffd276824afa702c263888e9202691",
+      "kind": "caption",
+      "text": "Table 1 reports memory’s contribution. All percentages in the text use the relative definition",
+      "order": 79,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆",
+        "Memory Ablation"
+      ],
+      "char_start": 22864,
+      "char_end": 22958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c35d46f66399ed253d7d25230c2b700a",
+      "kind": "paragraph",
+      "text": "above.",
+      "order": 80,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Query rel. Utility Utility∆",
+        "Memory Ablation"
+      ],
+      "char_start": 22960,
+      "char_end": 22966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a131c3e57efde2f80d6f26e75d8ecd51",
+      "kind": "heading",
+      "text": "Findings",
+      "order": 81,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings"
+      ],
+      "char_start": 22968,
+      "char_end": 22976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d3cdd7fb5144ce3a2f6fde0520bfd59",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 82,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings"
+      ],
+      "char_start": 22978,
+      "char_end": 22979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30b9f6a2f5a8091dc93f849a05563c51",
+      "kind": "paragraph",
+      "text": "w/o mem w/o prof w/o obs w/o mem+vis 0 5 10 15 20",
+      "order": 83,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings"
+      ],
+      "char_start": 22981,
+      "char_end": 23030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fef80bf5b17f36a0facd51a2da77185d",
+      "kind": "heading",
+      "text": "2%",
+      "order": 84,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "2%"
+      ],
+      "char_start": 23032,
+      "char_end": 23034,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a067bfea18623570ea7c00e4a14fb60d",
+      "kind": "heading",
+      "text": "9%",
+      "order": 85,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "9%"
+      ],
+      "char_start": 23036,
+      "char_end": 23038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:452887476c20dfb02bc4fd609faa4284",
+      "kind": "heading",
+      "text": "8%",
+      "order": 86,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "8%"
+      ],
+      "char_start": 23040,
+      "char_end": 23042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:881c73e7aa7e53833619bf630da16869",
+      "kind": "paragraph",
+      "text": "19%",
+      "order": 87,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "8%"
+      ],
+      "char_start": 23044,
+      "char_end": 23047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d6400694dc3ec25131cdd75fd0dda65",
+      "kind": "heading",
+      "text": "7%",
+      "order": 88,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "7%"
+      ],
+      "char_start": 23049,
+      "char_end": 23051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:702977dad4dd63115a6574de6723a463",
+      "kind": "heading",
+      "text": "8%",
+      "order": 89,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "8%"
+      ],
+      "char_start": 23053,
+      "char_end": 23055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb15ad29c703e527486c110aea7ebee8",
+      "kind": "heading",
+      "text": "7%",
+      "order": 90,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "7%"
+      ],
+      "char_start": 23057,
+      "char_end": 23059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42df7e8129895b5397ecbc555760698e",
+      "kind": "heading",
+      "text": "5%",
+      "order": 91,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "5%"
+      ],
+      "char_start": 23061,
+      "char_end": 23063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:549f99226e4d37e006a542416c1dff51",
+      "kind": "paragraph",
+      "text": "Relative drop vs. full (%) Tool-query relevance End-to-end utility",
+      "order": 92,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "5%"
+      ],
+      "char_start": 23065,
+      "char_end": 23131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e107b7386e856bde86337491e4c51821",
+      "kind": "caption",
+      "text": "Figure 2: Memory ablation asrelative drop from the full three-layer condition(same means as",
+      "order": 93,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "5%"
+      ],
+      "char_start": 23133,
+      "char_end": 23224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e61851c82f368698c0681b8873be85f",
+      "kind": "paragraph",
+      "text": "Table 1;n=800). Absolute scores remain high without memory because visual context and tools still work; removing the full memory block still costs∼10–11% relative on both metrics, and removing memory together with visual context costs the most. • Memory (primary).Removing the full three-layer memory block (profile, short-term focus, and observations) drops tool-query relevance by0.47points absolute (4.21→ 3.74;11 .2% relative) and utility by0.082absolute (0.842→0.760;9 .7%relative). Absolute scores stay high without memory because visual context and multi-tool lookup still operate; the ablation isolates acomplementarypersonalization gain, not a collapse of the whole pipeline (Figure 2). • Profile vs. observations.Partial layer ablations keep short-term focus in place and are smaller but ordered: w/o profile costs more than w/o observations on both metrics (utility∆ −0.049vs. −0.031), consistent with profile driving depth and observations driving specificity. • Memory and visual context.Removing both costs0.139absolute utility (∼16.5% relative), larger than either factor alone—memory is not a substitute for seeing the image. • Composition and tool loop.Pipeline ablations (Table 3) show that removing LLM composition reduces utility most (0.842→ 0.731;∆ = −0.111), followed by collapsing the multi-tool loop to a single generic web query (0.842→0.748;∆ = −0.094), then removing full memory (0.842→0.760;∆ = −0.082). Memory changeswhat is looked up and how it is angled; the tool loop is the surface through which that conditioning acts; composition turns",
+      "order": 94,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "5%"
+      ],
+      "char_start": 23226,
+      "char_end": 24797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9889de56df1d82aeb4fc8a16987a5ca6",
+      "kind": "paragraph",
+      "text": "tool evidence into an answer. The∼10% relative memory effect is a meaningful single-module contribution alongside these stronger pipeline factors.",
+      "order": 95,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "5%"
+      ],
+      "char_start": 24799,
+      "char_end": 24945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2db244f562934e1bfd51bbeb05651c6",
+      "kind": "heading",
+      "text": "Tool-Argument Quality by Tool Family",
+      "order": 96,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Tool-Argument Quality by Tool Family"
+      ],
+      "char_start": 24947,
+      "char_end": 24983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40c8b0f5ebbc3c734bb1ef853bbaf956",
+      "kind": "caption",
+      "text": "Table 2 reports mean human scores (normalized to[0, 1]) for relevance, specificity, and self-",
+      "order": 97,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Tool-Argument Quality by Tool Family"
+      ],
+      "char_start": 24985,
+      "char_end": 25078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce4dfdf95a85fa3cb6c7d021745e007f",
+      "kind": "paragraph",
+      "text": "containment of tool arguments under the with-memory condition, grouped by tool family. Web rows are successive web calls within a session when the agent issues more than one.",
+      "order": 98,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Tool-Argument Quality by Tool Family"
+      ],
+      "char_start": 25080,
+      "char_end": 25254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b3471cae6070dd299a4363f51ae020c",
+      "kind": "heading",
+      "text": "Full Pipeline Ablation",
+      "order": 99,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Full Pipeline Ablation"
+      ],
+      "char_start": 25256,
+      "char_end": 25278,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:352d81c43a89f8fafb5b540df866da83",
+      "kind": "caption",
+      "text": "Table 3 isolates components. Utility∆is absolute (full−ablated).",
+      "order": 100,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Full Pipeline Ablation"
+      ],
+      "char_start": 25280,
+      "char_end": 25344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f754f5998d08f151456094d0b811f318",
+      "kind": "heading",
+      "text": "Qualitative Example",
+      "order": 101,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Qualitative Example"
+      ],
+      "char_start": 25346,
+      "char_end": 25365,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7d869d8a7b829febeb28ae5202dac76",
+      "kind": "caption",
+      "text": "Figure 3 and Table 4 show how memory changes tool choice and arguments for thesameimage",
+      "order": 102,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Qualitative Example"
+      ],
+      "char_start": 25367,
+      "char_end": 25454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f19f29195d09b8e5fb390bb1b7664cf",
+      "kind": "paragraph",
+      "text": "(a luxury sports watch) under empty memory versus collector-style memory. Recognition of the object class can succeed in both conditions; memory mainly changeswhat is worth looking up. 9",
+      "order": 103,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Qualitative Example"
+      ],
+      "char_start": 25456,
+      "char_end": 25642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aebaed4e143dfe0c876e4a128259f380",
+      "kind": "caption",
+      "text": "Table 2: Tool-argument quality by family (with memory; scores in[0,1]).",
+      "order": 104,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Findings",
+        "Qualitative Example"
+      ],
+      "char_start": 25644,
+      "char_end": 25715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:833378b10cecc80c4c07e452570dbaaa",
+      "kind": "heading",
+      "text": "Tool family Relevance Specificity Self-containment",
+      "order": 105,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool family Relevance Specificity Self-containment"
+      ],
+      "char_start": 25717,
+      "char_end": 25767,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ce14c2dbff0258d35bbe232eedc6a79",
+      "kind": "paragraph",
+      "text": "Web search (call 1) 0.87 0.76 0.91 Web search (call 2) 0.84 0.72 0.89 Web search (call 3) 0.81 0.68 0.87 Image search 0.90 0.82 0.93 Video search 0.78 0.71 0.88 Places 0.72 0.65 0.85",
+      "order": 106,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool family Relevance Specificity Self-containment"
+      ],
+      "char_start": 25769,
+      "char_end": 25951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89b250e4cab402769d84f2e45a973630",
+      "kind": "caption",
+      "text": "Table 3: Pipeline component ablation (utility; means of three raters).∆is absolute (full−",
+      "order": 107,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool family Relevance Specificity Self-containment"
+      ],
+      "char_start": 25953,
+      "char_end": 26042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca294fa45e7c355157da896689f88a62",
+      "kind": "paragraph",
+      "text": "ablated).",
+      "order": 108,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tool family Relevance Specificity Self-containment"
+      ],
+      "char_start": 26044,
+      "char_end": 26053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4e4fa89edfccf8e1878d5df662c4742",
+      "kind": "heading",
+      "text": "Configuration Utility∆(abs.)",
+      "order": 109,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Utility∆(abs.)"
+      ],
+      "char_start": 26055,
+      "char_end": 26083,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:145493e2a69ce7e77f9b1b97060c72db",
+      "kind": "paragraph",
+      "text": "Full pipeline 0.842 — w/o memory 0.760−0.082 w/o visual context 0.783−0.059 w/o tool loop 0.748−0.094 w/o multi-tool 0.805−0.037 w/o structured trust 0.812−0.030 w/o composition 0.731−0.111",
+      "order": 110,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Configuration Utility∆(abs.)"
+      ],
+      "char_start": 26085,
+      "char_end": 26274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09a1471422cffdf2ea223ca75d4d4eee",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 111,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion"
+      ],
+      "char_start": 26276,
+      "char_end": 26286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1778f304745ef0b3e7de26fac326d6ff",
+      "kind": "heading",
+      "text": "Memory Ablation in Context",
+      "order": 112,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion",
+        "Memory Ablation in Context"
+      ],
+      "char_start": 26288,
+      "char_end": 26314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da0ff2bae74d928ed4b4f73106061e47",
+      "kind": "paragraph",
+      "text": "Holding visual context, tools, and the model fixed and removing the full three-layer memory block changes both tool calls and answers: •Tool-query relevance falls by0.47absolute points (4.21→3.74;11.2%relative). •End-to-end utility falls by0.082absolute (0.842→0.760;9.7%relative). The absolute gap is moderate because the ablated agent is still a capable visual multi-tool loop; memory is aconditioningsignal on top of recognition, not a replacement for it. Relative drops of∼10% on both metrics, with a consistent profile> observations ordering under partial layer ablations that keep short-term focus, are the effect size we claim. Figure 3 and Table 4 show the same image under empty memory versus full collector-style memory: generic identification and price checks versus model-specific resale and reference lookups. That qualitative shift—not a large absolute score swing—is the mechanism under image-only intake.",
+      "order": 113,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion",
+        "Memory Ablation in Context"
+      ],
+      "char_start": 26316,
+      "char_end": 27236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f865b597d95562af2ac44ec7a1b34b14",
+      "kind": "heading",
+      "text": "Relation to Dialogue Memory Systems",
+      "order": 114,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion",
+        "Relation to Dialogue Memory Systems"
+      ],
+      "char_start": 27238,
+      "char_end": 27273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:538d60d74a52b526a1917abec8ca7783",
+      "kind": "paragraph",
+      "text": "Mem0 [1] and related systems improve multi-session dialogue QA with extract–update–retrieve memory and lower cost than full-context replay. PersonaVLM [15] similarly targets long-term multimodal personalization, but evaluates memory-augmented reasoning and personality-aligned generation rather than tool-argument quality under image-only intake. M2A [16] emphasizes editable online dual-layer multimodal memory and multi-session personalized QA rather than tool-argument quality under image-only intake. Our intake is camera-first, and our metrics are tool-query relevance and end-to-end utility. We use a similar family of conflict-aware observation operations for write-back in the system design; profile curation uses user actions only. The object of study is memory-conditioned tool policy under image-first input. 10",
+      "order": 115,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion",
+        "Relation to Dialogue Memory Systems"
+      ],
+      "char_start": 27275,
+      "char_end": 28097,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6eb4609724dcab6362f43f0de6c2de3",
+      "kind": "paragraph",
+      "text": "Same camerafirst input watch image memory condition No memory Tool calls (generic) web: What watch model is this? web: How much does this watch cost? web: Is this watch authentic?",
+      "order": 116,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Discussion",
+        "Relation to Dialogue Memory Systems"
+      ],
+      "char_start": 28099,
+      "char_end": 28278,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d90039053a25eea9e411635ed67bbd91",
+      "kind": "heading",
+      "text": "Angle:identify→price→authenticity",
+      "order": 117,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28280,
+      "char_end": 28313,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d4c8a36f96a6c93f923a20b6f9ee5ea",
+      "kind": "paragraph",
+      "text": "Collector memory Memory:experienced enthusiast; short-term focus = resale & references Tool calls (memory-calibrated) web: resale 126610L V vs. 16610 web: dial/bezel telltales price: Submariner 126610L V Angle:reference-grade comparison",
+      "order": 118,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28315,
+      "char_end": 28551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5494751179d499c6277495d9ef696e9",
+      "kind": "caption",
+      "text": "Figure 3: Qualitative contrast for one image under image-only intake. Empty memory yields",
+      "order": 119,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28553,
+      "char_end": 28642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29242ec0dcfe0299e6a38894d2234408",
+      "kind": "paragraph",
+      "text": "generic identification and price checks; full collector-style memory (profile + short-term focus + observations) steers tool choice and arguments toward resale and reference lookups. Tool strings in the figure are abbreviated; full strings are in Table 4.",
+      "order": 120,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28644,
+      "char_end": 28899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31d3e7e25973fc21d56ca66916c804b0",
+      "kind": "caption",
+      "text": "Table 4: Tool-call contrast for the same image under empty vs. full three-layer memory (detail",
+      "order": 121,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28901,
+      "char_end": 28995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14812d3332945b2bac59f5ec5eedac62",
+      "kind": "paragraph",
+      "text": "for Figure 3). Condition Example tool calls No memory (empty block)web_search : What watch model is this? web_search: How much does this watch cost?web_search: Is this watch authentic? Full collector memory (profile: experienced watch enthusiast; short-term focus: resale and references; observations: reference comparisons) web_search: How does resale of the Rolex Submariner 126610LV compare to the 16610?web_search: 126610LV dial and bezel telltales.search_price: Rolex Submariner 126610LV",
+      "order": 122,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity"
+      ],
+      "char_start": 28997,
+      "char_end": 29489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6d2943384fc0be3b51f14b418a5c611",
+      "kind": "heading",
+      "text": "Write-Back Across Captures",
+      "order": 123,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity",
+        "Write-Back Across Captures"
+      ],
+      "char_start": 29491,
+      "char_end": 29517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:731d93c76249de9ebab4959aa6da2227",
+      "kind": "paragraph",
+      "text": "The intended outer path is: focused tool calls→ user-aligned lookups→ better answers→ updated memory→ tool calls on a later capture. This paper measures memory→ tool calls most directly under fixed synthetic blocks. Multi-session compounding from write-back is left for later measurement; privacy constraints are in Section 6.",
+      "order": 124,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity",
+        "Write-Back Across Captures"
+      ],
+      "char_start": 29519,
+      "char_end": 29845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c62772aa357627b2ec3823aaba430ae",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 125,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity",
+        "Limitations"
+      ],
+      "char_start": 29847,
+      "char_end": 29858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d88df7c7d06f8b19cd8b66101ce41ce",
+      "kind": "paragraph",
+      "text": "Memory blocks are synthetic stand-ins for long-term user memory, not automatic extracts from live multi-session histories; we do not evaluate mismatched-memory robustness or write-back compounding across captures. Partial layer ablations isolate profile vs. observations while keeping short-term focus; we do not report a short-term-focus-only ablation in the release tables. Raters were interface-familiar internal annotators; we report means of three raters without inter-annotator agreement statistics and without per-item standard deviations in the release tables. Early automatic profiles in production settings can be overconfident. Composition is a large utility factor alongside memory. Memory is textual; personal visual embeddings are not studied here. Search API behavior and the underlying LLM endpoint can change over time. 11",
+      "order": 126,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity",
+        "Limitations"
+      ],
+      "char_start": 29860,
+      "char_end": 30699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9367b2984695529e3f050ace4f8cb07c",
+      "kind": "paragraph",
+      "text": "Optional follow-up text may be available in production settings; experiments use camera-first (image-only) intake.",
+      "order": 127,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Angle:identify→price→authenticity",
+        "Limitations"
+      ],
+      "char_start": 30701,
+      "char_end": 30815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f60a0c73b22fec320a508c95d11f36cf",
+      "kind": "heading",
+      "text": "Privacy, Safety, and Data Handling",
+      "order": 128,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Privacy, Safety, and Data Handling"
+      ],
+      "char_start": 30817,
+      "char_end": 30851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07f69b346ac0993b9a46e4305cb8cdf5",
+      "kind": "paragraph",
+      "text": "Personal visual memory is sensitive. We treat it as follows: •Purpose.Memory calibrates depth, angle, and specificity of tool use and answers. • Separation of signals.Profile curation uses user actions only (images and user-issued queries), not model outputs, so the agent does not mistake its own style for user identity. • Minimization.Layer sizes stay small (∼800 /∼200 characters plus short observations); summaries, not raw transcript dumps. •User control.Users should be able to review and delete stored memory. • Retrieval hygiene.Memory conditions tool choice and tool arguments inside the agent; it is not pasted wholesale into third-party search APIs. • Evaluation data.The 800-image study uses de-identified evaluation assets and synthetic memory blocks; it is not a release of production user memory stores.",
+      "order": 129,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Privacy, Safety, and Data Handling"
+      ],
+      "char_start": 30853,
+      "char_end": 31672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f6516d7dc6cb983f5a4a82a050b8f17",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 130,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Conclusion"
+      ],
+      "char_start": 31674,
+      "char_end": 31684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a09d5a5eda25bbc1d844082a5488614a",
+      "kind": "paragraph",
+      "text": "In a camera-first agent, recognition addresseswhat is in the image; personal memory conditions what to look up next. We describe a three-layer personal visual memory design coupled with multi-tool lookup: memory shapes tool calls, tool calls shape what is looked up, and conflictaware write-back is designed to update memory for later captures. Under controlled synthetic full memory blocks, removing the full three-layer block reduces tool-query relevance by0.47 points absolute (11.2%relative) and end-to-end utility by0.082absolute (9.7%relative). A vailability Architecture, memory schema, ablation protocol, and rating rubrics are described in this manuscript so that theexperimental claimscan be interpreted without access to private assets. Implementation details of our production stack at Chance AI—source code, full agent prompts, proprietary tool connectors, and the 800 evaluation images—are not released (commercial and privacy constraints). We encourage re-implementations that (i) inject a full profile/short-termfocus/observations block into a multimodal tool-calling agent, (ii) hold visual context, tools, and model fixed, and (iii) compare empty vs. matched synthetic memory blocks with the same human rubrics. Correspondence:xiaofan@chance.vision.",
+      "order": 131,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Conclusion"
+      ],
+      "char_start": 31686,
+      "char_end": 32953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c16b197a08634fee6282a6e72ae003f3",
+      "kind": "heading",
+      "text": "CRediT Author Statement",
+      "order": 132,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "CRediT Author Statement"
+      ],
+      "char_start": 32955,
+      "char_end": 32978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c90beec84eee7277585a87e0ae14ccb",
+      "kind": "paragraph",
+      "text": "Xiaofan Wu:Conceptualization, Methodology, Software, Investigation, Writing – Original Draft, Writing – Review & Editing, Supervision, Project Administration.Xi Zeng:Conceptualization, Supervision, Funding Acquisition.Miaoxia Chen:Software, Investigation, Formal Analysis,",
+      "order": 133,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "CRediT Author Statement"
+      ],
+      "char_start": 32980,
+      "char_end": 33252,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70ea55893e067c77cf1776869a0d36ff",
+      "kind": "heading",
+      "text": "Validation.Peishan Chen:Software, Investigation, Formal Analysis, Validation.Shuyan",
+      "order": 134,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Validation.Peishan Chen:Software, Investigation, Formal Analysis, Validation.Shuyan"
+      ],
+      "char_start": 33254,
+      "char_end": 33337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5af093502c6a39c81357adcf3c115f4",
+      "kind": "heading",
+      "text": "Software, Investigation, Formal Analysis, Validation.Jiyun Yao:Software, Investigation,",
+      "order": 135,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Software, Investigation, Formal Analysis, Validation.Jiyun Yao:Software, Investigation,"
+      ],
+      "char_start": 33339,
+      "char_end": 33426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ef8faa41c7c540778a97fcec10f4f98",
+      "kind": "paragraph",
+      "text": "Formal Analysis, Validation.Hanyong Zhong:Software, Investigation, Formal Analysis, Validation.Jiahao Zhu:Software, Investigation, Formal Analysis, Validation. 12",
+      "order": 136,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Software, Investigation, Formal Analysis, Validation.Jiyun Yao:Software, Investigation,"
+      ],
+      "char_start": 33428,
+      "char_end": 33590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8365f13de14b025f9dc7fdc143121bff",
+      "kind": "heading",
+      "text": "References",
+      "order": 137,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "References"
+      ],
+      "char_start": 33592,
+      "char_end": 33602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5eecc19644080b2b698b77c38f39bef",
+      "kind": "reference",
+      "text": "[1] Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, and Deshraj Yadav. “Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory.” arXiv:2504.19413, 2025. [2] ZhengXian Wu, Hangrui Xu, Kai Shi, Zhuohong Chen, Yunyao Yu, Chuanrui Zhang, Zirui Liao, Jun Yang, Zhenyu Yang, Haonan Lu, and Haoqian Wang. “ProMSA: Progressive Multimodal Search Agents for Knowledge-Based Visual Question Answering.” arXiv:2606.27974, 2026. [3] Xiangyu Peng, Can Qin, An Yan, Xinyi Yang, Zeyuan Chen, Ran Xu, and Chien-Sheng Wu. “MTA-Agent: An Open Recipe for Multimodal Deep Search Agents.” arXiv:2604.06376, 2026. [4] Zhenkun Gao, Yicheng Bao, Jinlong Peng, Xueheng Li, Theo Huang, Bangwei Liu, Kunquan Li, Zhenye Gan, Tao Hu, Chengjun Xie, Mingqian Yang, Xuanhua He, Zhizhong Zhang, Xin",
+      "order": 138,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "References"
+      ],
+      "char_start": 33604,
+      "char_end": 34397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5de17ce95226fcbad67da2d12fd40fc",
+      "kind": "heading",
+      "text": "Tan, Chengjie Wang, and Yuan Xie. “VideoSearcher: Empowering Video Deep Research",
+      "order": 139,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tan, Chengjie Wang, and Yuan Xie. “VideoSearcher: Empowering Video Deep Research"
+      ],
+      "char_start": 34399,
+      "char_end": 34479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d38a7ef77920a6849324776eef9e876",
+      "kind": "paragraph",
+      "text": "with Multi-Tool Agentic Reasoning via Reinforcement Learning.” arXiv:2607.02927, 2026.",
+      "order": 140,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Tan, Chengjie Wang, and Yuan Xie. “VideoSearcher: Empowering Video Deep Research"
+      ],
+      "char_start": 34481,
+      "char_end": 34567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31ef93f157a9bf7fd72245537c63bd54",
+      "kind": "heading",
+      "text": "[5] Varun Nagaraj Rao, Siddharth Choudhary, Aditya Deshpande, Ravi Kumar Satzoda, and",
+      "order": 141,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[5] Varun Nagaraj Rao, Siddharth Choudhary, Aditya Deshpande, Ravi Kumar Satzoda, and"
+      ],
+      "char_start": 34569,
+      "char_end": 34654,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1adb46cae9635f14b08e16c1bad2c16",
+      "kind": "heading",
+      "text": "Srikar Appalaraju. “RAVEN: Multitask Retrieval Augmented Vision-Language Learning.”",
+      "order": 142,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Srikar Appalaraju. “RAVEN: Multitask Retrieval Augmented Vision-Language Learning.”"
+      ],
+      "char_start": 34656,
+      "char_end": 34739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4fb46a5d1ccfed24329ae8d442e6549",
+      "kind": "paragraph",
+      "text": "arXiv:2406.19150, 2024. [6] Jeff Johnson, Matthijs Douze, and Hervé Jégou. “Billion-scale similarity search with GPUs.” IEEE Transactions on Big Data, 2019. Also arXiv:1702.08734. [7] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini",
+      "order": 143,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Srikar Appalaraju. “RAVEN: Multitask Retrieval Augmented Vision-Language Learning.”"
+      ],
+      "char_start": 34741,
+      "char_end": 35005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:584159024c6adcd7d90ffa50c487d511",
+      "kind": "heading",
+      "text": "Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and",
+      "order": 144,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and"
+      ],
+      "char_start": 35007,
+      "char_end": 35095,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3447bcddaba1c8866b52ed992e997780",
+      "kind": "heading",
+      "text": "Ilya Sutskever. “Learning Transferable Visual Models From Natural Language Supervision.”",
+      "order": 145,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Ilya Sutskever. “Learning Transferable Visual Models From Natural Language Supervision.”"
+      ],
+      "char_start": 35097,
+      "char_end": 35185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7577270d5ec6c42569cd487e700f7655",
+      "kind": "paragraph",
+      "text": "InICML, 2021. Also arXiv:2103.00020.",
+      "order": 146,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Ilya Sutskever. “Learning Transferable Visual Models From Natural Language Supervision.”"
+      ],
+      "char_start": 35187,
+      "char_end": 35223,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d1cc3163fe2f053c352b049fadbfbc0",
+      "kind": "heading",
+      "text": "[8] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Luke",
+      "order": 147,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[8] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Luke"
+      ],
+      "char_start": 35225,
+      "char_end": 35310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83d8b4fcb43633624964709c860656bf",
+      "kind": "heading",
+      "text": "Zettlemoyer, Nicola Cancedda, and Thomas Scialom. “Toolformer: Language Models Can",
+      "order": 148,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Zettlemoyer, Nicola Cancedda, and Thomas Scialom. “Toolformer: Language Models Can"
+      ],
+      "char_start": 35312,
+      "char_end": 35394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:521b9c82990421aa001315a52337112c",
+      "kind": "paragraph",
+      "text": "Teach Themselves to Use Tools.” InNeurIPS, 2023. Also arXiv:2302.04761. [9] Shishir G. Patil, Tianjun Zhang, Xin Wang, and Joseph E. Gonzalez. “Gorilla: Large Language Model Connected with Massive APIs.” arXiv:2305.15334, 2023. [10] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. “ReAct: Synergizing Reasoning and Acting in Language Models.” InICLR, 2023. Also arXiv:2210.03629. [11] Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. “MemGPT: Towards LLMs as Operating Systems.” arXiv:2310.08560, 2023. [12] Joon Sung Park, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, and Michael S. Bernstein. “Generative Agents: Interactive Simulacra of Human Behavior.” InUIST, 2023. Also arXiv:2304.03442.",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "Zettlemoyer, Nicola Cancedda, and Thomas Scialom. “Toolformer: Language Models Can"
+      ],
+      "char_start": 35396,
+      "char_end": 36219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ea711f5df301412939d05c8a1ae96e2",
+      "kind": "heading",
+      "text": "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and",
+      "order": 150,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and"
+      ],
+      "char_start": 36221,
+      "char_end": 36311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b281d11623a42b29dacd2c588f3761d",
+      "kind": "paragraph",
+      "text": "Yuwei Fang. “Evaluating Very Long-Term Conversational Memory of LLM Agents.” InACL,",
+      "order": 151,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and"
+      ],
+      "char_start": 36313,
+      "char_end": 36396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a597f1192b626b1746cbdfce2e9e714",
+      "kind": "heading",
+      "text": "Also arXiv:2402.17753.",
+      "order": 152,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and",
+        "Also arXiv:2402.17753."
+      ],
+      "char_start": 36398,
+      "char_end": 36420,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc1525ec454329c04e85d5542faeef2c",
+      "kind": "paragraph",
+      "text": "[14] Jaime Teevan, Susan T. Dumais, and Eric Horvitz. “Personalizing Search via Automated Analysis of Interests and Activities.” InSIGIR, 2005. 13",
+      "order": 153,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and",
+        "Also arXiv:2402.17753."
+      ],
+      "char_start": 36422,
+      "char_end": 36568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3b0ee7fad56bf71e30dd2f6fea4866d",
+      "kind": "paragraph",
+      "text": "[15] Chang Nie, Chaoyou Fu, Yifan Zhang, Haihua Yang, and Caifeng Shan. “PersonaVLM: Long-Term Personalized Multimodal LLMs.” arXiv:2604.13074, 2026. [16] Junyu Feng, Binxiao Xu, Jiayi Chen, Mengyu Dai, Cenyang Wu, Haodong Li, Bohan Zeng, Yunliu Xie, Hao Liang, Ming Lu, and Wentao Zhang. “M2A: Multimodal Memory Agent with Dual-Layer Hybrid Memory for Long-Term Personalized Interactions.” arXiv:2602.07624, 2026. 14",
+      "order": 154,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Memory-Conditioned Tool Calling",
+        "[13] Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov, Mohit Bansal, Francesco Barbieri, and",
+        "Also arXiv:2402.17753."
+      ],
+      "char_start": 36570,
+      "char_end": 36987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 14,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 14
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.09822",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 14,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

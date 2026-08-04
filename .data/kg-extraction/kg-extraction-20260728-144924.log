@@ -1,0 +1,585 @@
+ Container hermesgraph-postgres-1 Running 
+ Container hermesgraph-neo4j-1 Running 
+ Container hermesgraph-qdrant-1 Running 
+
+KG extraction configuration
+  scope:       local/computer-science
+  documents:   all incomplete documents
+  concurrency: 12
+  char budget: 20000 per document
+  checkpoint:  /data/graph_backfill_manifest.json
+  skip errors: true
+  dry run:     false
+
+ Image hermesgraph-app Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 603B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.24kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 154B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [runtime  1/13] FROM docker.io/nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b
+#6 resolve docker.io/nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b
+#6 resolve docker.io/nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b done
+#6 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 20.71kB 0.0s done
+#5 DONE 0.0s
+
+#7 [runtime  5/13] RUN --mount=type=cache,target=/root/.cache/pip     pip install --index-url="https://mirrors.aliyun.com/pypi/simple" -r requirements.runtime.lock     && python -c "import tiktoken; encoding = tiktoken.get_encoding('o200k_base'); assert encoding.name == 'o200k_base'"
+#7 CACHED
+
+#8 [runtime  6/13] COPY pyproject.toml README.md ./
+#8 CACHED
+
+#9 [runtime  4/13] COPY assets/tiktoken/fb374d419588a4632f3f557e76b4b70aebbca790     /opt/hermesgraph/tiktoken-cache/fb374d419588a4632f3f557e76b4b70aebbca790
+#9 CACHED
+
+#10 [runtime  7/13] COPY app/ ./app/
+#10 CACHED
+
+#11 [runtime  2/13] WORKDIR /app
+#11 CACHED
+
+#12 [runtime  9/13] COPY docs/ ./docs/
+#12 CACHED
+
+#13 [runtime  3/13] COPY requirements.runtime.lock ./
+#13 CACHED
+
+#14 [runtime  8/13] RUN pip install --no-deps .     && pip check
+#14 CACHED
+
+#15 [runtime 11/13] COPY prompts/ ./prompts/
+#15 CACHED
+
+#16 [runtime 12/13] COPY frontend/dist/ ./frontend/dist/
+#16 CACHED
+
+#17 [runtime 10/13] COPY examples/ ./examples/
+#17 CACHED
+
+#18 [runtime 13/13] RUN useradd --create-home --uid 10001 hermesgraph     && mkdir -p /data     && chown -R hermesgraph:hermesgraph /data
+#18 CACHED
+
+#19 exporting to image
+#19 exporting layers done
+#19 exporting manifest sha256:a6483bed99f8ad90cfc31b192fd60b6263668474d7886430094b83c32621f2b9 done
+#19 exporting config sha256:449065a74f00a33ebb1d8c941d7740b7c66d2de17cf98d4a5a6ff7141b9d74ef done
+#19 exporting attestation manifest sha256:928c4254314eca26069880ac2a663e969d8e74665df7c253df256b904a6ec043 done
+#19 exporting manifest list sha256:580bc31f3dd8b1b83d2738c0960a183bd8218a4528eb338ef2d60b1636aa5eed
+#19 exporting manifest list sha256:580bc31f3dd8b1b83d2738c0960a183bd8218a4528eb338ef2d60b1636aa5eed done
+#19 naming to docker.io/library/hermesgraph-app:latest done
+#19 unpacking to docker.io/library/hermesgraph-app:latest done
+#19 DONE 0.1s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.0s
+ Image hermesgraph-app Built 
+ Container hermesgraph-app-run-59ae3e89f2b3 Creating 
+ Container hermesgraph-app-run-59ae3e89f2b3 Created 
+KG [----------------------------]   0/478 ok=0   failed=0   entities=0     relations=0     elapsed=00:00 eta=--:--
+KG [----------------------------]   1/478 ok=1   failed=0   entities=25    relations=23    elapsed=03:31 eta=28:04:04
+KG [----------------------------]   2/478 ok=1   failed=1   entities=25    relations=23    elapsed=04:31 eta=17:58:02
+KG [----------------------------]   3/478 ok=1   failed=2   entities=25    relations=23    elapsed=04:31 eta=11:57:41
+KG [----------------------------]   4/478 ok=2   failed=2   entities=50    relations=40    elapsed=05:33 eta=10:57:41
+KG [----------------------------]   5/478 ok=3   failed=2   entities=75    relations=53    elapsed=06:02 eta=09:32:06
+KG [----------------------------]   6/478 ok=3   failed=3   entities=75    relations=53    elapsed=07:27 eta=09:46:13
+KG [----------------------------]   7/478 ok=4   failed=3   entities=100   relations=73    elapsed=08:08 eta=09:07:33
+KG [----------------------------]   8/478 ok=4   failed=4   entities=100   relations=73    elapsed=08:15 eta=08:05:26
+KG [----------------------------]   9/478 ok=5   failed=4   entities=125   relations=87    elapsed=09:17 eta=08:04:09
+KG [----------------------------]  10/478 ok=6   failed=4   entities=150   relations=101   elapsed=09:23 eta=07:19:09
+KG [----------------------------]  11/478 ok=7   failed=4   entities=175   relations=118   elapsed=09:24 eta=06:39:32
+KG [----------------------------]  12/478 ok=7   failed=5   entities=175   relations=118   elapsed=10:04 eta=06:31:11
+KG [----------------------------]  13/478 ok=7   failed=6   entities=175   relations=118   elapsed=11:09 eta=06:39:14
+KG [----------------------------]  14/478 ok=8   failed=6   entities=200   relations=126   elapsed=11:24 eta=06:18:18
+KG [----------------------------]  15/478 ok=9   failed=6   entities=225   relations=131   elapsed=11:25 eta=05:52:37
+KG [----------------------------]  16/478 ok=10  failed=6   entities=250   relations=145   elapsed=12:32 eta=06:01:54
+KG [----------------------------]  17/478 ok=11  failed=6   entities=275   relations=152   elapsed=13:40 eta=06:10:38
+KG [#---------------------------]  18/478 ok=12  failed=6   entities=300   relations=155   elapsed=15:38 eta=06:39:47
+KG [#---------------------------]  19/478 ok=12  failed=7   entities=300   relations=155   elapsed=15:47 eta=06:21:37
+KG [#---------------------------]  20/478 ok=12  failed=8   entities=300   relations=155   elapsed=16:04 eta=06:08:12
+KG [#---------------------------]  21/478 ok=13  failed=8   entities=325   relations=159   elapsed=17:51 eta=06:28:28
+KG [#---------------------------]  22/478 ok=14  failed=8   entities=350   relations=172   elapsed=18:28 eta=06:22:48
+KG [#---------------------------]  23/478 ok=15  failed=8   entities=375   relations=184   elapsed=18:32 eta=06:06:39
+KG [#---------------------------]  24/478 ok=16  failed=8   entities=400   relations=188   elapsed=18:32 eta=05:50:50
+KG [#---------------------------]  25/478 ok=17  failed=8   entities=425   relations=200   elapsed=18:49 eta=05:41:12
+KG [#---------------------------]  26/478 ok=18  failed=8   entities=450   relations=208   elapsed=19:07 eta=05:32:25
+KG [#---------------------------]  27/478 ok=19  failed=8   entities=475   relations=217   elapsed=20:26 eta=05:41:22
+KG [#---------------------------]  28/478 ok=19  failed=9   entities=475   relations=217   elapsed=20:57 eta=05:36:57
+KG [#---------------------------]  29/478 ok=20  failed=9   entities=500   relations=222   elapsed=22:05 eta=05:42:09
+KG [#---------------------------]  30/478 ok=20  failed=10  entities=500   relations=222   elapsed=23:00 eta=05:43:31
+KG [#---------------------------]  31/478 ok=20  failed=11  entities=500   relations=222   elapsed=23:02 eta=05:32:16
+KG [#---------------------------]  32/478 ok=20  failed=12  entities=500   relations=222   elapsed=23:03 eta=05:21:17
+KG [#---------------------------]  33/478 ok=20  failed=13  entities=500   relations=222   elapsed=23:04 eta=05:11:04
+KG [#---------------------------]  34/478 ok=20  failed=14  entities=500   relations=222   elapsed=23:04 eta=05:01:15
+KG [##--------------------------]  35/478 ok=20  failed=15  entities=500   relations=222   elapsed=23:05 eta=04:52:10
+KG [##--------------------------]  36/478 ok=20  failed=16  entities=500   relations=222   elapsed=23:05 eta=04:43:25
+KG [##--------------------------]  37/478 ok=20  failed=17  entities=500   relations=222   elapsed=23:05 eta=04:35:08
+KG [##--------------------------]  38/478 ok=20  failed=18  entities=500   relations=222   elapsed=23:05 eta=04:27:18
+KG [##--------------------------]  39/478 ok=20  failed=19  entities=500   relations=222   elapsed=23:05 eta=04:19:52
+KG [##--------------------------]  40/478 ok=20  failed=20  entities=500   relations=222   elapsed=23:05 eta=04:12:48
+KG [##--------------------------]  41/478 ok=21  failed=20  entities=525   relations=244   elapsed=24:03 eta=04:16:22
+KG [##--------------------------]  42/478 ok=21  failed=21  entities=525   relations=244   elapsed=24:34 eta=04:15:09
+KG [##--------------------------]  43/478 ok=21  failed=22  entities=525   relations=244   elapsed=24:35 eta=04:08:48
+KG [##--------------------------]  44/478 ok=21  failed=23  entities=525   relations=244   elapsed=26:05 eta=04:17:25
+KG [##--------------------------]  45/478 ok=22  failed=23  entities=550   relations=258   elapsed=28:11 eta=04:31:20
+KG [##--------------------------]  46/478 ok=23  failed=23  entities=575   relations=266   elapsed=29:02 eta=04:32:47
+KG [##--------------------------]  47/478 ok=23  failed=24  entities=575   relations=266   elapsed=29:31 eta=04:30:40
+KG [##--------------------------]  48/478 ok=23  failed=25  entities=575   relations=266   elapsed=29:31 eta=04:24:26
+KG [##--------------------------]  49/478 ok=23  failed=26  entities=575   relations=266   elapsed=29:31 eta=04:18:27
+KG [##--------------------------]  50/478 ok=23  failed=27  entities=575   relations=266   elapsed=29:32 eta=04:12:48
+KG [##--------------------------]  51/478 ok=23  failed=28  entities=575   relations=266   elapsed=29:32 eta=04:07:16
+KG [###-------------------------]  52/478 ok=23  failed=29  entities=575   relations=266   elapsed=29:32 eta=04:01:57
+KG [###-------------------------]  53/478 ok=23  failed=30  entities=575   relations=266   elapsed=29:32 eta=03:56:50
+KG [###-------------------------]  54/478 ok=23  failed=31  entities=575   relations=266   elapsed=29:32 eta=03:51:54
+KG [###-------------------------]  55/478 ok=23  failed=32  entities=575   relations=266   elapsed=29:32 eta=03:47:09
+KG [###-------------------------]  56/478 ok=23  failed=33  entities=575   relations=266   elapsed=29:32 eta=03:42:35
+KG [###-------------------------]  57/478 ok=23  failed=34  entities=575   relations=266   elapsed=29:32 eta=03:38:11
+KG [###-------------------------]  58/478 ok=23  failed=35  entities=575   relations=266   elapsed=29:32 eta=03:33:56
+KG [###-------------------------]  59/478 ok=24  failed=35  entities=600   relations=289   elapsed=34:00 eta=04:01:31
+KG [###-------------------------]  60/478 ok=24  failed=36  entities=600   relations=289   elapsed=34:04 eta=03:57:20
+KG [###-------------------------]  61/478 ok=25  failed=36  entities=625   relations=298   elapsed=35:04 eta=03:59:44
+KG [###-------------------------]  62/478 ok=25  failed=37  entities=625   relations=298   elapsed=35:10 eta=03:55:58
+KG [###-------------------------]  63/478 ok=26  failed=37  entities=650   relations=317   elapsed=35:28 eta=03:53:42
+KG [###-------------------------]  64/478 ok=26  failed=38  entities=650   relations=317   elapsed=35:38 eta=03:50:35
+KG [###-------------------------]  65/478 ok=27  failed=38  entities=675   relations=319   elapsed=36:03 eta=03:49:05
+KG [###-------------------------]  66/478 ok=28  failed=38  entities=700   relations=339   elapsed=37:02 eta=03:51:11
+KG [###-------------------------]  67/478 ok=29  failed=38  entities=725   relations=349   elapsed=37:08 eta=03:47:53
+KG [###-------------------------]  68/478 ok=30  failed=38  entities=750   relations=353   elapsed=37:53 eta=03:48:29
+KG [####------------------------]  69/478 ok=31  failed=38  entities=775   relations=375   elapsed=39:00 eta=03:51:10
+KG [####------------------------]  70/478 ok=31  failed=39  entities=775   relations=375   elapsed=40:24 eta=03:55:29
+KG [####------------------------]  71/478 ok=31  failed=40  entities=775   relations=375   elapsed=40:34 eta=03:52:37
+KG [####------------------------]  72/478 ok=32  failed=40  entities=800   relations=400   elapsed=40:41 eta=03:49:29
+KG [####------------------------]  73/478 ok=33  failed=40  entities=825   relations=405   elapsed=42:23 eta=03:55:09
+KG [####------------------------]  74/478 ok=33  failed=41  entities=825   relations=405   elapsed=42:50 eta=03:53:53
+KG [####------------------------]  75/478 ok=34  failed=41  entities=850   relations=420   elapsed=43:45 eta=03:55:09
+KG [####------------------------]  76/478 ok=34  failed=42  entities=850   relations=420   elapsed=43:45 eta=03:51:29
+KG [####------------------------]  77/478 ok=35  failed=42  entities=875   relations=439   elapsed=44:39 eta=03:52:36
+KG [####------------------------]  78/478 ok=35  failed=43  entities=875   relations=439   elapsed=45:11 eta=03:51:44
+KG [####------------------------]  79/478 ok=35  failed=44  entities=875   relations=439   elapsed=46:02 eta=03:52:33
+KG [####------------------------]  80/478 ok=36  failed=44  entities=900   relations=457   elapsed=47:09 eta=03:54:37
+KG [####------------------------]  81/478 ok=36  failed=45  entities=900   relations=457   elapsed=47:13 eta=03:51:29
+KG [####------------------------]  82/478 ok=36  failed=46  entities=900   relations=457   elapsed=47:21 eta=03:48:41
+KG [####------------------------]  83/478 ok=36  failed=47  entities=900   relations=457   elapsed=47:22 eta=03:45:28
+KG [####------------------------]  84/478 ok=36  failed=48  entities=900   relations=457   elapsed=47:22 eta=03:42:13
+KG [####------------------------]  85/478 ok=36  failed=49  entities=900   relations=457   elapsed=47:22 eta=03:39:03
+KG [#####-----------------------]  86/478 ok=36  failed=50  entities=900   relations=457   elapsed=47:22 eta=03:35:58
+KG [#####-----------------------]  87/478 ok=36  failed=51  entities=900   relations=457   elapsed=47:23 eta=03:32:59
+KG [#####-----------------------]  88/478 ok=36  failed=52  entities=900   relations=457   elapsed=47:23 eta=03:30:02
+KG [#####-----------------------]  89/478 ok=36  failed=53  entities=900   relations=457   elapsed=47:23 eta=03:27:08
+KG [#####-----------------------]  90/478 ok=36  failed=54  entities=900   relations=457   elapsed=47:23 eta=03:24:19
+KG [#####-----------------------]  91/478 ok=36  failed=55  entities=900   relations=457   elapsed=47:23 eta=03:21:33
+KG [#####-----------------------]  92/478 ok=36  failed=56  entities=900   relations=457   elapsed=47:23 eta=03:18:51
+KG [#####-----------------------]  93/478 ok=36  failed=57  entities=900   relations=457   elapsed=47:23 eta=03:16:12
+KG [#####-----------------------]  94/478 ok=37  failed=57  entities=925   relations=465   elapsed=52:16 eta=03:33:32
+KG [#####-----------------------]  95/478 ok=37  failed=58  entities=925   relations=465   elapsed=53:09 eta=03:34:18
+KG [#####-----------------------]  96/478 ok=37  failed=59  entities=925   relations=465   elapsed=53:09 eta=03:31:31
+KG [#####-----------------------]  97/478 ok=37  failed=60  entities=925   relations=465   elapsed=53:09 eta=03:28:47
+KG [#####-----------------------]  98/478 ok=37  failed=61  entities=925   relations=465   elapsed=53:09 eta=03:26:07
+KG [#####-----------------------]  99/478 ok=37  failed=62  entities=925   relations=465   elapsed=53:11 eta=03:23:36
+KG [#####-----------------------] 100/478 ok=37  failed=63  entities=925   relations=465   elapsed=53:11 eta=03:21:05
+KG [#####-----------------------] 101/478 ok=37  failed=64  entities=925   relations=465   elapsed=53:11 eta=03:18:34
+KG [#####-----------------------] 102/478 ok=37  failed=65  entities=925   relations=465   elapsed=53:11 eta=03:16:06
+KG [######----------------------] 103/478 ok=37  failed=66  entities=925   relations=465   elapsed=53:11 eta=03:13:41
+KG [######----------------------] 104/478 ok=37  failed=67  entities=925   relations=465   elapsed=53:11 eta=03:11:18
+KG [######----------------------] 105/478 ok=37  failed=68  entities=925   relations=465   elapsed=53:12 eta=03:08:59
+KG [######----------------------] 106/478 ok=37  failed=69  entities=925   relations=465   elapsed=53:12 eta=03:06:42
+KG [######----------------------] 107/478 ok=37  failed=70  entities=925   relations=465   elapsed=54:42 eta=03:09:40
+KG [######----------------------] 108/478 ok=37  failed=71  entities=925   relations=465   elapsed=56:13 eta=03:12:38
+KG [######----------------------] 109/478 ok=37  failed=72  entities=925   relations=465   elapsed=57:43 eta=03:15:25
+KG [######----------------------] 110/478 ok=38  failed=72  entities=950   relations=479   elapsed=58:37 eta=03:16:06
+KG [######----------------------] 111/478 ok=39  failed=72  entities=975   relations=494   elapsed=58:49 eta=03:14:31
+KG [######----------------------] 112/478 ok=39  failed=73  entities=975   relations=494   elapsed=59:40 eta=03:15:00
+KG [######----------------------] 113/478 ok=39  failed=74  entities=975   relations=494   elapsed=59:46 eta=03:13:06
+KG [######----------------------] 114/478 ok=40  failed=74  entities=1000  relations=510   elapsed=01:00:32 eta=03:13:19
+KG [######----------------------] 115/478 ok=41  failed=74  entities=1025  relations=522   elapsed=01:00:33 eta=03:11:09
+KG [######----------------------] 116/478 ok=41  failed=75  entities=1025  relations=522   elapsed=01:00:54 eta=03:10:05
+KG [######----------------------] 117/478 ok=42  failed=75  entities=1050  relations=544   elapsed=01:01:31 eta=03:09:50
+KG [######----------------------] 118/478 ok=43  failed=75  entities=1075  relations=557   elapsed=01:02:04 eta=03:09:23
+KG [######----------------------] 119/478 ok=44  failed=75  entities=1100  relations=579   elapsed=01:02:30 eta=03:08:35
+KG [#######---------------------] 120/478 ok=45  failed=75  entities=1125  relations=594   elapsed=01:04:35 eta=03:12:41
+KG [#######---------------------] 121/478 ok=46  failed=75  entities=1150  relations=599   elapsed=01:04:51 eta=03:11:20
+KG [#######---------------------] 122/478 ok=46  failed=76  entities=1150  relations=599   elapsed=01:06:36 eta=03:14:22
+KG [#######---------------------] 123/478 ok=46  failed=77  entities=1150  relations=599   elapsed=01:06:38 eta=03:12:19
+KG [#######---------------------] 124/478 ok=46  failed=78  entities=1150  relations=599   elapsed=01:06:38 eta=03:10:14
+KG [#######---------------------] 125/478 ok=46  failed=79  entities=1150  relations=599   elapsed=01:06:38 eta=03:08:11
+KG [#######---------------------] 126/478 ok=46  failed=80  entities=1150  relations=599   elapsed=01:06:39 eta=03:06:12
+KG [#######---------------------] 127/478 ok=46  failed=81  entities=1150  relations=599   elapsed=01:06:39 eta=03:04:12
+KG [#######---------------------] 128/478 ok=46  failed=82  entities=1150  relations=599   elapsed=01:06:39 eta=03:02:15
+KG [#######---------------------] 129/478 ok=46  failed=83  entities=1150  relations=599   elapsed=01:06:39 eta=03:00:19
+KG [#######---------------------] 130/478 ok=46  failed=84  entities=1150  relations=599   elapsed=01:06:39 eta=02:58:25
+KG [#######---------------------] 131/478 ok=46  failed=85  entities=1150  relations=599   elapsed=01:06:39 eta=02:56:33
+KG [#######---------------------] 132/478 ok=46  failed=86  entities=1150  relations=599   elapsed=01:06:39 eta=02:54:42
+KG [#######---------------------] 133/478 ok=46  failed=87  entities=1150  relations=599   elapsed=01:06:39 eta=02:52:54
+KG [#######---------------------] 134/478 ok=46  failed=88  entities=1150  relations=599   elapsed=01:08:10 eta=02:55:01
+KG [#######---------------------] 135/478 ok=46  failed=89  entities=1150  relations=599   elapsed=01:08:10 eta=02:53:13
+KG [#######---------------------] 136/478 ok=46  failed=90  entities=1150  relations=599   elapsed=01:09:41 eta=02:55:14
+KG [########--------------------] 137/478 ok=46  failed=91  entities=1150  relations=599   elapsed=01:09:41 eta=02:53:27
+KG [########--------------------] 138/478 ok=47  failed=91  entities=1175  relations=612   elapsed=01:11:07 eta=02:55:13
+KG [########--------------------] 139/478 ok=47  failed=92  entities=1175  relations=612   elapsed=01:11:32 eta=02:54:28
+KG [########--------------------] 140/478 ok=47  failed=93  entities=1175  relations=612   elapsed=01:11:32 eta=02:52:43
+KG [########--------------------] 141/478 ok=47  failed=94  entities=1175  relations=612   elapsed=01:12:19 eta=02:52:52
+KG [########--------------------] 142/478 ok=47  failed=95  entities=1175  relations=612   elapsed=01:12:25 eta=02:51:21
+KG [########--------------------] 143/478 ok=47  failed=96  entities=1175  relations=612   elapsed=01:12:25 eta=02:49:38
+KG [########--------------------] 144/478 ok=47  failed=97  entities=1175  relations=612   elapsed=01:12:25 eta=02:47:58
+KG [########--------------------] 145/478 ok=47  failed=98  entities=1175  relations=612   elapsed=01:12:25 eta=02:46:18
+KG [########--------------------] 146/478 ok=47  failed=99  entities=1175  relations=612   elapsed=01:12:25 eta=02:44:40
+KG [########--------------------] 147/478 ok=47  failed=100 entities=1175  relations=612   elapsed=01:12:25 eta=02:43:03
+KG [########--------------------] 148/478 ok=47  failed=101 entities=1175  relations=612   elapsed=01:12:25 eta=02:41:28
+KG [########--------------------] 149/478 ok=47  failed=102 entities=1175  relations=612   elapsed=01:12:25 eta=02:39:54
+KG [########--------------------] 150/478 ok=47  failed=103 entities=1175  relations=612   elapsed=01:12:25 eta=02:38:21
+KG [########--------------------] 151/478 ok=47  failed=104 entities=1175  relations=612   elapsed=01:12:25 eta=02:36:49
+KG [########--------------------] 152/478 ok=47  failed=105 entities=1175  relations=612   elapsed=01:12:44 eta=02:35:59
+KG [########--------------------] 153/478 ok=47  failed=106 entities=1175  relations=612   elapsed=01:13:22 eta=02:35:52
+KG [#########-------------------] 154/478 ok=47  failed=107 entities=1175  relations=612   elapsed=01:13:22 eta=02:34:22
+KG [#########-------------------] 155/478 ok=47  failed=108 entities=1175  relations=612   elapsed=01:13:22 eta=02:32:54
+KG [#########-------------------] 156/478 ok=47  failed=109 entities=1175  relations=612   elapsed=01:13:22 eta=02:31:27
+KG [#########-------------------] 157/478 ok=47  failed=110 entities=1175  relations=612   elapsed=01:13:22 eta=02:30:01
+KG [#########-------------------] 158/478 ok=47  failed=111 entities=1175  relations=612   elapsed=01:13:22 eta=02:28:36
+KG [#########-------------------] 159/478 ok=47  failed=112 entities=1175  relations=612   elapsed=01:13:22 eta=02:27:13
+KG [#########-------------------] 160/478 ok=47  failed=113 entities=1175  relations=612   elapsed=01:14:53 eta=02:28:51
+KG [#########-------------------] 161/478 ok=47  failed=114 entities=1175  relations=612   elapsed=01:14:53 eta=02:27:27
+KG [#########-------------------] 162/478 ok=47  failed=115 entities=1175  relations=612   elapsed=01:14:53 eta=02:26:05
+KG [#########-------------------] 163/478 ok=47  failed=116 entities=1175  relations=612   elapsed=01:14:53 eta=02:24:44
+KG [#########-------------------] 164/478 ok=47  failed=117 entities=1175  relations=612   elapsed=01:14:53 eta=02:23:23
+KG [#########-------------------] 165/478 ok=47  failed=118 entities=1175  relations=612   elapsed=01:15:15 eta=02:22:45
+KG [#########-------------------] 166/478 ok=47  failed=119 entities=1175  relations=612   elapsed=01:15:15 eta=02:21:26
+KG [#########-------------------] 167/478 ok=47  failed=120 entities=1175  relations=612   elapsed=01:15:15 eta=02:20:08
+KG [#########-------------------] 168/478 ok=47  failed=121 entities=1175  relations=612   elapsed=01:15:15 eta=02:18:51
+KG [#########-------------------] 169/478 ok=47  failed=122 entities=1175  relations=612   elapsed=01:15:15 eta=02:17:35
+KG [#########-------------------] 170/478 ok=47  failed=123 entities=1175  relations=612   elapsed=01:15:15 eta=02:16:20
+KG [##########------------------] 171/478 ok=47  failed=124 entities=1175  relations=612   elapsed=01:15:15 eta=02:15:06
+KG [##########------------------] 172/478 ok=47  failed=125 entities=1175  relations=612   elapsed=01:16:46 eta=02:16:34
+KG [##########------------------] 173/478 ok=47  failed=126 entities=1175  relations=612   elapsed=01:16:46 eta=02:15:20
+KG [##########------------------] 174/478 ok=47  failed=127 entities=1175  relations=612   elapsed=01:16:46 eta=02:14:07
+KG [##########------------------] 175/478 ok=47  failed=128 entities=1175  relations=612   elapsed=01:16:46 eta=02:12:55
+KG [##########------------------] 176/478 ok=47  failed=129 entities=1175  relations=612   elapsed=01:16:46 eta=02:11:44
+KG [##########------------------] 177/478 ok=47  failed=130 entities=1175  relations=612   elapsed=01:17:23 eta=02:11:36
+KG [##########------------------] 178/478 ok=47  failed=131 entities=1175  relations=612   elapsed=01:17:23 eta=02:10:25
+KG [##########------------------] 179/478 ok=47  failed=132 entities=1175  relations=612   elapsed=01:17:23 eta=02:09:16
+KG [##########------------------] 180/478 ok=47  failed=133 entities=1175  relations=612   elapsed=01:17:23 eta=02:08:07
+KG [##########------------------] 181/478 ok=47  failed=134 entities=1175  relations=612   elapsed=01:17:23 eta=02:06:59
+KG [##########------------------] 182/478 ok=47  failed=135 entities=1175  relations=612   elapsed=01:17:23 eta=02:05:51
+KG [##########------------------] 183/478 ok=47  failed=136 entities=1175  relations=612   elapsed=01:17:23 eta=02:04:45
+KG [##########------------------] 184/478 ok=47  failed=137 entities=1175  relations=612   elapsed=01:18:03 eta=02:04:42
+KG [##########------------------] 185/478 ok=47  failed=138 entities=1175  relations=612   elapsed=01:18:03 eta=02:03:36
+KG [##########------------------] 186/478 ok=47  failed=139 entities=1175  relations=612   elapsed=01:18:03 eta=02:02:31
+KG [##########------------------] 187/478 ok=47  failed=140 entities=1175  relations=612   elapsed=01:18:03 eta=02:01:27
+KG [###########-----------------] 188/478 ok=47  failed=141 entities=1175  relations=612   elapsed=01:18:03 eta=02:00:23
+KG [###########-----------------] 189/478 ok=47  failed=142 entities=1175  relations=612   elapsed=01:19:51 eta=02:02:07
+KG [###########-----------------] 190/478 ok=47  failed=143 entities=1175  relations=612   elapsed=01:19:51 eta=02:01:03
+KG [###########-----------------] 191/478 ok=47  failed=144 entities=1175  relations=612   elapsed=01:19:51 eta=02:00:00
+KG [###########-----------------] 192/478 ok=47  failed=145 entities=1175  relations=612   elapsed=01:19:51 eta=01:58:57
+KG [###########-----------------] 193/478 ok=47  failed=146 entities=1175  relations=612   elapsed=01:19:51 eta=01:57:56
+KG [###########-----------------] 194/478 ok=47  failed=147 entities=1175  relations=612   elapsed=01:19:51 eta=01:56:54
+KG [###########-----------------] 195/478 ok=47  failed=148 entities=1175  relations=612   elapsed=01:19:51 eta=01:55:54
+KG [###########-----------------] 196/478 ok=47  failed=149 entities=1175  relations=612   elapsed=01:20:08 eta=01:55:17
+KG [###########-----------------] 197/478 ok=47  failed=150 entities=1175  relations=612   elapsed=01:20:08 eta=01:54:18
+KG [###########-----------------] 198/478 ok=47  failed=151 entities=1175  relations=612   elapsed=01:20:08 eta=01:53:19
+KG [###########-----------------] 199/478 ok=47  failed=152 entities=1175  relations=612   elapsed=01:20:08 eta=01:52:21
+KG [###########-----------------] 200/478 ok=47  failed=153 entities=1175  relations=612   elapsed=01:20:08 eta=01:51:23
+KG [###########-----------------] 201/478 ok=47  failed=154 entities=1175  relations=612   elapsed=01:23:09 eta=01:54:36
+KG [###########-----------------] 202/478 ok=47  failed=155 entities=1175  relations=612   elapsed=01:23:09 eta=01:53:37
+KG [###########-----------------] 203/478 ok=47  failed=156 entities=1175  relations=612   elapsed=01:24:40 eta=01:54:43
+KG [###########-----------------] 204/478 ok=47  failed=157 entities=1175  relations=612   elapsed=01:24:40 eta=01:53:44
+KG [############----------------] 205/478 ok=47  failed=158 entities=1175  relations=612   elapsed=01:25:28 eta=01:53:49
+KG [############----------------] 206/478 ok=47  failed=159 entities=1175  relations=612   elapsed=01:25:28 eta=01:52:51
+KG [############----------------] 207/478 ok=47  failed=160 entities=1175  relations=612   elapsed=01:26:20 eta=01:53:02
+KG [############----------------] 208/478 ok=47  failed=161 entities=1175  relations=612   elapsed=01:26:20 eta=01:52:04
+KG [############----------------] 209/478 ok=47  failed=162 entities=1175  relations=612   elapsed=01:26:20 eta=01:51:07
+KG [############----------------] 210/478 ok=47  failed=163 entities=1175  relations=612   elapsed=01:26:20 eta=01:50:11
+KG [############----------------] 211/478 ok=47  failed=164 entities=1175  relations=612   elapsed=01:26:20 eta=01:49:15
+KG [############----------------] 212/478 ok=47  failed=165 entities=1175  relations=612   elapsed=01:26:25 eta=01:48:26
+KG [############----------------] 213/478 ok=47  failed=166 entities=1175  relations=612   elapsed=01:26:25 eta=01:47:31
+KG [############----------------] 214/478 ok=48  failed=166 entities=1200  relations=625   elapsed=01:26:40 eta=01:46:56
+KG [############----------------] 215/478 ok=48  failed=167 entities=1200  relations=625   elapsed=01:27:18 eta=01:46:47
+KG [############----------------] 216/478 ok=48  failed=168 entities=1200  relations=625   elapsed=01:27:18 eta=01:45:53
+KG [############----------------] 217/478 ok=48  failed=169 entities=1200  relations=625   elapsed=01:27:18 eta=01:45:00
+KG [############----------------] 218/478 ok=48  failed=170 entities=1200  relations=625   elapsed=01:27:18 eta=01:44:07
+KG [############----------------] 219/478 ok=48  failed=171 entities=1200  relations=625   elapsed=01:28:05 eta=01:44:10
+KG [############----------------] 220/478 ok=48  failed=172 entities=1200  relations=625   elapsed=01:28:05 eta=01:43:17
+KG [############----------------] 221/478 ok=48  failed=173 entities=1200  relations=625   elapsed=01:28:05 eta=01:42:26
+KG [#############---------------] 222/478 ok=48  failed=174 entities=1200  relations=625   elapsed=01:28:05 eta=01:41:34
+KG [#############---------------] 223/478 ok=48  failed=175 entities=1200  relations=625   elapsed=01:28:05 eta=01:40:43
+KG [#############---------------] 224/478 ok=48  failed=176 entities=1200  relations=625   elapsed=01:28:23 eta=01:40:13
+KG [#############---------------] 225/478 ok=48  failed=177 entities=1200  relations=625   elapsed=01:28:23 eta=01:39:23
+KG [#############---------------] 226/478 ok=48  failed=178 entities=1200  relations=625   elapsed=01:28:23 eta=01:38:33
+KG [#############---------------] 227/478 ok=48  failed=179 entities=1200  relations=625   elapsed=01:29:11 eta=01:38:37
+KG [#############---------------] 228/478 ok=48  failed=180 entities=1200  relations=625   elapsed=01:29:11 eta=01:37:47
+KG [#############---------------] 229/478 ok=48  failed=181 entities=1200  relations=625   elapsed=01:29:11 eta=01:36:58
+KG [#############---------------] 230/478 ok=48  failed=182 entities=1200  relations=625   elapsed=01:29:11 eta=01:36:10
+KG [#############---------------] 231/478 ok=48  failed=183 entities=1200  relations=625   elapsed=01:29:58 eta=01:36:12
+KG [#############---------------] 232/478 ok=48  failed=184 entities=1200  relations=625   elapsed=01:29:58 eta=01:35:24
+KG [#############---------------] 233/478 ok=48  failed=185 entities=1200  relations=625   elapsed=01:29:58 eta=01:34:36
+KG [#############---------------] 234/478 ok=48  failed=186 entities=1200  relations=625   elapsed=01:29:58 eta=01:33:49
+KG [#############---------------] 235/478 ok=48  failed=187 entities=1200  relations=625   elapsed=01:29:58 eta=01:33:02
+KG [#############---------------] 236/478 ok=48  failed=188 entities=1200  relations=625   elapsed=01:30:31 eta=01:32:49
+KG [#############---------------] 237/478 ok=48  failed=189 entities=1200  relations=625   elapsed=01:30:31 eta=01:32:03
+KG [#############---------------] 238/478 ok=48  failed=190 entities=1200  relations=625   elapsed=01:30:31 eta=01:31:17
+KG [##############--------------] 239/478 ok=48  failed=191 entities=1200  relations=625   elapsed=01:30:50 eta=01:30:50
+KG [##############--------------] 240/478 ok=48  failed=192 entities=1200  relations=625   elapsed=01:30:50 eta=01:30:04
+KG [##############--------------] 241/478 ok=48  failed=193 entities=1200  relations=625   elapsed=01:30:50 eta=01:29:19
+KG [##############--------------] 242/478 ok=48  failed=194 entities=1200  relations=625   elapsed=01:30:50 eta=01:28:35
+KG [##############--------------] 243/478 ok=48  failed=195 entities=1200  relations=625   elapsed=01:31:37 eta=01:28:36
+KG [##############--------------] 244/478 ok=48  failed=196 entities=1200  relations=625   elapsed=01:31:37 eta=01:27:52
+KG [##############--------------] 245/478 ok=48  failed=197 entities=1200  relations=625   elapsed=01:31:37 eta=01:27:08
+KG [##############--------------] 246/478 ok=48  failed=198 entities=1200  relations=625   elapsed=01:31:37 eta=01:26:24
+KG [##############--------------] 247/478 ok=48  failed=199 entities=1200  relations=625   elapsed=01:31:37 eta=01:25:41
+KG [##############--------------] 248/478 ok=48  failed=200 entities=1200  relations=625   elapsed=01:33:08 eta=01:26:22
+KG [##############--------------] 249/478 ok=48  failed=201 entities=1200  relations=625   elapsed=01:33:08 eta=01:25:39
+KG [##############--------------] 250/478 ok=48  failed=202 entities=1200  relations=625   elapsed=01:33:08 eta=01:24:56
+KG [##############--------------] 251/478 ok=48  failed=203 entities=1200  relations=625   elapsed=01:33:11 eta=01:24:16
+KG [##############--------------] 252/478 ok=48  failed=204 entities=1200  relations=625   elapsed=01:33:11 eta=01:23:34
+KG [##############--------------] 253/478 ok=48  failed=205 entities=1200  relations=625   elapsed=01:33:11 eta=01:22:52
+KG [##############--------------] 254/478 ok=48  failed=206 entities=1200  relations=625   elapsed=01:33:11 eta=01:22:10
+KG [##############--------------] 255/478 ok=48  failed=207 entities=1200  relations=625   elapsed=01:34:42 eta=01:22:49
+KG [##############--------------] 256/478 ok=48  failed=208 entities=1200  relations=625   elapsed=01:34:42 eta=01:22:07
+KG [###############-------------] 257/478 ok=48  failed=209 entities=1200  relations=625   elapsed=01:34:42 eta=01:21:26
+KG [###############-------------] 258/478 ok=48  failed=210 entities=1200  relations=625   elapsed=01:34:42 eta=01:20:45
+KG [###############-------------] 259/478 ok=48  failed=211 entities=1200  relations=625   elapsed=01:34:42 eta=01:20:04
+KG [###############-------------] 260/478 ok=48  failed=212 entities=1200  relations=625   elapsed=01:34:59 eta=01:19:39
+KG [###############-------------] 261/478 ok=48  failed=213 entities=1200  relations=625   elapsed=01:34:59 eta=01:18:58
+KG [###############-------------] 262/478 ok=48  failed=214 entities=1200  relations=625   elapsed=01:34:59 eta=01:18:19
+KG [###############-------------] 263/478 ok=48  failed=215 entities=1200  relations=625   elapsed=01:36:30 eta=01:18:53
+KG [###############-------------] 264/478 ok=48  failed=216 entities=1200  relations=625   elapsed=01:36:30 eta=01:18:14
+KG [###############-------------] 265/478 ok=48  failed=217 entities=1200  relations=625   elapsed=01:36:30 eta=01:17:34
+KG [###############-------------] 266/478 ok=48  failed=218 entities=1200  relations=625   elapsed=01:36:30 eta=01:16:55
+KG [###############-------------] 267/478 ok=48  failed=219 entities=1200  relations=625   elapsed=01:36:48 eta=01:16:30
+KG [###############-------------] 268/478 ok=48  failed=220 entities=1200  relations=625   elapsed=01:36:48 eta=01:15:51
+KG [###############-------------] 269/478 ok=48  failed=221 entities=1200  relations=625   elapsed=01:36:48 eta=01:15:13
+KG [###############-------------] 270/478 ok=48  failed=222 entities=1200  relations=625   elapsed=01:36:48 eta=01:14:34
+KG [###############-------------] 271/478 ok=48  failed=223 entities=1200  relations=625   elapsed=01:36:48 eta=01:13:56
+KG [###############-------------] 272/478 ok=48  failed=224 entities=1200  relations=625   elapsed=01:37:17 eta=01:13:40
+KG [###############-------------] 273/478 ok=48  failed=225 entities=1200  relations=625   elapsed=01:37:17 eta=01:13:03
+KG [################------------] 274/478 ok=48  failed=226 entities=1200  relations=625   elapsed=01:37:17 eta=01:12:25
+KG [################------------] 275/478 ok=48  failed=227 entities=1200  relations=625   elapsed=01:38:04 eta=01:12:23
+KG [################------------] 276/478 ok=48  failed=228 entities=1200  relations=625   elapsed=01:38:04 eta=01:11:46
+KG [################------------] 277/478 ok=48  failed=229 entities=1200  relations=625   elapsed=01:38:04 eta=01:11:10
+KG [################------------] 278/478 ok=48  failed=230 entities=1200  relations=625   elapsed=01:38:37 eta=01:10:57
+KG [################------------] 279/478 ok=48  failed=231 entities=1200  relations=625   elapsed=01:38:37 eta=01:10:20
+KG [################------------] 280/478 ok=48  failed=232 entities=1200  relations=625   elapsed=01:38:37 eta=01:09:44
+KG [################------------] 281/478 ok=48  failed=233 entities=1200  relations=625   elapsed=01:38:37 eta=01:09:08
+KG [################------------] 282/478 ok=48  failed=234 entities=1200  relations=625   elapsed=01:38:37 eta=01:08:33
+KG [################------------] 283/478 ok=48  failed=235 entities=1200  relations=625   elapsed=01:40:08 eta=01:09:00
+KG [################------------] 284/478 ok=48  failed=236 entities=1200  relations=625   elapsed=01:40:08 eta=01:08:24
+KG [################------------] 285/478 ok=48  failed=237 entities=1200  relations=625   elapsed=01:40:08 eta=01:07:49
+KG [################------------] 286/478 ok=48  failed=238 entities=1200  relations=625   elapsed=01:40:18 eta=01:07:20
+KG [################------------] 287/478 ok=48  failed=239 entities=1200  relations=625   elapsed=01:40:18 eta=01:06:45
+KG [################------------] 288/478 ok=48  failed=240 entities=1200  relations=625   elapsed=01:40:18 eta=01:06:10
+KG [################------------] 289/478 ok=48  failed=241 entities=1200  relations=625   elapsed=01:40:21 eta=01:05:38
+KG [################------------] 290/478 ok=48  failed=242 entities=1200  relations=625   elapsed=01:40:22 eta=01:05:04
+KG [#################-----------] 291/478 ok=48  failed=243 entities=1200  relations=625   elapsed=01:40:22 eta=01:04:30
+KG [#################-----------] 292/478 ok=48  failed=244 entities=1200  relations=625   elapsed=01:40:22 eta=01:03:56
+KG [#################-----------] 293/478 ok=48  failed=245 entities=1200  relations=625   elapsed=01:40:22 eta=01:03:22
+KG [#################-----------] 294/478 ok=48  failed=246 entities=1200  relations=625   elapsed=01:40:23 eta=01:02:50
+KG [#################-----------] 295/478 ok=48  failed=247 entities=1200  relations=625   elapsed=01:40:24 eta=01:02:17
+KG [#################-----------] 296/478 ok=48  failed=248 entities=1200  relations=625   elapsed=01:40:24 eta=01:01:44
+KG [#################-----------] 297/478 ok=48  failed=249 entities=1200  relations=625   elapsed=01:40:24 eta=01:01:11
+KG [#################-----------] 298/478 ok=48  failed=250 entities=1200  relations=625   elapsed=01:40:29 eta=01:00:41
+KG [#################-----------] 299/478 ok=48  failed=251 entities=1200  relations=625   elapsed=01:40:29 eta=01:00:09
+KG [#################-----------] 300/478 ok=48  failed=252 entities=1200  relations=625   elapsed=01:40:31 eta=59:38
+KG [#################-----------] 301/478 ok=48  failed=253 entities=1200  relations=625   elapsed=01:40:33 eta=59:08
+KG [#################-----------] 302/478 ok=48  failed=254 entities=1200  relations=625   elapsed=01:40:33 eta=58:36
+KG [#################-----------] 303/478 ok=48  failed=255 entities=1200  relations=625   elapsed=01:40:33 eta=58:04
+KG [#################-----------] 304/478 ok=48  failed=256 entities=1200  relations=625   elapsed=01:40:33 eta=57:33
+KG [#################-----------] 305/478 ok=48  failed=257 entities=1200  relations=625   elapsed=01:40:35 eta=57:03
+KG [#################-----------] 306/478 ok=48  failed=258 entities=1200  relations=625   elapsed=01:40:35 eta=56:32
+KG [#################-----------] 307/478 ok=48  failed=259 entities=1200  relations=625   elapsed=01:40:35 eta=56:02
+KG [##################----------] 308/478 ok=48  failed=260 entities=1200  relations=625   elapsed=01:40:37 eta=55:32
+KG [##################----------] 309/478 ok=48  failed=261 entities=1200  relations=625   elapsed=01:40:42 eta=55:05
+KG [##################----------] 310/478 ok=48  failed=262 entities=1200  relations=625   elapsed=01:40:45 eta=54:36
+KG [##################----------] 311/478 ok=48  failed=263 entities=1200  relations=625   elapsed=01:40:47 eta=54:07
+KG [##################----------] 312/478 ok=48  failed=264 entities=1200  relations=625   elapsed=01:40:47 eta=53:37
+KG [##################----------] 313/478 ok=48  failed=265 entities=1200  relations=625   elapsed=01:40:47 eta=53:08
+KG [##################----------] 314/478 ok=48  failed=266 entities=1200  relations=625   elapsed=01:40:47 eta=52:38
+KG [##################----------] 315/478 ok=48  failed=267 entities=1200  relations=625   elapsed=01:40:47 eta=52:09
+KG [##################----------] 316/478 ok=48  failed=268 entities=1200  relations=625   elapsed=01:40:49 eta=51:41
+KG [##################----------] 317/478 ok=48  failed=269 entities=1200  relations=625   elapsed=01:40:52 eta=51:14
+KG [##################----------] 318/478 ok=48  failed=270 entities=1200  relations=625   elapsed=01:40:52 eta=50:45
+KG [##################----------] 319/478 ok=48  failed=271 entities=1200  relations=625   elapsed=01:40:52 eta=50:17
+KG [##################----------] 320/478 ok=48  failed=272 entities=1200  relations=625   elapsed=01:40:54 eta=49:49
+KG [##################----------] 321/478 ok=48  failed=273 entities=1200  relations=625   elapsed=01:40:58 eta=49:23
+KG [##################----------] 322/478 ok=48  failed=274 entities=1200  relations=625   elapsed=01:40:58 eta=48:55
+KG [##################----------] 323/478 ok=48  failed=275 entities=1200  relations=625   elapsed=01:40:58 eta=48:27
+KG [##################----------] 324/478 ok=48  failed=276 entities=1200  relations=625   elapsed=01:41:03 eta=48:01
+KG [###################---------] 325/478 ok=48  failed=277 entities=1200  relations=625   elapsed=01:41:03 eta=47:34
+KG [###################---------] 326/478 ok=48  failed=278 entities=1200  relations=625   elapsed=01:41:03 eta=47:07
+KG [###################---------] 327/478 ok=48  failed=279 entities=1200  relations=625   elapsed=01:41:03 eta=46:39
+KG [###################---------] 328/478 ok=48  failed=280 entities=1200  relations=625   elapsed=01:41:03 eta=46:13
+KG [###################---------] 329/478 ok=48  failed=281 entities=1200  relations=625   elapsed=01:41:03 eta=45:46
+KG [###################---------] 330/478 ok=48  failed=282 entities=1200  relations=625   elapsed=01:41:03 eta=45:19
+KG [###################---------] 331/478 ok=48  failed=283 entities=1200  relations=625   elapsed=01:41:05 eta=44:53
+KG [###################---------] 332/478 ok=48  failed=284 entities=1200  relations=625   elapsed=01:41:05 eta=44:27
+KG [###################---------] 333/478 ok=48  failed=285 entities=1200  relations=625   elapsed=01:41:10 eta=44:03
+KG [###################---------] 334/478 ok=48  failed=286 entities=1200  relations=625   elapsed=01:41:10 eta=43:37
+KG [###################---------] 335/478 ok=48  failed=287 entities=1200  relations=625   elapsed=01:41:10 eta=43:11
+KG [###################---------] 336/478 ok=48  failed=288 entities=1200  relations=625   elapsed=01:41:14 eta=42:47
+KG [###################---------] 337/478 ok=48  failed=289 entities=1200  relations=625   elapsed=01:41:15 eta=42:21
+KG [###################---------] 338/478 ok=48  failed=290 entities=1200  relations=625   elapsed=01:41:15 eta=41:56
+KG [###################---------] 339/478 ok=48  failed=291 entities=1200  relations=625   elapsed=01:41:15 eta=41:31
+KG [###################---------] 340/478 ok=48  failed=292 entities=1200  relations=625   elapsed=01:41:17 eta=41:06
+KG [###################---------] 341/478 ok=48  failed=293 entities=1200  relations=625   elapsed=01:41:17 eta=40:41
+KG [####################--------] 342/478 ok=48  failed=294 entities=1200  relations=625   elapsed=01:41:17 eta=40:16
+KG [####################--------] 343/478 ok=48  failed=295 entities=1200  relations=625   elapsed=01:41:17 eta=39:52
+KG [####################--------] 344/478 ok=48  failed=296 entities=1200  relations=625   elapsed=01:41:17 eta=39:27
+KG [####################--------] 345/478 ok=48  failed=297 entities=1200  relations=625   elapsed=01:41:20 eta=39:04
+KG [####################--------] 346/478 ok=48  failed=298 entities=1200  relations=625   elapsed=01:41:24 eta=38:41
+KG [####################--------] 347/478 ok=48  failed=299 entities=1200  relations=625   elapsed=01:41:24 eta=38:17
+KG [####################--------] 348/478 ok=48  failed=300 entities=1200  relations=625   elapsed=01:41:31 eta=37:55
+KG [####################--------] 349/478 ok=48  failed=301 entities=1200  relations=625   elapsed=01:41:31 eta=37:31
+KG [####################--------] 350/478 ok=48  failed=302 entities=1200  relations=625   elapsed=01:41:31 eta=37:07
+KG [####################--------] 351/478 ok=48  failed=303 entities=1200  relations=625   elapsed=01:41:31 eta=36:44
+KG [####################--------] 352/478 ok=48  failed=304 entities=1200  relations=625   elapsed=01:41:32 eta=36:20
+KG [####################--------] 353/478 ok=48  failed=305 entities=1200  relations=625   elapsed=01:41:32 eta=35:57
+KG [####################--------] 354/478 ok=48  failed=306 entities=1200  relations=625   elapsed=01:41:32 eta=35:33
+KG [####################--------] 355/478 ok=48  failed=307 entities=1200  relations=625   elapsed=01:41:32 eta=35:10
+KG [####################--------] 356/478 ok=48  failed=308 entities=1200  relations=625   elapsed=01:41:32 eta=34:47
+KG [####################--------] 357/478 ok=48  failed=309 entities=1200  relations=625   elapsed=01:41:35 eta=34:26
+KG [####################--------] 358/478 ok=48  failed=310 entities=1200  relations=625   elapsed=01:41:35 eta=34:03
+KG [#####################-------] 359/478 ok=48  failed=311 entities=1200  relations=625   elapsed=01:41:36 eta=33:40
+KG [#####################-------] 360/478 ok=48  failed=312 entities=1200  relations=625   elapsed=01:41:43 eta=33:20
+KG [#####################-------] 361/478 ok=48  failed=313 entities=1200  relations=625   elapsed=01:41:43 eta=32:58
+KG [#####################-------] 362/478 ok=48  failed=314 entities=1200  relations=625   elapsed=01:41:43 eta=32:35
+KG [#####################-------] 363/478 ok=48  failed=315 entities=1200  relations=625   elapsed=01:41:43 eta=32:13
+KG [#####################-------] 364/478 ok=48  failed=316 entities=1200  relations=625   elapsed=01:41:46 eta=31:52
+KG [#####################-------] 365/478 ok=48  failed=317 entities=1200  relations=625   elapsed=01:41:46 eta=31:30
+KG [#####################-------] 366/478 ok=48  failed=318 entities=1200  relations=625   elapsed=01:41:49 eta=31:09
+KG [#####################-------] 367/478 ok=48  failed=319 entities=1200  relations=625   elapsed=01:41:49 eta=30:47
+KG [#####################-------] 368/478 ok=48  failed=320 entities=1200  relations=625   elapsed=01:41:49 eta=30:26
+KG [#####################-------] 369/478 ok=48  failed=321 entities=1200  relations=625   elapsed=01:41:49 eta=30:04
+KG [#####################-------] 370/478 ok=48  failed=322 entities=1200  relations=625   elapsed=01:41:50 eta=29:43
+KG [#####################-------] 371/478 ok=48  failed=323 entities=1200  relations=625   elapsed=01:41:51 eta=29:22
+KG [#####################-------] 372/478 ok=48  failed=324 entities=1200  relations=625   elapsed=01:41:55 eta=29:02
+KG [#####################-------] 373/478 ok=48  failed=325 entities=1200  relations=625   elapsed=01:41:55 eta=28:41
+KG [#####################-------] 374/478 ok=48  failed=326 entities=1200  relations=625   elapsed=01:41:56 eta=28:20
+KG [#####################-------] 375/478 ok=48  failed=327 entities=1200  relations=625   elapsed=01:41:56 eta=27:59
+KG [######################------] 376/478 ok=48  failed=328 entities=1200  relations=625   elapsed=01:41:56 eta=27:39
+KG [######################------] 377/478 ok=48  failed=329 entities=1200  relations=625   elapsed=01:41:56 eta=27:18
+KG [######################------] 378/478 ok=48  failed=330 entities=1200  relations=625   elapsed=01:41:57 eta=26:58
+KG [######################------] 379/478 ok=48  failed=331 entities=1200  relations=625   elapsed=01:41:57 eta=26:37
+KG [######################------] 380/478 ok=48  failed=332 entities=1200  relations=625   elapsed=01:41:57 eta=26:17
+KG [######################------] 381/478 ok=48  failed=333 entities=1200  relations=625   elapsed=01:41:57 eta=25:57
+KG [######################------] 382/478 ok=48  failed=334 entities=1200  relations=625   elapsed=01:41:59 eta=25:37
+KG [######################------] 383/478 ok=48  failed=335 entities=1200  relations=625   elapsed=01:42:00 eta=25:18
+KG [######################------] 384/478 ok=48  failed=336 entities=1200  relations=625   elapsed=01:42:01 eta=24:58
+KG [######################------] 385/478 ok=48  failed=337 entities=1200  relations=625   elapsed=01:42:01 eta=24:38
+KG [######################------] 386/478 ok=48  failed=338 entities=1200  relations=625   elapsed=01:42:06 eta=24:20
+KG [######################------] 387/478 ok=48  failed=339 entities=1200  relations=625   elapsed=01:42:06 eta=24:00
+KG [######################------] 388/478 ok=48  failed=340 entities=1200  relations=625   elapsed=01:42:06 eta=23:40
+KG [######################------] 389/478 ok=48  failed=341 entities=1200  relations=625   elapsed=01:42:08 eta=23:22
+KG [######################------] 390/478 ok=48  failed=342 entities=1200  relations=625   elapsed=01:42:11 eta=23:03
+KG [######################------] 391/478 ok=48  failed=343 entities=1200  relations=625   elapsed=01:42:12 eta=22:44
+KG [######################------] 392/478 ok=48  failed=344 entities=1200  relations=625   elapsed=01:42:12 eta=22:25
+KG [#######################-----] 393/478 ok=48  failed=345 entities=1200  relations=625   elapsed=01:42:14 eta=22:06
+KG [#######################-----] 394/478 ok=48  failed=346 entities=1200  relations=625   elapsed=01:42:14 eta=21:47
+KG [#######################-----] 395/478 ok=48  failed=347 entities=1200  relations=625   elapsed=01:42:14 eta=21:28
+KG [#######################-----] 396/478 ok=48  failed=348 entities=1200  relations=625   elapsed=01:42:18 eta=21:11
+KG [#######################-----] 397/478 ok=48  failed=349 entities=1200  relations=625   elapsed=01:42:18 eta=20:52
+KG [#######################-----] 398/478 ok=48  failed=350 entities=1200  relations=625   elapsed=01:42:19 eta=20:33
+KG [#######################-----] 399/478 ok=48  failed=351 entities=1200  relations=625   elapsed=01:42:19 eta=20:15
+KG [#######################-----] 400/478 ok=48  failed=352 entities=1200  relations=625   elapsed=01:42:20 eta=19:57
+KG [#######################-----] 401/478 ok=48  failed=353 entities=1200  relations=625   elapsed=01:42:23 eta=19:39
+KG [#######################-----] 402/478 ok=48  failed=354 entities=1200  relations=625   elapsed=01:42:24 eta=19:21
+KG [#######################-----] 403/478 ok=48  failed=355 entities=1200  relations=625   elapsed=01:42:24 eta=19:03
+KG [#######################-----] 404/478 ok=48  failed=356 entities=1200  relations=625   elapsed=01:42:24 eta=18:45
+KG [#######################-----] 405/478 ok=48  failed=357 entities=1200  relations=625   elapsed=01:42:28 eta=18:28
+KG [#######################-----] 406/478 ok=48  failed=358 entities=1200  relations=625   elapsed=01:42:28 eta=18:10
+KG [#######################-----] 407/478 ok=48  failed=359 entities=1200  relations=625   elapsed=01:42:28 eta=17:52
+KG [#######################-----] 408/478 ok=48  failed=360 entities=1200  relations=625   elapsed=01:42:32 eta=17:35
+KG [#######################-----] 409/478 ok=48  failed=361 entities=1200  relations=625   elapsed=01:42:32 eta=17:18
+KG [########################----] 410/478 ok=48  failed=362 entities=1200  relations=625   elapsed=01:42:34 eta=17:00
+KG [########################----] 411/478 ok=48  failed=363 entities=1200  relations=625   elapsed=01:42:34 eta=16:43
+KG [########################----] 412/478 ok=48  failed=364 entities=1200  relations=625   elapsed=01:42:37 eta=16:26
+KG [########################----] 413/478 ok=48  failed=365 entities=1200  relations=625   elapsed=01:42:39 eta=16:09
+KG [########################----] 414/478 ok=48  failed=366 entities=1200  relations=625   elapsed=01:42:39 eta=15:52
+KG [########################----] 415/478 ok=48  failed=367 entities=1200  relations=625   elapsed=01:42:39 eta=15:35
+KG [########################----] 416/478 ok=48  failed=368 entities=1200  relations=625   elapsed=01:42:39 eta=15:18
+KG [########################----] 417/478 ok=48  failed=369 entities=1200  relations=625   elapsed=01:42:43 eta=15:01
+KG [########################----] 418/478 ok=48  failed=370 entities=1200  relations=625   elapsed=01:42:43 eta=14:44
+KG [########################----] 419/478 ok=48  failed=371 entities=1200  relations=625   elapsed=01:42:43 eta=14:27
+KG [########################----] 420/478 ok=48  failed=372 entities=1200  relations=625   elapsed=01:42:44 eta=14:11
+KG [########################----] 421/478 ok=48  failed=373 entities=1200  relations=625   elapsed=01:42:45 eta=13:54
+KG [########################----] 422/478 ok=48  failed=374 entities=1200  relations=625   elapsed=01:42:45 eta=13:38
+KG [########################----] 423/478 ok=48  failed=375 entities=1200  relations=625   elapsed=01:42:45 eta=13:21
+KG [########################----] 424/478 ok=48  failed=376 entities=1200  relations=625   elapsed=01:42:45 eta=13:05
+KG [########################----] 425/478 ok=48  failed=377 entities=1200  relations=625   elapsed=01:42:45 eta=12:48
+KG [########################----] 426/478 ok=48  failed=378 entities=1200  relations=625   elapsed=01:42:45 eta=12:32
+KG [#########################---] 427/478 ok=48  failed=379 entities=1200  relations=625   elapsed=01:42:45 eta=12:16
+KG [#########################---] 428/478 ok=48  failed=380 entities=1200  relations=625   elapsed=01:42:48 eta=12:00
+KG [#########################---] 429/478 ok=48  failed=381 entities=1200  relations=625   elapsed=01:42:49 eta=11:44
+KG [#########################---] 430/478 ok=48  failed=382 entities=1200  relations=625   elapsed=01:42:49 eta=11:28
+KG [#########################---] 431/478 ok=48  failed=383 entities=1200  relations=625   elapsed=01:42:49 eta=11:12
+KG [#########################---] 432/478 ok=48  failed=384 entities=1200  relations=625   elapsed=01:42:49 eta=10:56
+KG [#########################---] 433/478 ok=48  failed=385 entities=1200  relations=625   elapsed=01:42:50 eta=10:41
+KG [#########################---] 434/478 ok=48  failed=386 entities=1200  relations=625   elapsed=01:42:50 eta=10:25
+KG [#########################---] 435/478 ok=48  failed=387 entities=1200  relations=625   elapsed=01:42:50 eta=10:09
+KG [#########################---] 436/478 ok=48  failed=388 entities=1200  relations=625   elapsed=01:42:50 eta=09:54
+KG [#########################---] 437/478 ok=48  failed=389 entities=1200  relations=625   elapsed=01:42:50 eta=09:38
+KG [#########################---] 438/478 ok=48  failed=390 entities=1200  relations=625   elapsed=01:42:50 eta=09:23
+KG [#########################---] 439/478 ok=48  failed=391 entities=1200  relations=625   elapsed=01:42:50 eta=09:08
+KG [#########################---] 440/478 ok=48  failed=392 entities=1200  relations=625   elapsed=01:42:51 eta=08:52
+KG [#########################---] 441/478 ok=48  failed=393 entities=1200  relations=625   elapsed=01:42:51 eta=08:37
+KG [#########################---] 442/478 ok=48  failed=394 entities=1200  relations=625   elapsed=01:42:52 eta=08:22
+KG [#########################---] 443/478 ok=48  failed=395 entities=1200  relations=625   elapsed=01:42:52 eta=08:07
+KG [##########################--] 444/478 ok=48  failed=396 entities=1200  relations=625   elapsed=01:42:53 eta=07:52
+KG [##########################--] 445/478 ok=48  failed=397 entities=1200  relations=625   elapsed=01:42:53 eta=07:37
+KG [##########################--] 446/478 ok=48  failed=398 entities=1200  relations=625   elapsed=01:42:54 eta=07:22
+KG [##########################--] 447/478 ok=48  failed=399 entities=1200  relations=625   elapsed=01:42:54 eta=07:08
+KG [##########################--] 448/478 ok=48  failed=400 entities=1200  relations=625   elapsed=01:42:54 eta=06:53
+KG [##########################--] 449/478 ok=48  failed=401 entities=1200  relations=625   elapsed=01:42:54 eta=06:38
+KG [##########################--] 450/478 ok=48  failed=402 entities=1200  relations=625   elapsed=01:42:55 eta=06:24
+KG [##########################--] 451/478 ok=48  failed=403 entities=1200  relations=625   elapsed=01:42:55 eta=06:09
+KG [##########################--] 452/478 ok=48  failed=404 entities=1200  relations=625   elapsed=01:42:55 eta=05:55
+KG [##########################--] 453/478 ok=48  failed=405 entities=1200  relations=625   elapsed=01:42:55 eta=05:40
+KG [##########################--] 454/478 ok=48  failed=406 entities=1200  relations=625   elapsed=01:42:55 eta=05:26
+KG [##########################--] 455/478 ok=48  failed=407 entities=1200  relations=625   elapsed=01:42:56 eta=05:12
+KG [##########################--] 456/478 ok=48  failed=408 entities=1200  relations=625   elapsed=01:42:56 eta=04:57
+KG [##########################--] 457/478 ok=48  failed=409 entities=1200  relations=625   elapsed=01:42:56 eta=04:43
+KG [##########################--] 458/478 ok=48  failed=410 entities=1200  relations=625   elapsed=01:42:56 eta=04:29
+KG [##########################--] 459/478 ok=48  failed=411 entities=1200  relations=625   elapsed=01:42:56 eta=04:15
+KG [##########################--] 460/478 ok=48  failed=412 entities=1200  relations=625   elapsed=01:42:57 eta=04:01
+KG [###########################-] 461/478 ok=48  failed=413 entities=1200  relations=625   elapsed=01:42:57 eta=03:47
+KG [###########################-] 462/478 ok=48  failed=414 entities=1200  relations=625   elapsed=01:42:57 eta=03:33
+KG [###########################-] 463/478 ok=48  failed=415 entities=1200  relations=625   elapsed=01:42:57 eta=03:20
+KG [###########################-] 464/478 ok=48  failed=416 entities=1200  relations=625   elapsed=01:42:57 eta=03:06
+KG [###########################-] 465/478 ok=48  failed=417 entities=1200  relations=625   elapsed=01:42:58 eta=02:52
+KG [###########################-] 466/478 ok=48  failed=418 entities=1200  relations=625   elapsed=01:42:58 eta=02:39
+KG [###########################-] 467/478 ok=48  failed=419 entities=1200  relations=625   elapsed=01:42:58 eta=02:25
+KG [###########################-] 468/478 ok=48  failed=420 entities=1200  relations=625   elapsed=01:42:59 eta=02:12
+KG [###########################-] 469/478 ok=48  failed=421 entities=1200  relations=625   elapsed=01:42:59 eta=01:58
+KG [###########################-] 470/478 ok=48  failed=422 entities=1200  relations=625   elapsed=01:42:59 eta=01:45
+KG [###########################-] 471/478 ok=48  failed=423 entities=1200  relations=625   elapsed=01:42:59 eta=01:31
+KG [###########################-] 472/478 ok=48  failed=424 entities=1200  relations=625   elapsed=01:42:59 eta=01:18
+KG [###########################-] 473/478 ok=48  failed=425 entities=1200  relations=625   elapsed=01:42:59 eta=01:05
+KG [###########################-] 474/478 ok=48  failed=426 entities=1200  relations=625   elapsed=01:43:00 eta=00:52
+KG [###########################-] 475/478 ok=48  failed=427 entities=1200  relations=625   elapsed=01:43:00 eta=00:39
+KG [###########################-] 476/478 ok=48  failed=428 entities=1200  relations=625   elapsed=01:43:00 eta=00:25
+KG [###########################-] 477/478 ok=48  failed=429 entities=1200  relations=625   elapsed=01:43:00 eta=00:12
+KG [############################] 478/478 ok=48  failed=430 entities=1200  relations=625   elapsed=01:43:00 eta=00:00
+{
+  "extractor_revision": "openai-graph-extraction-v6-window-map-reduce:c6000:n4:o1:gpt-5.6-sol",
+  "documents_discovered": 528,
+  "documents_selected": 478,
+  "documents_completed": 48,
+  "documents_skipped": 50,
+  "documents_failed": 430,
+  "entity_candidates": 1200,
+  "relation_candidates": 625,
+  "dry_run": false,
+  "checkpoint_path": "/data/graph_backfill_manifest.json"
+}
+

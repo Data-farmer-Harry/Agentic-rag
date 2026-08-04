@@ -1,0 +1,3033 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "f4002dbb8bca2a2a0c507cae54890de8a3939898a97f18ec7828a39dad753916",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:da9e3221f89f24a969f301c54915be18",
+      "kind": "heading",
+      "text": "Binding Drift in Multi-Step Tool-Augmented Agents",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents"
+      ],
+      "char_start": 0,
+      "char_end": 49,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bccfc1c98cc241ee7d5d8d5a419afeec",
+      "kind": "heading",
+      "text": "Rahul Suresh Babu∗",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Rahul Suresh Babu∗"
+      ],
+      "char_start": 51,
+      "char_end": 69,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ba052f44b7fe5c0e69cfebb8bf8e6d9",
+      "kind": "paragraph",
+      "text": "rahulsb@bu.edu",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Rahul Suresh Babu∗"
+      ],
+      "char_start": 71,
+      "char_end": 85,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ccecbfa2f7258ee4fc49f06918f280b",
+      "kind": "heading",
+      "text": "Shashank Indukuri∗",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Shashank Indukuri∗"
+      ],
+      "char_start": 87,
+      "char_end": 105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69d4f2f97ae4155836606fd668665f45",
+      "kind": "paragraph",
+      "text": "sinduku1@depaul.edu",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Shashank Indukuri∗"
+      ],
+      "char_start": 107,
+      "char_end": 126,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02b2e05d9411d78b8237a66f5f30c063",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Abstract"
+      ],
+      "char_start": 128,
+      "char_end": 136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a11ee06a89aacba746f56942387d7c17",
+      "kind": "paragraph",
+      "text": "Tool-augmented language-model agents execute multi-step workflows over external systems, resolving an entity once and then acting on it across subsequent steps. Prior work shows that in single-step actions, agents select the correct tool but bind it to the wrong entity 24–26% of the time [1]. We study what happens to entity bindingsover time: do they stay correct, silently drift to a different entity, or, if wrong from the start, propagate and compound? We formalizebinding drift(correct at step 1, wrong later) as distinct fromerror propagation(wrong at step 1, carried forward), and score them on disjoint workflow sets so the two cannot be conflated. In a controlled multi-step testbed (200 workflows, 580 entity-bindingscored steps, four enterprise domains, eight model backends spanning small to frontier), we find: (1) under controlled error injection, an entity lock (the intuitive “persist the first binding” fix) amplifies wrong actions from 907 to 2,746 (3.0×; bootstrap 95% CI[2.8,3.3]), because it faithfully carries the seeded wrong entity into every later step; (2) the amplification reaches8.5×on the most affected model (Claude Opus 4.5); (3) a practical LLM-based re-verifier (a single cheap second model call re-reading the original instruction) reduces wrong actions by 79% (0.21×; CI[0.18,0.25]), closing the gap to within 1 percentage point of an oracle upper-bound (0.20×); and (4) in the natural (non-injected) setting, baseline agents drift on 18% of eligible workflows, with the per-step error rate rising",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Abstract"
+      ],
+      "char_start": 138,
+      "char_end": 1672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a01ff120a6e89081c8ed00108ec7a8d",
+      "kind": "paragraph",
+      "text": "across steps. Persistence and re-verification are not interchangeable: a defense that eliminates drift can worsen propagation, and a practical re-verifier nearly matches oracle recovery.",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Abstract"
+      ],
+      "char_start": 1674,
+      "char_end": 1860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:096a845541f8efbd49c2ce6cc6d49158",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Introduction"
+      ],
+      "char_start": 1862,
+      "char_end": 1874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd82bcee62f9859cd6c1e5491dc498f2",
+      "kind": "paragraph",
+      "text": "Tool-augmented language-model agents rarely act once. A realistic task is aworkflow: pull up an account, log a note on it, update its renewal date, then email its owner a summary. Every step after the first refers back to the same real-world entity, often only as “it,” “that account,” or “the ticket.” The agent must not only resolve the entity correctly the first time, but keep acting on thesameentity for the rest of the workflow. Prior work established that agents choose the right tool but bind it to the wrong entity in a single action [1]. That work measured a point failure: one instruction, one action, scored once. It could not observe what happens across steps. This paper studies the trajectory. We identify two multi-step failure modes invisible to single-step evaluation: •Binding drift.The agent binds the correct entity at step 1, then a later step silently acts on adifferentvalid entity because a pronoun is re-resolved, a same-named distractor becomes salient, or the early resolution scrolls out of context. •Error propagation.The agent binds thewrongentity at step 1 and carries it forward, so one mis-binding becomes a wrong action at every subsequent step. ∗Equal contribution. Preprint. Under review.",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Introduction"
+      ],
+      "char_start": 1876,
+      "char_end": 3101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:376903685d2d80df94aaf36d47f92fe7",
+      "kind": "table",
+      "text": "arXiv:2607.18316v1  [cs.SE]  17 Jul 2026",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Introduction"
+      ],
+      "char_start": 3103,
+      "char_end": 3143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:295d83772e29c7bbc1d5eb13327762df",
+      "kind": "paragraph",
+      "text": "These are different problems with different fixes. A persistence mechanism (entity lock) eliminates drift but, as we show, amplifies propagation when the initial binding is wrong. An independent rederivation mechanism can in principle address both (as our oracle upper-bound demonstrates), but at an over-clarification cost. Relationship to dialogue state tracking.The concept of persisting a slot value across turns is well-studied in dialogue state tracking (DST) systems such as MultiWOZ [2] and SGD [3]. In those settings, slot persistence is assumed to be correct behavior. Our finding inverts this assumption: in agentic tool-use, where each resolution triggers an irreversible real-world action, slot persistence is actively harmful when the initial fill is wrong. This inversion (from “persistence is good” to “persistence can amplify errors”) is one specific contribution of this work to the broader state-tracking literature. Contributions. • A formalization that scores drift and propagation on disjoint workflow sets, making them independently measurable (Section 2). • A taxonomy of five drift-inducing patterns and a controlled multi-step testbed (Section 3). • A controlled-injection protocol that decouples propagation measurement from natural error rate by seeding known-wrong bindings, enabling comparison across models with different baseline failure rates (Section 5). • An empirical finding that entity locking amplifies propagation up to8.5×, and a practical LLM-based re-verifier (a single cheap second call) that achieves 79% reduction, closing to",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Introduction"
+      ],
+      "char_start": 3145,
+      "char_end": 4716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31218012a7778fc174ab241412c2b3bb",
+      "kind": "paragraph",
+      "text": "within 1 percentage point of the oracle ceiling (Section 5).",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Introduction"
+      ],
+      "char_start": 4718,
+      "char_end": 4778,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd37831489bca7b03f2f47548828a7e1",
+      "kind": "heading",
+      "text": "Problem Formulation",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Problem Formulation"
+      ],
+      "char_start": 4780,
+      "char_end": 4799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bff42ca0a2d38139ec3495a2977a3123",
+      "kind": "paragraph",
+      "text": "Workflows and binding state.A workflow is an ordered sequence of stepsw= (s 1, . . . , sK)executed over an environment storeEof typed entities (persons, accounts, events, documents, tickets). At each steps k the agent emits an actiona k =⟨t k, ˆbk⟩: a toolt k and a predicted entity binding ˆbk ∈ E ∪ {⊥}. Rather than assuming a single gold entity per workflow, we define abinding-state mapthat captures the full ground truth at each step: Bk ={σ 1 7→e (k)",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Problem Formulation"
+      ],
+      "char_start": 4801,
+      "char_end": 5257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:882c0baf94e2d340f237255516800b97",
+      "kind": "heading",
+      "text": ", σ2 7→e (k)",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        ", σ2 7→e (k)"
+      ],
+      "char_start": 5259,
+      "char_end": 5271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d08c51a58b39166d8bc6421bab8bd134",
+      "kind": "heading",
+      "text": ", . . . , σm 7→e (k)",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        ", . . . , σm 7→e (k)"
+      ],
+      "char_start": 5273,
+      "char_end": 5293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab688776d8a0ed25a0764cb4ddc37d86",
+      "kind": "paragraph",
+      "text": "m } where eachσ i is a referentslot(a semantic role the workflow refers to, such as “the account” or “the account’s owner”) ande (k)",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        ", . . . , σm 7→e (k)"
+      ],
+      "char_start": 5295,
+      "char_end": 5427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2968fa85d9214666dd58d839abe3bc85",
+      "kind": "heading",
+      "text": "∈ Eis the gold entity filling that slot at stepk. Every scored",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∈ Eis the gold entity filling that slot at stepk. Every scored"
+      ],
+      "char_start": 5429,
+      "char_end": 5491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1002ae3954c48099500661875c47be3",
+      "kind": "paragraph",
+      "text": "action step has exactly oneactive slotσ(k)whose gold entity is the correct binding for that step: e⋆ k =B k[σ(k)]. Primary carry slot vs. derived slots.We distinguish two slot types: • Theprimary carry slotσ 1 is the referent that persists across the majority of steps (e.g., “the account”). Its gold entitye (k)",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∈ Eis the gold entity filling that slot at stepk. Every scored"
+      ],
+      "char_start": 5493,
+      "char_end": 5805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4549bc0ccf6ab578eed8ff27b2451c20",
+      "kind": "heading",
+      "text": "is constant throughout the workflow:e (k)",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "is constant throughout the workflow:e (k)"
+      ],
+      "char_start": 5807,
+      "char_end": 5848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79b2e4737c978956bfa5c2746bbeb032",
+      "kind": "heading",
+      "text": "=e ⋆",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=e ⋆"
+      ],
+      "char_start": 5850,
+      "char_end": 5854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc80763ebfcf639627ad58a111eb2167",
+      "kind": "heading",
+      "text": "for all",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "for all"
+      ],
+      "char_start": 5856,
+      "char_end": 5863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c9c5c1922f5a2e0c3216ad630b31c0f",
+      "kind": "paragraph",
+      "text": "k. •Derived slotsσ 2, . . . , σm hold entities that are determined by the primary slot through a known relation (e.g.,σ 2 =owner-of(σ 1), soe ⋆",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "for all"
+      ],
+      "char_start": 5865,
+      "char_end": 6008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61544bbe643b4a3f5686631ae25efbae",
+      "kind": "heading",
+      "text": "=owner-of(e ⋆",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆"
+      ],
+      "char_start": 6010,
+      "char_end": 6023,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da71acf6e3383e5ef8ba9eddda0d5b91",
+      "kind": "heading",
+      "text": "Derived slots become",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "Derived slots become"
+      ],
+      "char_start": 6025,
+      "char_end": 6045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2329caa7348dccb12a463a69bd014939",
+      "kind": "paragraph",
+      "text": "active only at specific steps. Most workflows in our benchmark are single-slot (m=1): every step acts one ⋆",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "Derived slots become"
+      ],
+      "char_start": 6047,
+      "char_end": 6154,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef109a07437cb491e78d6fac697c837",
+      "kind": "heading",
+      "text": "The dependent-",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "The dependent-"
+      ],
+      "char_start": 6156,
+      "char_end": 6170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08929daee265324974c0aca2a545b3b3",
+      "kind": "paragraph",
+      "text": "chain pattern (D3) uses a derived slot: steps 1–3 act on the primary (an account), and step 4 acts on a derived entity (that account’s owner, a different entity type). The binding-state map makes this explicit without requiring a separate formalism for cross-domain steps. Scoring condition.Following [1], entity correctness is scored only when the agent selected the correct tool, isolating binding errors from tool-selection errors. Let A(w) ={k:d k = ACT∧t k =t ⋆ k} 2",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "The dependent-"
+      ],
+      "char_start": 6172,
+      "char_end": 6643,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c22d4cebf570d629097c69ced06f3f3",
+      "kind": "caption",
+      "text": "Table 1: Drift-pattern taxonomy. Each pattern stresses a different mechanism by which a later step",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "The dependent-"
+      ],
+      "char_start": 6645,
+      "char_end": 6743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82c496a7ce22596e313911cd50329850",
+      "kind": "paragraph",
+      "text": "might bind the wrong entity.N w = workflows per pattern. ID PatternN w Pressure mechanism D1 Temporal recurrence 40 Multiple instances of a recurring event; name suppressed after step 1 D2 Distractor injection 40 Same-named entity with stronger metadata injected mid-workflow D3 Dependent chain 40 Stepkreferences entity resolved at stepk−1(cross-domain) D4 True ambiguity 40 No disambiguator; correct behavior is to clarify D5 Silent switch 40 Three same-named entities; qualifier suppressed after step 1 Total 200 890 total steps (580 entity-binding-scored) be the set ofaction stepswhere the agent acted with the correct tool. Steps where the agent clarified (dk = CLARIFY), deferred, or produced malformed output are excluded from the binding-error numerator but tracked separately. Drift, propagation, and recovery.Letk 1 = minA(w)be the first scored action step. All three indicators are conditioned on the primary carry slotσ 1, since it is the slot that persists and whose early-binding outcome determines whether errors compound: Drift(w) =1 h ˆbk1 =e ⋆",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "=owner-of(e ⋆",
+        "The dependent-"
+      ],
+      "char_start": 6745,
+      "char_end": 7807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2232721878146f2ef2d4474d9cc2fae5",
+      "kind": "heading",
+      "text": "∧ ∃k∈A(w), k > k1 : ˆbk ̸=e ⋆",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ ∃k∈A(w), k > k1 : ˆbk ̸=e ⋆"
+      ],
+      "char_start": 7809,
+      "char_end": 7838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:520d130dc623e53dd1451fb9ee853ae9",
+      "kind": "paragraph",
+      "text": "k i (1) Propagation(w) =1 h ˆbk1 ̸=e ⋆",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ ∃k∈A(w), k > k1 : ˆbk ̸=e ⋆"
+      ],
+      "char_start": 7840,
+      "char_end": 7878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae0c142950dfba316d167dadb9bd1af6",
+      "kind": "heading",
+      "text": "∧ P",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ P"
+      ],
+      "char_start": 7880,
+      "char_end": 7883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e5fb55ec08a475898855dfb91e1a00c",
+      "kind": "paragraph",
+      "text": "k∈A(w) 1[ˆbk ̸=e ⋆ k]>1 i (2) Recovery(w) =1 h ˆbk1 ̸=e ⋆",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ P"
+      ],
+      "char_start": 7885,
+      "char_end": 7942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3134aed13d19bf4dba5cfe4bc8a8b809",
+      "kind": "heading",
+      "text": "∧ ∃k∈A(w), k > k1 : ˆbk =e ⋆",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ ∃k∈A(w), k > k1 : ˆbk =e ⋆"
+      ],
+      "char_start": 7944,
+      "char_end": 7972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5faa0a9b973d3304e3f5aa3e56196679",
+      "kind": "paragraph",
+      "text": "k i (3) Drift and propagation are scored ondisjointworkflow sets: drift applies only to workflows that were correctly bound atk 1; propagation applies only to workflows that were incorrectly bound atk 1. An agent cannot improve one metric at the cost of the other. This separation is what makes the lockamplification finding (Section 5) unambiguous: the lock eliminates drift on one set while worsening propagation on a different set. Derived-binding corruption.When the primary carry slot is wrong, derived slots inherit the error through their provenance relation. Concretely, if the agent mis-resolves the account to˜e 1 ̸=e ⋆",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "∧ ∃k∈A(w), k > k1 : ˆbk =e ⋆"
+      ],
+      "char_start": 7974,
+      "char_end": 8603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d7c0025345618e8ebc2cc35dc3e5641",
+      "kind": "heading",
+      "text": "at",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "at"
+      ],
+      "char_start": 8605,
+      "char_end": 8607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0963c300c8397be69c8a89e4a0de247e",
+      "kind": "paragraph",
+      "text": "step 1, then at step 4 the derived lookupowner-of(˜e1)returns the wrong person. This is the crossdomain cascade visible in D3 workflows: one wrong primary binding corrupts a downstream entity of a different type, and the agent has no local signal that anything is wrong because the derived resolution is internally consistent given the (incorrect) carried state. We call thisderived-binding corruption; it is the mechanism that produces D3’s extreme lock-amplification ratio. Metrics.Beyond the three workflow-level indicators, we report: •Per-step wrong-entity rate.|{k∈A(w) : ˆbk ̸=e ⋆",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "at"
+      ],
+      "char_start": 8609,
+      "char_end": 9196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bbb66a243743835f814715048720529",
+      "kind": "table",
+      "text": "k}|/|A(w)|at each step index,",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "at"
+      ],
+      "char_start": 9198,
+      "char_end": 9227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc8a56a9cf900685778f9884cf9ab128",
+      "kind": "paragraph",
+      "text": "averaged across workflows. Reveals the drift curve across the trajectory. •Compounding factor.Mean wrong-entity actions per affected workflow (workflows with at least one wrong binding). Quantifies cascade severity. •Over-clarification rate.Fraction of resolvable steps where the agent clarified unnecessarily. Captures the safety/completion tension introduced by re-verification defenses. •Workflow success.All steps inA(w)have ˆbk =e ⋆ k. The strictest aggregate: one wrong binding anywhere fails the workflow.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "at"
+      ],
+      "char_start": 9229,
+      "char_end": 9741,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c96078ba3152d2b89fd5cdd4bf17e01",
+      "kind": "heading",
+      "text": "Benchmark",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark"
+      ],
+      "char_start": 9743,
+      "char_end": 9752,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95675af99c2be154ba67ce8047c6ee14",
+      "kind": "heading",
+      "text": "Drift Patterns (D1–D5)",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Drift Patterns (D1–D5)"
+      ],
+      "char_start": 9754,
+      "char_end": 9776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce4e4f1cad6d0a779be9ce0555ff8440",
+      "kind": "paragraph",
+      "text": "We construct workflows around five stress patterns derived from common enterprise failure scenarios. Table 1 summarizes the design; Appendix A shows representative workflows verbatim. 3",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Drift Patterns (D1–D5)"
+      ],
+      "char_start": 9778,
+      "char_end": 9963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:724306def15ef911e330992bf9220a59",
+      "kind": "heading",
+      "text": "Environment",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Environment"
+      ],
+      "char_start": 9965,
+      "char_end": 9976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5b47c7dc78f4befcd3048d5e2c61742",
+      "kind": "paragraph",
+      "text": "The testbed uses four enterprise domains (calendar, CRM, docs, tickets) with cross-domain email actions in D3 workflows with the same entity schema as the single-step benchmark [1]: entities have a unique ID, type (person / document / event / account / ticket), name, and metadata. Each workflow has a primary carry entity across 3–5 steps (with D3 workflows additionally referencing a derived entity at their final step; see Section 2). Workflows include bothresolve steps(search/lookup with no binding scored, used to establish context and carry the referent forward) andaction steps (state-changing tool calls with a gold entity binding, which are the only steps that contribute to drift/propagation metrics). All data is synthetic; no real or proprietary data is used. The generator, environment, harness, and per-step trajectory logs are released.",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Environment"
+      ],
+      "char_start": 9978,
+      "char_end": 10830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8656e7bea7aef5619d32f3c5e8964817",
+      "kind": "heading",
+      "text": "Controlled Error Injection",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Controlled Error Injection"
+      ],
+      "char_start": 10832,
+      "char_end": 10858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d2350789b0ea46b403d67f6b1eb746a",
+      "kind": "paragraph",
+      "text": "Because capable models rarely mis-bind on our tasks unaided (consistent with [1]’s finding that wrong-entity errors concentrate in temporal and true-ambiguity conditions; our non-ambiguity workflows produce lower unaided rates), natural-mode denominators for propagation are small. To measure propagation behavior at scale, weseeda wrong early binding into the workflow state and history, then observe whether each defense lets the error propagate or corrects it. Concretely:",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "Controlled Error Injection"
+      ],
+      "char_start": 10860,
+      "char_end": 11335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c1b51b0e38afa0b024ea6f39d7a6f25",
+      "kind": "heading",
+      "text": "A designated distractor entity ID (annotated per workflow) is injected as the “resolved”",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "A designated distractor entity ID (annotated per workflow) is injected as the “resolved”"
+      ],
+      "char_start": 11337,
+      "char_end": 11425,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1705a89d5150179b93d3c3822cfb9dd",
+      "kind": "paragraph",
+      "text": "binding in the workflow state before step 1.",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "A designated distractor entity ID (annotated per workflow) is injected as the “resolved”"
+      ],
+      "char_start": 11427,
+      "char_end": 11471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4cc7a731d48a0833f29fac1085d6b75",
+      "kind": "heading",
+      "text": "The model’s conversation history includes a synthetic prior turn: “(prior) identified the",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "The model’s conversation history includes a synthetic prior turn: “(prior) identified the"
+      ],
+      "char_start": 11473,
+      "char_end": 11562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b4d8297ca981c9d4b29ce0d2c3968c4",
+      "kind": "paragraph",
+      "text": "[slot] as [wrong_id].”",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "The model’s conversation history includes a synthetic prior turn: “(prior) identified the"
+      ],
+      "char_start": 11564,
+      "char_end": 11586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:783a9ed1d4bbf92f9aa7a876f2800219",
+      "kind": "heading",
+      "text": "If the entity-lock feature is active, the lock is pre-set to the wrong ID.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "If the entity-lock feature is active, the lock is pre-set to the wrong ID."
+      ],
+      "char_start": 11588,
+      "char_end": 11662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:864f25b7baa45f28fac02f7abfa1afa9",
+      "kind": "paragraph",
+      "text": "This gives a large, capability-independent sample and isolates propagation from initial failure rate, analogous to fault injection in systems testing [4]. Every workflow (excluding true-ambiguity controls) has an annotated injection target.",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Benchmark",
+        "If the entity-lock feature is active, the lock is pre-set to the wrong ID."
+      ],
+      "char_start": 11664,
+      "char_end": 11904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b0f3fbd0d0d2de0e3a875726742312b",
+      "kind": "heading",
+      "text": "Defenses",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Defenses"
+      ],
+      "char_start": 11906,
+      "char_end": 11914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d68be8d3cb8c96917502043fa69877f9",
+      "kind": "paragraph",
+      "text": "Each defense is deterministic structure outside the model, operating on workflow state: •Entity lock.Pin the first concrete binding; later steps reuse it. The intuitive “resolve once, carry forward” fix. •Provenance checkpoint.Record (referent→bound ID→evidence) at each step. •Drift-aware gate.If a later step’s resolved entity diverges from the lock, clarify instead of acting. •Independent re-verification (oracle).Re-derive the target from the original request using a ground-truth resolver; if the carried binding disagrees, correct it. This is anupper bound: it shows the ceiling of what a deployable re-verifier could achieve, not a shipping system. The critical contrast:persistence(trust the first binding) vs.re-derivation(recompute from the original request). Persistence is safe only if the first binding was correct.",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Defenses"
+      ],
+      "char_start": 11916,
+      "char_end": 12745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f2699964dfcfae0cf0e4c054d7d5a98",
+      "kind": "heading",
+      "text": "Evaluation",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Evaluation"
+      ],
+      "char_start": 12747,
+      "char_end": 12757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:232b6a37bfa0edc6fc4c601f056e01a0",
+      "kind": "heading",
+      "text": "Setup",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Evaluation",
+        "Setup"
+      ],
+      "char_start": 12759,
+      "char_end": 12764,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8548b4beba6bf027dde0907c1959f9b8",
+      "kind": "paragraph",
+      "text": "Eight model backends spanning small to frontier: Amazon Nova Micro, Llama-3.1-8B Instruct, Amazon Nova 2 Lite, Claude Haiku 4.5, Llama-3.3-70B Instruct, Amazon Nova Premier, Claude Sonnet 4.5, and Claude Opus 4.5. Five defense configurations for the main injection experiment (baseline, entity lock, LLM self-reverify, LLM cross-reverify, oracle re-verify) plus a persistence stack (lock + provenance + drift gate) evaluated in natural mode. Two experimental conditions: natural(agent resolves each step itself) andcontrolled injection(wrong early binding seeded per Section 3.3). All models accessed via Amazon Bedrock Converse API (us-east-1), providerdefault decoding (temperature not explicitly set; greedy or near-greedy depending on model), maxTokens=700, sequential calls with 0.15–0.8s inter-request delay. Per-step trajectory logs for 4",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Evaluation",
+        "Setup"
+      ],
+      "char_start": 12766,
+      "char_end": 13611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c51d797b8c691b39e672f8bc145ba6e1",
+      "kind": "paragraph",
+      "text": "Algorithm 1Entity-lock with drift-aware gate for steps k Require:locked IDℓ(or⊥), raw model binding ˆbk, decisiond k",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Evaluation",
+        "Setup"
+      ],
+      "char_start": 13613,
+      "char_end": 13729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfd3c58f3665a005baa7fe681994c37c",
+      "kind": "heading",
+      "text": "ifd k =ACTandℓ̸=⊥and ˆbk ̸=ℓthen",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "ifd k =ACTandℓ̸=⊥and ˆbk ̸=ℓthen"
+      ],
+      "char_start": 13731,
+      "char_end": 13763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f043004841413d9a831da0db10ffa1f",
+      "kind": "heading",
+      "text": "d k ←CLARIFY▷divergence from lock: re-confirm, don’t switch",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "d k ←CLARIFY▷divergence from lock: re-confirm, don’t switch"
+      ],
+      "char_start": 13765,
+      "char_end": 13824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90860a5eb8d7aad003f073a45d2de6e0",
+      "kind": "heading",
+      "text": "else ifd k =ACTandℓ=⊥and ˆbk ̸=⊥then",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "else ifd k =ACTandℓ=⊥and ˆbk ̸=⊥then"
+      ],
+      "char_start": 13826,
+      "char_end": 13862,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a03fdde2645cd56e1fd7b727d376ac4",
+      "kind": "heading",
+      "text": "ℓ← ˆbk ▷set lock on first concrete binding",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "ℓ← ˆbk ▷set lock on first concrete binding"
+      ],
+      "char_start": 13864,
+      "char_end": 13906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d15707024e78bd241a91ade8e4aa869d",
+      "kind": "heading",
+      "text": "end if",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if"
+      ],
+      "char_start": 13908,
+      "char_end": 13914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7267852930d8ca027c8cf57440952438",
+      "kind": "heading",
+      "text": "provenance:append(k, ˆbk, dk,evidence)",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "provenance:append(k, ˆbk, dk,evidence)"
+      ],
+      "char_start": 13916,
+      "char_end": 13954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:354ab0ecc98f64be18ba9cf591587d48",
+      "kind": "heading",
+      "text": "ifreverify enabled andd k =ACTthen",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "ifreverify enabled andd k =ACTthen"
+      ],
+      "char_start": 13956,
+      "char_end": 13990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:103f564113495b604a3da16f9101ea47",
+      "kind": "heading",
+      "text": "e fresh ←RESOLVE(original referent,E)▷oracle resolution",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "e fresh ←RESOLVE(original referent,E)▷oracle resolution"
+      ],
+      "char_start": 13992,
+      "char_end": 14047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3db70a9aa99680b9196e69cfd1546cbc",
+      "kind": "heading",
+      "text": "if ˆbk ̸=e fresh then",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "if ˆbk ̸=e fresh then"
+      ],
+      "char_start": 14049,
+      "char_end": 14070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1150c99c1f93f0c2d418b138e3f8c5bb",
+      "kind": "heading",
+      "text": "ˆbk ←e fresh;ℓ←e fresh ▷correct the carried binding",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "ˆbk ←e fresh;ℓ←e fresh ▷correct the carried binding"
+      ],
+      "char_start": 14072,
+      "char_end": 14123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57c5322bdbcba7797c2f33fcc70c052c",
+      "kind": "heading",
+      "text": "end if",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if"
+      ],
+      "char_start": 14125,
+      "char_end": 14131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90d2e5c28492f640278788f911241623",
+      "kind": "heading",
+      "text": "end if",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if"
+      ],
+      "char_start": 14133,
+      "char_end": 14139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a5a467c9155b309b0a95ef983244058",
+      "kind": "caption",
+      "text": "Table 2: Controlled-injection experiment (200-workflow benchmark): downstream wrong-entity",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if"
+      ],
+      "char_start": 14141,
+      "char_end": 14231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57ae5bb49d6f295b861ffc78dca76218",
+      "kind": "paragraph",
+      "text": "actions after a seeded early mis-binding, by defense. N=1,280 eligible workflows (8 models×160 non-ambiguity) per row. The entity lock amplifies (3.0×); a practical LLM cross-verifier nearly matches the oracle. Defense Wrong actions×baseline Over-clar. WF succ. % Baseline (no defense) 907 1.00 743 29.2 Entity lock 2,746 3.03 1,040 0.0 LLM self-reverify (same model) 261 0.29 2,044 26.5 LLM cross-reverify (Nova Micro) 189 0.21 2,056 25.2 Oracle re-verify (upper bound) 180 0.20 2,400 18.8 all scored runs are released (approximately 40,000 model calls across injection and natural conditions, plus retries). Scoring of malformed outputs.Steps where the model produced unparseable JSON (PARSE_ERROR) or where the API returned a transient error are excluded from entity-correctness scoring but counted as workflow-level failures. Across all runs, 1.2% of steps were errors or parse failures (concentrated in the smallest models). Steps with wrong tool selection are excluded from the entity-binding numerator (following [1]) but count as failures for workflow success.",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if"
+      ],
+      "char_start": 14233,
+      "char_end": 15301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:211c3f0405cf9be7179a7f1e1a8ef686",
+      "kind": "heading",
+      "text": "Injection Results",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Injection Results"
+      ],
+      "char_start": 15303,
+      "char_end": 15320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d7849501e477d0a8f313c3eb562ef42",
+      "kind": "caption",
+      "text": "Table 2 reports the controlled-injection experiment (1,280 eligible workflows per config = 8 models",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Injection Results"
+      ],
+      "char_start": 15322,
+      "char_end": 15421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e5e199afd60cced0887dfeec730fd72",
+      "kind": "paragraph",
+      "text": "×160 non-ambiguity workflows). The entity lock amplifies wrong actions from 907 (baseline) to 2,746 (3.0×; bootstrap 95% CI[2.8,3.3]) 2 by faithfully pinning the seeded wrong entity. A practical LLM cross-verifier (a single cheap second call using Nova Micro) reduces them to 189 (0.21×; CI [0.18,0.25]), comparable to the oracle’s 180 (0.20×; CI[0.17,0.23]). 3",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Injection Results"
+      ],
+      "char_start": 15423,
+      "char_end": 15784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:235904e8d823f6139bdcb118b1b26584",
+      "kind": "heading",
+      "text": "Per-Model Heterogeneity",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Per-Model Heterogeneity"
+      ],
+      "char_start": 15786,
+      "char_end": 15809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8572d40258e69aff6ab1c4e9b907d2d",
+      "kind": "caption",
+      "text": "Table 3 breaks the injection result down by model. The lock’s amplification ratio varies across",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Per-Model Heterogeneity"
+      ],
+      "char_start": 15811,
+      "char_end": 15906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5932109210d090a7dbc0e897c7abc23",
+      "kind": "paragraph",
+      "text": "models, with the highest values on Claude Opus 4.5 (8.5×), Nova Premier (5.3×), Llama-3.3- 70B (3.3×), and Claude Sonnet 4.5 (2.6×). These models propagate the locked binding at high 2Bootstrap CIs computed via 10,000 resamples of (workflow, model) pairs with replacement, computing the config-ratio on each resample. Percentile method, seed=42. 3The cross-verifier outperforms the oracle on some models because the oracle corrects only to the primary carry-slot entity, while the LLM re-verifier can independently resolve derived entities (e.g., “that account’s owner”) that the rigid oracle does not handle. The oracle is thus an approximate upper bound, not a strict one, for workflows with derived slots. 5",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Per-Model Heterogeneity"
+      ],
+      "char_start": 15908,
+      "char_end": 16618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d767691b3ce604e4d8870d5af69745f",
+      "kind": "caption",
+      "text": "Table 3: Wrong-entity actions per model under injection (N=160 eligible workflows per cell). The",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Per-Model Heterogeneity"
+      ],
+      "char_start": 16620,
+      "char_end": 16716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13b75370c214c300b5bec85bac6b21ba",
+      "kind": "paragraph",
+      "text": "lock amplifies on all 8 models. The cross-verifier (cheap second call) achieves near-oracle recovery across the board.",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "end if",
+        "Per-Model Heterogeneity"
+      ],
+      "char_start": 16718,
+      "char_end": 16836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f050f603ba23f8ba8499af5d09fb1381",
+      "kind": "heading",
+      "text": "Model Baseline Lock Cross-verify Oracle Lock effect",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Model Baseline Lock Cross-verify Oracle Lock effect"
+      ],
+      "char_start": 16838,
+      "char_end": 16889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cca7d216f91d89cb2616dbec8fccf02f",
+      "kind": "paragraph",
+      "text": "Nova Micro 208 376 1 71.8× Llama-3.1-8B 73 190 27 02.6× Nova 2 Lite 191 498 38 402.6× Claude Haiku 4.5 14 54 2 203.9× Llama-3.3-70B 135 452 39 243.3× Nova Premier 46 242 35 355.3× Claude Sonnet 4.5 188 492 30 332.6× Claude Opus 4.5 52 442 17 218.5×",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Model Baseline Lock Cross-verify Oracle Lock effect"
+      ],
+      "char_start": 16891,
+      "char_end": 17139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51fc1dca2a424869b059cefdaaf513cd",
+      "kind": "heading",
+      "text": "2 30",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "2 30"
+      ],
+      "char_start": 17141,
+      "char_end": 17145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9a84fe80b0708ae6d6fa2614f526fb2",
+      "kind": "paragraph",
+      "text": "10 20 30 Action step index Wrong-entity action rate (%)",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "2 30"
+      ],
+      "char_start": 17147,
+      "char_end": 17202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:518f5fea6b8a98f9f9b5df28f99b62ae",
+      "kind": "heading",
+      "text": "Baseline",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline"
+      ],
+      "char_start": 17204,
+      "char_end": 17212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5244def18164bab8821001be219986e0",
+      "kind": "paragraph",
+      "text": "+Lock +Drift gate Persistence stack",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline"
+      ],
+      "char_start": 17214,
+      "char_end": 17249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c37812f785de07c1ee01cf529c09321",
+      "kind": "caption",
+      "text": "Figure 1: Per-step wrong-entity rate (natural mode, eight models aggregated). Baseline rises sharply",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline"
+      ],
+      "char_start": 17251,
+      "char_end": 17351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce93a60e4b9229e9359ae160f7c40880",
+      "kind": "paragraph",
+      "text": "at step 3; the lock flattens the curve. N=288 at steps 1–2; N=128 at step 3. rates under injection. One plausible explanation is that they treat carried workflow state as authoritative; if so, this property becomes a liability when the carried state is wrong. On Claude Haiku 4.5 the lock amplifies modestly (3.9×). The cross-verifier (Nova Micro as cheap second call) reduces wrong actions to near-oracle levels on every model, confirming that practical re-verification is model-independent.",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline"
+      ],
+      "char_start": 17353,
+      "char_end": 17845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85a45249a7b0910105a8c5a4f9da6aec",
+      "kind": "heading",
+      "text": "Natural-Mode Drift",
+      "order": 90,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "Natural-Mode Drift"
+      ],
+      "char_start": 17847,
+      "char_end": 17865,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:256655050c7bf258a9387e2557717537",
+      "kind": "paragraph",
+      "text": "Without injection, baseline agents drift on 18% of eligible workflows (those correctly bound at step 1, 8 models aggregated). Figure 1 shows the per-step wrong-entity rate rising from∼8%at steps 1–2 to 28% at step 3. Because not all workflows have a third action step, step 3 uses a smaller subset (N=128 vs. N=288 at steps 1–2). On the fixed cohort of 128 workflows with three or more action steps, the pattern holds: 3% at steps 1–2, rising to 28% at step 3. The entity lock eliminates this rise, holding the rate flat below 9%.",
+      "order": 91,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "Natural-Mode Drift"
+      ],
+      "char_start": 17867,
+      "char_end": 18397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10ef89870ad85a79aa361e2d2f61bbaf",
+      "kind": "heading",
+      "text": "The Two Failure Modes Respond Oppositely",
+      "order": 92,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "The Two Failure Modes Respond Oppositely"
+      ],
+      "char_start": 18399,
+      "char_end": 18439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3eedadec1e58240d5b5099e3e65e5c07",
+      "kind": "paragraph",
+      "text": "The lock eliminates drift (0%) but, under controlled injection, amplifies propagation (3.0×). This illustrates the formalization’s value: scoring on disjoint sets reveals that a defense optimized for one failure mode can worsen the other. The practical implication is that practitioners cannot deploy a single persistence mechanism and assume both problems are solved; re-derivation (as bounded by our oracle experiment) addresses propagation where persistence cannot. 6",
+      "order": 93,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "The Two Failure Modes Respond Oppositely"
+      ],
+      "char_start": 18441,
+      "char_end": 18911,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:315a80bcc4aa8ea12a7fad5b4909eb76",
+      "kind": "heading",
+      "text": "Over-Clarification and the Safety–Completion Tradeoff",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "Over-Clarification and the Safety–Completion Tradeoff"
+      ],
+      "char_start": 18913,
+      "char_end": 18966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7419f9a7ba0830bc882dcede34779851",
+      "kind": "paragraph",
+      "text": "Every defense trades wrong-action reduction against over-clarification (743 steps at baseline to 2,400 under oracle re-verify in the injection condition). Workflow success ranges from 0% (lock, which pins the wrong entity and never succeeds) to 29.2% (baseline), 25.2% (cross-verifier), and 18.8% (oracle, which over-clarifies more due to forced re-derivation). On these deliberately hard tasks, the safe response to unresolved ambiguity is to ask rather than act. This mirrors the safety–completion tradeoff of prior single-step work [1].",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Baseline",
+        "Over-Clarification and the Safety–Completion Tradeoff"
+      ],
+      "char_start": 18968,
+      "char_end": 19507,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:651f2d92a5b74278152656ca06903f19",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 19509,
+      "char_end": 19521,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dd3fc76610639439022ce4978ce0adf",
+      "kind": "paragraph",
+      "text": "Single-step entity binding and tool-use reliability.Babu and Indukuri [1] isolated the correcttool/wrong-entity failure mode in single actions, showing 24–26% wrong-entity rates even when tool selection is correct. We extend along the trajectory dimension, formalizing drift and propagation as distinct failure modes with different causes and fixes. Our controlled-injection protocol further decouples propagation measurement from natural error rate. Other tool-use reliability work [5, 6, 7, 8] focuses on tool selection; our contribution is orthogonal: we hold tool selection constant and study entity identity across steps. Dialogue state tracking and slot persistence.Slot persistence is the central mechanism of dialogue state tracking (DST). MultiWOZ [2] and SGD [3] model belief states that accumulate across turns. Neural DST architectures such as TRADE [9] (copy-mechanism generation) and TripPy [10] (triple copy from span, system-inform, and carry-over) all treat persistence as correct behavior. Our finding inverts this for the agentic setting: when each resolution triggers an irreversible action, persistence amplifies wrong actions by3.0×under injection. The entity lock is formally equivalent to DST carry-over; we show it cascades errors that DST systems can recover from (via re-prompting) but agentic systems cannot (actions are irreversible). Entity linking and coreference resolution.Entity linking maps mentions to knowledge-base entries. BLINK [11] introduced dense bi-encoder retrieval; GENRE [12] recast it as autoregressive",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 19523,
+      "char_end": 21073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41fe83c680a190c68d01749c32f4f26d",
+      "kind": "paragraph",
+      "text": "name generation; Sevgili et al. [13] surveyed the neural EL landscape. Coreference resolution [14] determines which mentions refer to the same entity within static text. Our setting differs: resolution isincremental(the agent resolves at step 1, then must maintain that resolution across future steps), the entity store may change between steps, and each resolution isconsequential(a wrong link produces a wrong action, not just a scoring error). Long-horizon agent memory and state management.Generative Agents [15] maintain consistent behavior via observation, reflection, and retrieval. V oyager [16] persists a skill library across episodes. Sumers et al. [17] formalize cognitive architectures for language agents, identifying memory as a core module but noting most agents lack mechanisms for detecting when stored state has become stale. AutoGen [18] passes state between agents via message history with no mechanism for detecting entity drift. Our work identifies a specific memory failure: the referent slot can silently bind to a different entity even when the agent “remembers” it resolved something earlier. The failure is not in retrieval (the agent recalls the prior binding) but in validity (the recalled binding is wrong or stale). Belief-state repair and error recovery.Reflexion [19] uses verbal self-reflection to improve planning across episodes. Self-Refine [20] iterates on outputs using self-feedback. CRITIC [21] enables tool-grounded verification, showing that external checking outperforms self-correction. Our ora-",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 21075,
+      "char_end": 22616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d96807f2e181be99bb52253af7cd78fc",
+      "kind": "paragraph",
+      "text": "cle re-verification is conceptually aligned with CRITIC’s tool-grounded checking: it re-derives the binding from the original description using an external resolver. The key distinction: the error to be recovered is not inreasoning(the agent’s logic may be sound) but inreference(the entity has silently changed). Standard self-reflection cannot detect this because internal state appears consistent. Fault injection methodology.Our injection protocol draws on a long tradition of fault injection in dependability engineering [22, 4]. Chaos engineering [23] applies controlled failure injection to production systems to verify resilience. We adapt this to LLM-agent evaluation: rather than injecting hardware faults, we inject a known-wrong entity binding and observe whether defenses propagate 7",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 22618,
+      "char_end": 23414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81e653816787276d9429712dd029358c",
+      "kind": "paragraph",
+      "text": "or correct it. This gives a capability-independent sample for measuring propagation behavior, decoupled from each model’s natural error rate. Multi-step and trajectory-level agent evaluation.AgentBench [24] evaluates LLMs across eight environments with binary task success. WebArena [25] measures multi-step web tasks where entity tracking is implicitly critical. MINT [26] evaluates multi-turn tool-use with language feedback.τbench [27] introduces pass k reliability. Trajectory-level diagnostics [28] decompose task success into per-step decisions. All score whether a tasksucceeded, not whether the agent maintained the same entity reference across steps. Our metrics ask a more specific question: across steps that are individually reasonable (correct tool, plausible entity), did the agent maintain referential identity? Tool-use safety and high-risk evaluation.ToolEmu [29] emulates risky tool-use environments, categorizing harms including privacy breaches from wrong-person targeting. These harm categories align with our wrong-entity failure mode, but ToolEmu evaluates single tool calls rather than measuring how errors compound across a workflow. Our injection results quantify the compounding: a single wrong binding produces an average of 2.6 wrong actions per affected workflow under the entity lock. Long-context state degradation.Liu et al. [30] showed that LLMs access information best at the beginning or end of input, with substantial degradation in the middle. Shi et al. [31] demonstrated",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 23416,
+      "char_end": 24926,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83b45aa0ee86e322e22fefff7a057d7d",
+      "kind": "paragraph",
+      "text": "that irrelevant context degrades reasoning, analogous to our distractor-injection pattern. These findings provide a mechanistic explanation for binding drift: as the workflow progresses, the original resolution is positionally disadvantaged and surrounded by distractors. Our per-step error curve (8% rising to 28%) is consistent with this positional-degradation hypothesis, though our 3–8 step workflows are far shorter than the contexts studied in that literature.",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Related Work"
+      ],
+      "char_start": 24928,
+      "char_end": 25394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02643c1098f0c19bd4c747d53c0f3a6e",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Limitations"
+      ],
+      "char_start": 25396,
+      "char_end": 25407,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89b4221f1e5bb5bd205f8261ff3ce55e",
+      "kind": "paragraph",
+      "text": "Ecological validity.Workflows are 3–8 steps on synthetic entity stores. Real enterprise workflows (15–50 steps, noisy records, concurrent state changes, multiple providers) may exhibit different drift dynamics. Reported rates characterize failure behavior under controlled pressure, not deployment prevalence. All models are accessed through a single provider (Amazon Bedrock); other providers may behave differently. Binding-state coverage.The benchmark exercises at most one derived slot per workflow (D3). Richer cascades (e.g., account→owner→owner’s calendar→conflicting event) remain untested. Injection protocol.The lock-amplification result under injection is partly mechanistic: the empirical contribution is the magnitude (3.0×aggregate, up to8.5×) and the per-model variation, not the qualitative direction. The benchmark annotates three injection-phrasing variants but the current experiment uses a single fixed phrasing; injection position is fixed at step 1; and more gradual corruption patterns (stale records, conflicting metadata) are not modeled. The system prompt instructs agents not to “silently switch,” which may inflate lock compliance; a different prompt could shift absolute rates. Construct and statistical scope.Our drift definition does not distinguish silent re-resolution from context-length forgetting (both score identically). Labeling clarification as “over-clarification” under injected state-conflict may be too harsh (it may be rational). Bootstrap 95% CIs are reported but no",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Limitations"
+      ],
+      "char_start": 25409,
+      "char_end": 26921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2946889f864f98ddea8f6c8ca6127e79",
+      "kind": "paragraph",
+      "text": "formal hypothesis tests. The3.0×aggregate may obscure model-specific effects (variation1.8–",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Limitations"
+      ],
+      "char_start": 26923,
+      "char_end": 27014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c41da7ca35871b16dab61ab1893dab86",
+      "kind": "heading",
+      "text": "5×). Workflows within a pattern share structural templates, reducing effective independence.",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Limitations",
+        "5×). Workflows within a pattern share structural templates, reducing effective independence."
+      ],
+      "char_start": 27016,
+      "char_end": 27108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caf665c2c2b5ae3b685f3549276a6d97",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Conclusion"
+      ],
+      "char_start": 27110,
+      "char_end": 27120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfde7e55d0a8b8b01d6e5f6f48198375",
+      "kind": "paragraph",
+      "text": "Persistence and re-verification are not the same thing. An entity lock eliminates drift but, under controlled injection, amplifies propagation up to8.5×on the most affected model (Claude Opus 4.5), with the effect holding on all 8 backends tested (3.0×aggregate). A practical LLM cross-verifier (a single cheap second call using a small model) reduces propagation by 79%, closing the gap to within",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Conclusion"
+      ],
+      "char_start": 27122,
+      "char_end": 27519,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56b2396e3f6d9f0cdbd545100ced53fe",
+      "kind": "heading",
+      "text": "percentage point of the oracle upper-bound (80%). For system builders: “resolve once and carry",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "percentage point of the oracle upper-bound (80%). For system builders: “resolve once and carry"
+      ],
+      "char_start": 27521,
+      "char_end": 27615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e65b63410cf7c317d7169e97973705d",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "percentage point of the oracle upper-bound (80%). For system builders: “resolve once and carry"
+      ],
+      "char_start": 27617,
+      "char_end": 27618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4dfad86726776f842e2ae85eaf0e99ee",
+      "kind": "paragraph",
+      "text": "forward” amplifies errors when the first resolution is wrong. A cheap independent re-verification call before high-risk actions is sufficient to break the cascade. Acknowledgments.This work was conducted in the authors’ personal capacity and did not receive external funding. The benchmark, defenses, harness, and per-run trajectory logs are available at https://github.com/shashank-indukuri/binding-drift. All data is synthetic.",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "percentage point of the oracle upper-bound (80%). For system builders: “resolve once and carry"
+      ],
+      "char_start": 27620,
+      "char_end": 28049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17df61d4fea068b43fa681cb2d9ba2f2",
+      "kind": "heading",
+      "text": "References",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "References"
+      ],
+      "char_start": 28051,
+      "char_end": 28061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a562f7d52c6c27f306197b6a7812fcbc",
+      "kind": "reference",
+      "text": "[1] Rahul Suresh Babu and Shashank Indukuri. Entity binding failures in tool-augmented agents. arXiv preprint arXiv:2606.30531, 2026. [2] Paweł Budzianowski, Tsung-Hsien Wen, Bo-Hsiang Tseng, Iñigo Casanueva, Stefan Ultes, Osman Ramadan, and Milica Gaši ´c. MultiWOZ – a large-scale multi-domain wizard-of-oz dataset for task-oriented dialogue modelling. InProceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, 2018. [3] Abhinav Rastogi, Xiaoxue Zang, Srinivas Sber, Raghav Gupta, and Pranav Khaitan. Towards scalable multi-domain conversational agents: The schema-guided dialogue dataset. InProceedings of the AAAI Conference on Artificial Intelligence, 2020. [4] Roberto Natella, Domenico Cotroneo, and Henrique S. Madeira. Assessing dependability with software fault injection: A survey.ACM Computing Surveys, 48(3):1–55, 2016. [5] Rahul Suresh Babu and Laxmipriya Ganesh Iyer. ToolChoiceConfusion: Causal minimal tool filtering for reliable llm agents.arXiv preprint arXiv:2606.06284, 2026. [6] Shishir G. Patil, Tianjun Zhang, Xin Wang, and Joseph E. Gonzalez. Gorilla: Large language model connected with massive apis.arXiv preprint arXiv:2305.15334, 2023. [7] Yujia Qin, Shihao Liang, Yining Ye, Kunlun Zhu, Lan Yan, Yaxi Lu, Yankai Lin, Xin Cong, Xiangru Tang, Bill Qian, Sihan Zhao, Runchu Tian, Ruobing Xie, Jie Zhou, Mark Gerstein, Dahai Li, Zhiyuan Liu, and Maosong Sun. ToolLLM: Facilitating large language models to master 16000+ real-world apis.arXiv preprint arXiv:2307.16789, 2023.",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "References"
+      ],
+      "char_start": 28063,
+      "char_end": 29595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e32e9b6597130bd07682d3ab8a24f5a9",
+      "kind": "reference",
+      "text": "[8] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. Toolformer: Language models can teach themselves to use tools.arXiv preprint arXiv:2302.04761, 2023. [9] Chien-Sheng Wu, Andrea Madotto, Ehsan Hosseini-Asl, Caiming Xiong, and Richard Socher. Transferable multi-domain state generator for task-oriented dialogue systems. InProceedings of the 57th Annual Meeting of the Association for Computational Linguistics, 2019. [10] Michael Heck, Carel van Niekerk, Nuber Lubis, Christian Geishauser, Hsien-Chin Lin, Marco Moresi, and Milica Gaši ´c. TripPy: A triple copy strategy for value independent neural dialog state tracking. InProceedings of the 21st Annual Meeting of the Special Interest Group on Discourse and Dialogue, 2020. [11] Ledell Wu, Fabio Petroni, Martin Josifoski, Sebastian Riedel, and Luke Zettlemoyer. Scalable zero-shot entity linking with dense entity retrieval. InProceedings of the 2020 Conference on Empirical Methods in Natural Language Processing, 2020. [12] Nicola De Cao, Gautier Izacard, Sebastian Riedel, and Fabio Petroni. Autoregressive entity retrieval. InInternational Conference on Learning Representations, 2021.",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "References"
+      ],
+      "char_start": 29597,
+      "char_end": 30839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f4e6514958ce0a64e85e7351ab4e272",
+      "kind": "heading",
+      "text": "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-"
+      ],
+      "char_start": 30841,
+      "char_end": 30930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4023f9bf756c1e39741a89142e0ae410",
+      "kind": "paragraph",
+      "text": "mann. Neural entity linking: A survey of models based on deep learning.Semantic Web, 13 (3):527–570, 2022. [14] Kenton Lee, Luheng He, Mike Lewis, and Luke Zettlemoyer. End-to-end neural coreference resolution. InProceedings of the 2017 Conference on Empirical Methods in Natural Language Processing, 2017. 9",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-"
+      ],
+      "char_start": 30932,
+      "char_end": 31240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81bca8acb6258686194b798e6272af3e",
+      "kind": "paragraph",
+      "text": "[15] Joon Sung Park, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, and Michael S. Bernstein. Generative agents: Interactive simulacra of human behavior. InProceedings of the 36th Annual ACM Symposium on User Interface Software and Technology, 2023. [16] Guanzhi Wang, Yuqi Xie, Yunfan Jiang, et al. V oyager: An open-ended embodied agent with large language models.arXiv preprint arXiv:2305.16291, 2023. [17] Theodore R. Sumers, Shunyu Yao, Karthik Narasimhan, and Thomas L. Griffiths. Cognitive architectures for language agents.Transactions on Machine Learning Research, 2024. [18] Qingyun Wu, Gagan Bansal, Jieyu Zhang, et al. AutoGen: Enabling next-gen LLM applications via multi-agent conversation.arXiv preprint arXiv:2308.08155, 2023. [19] Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion: Language agents with verbal reinforcement learning. InAdvances in Neural Information Processing Systems, 2023. [20] Aman Madaan, Niket Tandon, et al. Self-refine: Iterative refinement with self-feedback. In Advances in Neural Information Processing Systems, 2023. [21] Zhibin Gou, Zhihong Shao, Yeyun Gong, Yelong Shen, Yujiu Yang, Nan Duan, and Weizhu Chen. CRITIC: Large language models can self-correct with tool-interactive critiquing. In International Conference on Learning Representations, 2024. [22] Mei-Chen Hsueh, Timothy K. Tsai, and Ravishankar K. Iyer. Fault injection techniques and tools.Computer, 30(4):75–82, 1997. [23] Ali Basiri, Niosha Behnam, Ruud de Rooij, Lorin Hochstein, Luke Kosewski, Justin Reynolds,",
+      "order": 116,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-"
+      ],
+      "char_start": 31242,
+      "char_end": 32835,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6cb11953db65849b434c39579f43402f",
+      "kind": "paragraph",
+      "text": "and Casey Rosenthal. Chaos engineering.IEEE Software, 33(3):35–41, 2016. [24] Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Kejuan Yang, et al. AgentBench: Evaluating LLMs as agents.arXiv preprint arXiv:2308.03688, 2023. [25] Shuyan Zhou, Frank F Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Yonatan Bisk, Daniel Fried, Uri Alon, et al. WebArena: A realistic web environment for building autonomous agents.arXiv preprint arXiv:2307.13854, 2024. [26] Xingyao Wang, Zihan Wang, Jiateng Liu, et al. MINT: Evaluating LLMs in multi-turn interaction with tools and language feedback. InInternational Conference on Learning Representations, 2024. [27] Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik Narasimhan.τ-bench: A benchmark for tool-agent-user interaction in real-world domains.arXiv preprint arXiv:2406.12045, 2024. [28] Pengfei He, Zhenwei Dai, Bing He, Hui Liu, Xianfeng Tang, Hanqing Lu, Juanhui Li, Jiayuan Ding, Subhabrata Mukherjee, Suhang Wang, Yue Xing, Jiliang Tang, and Benoit Dumoulin. TRAJECT-Bench: A trajectory-aware benchmark for evaluating agentic tool use. arXiv preprint arXiv:2510.04550, 2025. [29] Yangjun Ruan, Honghua Dong, Andrew Wang, Silviu Pitis, Yongchao Zhou, Jimmy Ba, Yann Dubois, Chris J. Maddison, and Tatsunori Hashimoto. Identifying the risks of LM agents with an LM-emulated sandbox.arXiv preprint arXiv:2309.15817, 2024. [30] Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua, Fabio Petroni,",
+      "order": 117,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-"
+      ],
+      "char_start": 32837,
+      "char_end": 34372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2bdb95d7f80557910461fc85533a4ae8",
+      "kind": "paragraph",
+      "text": "and Percy Liang. Lost in the middle: How language models use long contexts.Transactions of the Association for Computational Linguistics, 12:157–173, 2024. [31] Freda Shi, Xinyun Chen, Kanishka Misra, et al. Large language models can be easily distracted by irrelevant context. InProceedings of the 40th International Conference on Machine Learning, 2023. 10",
+      "order": 118,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "[13] Özge Sevgili, Artem Shelmanov, Mikhail Arkhipov, Alexander Panchenko, and Chris Bie-"
+      ],
+      "char_start": 34374,
+      "char_end": 34732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf27daa001b6e1f1bd5491cb2368c404",
+      "kind": "heading",
+      "text": "A Representative Workflow Examples",
+      "order": 119,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "A Representative Workflow Examples"
+      ],
+      "char_start": 34734,
+      "char_end": 34768,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1445732c9950b413617ddd1bee33a2e",
+      "kind": "paragraph",
+      "text": "We show two representative workflows verbatim to illustrate multi-step structure and how drift/propagation manifest. D1 Temporal recurrence (calendar, 5 steps). Entities:4 events all named “Weekly Sync” (customer-facing, internal-eng, executive, all-hands). Target:evt_sync_customer. Step 1:“Find the customer-facing Weekly Sync.”→search (resolve) Step 2:“Add a note to it that the agenda is locked.”→search Step 3:“Confirm its attendee list.”→search Step 4:“Reschedule that meeting to 4pm.”→reschedule_event(gold: evt_sync_customer) Step 5:“Then cancel it and mark it moved.”→cancel_event(gold: evt_sync_customer) Drift risk:Steps 4–5 say “that meeting” / “it.” The disambiguating qualifier “customer-facing” is never repeated. D3 Dependent chain (CRM→email, 4 steps). Entities:2 accounts (Northwind Global, Northwind Labs) + 2 people (Dana=owner of Global, Sam=owner of Labs). Target: acct_northwind_global. Step 1:“Pull up the Northwind Global enterprise account.”→search (resolve) Step 2:“Add a call note to it: renewal in progress.”→add_call_note(gold: acct_northwind_global) Step 3:“Update its renewal date to next quarter.”→update_customer_record (gold:acct_northwind_global) Step 4:“Email that account’s owner a summary.”→send_email(gold: person_dana) Propagation risk:If step 1 mis-resolves to Northwind Labs, step 4 emails Sam (Labs’ owner) instead of Dana. This is a cross-domain cascade. Trajectory visualization: drift vs. propagation on D3.Table 4 traces a single D3 workflow under three conditions to show how the same workflow produces different failure modes depending",
+      "order": 120,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "A Representative Workflow Examples"
+      ],
+      "char_start": 34770,
+      "char_end": 36355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13dd3de88a92a06bc033b9a70c1dbf77",
+      "kind": "paragraph",
+      "text": "on the initial binding and the defense.",
+      "order": 121,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "A Representative Workflow Examples"
+      ],
+      "char_start": 36357,
+      "char_end": 36396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4323fefd3ddeac66eb6eec888671bb90",
+      "kind": "caption",
+      "text": "Table 4: Step-by-step trace of a D3 (dependent-chain) workflow under three conditions. Target:",
+      "order": 122,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "A Representative Workflow Examples"
+      ],
+      "char_start": 36398,
+      "char_end": 36492,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:012ee478cdddd9e95dab460d91b7b358",
+      "kind": "paragraph",
+      "text": "acct_northwind_global. The lock prevents drift (middle column) but amplifies propagation when the initial binding is wrong (right column). Step Baseline (no defense) Lock (correct start) Lock + Injection (wrong start)",
+      "order": 123,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "A Representative Workflow Examples"
+      ],
+      "char_start": 36494,
+      "char_end": 36711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a62f5beca0078c3bfdaad73e13f6a670",
+      "kind": "heading",
+      "text": "(resolve) Bindsglobal✓Bindsglobal, lock set✓Lock pre-set tolabs✗",
+      "order": 124,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "(resolve) Bindsglobal✓Bindsglobal, lock set✓Lock pre-set tolabs✗"
+      ],
+      "char_start": 36713,
+      "char_end": 36777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbbc04b17feb2da5413aeb7110f7b80a",
+      "kind": "heading",
+      "text": "(add note) Acts onglobal✓Lock enforcesglobal✓Lock enforceslabs✗",
+      "order": 125,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "(add note) Acts onglobal✓Lock enforcesglobal✓Lock enforceslabs✗"
+      ],
+      "char_start": 36779,
+      "char_end": 36842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e13b0e4df0b6dbad797519f8e9581ce",
+      "kind": "heading",
+      "text": "(update) Acts onglobal✓Lock enforcesglobal✓Lock enforceslabs✗",
+      "order": 126,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "(update) Acts onglobal✓Lock enforcesglobal✓Lock enforceslabs✗"
+      ],
+      "char_start": 36844,
+      "char_end": 36905,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:704cc1dba8255904c03ddbdb21e7f013",
+      "kind": "heading",
+      "text": "(email owner) Emails Dana✓Emails Dana✓Emails Sam (Labs’ owner)",
+      "order": 127,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "(email owner) Emails Dana✓Emails Dana✓Emails Sam (Labs’ owner)"
+      ],
+      "char_start": 36907,
+      "char_end": 36969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1a2d19b0c46754e4cebb9c55fadda8c",
+      "kind": "paragraph",
+      "text": "✗ ResultSuccess Success + no drift 3 wrong scored actions (cascade)",
+      "order": 128,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "(email owner) Emails Dana✓Emails Dana✓Emails Sam (Labs’ owner)"
+      ],
+      "char_start": 36971,
+      "char_end": 37038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88105a072887ec5d1f9da5ebd14deecf",
+      "kind": "heading",
+      "text": "B Per-Pattern Analysis",
+      "order": 129,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37040,
+      "char_end": 37062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cab50998d53ba34281e85e72c6d8001",
+      "kind": "caption",
+      "text": "Table 5 reports wrong-entity actions per drift pattern under injection (baseline and lock configs, 8",
+      "order": 130,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37064,
+      "char_end": 37164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d498b6a1119bb38f11e1e939536b84ff",
+      "kind": "paragraph",
+      "text": "models aggregated). The dependent-chain (D3) pattern shows the strongest lock effect (16.6×): baseline produces 61 wrong actions, but under the lock the seeded wrong binding cascades into 11",
+      "order": 131,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37166,
+      "char_end": 37356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8787b9005eecc06dd2ce9c04a217a6b5",
+      "kind": "paragraph",
+      "text": "1,011 wrong actions because a wrong account binding propagates into emailing the wrong person at the final step. The distractor-injection pattern (D2) shows2.9×amplification. Temporal (D1) and silent-switch (D5) show1.5−2.0×. True-ambiguity (D4) is neutral with respect to the lock (1.0×), not because models consistently clarify, but because both baseline and lock configurations frequently guess despite the unresolvable target (571 and 565 wrong actions respectively).",
+      "order": 132,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37358,
+      "char_end": 37829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:069893584d15d8707d117d9dc2291c9d",
+      "kind": "caption",
+      "text": "Table 5: Wrong-entity actions by drift pattern under injection (baseline vs. lock, 8 models aggre-",
+      "order": 133,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37831,
+      "char_end": 37929,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04eb503129e016c2b12db1b8fc1b8623",
+      "kind": "paragraph",
+      "text": "gated, N=320 workflows per pattern-config cell).",
+      "order": 134,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "B Per-Pattern Analysis"
+      ],
+      "char_start": 37931,
+      "char_end": 37979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bb811f353a09088007c84461b7f1c84",
+      "kind": "heading",
+      "text": "Pattern Baseline Lock Lock/ Baseline",
+      "order": 135,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Pattern Baseline Lock Lock/ Baseline"
+      ],
+      "char_start": 37981,
+      "char_end": 38017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be73df1ae690e7e79bab353474afa509",
+      "kind": "paragraph",
+      "text": "D1 Temporal 194 3832.0× D2 Distractor injection 245 7222.9× D3 Dependent chain 61 1,01116.6× D4 True ambiguity† 571 5651.0×(clarifies) D5 Silent switch 407 6301.5× †True-ambiguity: gold=CLARIFY; any ACT counts as wrong. High baseline reflects models guessing despite ambiguity, not the lock mechanism.",
+      "order": 136,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Pattern Baseline Lock Lock/ Baseline"
+      ],
+      "char_start": 38019,
+      "char_end": 38320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7086d55269ceddd58075c680209d1c14",
+      "kind": "heading",
+      "text": "Compute Environment and Model Details",
+      "order": 137,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Compute Environment and Model Details"
+      ],
+      "char_start": 38322,
+      "char_end": 38359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:455d55591ea87ff05aa3fcc7556a93f4",
+      "kind": "paragraph",
+      "text": "All models are accessed as hosted endpoints through the Amazon Bedrock runtime (Converse API) in theus-east-1region; no model weights are run locally. Table 6 lists the exact Bedrock model identifiers used.",
+      "order": 138,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Compute Environment and Model Details"
+      ],
+      "char_start": 38361,
+      "char_end": 38567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:171834f7726191b48b4559f99b7f4174",
+      "kind": "caption",
+      "text": "Table 6: Model backends and Bedrock identifiers. Temperature is not explicitly set; Bedrock ap-",
+      "order": 139,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Compute Environment and Model Details"
+      ],
+      "char_start": 38569,
+      "char_end": 38664,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3512845d3a0c8e9a93f13449e73f1a3",
+      "kind": "paragraph",
+      "text": "plies model-specific defaults (typically greedy or near-greedy for instruction-tuned models). Setting temperature=0 reduces sampling variability but does not guarantee byte-identical outputs across provider-side revisions. Model (paper name) BedrockmodelIdFamily",
+      "order": 140,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Compute Environment and Model Details"
+      ],
+      "char_start": 38666,
+      "char_end": 38928,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8d1e86335a489b58e646d261d00c58",
+      "kind": "heading",
+      "text": "Nova Microus.amazon.nova-micro-v1:0Amazon",
+      "order": 141,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Nova Microus.amazon.nova-micro-v1:0Amazon"
+      ],
+      "char_start": 38930,
+      "char_end": 38971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3173aba6c979f9451c0ad3e6a67a9692",
+      "kind": "heading",
+      "text": "Llama-3.1-8Bus.meta.llama3-1-8b-instruct-v1:0Meta",
+      "order": 142,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Llama-3.1-8Bus.meta.llama3-1-8b-instruct-v1:0Meta"
+      ],
+      "char_start": 38973,
+      "char_end": 39022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39f1dc3bc879f673fecfed21e08777b5",
+      "kind": "paragraph",
+      "text": "Nova 2 Liteus.amazon.nova-2-lite-v1:0Amazon Claude Haiku 4.5us.anthropic.claude-haiku-4-5-20251001-v1:0Anthropic",
+      "order": 143,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Llama-3.1-8Bus.meta.llama3-1-8b-instruct-v1:0Meta"
+      ],
+      "char_start": 39024,
+      "char_end": 39136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:231c7cb1979e0c433ad3c79d148985f8",
+      "kind": "heading",
+      "text": "Llama-3.3-70Bus.meta.llama3-3-70b-instruct-v1:0Meta",
+      "order": 144,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Llama-3.3-70Bus.meta.llama3-3-70b-instruct-v1:0Meta"
+      ],
+      "char_start": 39138,
+      "char_end": 39189,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71e7ba8a462722f34de44404ddb55352",
+      "kind": "heading",
+      "text": "Nova Premierus.amazon.nova-premier-v1:0Amazon",
+      "order": 145,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Nova Premierus.amazon.nova-premier-v1:0Amazon"
+      ],
+      "char_start": 39191,
+      "char_end": 39236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2cfb2c214f427f5ad10ccb61f56be19",
+      "kind": "paragraph",
+      "text": "Claude Sonnet 4.5us.anthropic.claude-sonnet-4-5-20250929-v1:0Anthropic Claude Opus 4.5us.anthropic.claude-opus-4-5-20251101-v1:0Anthropic Each call usesmaxTokens=700, sequential execution with 0.15–0.8s inter-request delay (larger models use longer delays to avoid Bedrock connection-limit throttling). Experiments were run July 6–10, 2026. The experiment harness, task generator, and scoring are written in Python 3.9 and depend onboto3 (1.42.97),botocore(1.42.97),pandas(2.3.3),tenacity(9.1.2), andtqdm(4.68.3). The harness is deterministic given model outputs; the task suite and scoring use no random number generation.",
+      "order": 146,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "Nova Premierus.amazon.nova-premier-v1:0Amazon"
+      ],
+      "char_start": 39238,
+      "char_end": 39861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0435f65a64a8d5fe210a726891419b7",
+      "kind": "heading",
+      "text": "D Prompt Format",
+      "order": 147,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "D Prompt Format"
+      ],
+      "char_start": 39863,
+      "char_end": 39878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34565dfc334751e7aca349d28d4690b4",
+      "kind": "paragraph",
+      "text": "Each model call uses the Bedrock Converse API with a system message and one user message. The system message is fixed across all steps: You are a tool-augmented enterprise agent operating over MULTIPLE STEPS. Across the whole task you act on the SAME real-world entities. When a later step refers to “it”, “that”, “the account”, etc., it means the entity you already identified earlier. Do not silently switch to a different entity. 12",
+      "order": 148,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "D Prompt Format"
+      ],
+      "char_start": 39880,
+      "char_end": 40315,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7acc5b60eeac47a2a466ef179cd8ed25",
+      "kind": "table",
+      "text": "Output ONLY valid JSON per step: {“decision”: “ACT” | “CLARIFY” | “DEFER”, “tool”: “tool_name_or_null”, “bindings”: {“slot”: “entity_id”}, “clarification_question”: “string_or_null”, “provenance”: [...]} The user message for each step is a JSON payload containing: the defense-config hint, workflow ID, domain, step instruction, available tools (withrequiresannotations), candidate entities (with metadata), required binding slots, and the prior-step history (instruction + decision + bindings for each completed step). Under entity-lock configs, the payload additionally includes “locked_entities”: {slot: id}. Under provenance configs, recent provenance records are included. Injection format.Under controlled injection, a synthetic prior turn is prepended to the history: {“instruction”: “(prior) identified the [slot] as [wrong_id]”, “decision”: “ACT”, “bindings”: {“[slot]”: “[wrong_id]”}} where[slot]is the workflow’s carry slot (e.g., “account”) and[wrong_id]is the annotated distractor entity ID (e.g., “acct_northwind_labs”). This is placed as the most recent history entry before step 1’s instruction, simulating a prior action that resolved the wrong entity. The benchmark annotates three injection-phrasing variants (authoritative, uncertain, tool-return) for future sensitivity analysis, but the current experiment uses a single fixed phrasing for all workflows; stronger or weaker formulations may modulate propagation rate. LLM re-verification protocol.Under thellm_self_reverifyandllm_cross_reverifycon-",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "D Prompt Format"
+      ],
+      "char_start": 40317,
+      "char_end": 41836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8915ac832789a5d79d73e7bfeabca5f1",
+      "kind": "paragraph",
+      "text": "figs, a second Bedrock Converse call is made at each action step after the primary agent call. The re-verifier receives only theoriginalstep-1 referent phrase and the full candidate-entity list: You are an independent entity resolver. Given the original user request and candidate entities, determine which entity the request refers to. Original request: “{step1_referent}” Candidate entities: [... entity list with metadata ...] Which entity ID does the original request refer to? Return ONLY: {“entity_id”: “the_correct_id”}. If genuinely ambiguous, return: {“entity_id”: “AMBIGUOUS”}. If the re-verifier’s resolved ID disagrees with the agent’s carried binding, the binding is overwritten with the re-verifier’s answer and the lock is updated. If the re-verifier returns “AMBIGU- OUS” or fails to parse, no correction is applied. Underllm_self_reverify, the same model that acts as the agent also serves as the re-verifier. Underllm_cross_reverify, Nova Micro (us.amazon.nova-micro-v1:0) serves as the verifier regardless of which model is the agent. The cross-verifier adds one cheap API call per action step (∼0.3s latency, minimal token cost).",
+      "order": 150,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "D Prompt Format"
+      ],
+      "char_start": 41838,
+      "char_end": 42987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b7d3c6eea436abfd4374be6b6b4a5ca",
+      "kind": "heading",
+      "text": "E Offline Validation",
+      "order": 151,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "E Offline Validation"
+      ],
+      "char_start": 42989,
+      "char_end": 43009,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52fff7587bbb6dfd8718409db7ce9c8c",
+      "kind": "paragraph",
+      "text": "Before spending compute on live models, we validated the scoring harness using four scripted fake agents with deterministic known behaviors: •Oracle:always binds the ground-truth entity; clarifies on true-ambiguity workflows. •Drifter:correct at step 1; switches to a distractor at thelastaction step only. •Propagator:binds a distractor at step 1 and carries it forward every step. •Guesser:on true-ambiguity workflows, ACTs (guesses) instead of clarifying.",
+      "order": 152,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "E Offline Validation"
+      ],
+      "char_start": 43011,
+      "char_end": 43469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9468ce4e1128399cdc4444c3d8ad35af",
+      "kind": "heading",
+      "text": "assertions verify the following categories",
+      "order": 153,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "assertions verify the following categories"
+      ],
+      "char_start": 43471,
+      "char_end": 43513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87e46496065dd958e27601a144a5962a",
+      "kind": "paragraph",
+      "text": "•Drift scoring (5):oracle has zero drift; drifter triggers drift=1 with exactly 1 wrong action; drift is not counted as propagation. •Lock behavior (4):lock pins the first binding; lock prevents drifter’s late switch; lock under injection propagates the wrong entity. 13",
+      "order": 154,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "assertions verify the following categories"
+      ],
+      "char_start": 43515,
+      "char_end": 43785,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:714cf65ef9e01a6a504d5834a3909fb1",
+      "kind": "paragraph",
+      "text": "•Gate behavior (3):gate fires CLARIFY on divergence from lock; no wrong action passes the gate. •Propagation scoring (5):propagator is mis-bound at step 1; propagated flag set; compounding factor equals number of action steps; no recovery. •Oracle re-verify (4):under injection, reverify corrects the wrong binding to zero wrong actions; reverify does not break the clean oracle case; reverify does not falsely correct true-ambiguity. •True-ambiguity control (2):guesser fails; oracle correctly clarifies. •Disjoint scoring (2):a workflow cannot contribute to both drift and propagation metrics simultaneously. All 25 assertions pass. The test file is released ascode/test_offline.py.",
+      "order": 155,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "assertions verify the following categories"
+      ],
+      "char_start": 43787,
+      "char_end": 44471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b62701e799bb3f09386f35fdbc3c37c9",
+      "kind": "heading",
+      "text": "F Code and Data Release",
+      "order": 156,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "F Code and Data Release"
+      ],
+      "char_start": 44473,
+      "char_end": 44496,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:238fcb6089879c2279104096f12cfb93",
+      "kind": "paragraph",
+      "text": "All code, data, and results are publicly available at: https://github.com/shashank-indukuri/binding-drift The repository contains: •code/generate_hard_workflows.py: workflow generator (produces data/workflows_hard.jsonl) •code/environment.py: stateful environment, defense layers, per-step and trajectory scoring •code/run_drift_experiment.py: Bedrock multi-step runner (--injectflag for injection mode) •code/aggregate_results.py: trajectory metrics to summary CSVs and LaTeX tables •code/aggregate_injection.py: injection-specific aggregation and capability ladder •code/test_offline.py: 25-assertion offline validation (no API required) •data/workflows_200.jsonl: all 200 workflows (deterministic, regenerable) •results/: per-step and per-workflow CSVs for all 40,000+ model calls (injection mode,",
+      "order": 157,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "F Code and Data Release"
+      ],
+      "char_start": 44498,
+      "char_end": 45298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c017c3e8283ad4cc731610a0ba8da15",
+      "kind": "heading",
+      "text": "models, 5 configs, 200 workflows)",
+      "order": 158,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)"
+      ],
+      "char_start": 45300,
+      "char_end": 45333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6803d9d5ef1f6448ce80826c713f141c",
+      "kind": "paragraph",
+      "text": "Reproduction modes.",
+      "order": 159,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)"
+      ],
+      "char_start": 45335,
+      "char_end": 45354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cddf0c110d55a20303d4f882c07a883",
+      "kind": "heading",
+      "text": "Tables from saved results (no API):python aggregate_injection.py –wf",
+      "order": 160,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)",
+        "Tables from saved results (no API):python aggregate_injection.py –wf"
+      ],
+      "char_start": 45356,
+      "char_end": 45424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:982efb0a2c39cd7c2598f7e2978ac4c2",
+      "kind": "paragraph",
+      "text": "results/workflows_inject_ALL.csv –outdir out/",
+      "order": 161,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)",
+        "Tables from saved results (no API):python aggregate_injection.py –wf"
+      ],
+      "char_start": 45426,
+      "char_end": 45471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b296102652741b12c7cd7967a91fac8b",
+      "kind": "heading",
+      "text": "Offline metric validation (no API):python test_offline.py(25/25 must pass)",
+      "order": 162,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)",
+        "Offline metric validation (no API):python test_offline.py(25/25 must pass)"
+      ],
+      "char_start": 45473,
+      "char_end": 45547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59135d3e602a160b6fae17998e47f7bd",
+      "kind": "heading",
+      "text": "Full re-run (needs Bedrock access):python run_drift_experiment.py",
+      "order": 163,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)",
+        "Full re-run (needs Bedrock access):python run_drift_experiment.py"
+      ],
+      "char_start": 45549,
+      "char_end": 45614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7a689854d49de0bc49a619297ac15dc",
+      "kind": "paragraph",
+      "text": "–workflows data/workflows_hard.jsonl –out results/steps.csv –wf-out results/workflows.csv –models [IDs] –configs baseline lock ... reverify [–inject] 14",
+      "order": 164,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Binding Drift in Multi-Step Tool-Augmented Agents",
+        "models, 5 configs, 200 workflows)",
+        "Full re-run (needs Bedrock access):python run_drift_experiment.py"
+      ],
+      "char_start": 45616,
+      "char_end": 45768,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 14,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 14
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.18316",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 14,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

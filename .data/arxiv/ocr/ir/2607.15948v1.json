@@ -1,0 +1,1277 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "0cd882d2bdc125ecfd1ca9d847b6c32b51e4a6dfd45823fb32289cafcf2c7b62",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:e3da2795208391d268edbb5172dd5228",
+      "kind": "heading",
+      "text": "TARS: A Theory-of-Mind Agent for Personalized",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized"
+      ],
+      "char_start": 0,
+      "char_end": 45,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:472e3faffe1e22c70a0c6a058e56741d",
+      "kind": "heading",
+      "text": "In-IDE Code Comprehension",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "In-IDE Code Comprehension"
+      ],
+      "char_start": 47,
+      "char_end": 72,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2a298904ba091549d7999b7801496bd",
+      "kind": "paragraph",
+      "text": "Leopoldo Todisco∗, Antonio Della Porta ∗, Stefano Lambiase †, and Fabio Palomba ∗ ∗Software Engineering (SeSa) Lab, University of Salerno, Italy †Human Augmentation and Collaboration (HAC) Group, Aalborg University, Denmark Abstract—Code comprehension is one of the most timeconsuming tasks in software engineering, yet most LLM-based assistants produce explanations that ignore who is asking and force developers into a disruptive copy-paste workflow. We present TARS, an LLM-powered agent integrated into Visual Studio Code that supports program comprehension through autonomous explanations anchored directly to the code under analysis. Built around a lightweight Theory of Mind paradigm, TARS profiles a developer’s expertise, role, and stylistic preferences, then adapts the depth and tone of its explanations accordingly, grounding them in project documentation via Retrieval-Augmented Generation. To evaluate TARS, we conducted a controlled experiment with 18 participants on non-trivial Java snippets. Participants using TARS completed tasks 26% faster, reported lower cognitive load, and found the explanations meaningfully adapted to their profiles. Tool repository: https://github.com/leotodisco/tars Tool video: https://www.youtube.com/watch?v=RByMKisWDLM Index Terms—Code Comprehension, Large Language Models,",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "In-IDE Code Comprehension"
+      ],
+      "char_start": 74,
+      "char_end": 1396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82d7bbde4bd5837428465e822b1c6329",
+      "kind": "heading",
+      "text": "Cognitive Theories",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories"
+      ],
+      "char_start": 1398,
+      "char_end": 1416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:113ae9b46ac28a5ad338780dd649c2f1",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 1418,
+      "char_end": 1430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e57b4747bfd5668539d68d58fe6b59e4",
+      "kind": "paragraph",
+      "text": "Code comprehension is a fundamental activity in software engineering, underlying virtually every development task [1], [2]. Its importance is most pronounced during software maintenance and evolution, which dominate the software life cycle and consume the majority of its total cost [1], since before a developer can fix a bug, extend a feature, or refactor a module, they must first understand code they rarely authored themselves. The ability to rapidly build an accurate mental model of an unfamiliar codebase is therefore a critical, yet cognitively demanding, skill [3], [4], and developers spend a substantial portion of their time not writing code, but searching for, reading, and making sense of code written by others [5], [6]. This burden is compounded by the fact that internal code quality itself varies with the engineering practices adopted during development [7], leaving developers to reason about code whose structure reflects uneven practice. Among the aids that support this process, source code comments and documentation have consistently been identified as the most critical [8], [9]. Yet a well-known paradox persists: despite their recognized importance, comments in practice are frequently incomplete, outdated, or incorrect [10], leaving insufficiently documented code as a leading source of comprehension difficulties [11]. In recent years, researchers have begun investigating how Large Language Models (LLMs) can address this longstanding documentation dilemma [12]. Pioneering tools such as GILT [13] and IVIE [14] have demonstrated that LLMs can",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 1432,
+      "char_end": 3008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e11b2767c12fd43cb9fab78a9b33131a",
+      "kind": "paragraph",
+      "text": "shift the developer workflow from static informationretrieval to dynamic informationgeneration, producing on-demand, context-aware explanations tailored to the code at hand. While these results are encouraging, existing tools remain limited in several respects. They typically target isolated code snippets and operate reactively, responding only to explicit user queries rather than proactively assisting comprehension. More fundamentally, they generate “one-size-fits-all” explanations that overlook the individual developer’s background, skill set, and immediate goals. By failing to account for user expertise, current tools create a cognitive mismatch, either overwhelming less-experienced developers with low-level jargon or frustrating seasoned engineers with redundant, elementary details. The difficulty of these mismatches is best understood through cognitive theories of comprehension, which cast it as an active, hypothesis-driven process: developers build understanding either bottom-up, by chunking statements into higherlevel abstractions [15], or top-down, by refining expectations about the code’s purpose [16]. Which strategy a developer follows and what they need to advance it depend on their prior knowledge or expertise, so an explanation that ignores this risks disrupting rather than supporting comprehension. This is where Theory of Mind (ToM) becomes relevant. Originating in cognitive science, ToM describes the human ability to attribute mental states to others and to reason about what they believe, intend, and do not yet know [17]. It is",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 3010,
+      "char_end": 4578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:249159e0b79d906a412bc60524d77474",
+      "kind": "paragraph",
+      "text": "what allows a senior developer to tailor an explanation to a colleague rather than reciting the same account to everyone. Recent work shows that this capacity can be partially elicited in LLMs through prompting [18]–[22], enabling assistants to maintain an implicit model of the developer’s evolving understanding and shape explanations to fill gaps and avoiding cognitive overload. To this end, we introduce TARS, an LLM-powered agent that enhances code comprehension through autonomous, context-sensitive assistance integrated directly into the developer’s IDE. Unlike prior tools that treat LLMs as passive question-answering engines, TARS leverages an explicit perspective-taking mechanism to condition its explanations on the developer’s expertise, role, and stylistic preferences, adapting their depth, tone, and granularity to each user. A Retrieval-Augmented Generation component further grounds explanations in project-specific documentation. By embedding the agent within the editor, TARS minimizes the cognitive",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 4580,
+      "char_end": 5602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:627d4ac01cc6de5b77112b4f684f36c7",
+      "kind": "table",
+      "text": "arXiv:2607.15948v1  [cs.SE]  17 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 5604,
+      "char_end": 5644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee842b96ab3c89834912d0df98edd189",
+      "kind": "paragraph",
+      "text": "overhead of context switching and anchors its explanations directly to the code under analysis. We evaluate TARS through a controlled within-subjects experiment in which 18 participants completed code comprehension tasks on non-trivial Java snippets under both assisted and unassisted conditions. Results show that TARS reduces task completion time by approximately 26%, is perceived as highly useful and easy to use, imposes significantly lower cognitive workload than the manual condition, and produces explanations that participants find meaningfully adapted to their individual profile.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "INTRODUCTION"
+      ],
+      "char_start": 5646,
+      "char_end": 6236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25395bf96101f48e61c1c624314b9bee",
+      "kind": "heading",
+      "text": "BACKGROUND ANDRELATEDWORK",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "BACKGROUND ANDRELATEDWORK"
+      ],
+      "char_start": 6238,
+      "char_end": 6263,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5587052ff2e72bec9f1717e0da8e4645",
+      "kind": "paragraph",
+      "text": "LLMs offers a structural response to the documentation dilemma, replacing static, human-authored documentation with dynamic, on-demand explanation [13]. Where the traditional workflow cast the developer as an archaeologist excavating API references and forums for pre-existing answers, the emerging paradigm recasts them as a collaborator who prompts an LLM for a bespoke explanation of code in context. GILT [13] embodies this shift as a VS Code plugin that supports understanding through a chatbot interface, while IVIE [14] pushes it further byanchoringexplanations directly alongside the code they describe, mitigating the split-attention effect of toggling between the editor and a separate chat window. These tools establish two principles we adopt in TARS, namely that explanations should be situated within the editor, yet they share a key limitation: the explanation is the same regardless of who requests it. Theory of Mind offers a principled way to address this. Recent work shows ToM can be elicited in LLMs through prompting [18], [19], and Richards and Wessel [23] brought these ideas into software engineering with TOMMY , a conversational assistant that infers a user’s mental state from dialogue history to personalize explanations. TARS builds on this line of work but differs in two respects: it conditions explanations on an explicit developer profile rather than inferring state implicitly from conversation, and it delivers them anchored in the IDE rather than through a separate conversational channel.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "BACKGROUND ANDRELATEDWORK"
+      ],
+      "char_start": 6265,
+      "char_end": 7791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b64cde7c94d34d30d49f327739750b09",
+      "kind": "heading",
+      "text": "TARS",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "TARS"
+      ],
+      "char_start": 7793,
+      "char_end": 7797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d9643edf4d02945d9b68d008ceb9b0b",
+      "kind": "paragraph",
+      "text": "A. What is TARS TARS is an LLM-powered assistant integrated as a Visual Studio Code (VS Code) extension that supports program comprehension directly within the developer’s IDE. It is designed around two ideas: (1) explanations should beanchoredin the editor rather than delivered through a separate window, and (2) they should bepersonalizedfor the single developer rather than identical for everyone. To this end, TARS is built on a lightweight Theory of Mind paradigm. It models the developer’s cognitive state, capturing their expertise, role, and stylistic preferences, and conditions its explanations on this profile to adjust their granularity, tone, and technical depth. A junior developer and a senior architect are querying the same code, therefore, receive explanations pitched at different levels. To keep its reasoning grounded in the software under analysis, TARS further incorporates a Retrieval-Augmented Generation (RAG) component that ingests local project documentation, enriching explanations with project-specific architectural and domain knowledge. B. How TARS works The explanation generation process in TARS is governed by a stateful agent built with LangGraph, structured as a directed graph where nodes encapsulate discrete processing steps and edges represent conditional transitions. The graph comprises three nodes. ThePlanner Nodeconsumes the code snippet, the user profile, and any retrieved documentation chunks, emitting a structured JSON object with the original code and a natural language explanation. TheSyntax Check",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "TARS"
+      ],
+      "char_start": 7799,
+      "char_end": 9351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02f7d66a6655533b000d82801ef2a113",
+      "kind": "paragraph",
+      "text": "Nodevalidates the structural integrity of this output, looping back to the planner if malformed. TheCritique Node performs a semantic quality assessment, triggering revision when the explanation is inaccurate or insufficient, up to a configurable retry limit. Perspective-taking is operationalized in the Planner Node via a single consolidated system prompt that conditions the LLM’s output on the profile collected by the Theory of Mind Profiler: the user’s mental state, inferred through the initial questionnaire, is injected directly into the explanation prompt. While inspired by SIMTOM-Single [19], our approach differs in the timing and nature of the profile representation, as the cognitive profile is explicitly defined and structuredbeforegeneration, thereby reducing inferential load at execution. Rather than using multi-step inference to deduce the user’s mental state at runtime [23], TARS treats expertise level, role, and stylistic preferences as static contextual directives, optimizing latency by avoiding sequential LLM calls while retaining effective profile-conditioned adaptation. When project documentation has been indexed, the most relevant retrieved chunks are appended, grounding the explanation in the project’s architecture and domain conventions.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "TARS"
+      ],
+      "char_start": 9353,
+      "char_end": 10629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79db012ddeadecb157a0dd8d407a2eb9",
+      "kind": "heading",
+      "text": "How to Use TARS",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "How to Use TARS"
+      ],
+      "char_start": 10631,
+      "char_end": 10646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9385a50a0f5d6cb88489ece4c1bad4c1",
+      "kind": "paragraph",
+      "text": "Since TARS is implemented as a Visual Studio Code (VS Code) extension, the only prerequisite for installation is a working instance of VS Code. To install the tool, the user must open the VS Code Command Palette and run",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cognitive Theories",
+        "How to Use TARS"
+      ],
+      "char_start": 10648,
+      "char_end": 10867,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c924395af660519442cbb1fbd7c5768e",
+      "kind": "heading",
+      "text": ">EXTENSIONS: INSTALL FROMVSIX",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">EXTENSIONS: INSTALL FROMVSIX"
+      ],
+      "char_start": 10869,
+      "char_end": 10898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5cfbc8c48f540ab3031c2faec23d81c",
+      "kind": "heading",
+      "text": ">TARS.VSIX",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS.VSIX"
+      ],
+      "char_start": 10900,
+      "char_end": 10910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d28d958e1d018ef96736c4f17a25b409",
+      "kind": "paragraph",
+      "text": "As for its use, TARS is designed to operate through three sequential steps. First, the user must execute:",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS.VSIX"
+      ],
+      "char_start": 10912,
+      "char_end": 11017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b254cbd75c85f14b0af61f006ab553b6",
+      "kind": "heading",
+      "text": ">TARS: CONFIGURETARS",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: CONFIGURETARS"
+      ],
+      "char_start": 11019,
+      "char_end": 11039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b0cb04014c9e3897a8681db30179f91",
+      "kind": "paragraph",
+      "text": "which prompts the selection of a target Large Language Model (LLM) and the insertion of the corresponding API key. Then execute the command to access the ToM profiler.",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: CONFIGURETARS"
+      ],
+      "char_start": 11041,
+      "char_end": 11208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a4f15f1fedb28b4615c6c142b359ccb",
+      "kind": "heading",
+      "text": ">TARS: THEORY OFMINDPROFILER",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11210,
+      "char_end": 11238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8da0699f125d367f26a6e4f8956687f3",
+      "kind": "paragraph",
+      "text": "This step presents the user with a structured questionnaire to capture their current mental state and domain expertise. The collected profile is then used by TARS to perform perspective taking, i.e., to tailor the generated explanations to the specific cognitive and knowledge context of the individual developer.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11240,
+      "char_end": 11553,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc99de82716c16b29db122bb373df05f",
+      "kind": "caption",
+      "text": "Figure 1 shows the profiler interface as it appears within the",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11555,
+      "char_end": 11617,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4db94006bcbd50fd85aa816562287036",
+      "kind": "caption",
+      "text": "Fig. 1: The Theory of Mind Profiler questionnaire presented",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11619,
+      "char_end": 11678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1717e6ccdf1575831b65c9e77d7876b",
+      "kind": "paragraph",
+      "text": "to the user within the VSCode editor, used to capture expertise level, role, and stylistic preferences.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11680,
+      "char_end": 11783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a92a29fa9f2a52a2d07f43586216c177",
+      "kind": "caption",
+      "text": "Fig. 2: Example of an explanation generated by TARS for a",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11785,
+      "char_end": 11842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbdd03202a9bb0b7e9fb15857fcc9a1b",
+      "kind": "paragraph",
+      "text": "code snippet VSCode editor. Finally, once the profiling phase is completed, the user can request source code explanations by invoking",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: THEORY OFMINDPROFILER"
+      ],
+      "char_start": 11844,
+      "char_end": 11977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80d32221ca13ecd935c5c7b63d65bd9f",
+      "kind": "heading",
+      "text": ">TARS: EXPLAINCODE",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: EXPLAINCODE"
+      ],
+      "char_start": 11979,
+      "char_end": 11997,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5072416ef9f98b319bf9119c6f468341",
+      "kind": "paragraph",
+      "text": "The scope of the explanationadapts dynamically to the user’s selection: if a code snippet is highlighted in the editor at the time of invocation, TARS produces a targeted explanation for that fragment; otherwise, the explanation covers the entire file currently open in the editor. Figure 2 shows an example of an interaction between TARS and a developer.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: EXPLAINCODE"
+      ],
+      "char_start": 11999,
+      "char_end": 12354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62b34b50db2c2719a8a339483cd14caa",
+      "kind": "heading",
+      "text": "EVALUATION OF THETOOL",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: EXPLAINCODE",
+        "EVALUATION OF THETOOL"
+      ],
+      "char_start": 12356,
+      "char_end": 12377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6283877df892e23a008b78db6a42ca02",
+      "kind": "paragraph",
+      "text": "A. Study design To assess the effectiveness of TARS, we conducted a controlled experiment with 18 participants drawn from three groups: practitioners, researchers, and students. This heterogeneity is deliberate, since TARS adapts to user profiles, its effect can only be validated against users whose expertise and background genuinely differ. The overall goal of the current work is the following: ◎Goal of the work Assess whether TARS effectively supports developers in understanding unfamiliar or legacy code, with respect to explanation quality, cognitive load, task performance, and adaptability to individual user characteristics. To reach the goal and guide our investigation, we formulated the following research questions: /asksRQ1—Does the use of TARS improve code comprehension compared to the control condition? RQ 2—How is TARS perceived by users in terms of utility, ease of use, and cognitive load? /s♀apRQ3—Is TARS capable of adapting its explanations to the user’s individual characteristics? We employed a within-subjects experimental design to evaluate the impact of TARS on code comprehension. Under this design, all participants interacted with the same four selected Java code snippets, analyzing two snippets using the TARS-assisted condition and the remaining two without any AI assistance. To mitigate issues such as learning and sequence effects, we implemented a comprehensive, two-tiered counterbalancing strategy across the participants set: •Condition Order (Macro-categories):To prevent the results from being biased by participants simply becom-",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: EXPLAINCODE",
+        "EVALUATION OF THETOOL"
+      ],
+      "char_start": 12379,
+      "char_end": 13956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0aca6796291f1a9df9492c29d5f284e5",
+      "kind": "paragraph",
+      "text": "ing more familiar with the experimental procedure over time, the cohort was evenly divided into two macrocategories. The first group began their session using the TARS tool for the first two snippets, then switched to the manual condition for the remaining two. Conversely, the second group started with the manual control condition and subsequently transitioned to the TARS-assisted condition. This crossover approach ensures that fatigue or learning effects are symmetrically distributed across both conditions. •Snippet Assignment Combinations:To ensure that the intrinsic difficulty of any specific code snippet did not skew the performance metrics of a particular condition, we systematically rotated the assignment of the four snippets. Given four snippets, there are six possible pairwise combinations for allocating them into two sets (e.g., assigning snippets 1 and 2 to TARS while assigning",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        ">TARS: EXPLAINCODE",
+        "EVALUATION OF THETOOL"
+      ],
+      "char_start": 13958,
+      "char_end": 14858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e02934bfa2034a9ecc83ee67f51f1da2",
+      "kind": "heading",
+      "text": "and 4 to the manual condition; assigning 1 and 3 to",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "and 4 to the manual condition; assigning 1 and 3 to"
+      ],
+      "char_start": 14860,
+      "char_end": 14911,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2ebec54b20fb53e95a0b556b25745ee",
+      "kind": "paragraph",
+      "text": "TARS, and 2 and 4 to manual, etc.). Participants in both macro-categories were evenly distributed across these six combinatorial sequences. The experiment was conducted in a controlled lab setting. Before the session begins, the first two authors explain the",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "and 4 to the manual condition; assigning 1 and 3 to"
+      ],
+      "char_start": 14913,
+      "char_end": 15171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79a89c60129dc8f03ba439956ceb23bd",
+      "kind": "paragraph",
+      "text": "procedure to the participants and clarify the tasks they are expected to perform. To support them throughout the experiment, each participant receives a Markdown file that restates all the steps of the procedure. The same file specifies which scripts have to be analyzed using TARS and which ones have to be analyzed manually. To preserve the integrity of the study, participants are not allowed to use any other AI tool. The explanations produced by TARS cannot be copied and pasted, since the tool does not permit text selection, and participants are instructed not to reproduce these explanations verbatim in their responses. The first two authors remained in the laboratory for the entire duration of the experiment to ensure that every session is carried out according to these rules. To select the snippets that users have to understand, we selected four Java code snippets sourced from the CodeSearch- Net dataset [24], part of the CodeXGLUE benchmark [25]. Snippets were selected by filtering for a cyclomatic complexity [26] between 10 and 30 using thelizardlibrary, aiming for non-trivial but manageable code. All pre-existing comments were removed to avoid bias. The LLM used to run TARS was standardized to GPT-4.1 Nano across all participants, each of whom received a dedicated API key inside the task description. To answerRQ 1, we measuredtask execution timeand task correctness. Correctness was operationalized in two complementary ways: (i) as thecosine similaritybetween the participant’s explanation and the ground-truth docstring,",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "and 4 to the manual condition; assigning 1 and 3 to"
+      ],
+      "char_start": 15173,
+      "char_end": 16723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0baca39f45b3cb931da5cf001ccb9f06",
+      "kind": "paragraph",
+      "text": "computed after a standard NLP pre-processing pipeline using theintfloat/multilingual-e5-basesentencetransformer model, and (ii) through amanual evaluation, in which each explanation was independently classified asFully Correct,Partially Correct, orNot Correctagainst the oracle docstring by two of the authors, with a third author resolving any disagreements. To answerRQ 2, we use a post-experiment questionnaire that combines two validated instruments: the Technology Acceptance Model (TAM) [27], covering Perceived Usefulness (4 items), Perceived Ease of Use (4 items), Behavioral Intention (1 item), and Attitude Toward Use (3 items), for a total of",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "and 4 to the manual condition; assigning 1 and 3 to"
+      ],
+      "char_start": 16725,
+      "char_end": 17378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55f92ee8d7eb05386293beb4d1bfa37c",
+      "kind": "heading",
+      "text": "items; and a modified NASA-TLX [28], covering Mental",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "items; and a modified NASA-TLX [28], covering Mental"
+      ],
+      "char_start": 17380,
+      "char_end": 17432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feabf9d4bee06f87542eb26f10981bc4",
+      "kind": "paragraph",
+      "text": "Demand (3 items), Physical Demand (1 item), Performance (2 items), Effort (3 items), and Frustration (3 items), for a total of 12 items, used to assess cognitive load. To answerRQ 3, we extended the same questionnaire described above with a dedicated custom section of 9 Trust in Machine (TOM) items, designed to assess users’ perceptions of how well the generated explanations aligned with their individual profiles and backgrounds, covering dimensions such as the appropriateness of technical depth, relevance to the user’s stated experience level, and overall personalization quality.",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "items; and a modified NASA-TLX [28], covering Mental"
+      ],
+      "char_start": 17434,
+      "char_end": 18021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d75e3c4645ac4b177f9645fa6ed03d5b",
+      "kind": "heading",
+      "text": "RESULTS",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "items; and a modified NASA-TLX [28], covering Mental",
+        "RESULTS"
+      ],
+      "char_start": 18023,
+      "char_end": 18030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4e2ad2f7c2a97bc6b564bbb150f3cd1",
+      "kind": "paragraph",
+      "text": "We discuss the results organized by research question. TABLE I: Comparison of comprehension performance under TARS-assisted and control conditions",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "items; and a modified NASA-TLX [28], covering Mental",
+        "RESULTS"
+      ],
+      "char_start": 18032,
+      "char_end": 18178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5690ae3da23b06a2a86af807f5f78d3",
+      "kind": "heading",
+      "text": "Measure Condition Mean (SD) Median",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Measure Condition Mean (SD) Median"
+      ],
+      "char_start": 18180,
+      "char_end": 18214,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23692b4444db609dbdc7529d4e49109e",
+      "kind": "paragraph",
+      "text": "Completion Time (s) TARS224.00(116.74)213.5",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Measure Condition Mean (SD) Median"
+      ],
+      "char_start": 18216,
+      "char_end": 18259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc1fb04d1ef940dabe186e396aa7ea7d",
+      "kind": "heading",
+      "text": "NO TARS304.08(215.03)279.5",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "NO TARS304.08(215.03)279.5"
+      ],
+      "char_start": 18261,
+      "char_end": 18287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:885782c251f3e07efea487c55b61ddfe",
+      "kind": "heading",
+      "text": "Cosine Similarity TARS0.888(0.008)0.889",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Cosine Similarity TARS0.888(0.008)0.889"
+      ],
+      "char_start": 18289,
+      "char_end": 18328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b3cb0e1b829f66cb05e150995c8e529",
+      "kind": "heading",
+      "text": "NO TARS0.886(0.007)0.887",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "NO TARS0.886(0.007)0.887"
+      ],
+      "char_start": 18330,
+      "char_end": 18354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ff6e9953802dfe25e82b1b177324387",
+      "kind": "paragraph",
+      "text": "TABLE II: Self-reported measures (TARS condition only)",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "NO TARS0.886(0.007)0.887"
+      ],
+      "char_start": 18356,
+      "char_end": 18410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b68937af2cae3e27948f5c17942def79",
+      "kind": "heading",
+      "text": "Construct Mean SD Scale",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale"
+      ],
+      "char_start": 18412,
+      "char_end": 18435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:337ad6e27c87de944729310d8460f6a8",
+      "kind": "paragraph",
+      "text": "Perceived Usefulness (PU)4.28 0.65 1–5 Perceived Ease of Use (PE)4.33 0.67 1–5 Attitude Toward Use (ATU)4.19 0.70 1–5 Behavioral Intention (BI)4.61 0.61 1–5 Trust in Machine (TOM)3.92 0.63 1–5 Mental Demand (MD)3.64 1.56 1–5 Frustration3.86 1.64 1–5 Effort3.01 1.42 1–5 A.RQ 1—Does the use of TARS improve code comprehension compared to the control condition? Neither performance metric reached conventional statistical significance, yet both point in the expected direction (Table I). Fortask correctness, cosine similarity scores were nearly identical across conditions (TARS:M= 0.888; control: M= 0.886), with an independent-samplest-test confirming no significant difference (t(16) =−1.52,p= 0.18). For task execution time, TARS participants were on average 80 seconds faster (M= 224.0s vs.304.08s, a 26% reduction) and showed markedly lower variability (SD= 116.74vs.",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale"
+      ],
+      "char_start": 18437,
+      "char_end": 19309,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff2d64069e48dbef079b7b777f208a7d",
+      "kind": "heading",
+      "text": "Because the control-group times violated normality",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "Because the control-group times violated normality"
+      ],
+      "char_start": 19311,
+      "char_end": 19361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66bd5ee21e97f1a8ef8926ddf2b6521d",
+      "kind": "paragraph",
+      "text": "(Shapiro–Wilk:W= 0.82,p < .001), a Mann–Whitney U test was applied; the result did not reach significance (U= 494.5, p= 0.085), though thep-value lies close to theα= 0.05 threshold, suggesting a power limitation rather than the absence of a true effect. The manual evaluation corroborates this picture: under the TARS condition, explanations were more often judgedFully Correct(7 vs. 4) and less oftenNot Correct(2 vs. 3), while the majority in both conditions were ratedPartially Correct, indicating that participants generally grasped the core functionality but often missed finer details captured in the oracle docstring. B.RQ 2—How is TARS perceived by users in terms of utility, ease of use, and cognitive load? All TAM constructs were rated significantly above the neutral midpoint. Perceived Usefulness (V= 2.0,p < .001), Perceived Ease of Use (V= 0.0,p < .001), and Behavioral Intention (V= 0.0,p < .001) all exceeded the neutral value, as did Attitude Toward Using (t= 7.21,p < .001). On the NASA-TLX side, Mental Demand (t=−3.69,p=.0018), Effort (t=−5.91,p < .001), and Frustration (t=−2.94, p < .05) were all significantly below the neutral midpoint,",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "Because the control-group times violated normality"
+      ],
+      "char_start": 19363,
+      "char_end": 20524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03076c6b1f0964a17bfb8882987bb7c3",
+      "kind": "paragraph",
+      "text": "while perceived Performance was significantly above it (V=",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "Because the control-group times violated normality"
+      ],
+      "char_start": 20526,
+      "char_end": 20584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06e02ce223b16085142e6611ad0d5fc2",
+      "kind": "heading",
+      "text": "0,p=.0003). Participants therefore found TARS useful and",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "0,p=.0003). Participants therefore found TARS useful and"
+      ],
+      "char_start": 20586,
+      "char_end": 20642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:912555f8ccf53fd3663b1acb2f7f5d00",
+      "kind": "paragraph",
+      "text": "easy to operate, and associated it with a low cognitive burden and high self-reported performance.",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "0,p=.0003). Participants therefore found TARS useful and"
+      ],
+      "char_start": 20644,
+      "char_end": 20742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cea54310707ef42e22de6cf1cca89040",
+      "kind": "heading",
+      "text": "RQ 3—Is TARS capable of adapting its explanations to the",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "RQ 3—Is TARS capable of adapting its explanations to the"
+      ],
+      "char_start": 20744,
+      "char_end": 20800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4803dd14cb4d404ec2a9561005916fc",
+      "kind": "paragraph",
+      "text": "user’s individual characteristics? The mean Theory of Mind (ToM) score, calculated as the average of the scores from all ToM-related questions, was higher than the neutral midpoint of 3. This indicates that participants perceived the explanations as adapted to their individual profiles. Qualitative feedback reinforced this finding, though some participants noted a discrepancy between their declared preference for verbosity and the actual level of detail in the output, pointing to room for improvement in how the agent operationalizes the user profile.",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "RQ 3—Is TARS capable of adapting its explanations to the"
+      ],
+      "char_start": 20802,
+      "char_end": 21358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abb8c49634910b4d5a6298279460b63c",
+      "kind": "heading",
+      "text": "DISCUSSIONS",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "DISCUSSIONS"
+      ],
+      "char_start": 21360,
+      "char_end": 21371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f23db42bb173b21ad3f1c6811a453e4",
+      "kind": "paragraph",
+      "text": "The evaluation of TARS provides valuable insights into the role of personalized, in-IDE AI assistants. While not all objective metrics were statistically significant, the convergence of quantitative trends and subjective feedback points to three practical implications. TARS as an accelerator, not a corrector.Correctness was comparable across conditions, but TARS users were on average 26% faster with nearly halved completion-time variance. Although this trend did not reach statistical significance, its direction suggests that TARS helps developers avoid getting stuck on unfamiliar code, making the effort required for comprehension more predictable. The primacy of developer experience.The RQ 2 results are our clearest signal: participants significantly favored the TARS workflow, reporting lower mental demand, effort, and frustration. By offloading the burden of parsing unfamiliar syntax, TARS appears to preserve developers’ mental energy, suggesting its value lies as much in reducing cognitive friction as in improving accuracy. The reality of AI personalization.Participants perceived explanations as adapted to their profile rather than generic, supporting the integration of Theory of Mind into coding assistants. Yet feedback on verbosity exposes a known limitation, in that current LLMs struggle to honor abstract constraints such as “conciseness,” pointing to future work on stricter prompting or post-generation filtering.",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "DISCUSSIONS"
+      ],
+      "char_start": 21373,
+      "char_end": 22815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bc3f20158a19e7c2b793b563f71a73f",
+      "kind": "heading",
+      "text": "CONCLUSIONS",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "CONCLUSIONS"
+      ],
+      "char_start": 22817,
+      "char_end": 22828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7520faa97b12fd575b5485ab2ed673e",
+      "kind": "paragraph",
+      "text": "We presented TARS, a VS Code agent grounding autonomous, in-IDE code explanations in Theory of Mind. A within-subjects study with 18 participants showed faster comprehension, lower cognitive load, and explanations perceived as personalized. Future work will scale the evaluation to professionals on real-world codebases to test generalizability.",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "Construct Mean SD Scale",
+        "CONCLUSIONS"
+      ],
+      "char_start": 22830,
+      "char_end": 23175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc56f8edac4255f8fec4168bf05515c5",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES"
+      ],
+      "char_start": 23177,
+      "char_end": 23187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fc19d21f6d5df757d561c1cbe94097c",
+      "kind": "reference",
+      "text": "[1] A. V on Mayrhauser and A. M. Vans, “Program comprehension during software maintenance and evolution,”Computer, 2002. [2] X. Xia, L. Bao, D. Lo, Z. Xing, A. E. Hassan, and S. Li, “Measuring program comprehension: A large-scale field study with professionals,” IEEE Transactions on Software Engineering, 2017. [3] W. Maalej, R. Tiarks, T. Roehm, and R. Koschke, “On the comprehension of program comprehension,”ACM Transactions on Software Engineering and Methodology (TOSEM), vol. 23, no. 4, pp. 1–37, 2014. [4] A. J. Ko, R. DeLine, and G. Venolia, “Information needs in collocated software development teams,” in29th International Conference on Software Engineering (ICSE’07). IEEE, 2007, pp. 344–353. [5] A. J. Ko, B. A. Myers, M. J. Coblenz, and H. H. Aung, “An exploratory study of how developers seek, relate, and collect relevant information during software maintenance tasks,”IEEE Transactions on software engineering, vol. 32, no. 12, pp. 971–987, 2006. [6] T. D. LaToza, G. Venolia, and R. DeLine, “Maintaining mental models: a study of developer work habits,” inProceedings of the 28th international conference on Software engineering, 2006, pp. 492–501. [7] G. Giordano, A. Della Porta, F. Ferrucci, and F. Palomba, “An evidencebased study on the relationship of software engineering practices on code smells in python ml projects,” inEuromicro Conference on Software Engineering and Advanced Applications. Springer, 2025, pp. 105–120. [8] S. Stapleton, Y . Gambhir, A. LeClair, Z. Eberhart, W. Weimer, K. Leach,",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES"
+      ],
+      "char_start": 23189,
+      "char_end": 24714,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18374505f80351c1f30a7299662e401f",
+      "kind": "paragraph",
+      "text": "and Y . Huang, “A human study of comprehension and code summarization,” inProceedings of the 28th International Conference on Program Comprehension, 2020, pp. 2–13. [9] R. Brooks, “Using a behavioral theory of program comprehension in software engineering,” inProceedings of the 3rd international conference on Software engineering, 1978, pp. 196–201. [10] B. Fluri, M. Wursch, and H. C. Gall, “Do code and comments coevolve? on the relation between source code and comment changes,” in 14th Working conference on reverse engineering (WCRE 2007). IEEE, 2007, pp. 70–79. [11] X. Xia, L. Bao, D. Lo, Z. Xing, A. E. Hassan, and S. Li, “Measuring program comprehension: A large-scale field study with professionals,” IEEE Transactions on Software Engineering, vol. 44, no. 10, pp. 951– 976, 2017. [12] A. Della Porta, V . De Martino, G. Recupito, C. Iemmino, G. Catolino, D. Di Nucci, F. Palombaet al., “Using large language models to support software engineering documentation in waterfall life cycles: Are we there yet?”Ital-IA, pp. 42–47, 2024. [13] D. Nam, A. Macvean, V . Hellendoorn, B. Vasilescu, and B. Myers, “Using an llm to help with code understanding,” inProceedings of the IEEE/ACM 46th International Conference on Software Engineering, 2024, pp. 1–13. [14] L. Yan, A. Hwang, Z. Wu, and A. Head, “Ivie: Lightweight anchored explanations of just-generated code,” inProceedings of the 2024 CHI conference on human factors in computing systems, 2024, pp. 1–15. [15] R. Brooks, “Towards a theory of the comprehension of computer",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES"
+      ],
+      "char_start": 24716,
+      "char_end": 26250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d449e1d9431c2ab919c149eefbf5af9d",
+      "kind": "paragraph",
+      "text": "programs,”International journal of man-machine studies, vol. 18, no. 6, pp. 543–554, 1983. [16] E. Soloway and K. Ehrlich, “Empirical studies of programming knowledge,”IEEE Transactions on software engineering, 2009. [17] A. I. Goldmanet al.,Theory of mind. Oxford handbook of philosophy and cognitive science, 2012, vol. 1. [18] S. R. Moghaddam and C. J. Honey, “Boosting theory-of-mind performance in large language models via prompting,”arXiv preprint arXiv:2304.11490, 2023. [19] A. Wilf, S. Lee, P. P. Liang, and L.-P. Morency, “Think twice: Perspective-taking improves large language models’ theory-of-mind capabilities,” inProceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), 2024. [20] A. Della Porta, G. V oria, A. Abbate, R. Sulipano, S. Lambiase, G. Catolino, and F. Palomba, “Toward measuring prompt quality: A preliminary investigation on prompt smells,” in2026 IEEE International Conference on Software Analysis, Evolution and Reengineering- Companion (SANER-C). IEEE, 2026, pp. 293–300. [21] A. Della Porta, G. Recupito, S. Lambiase, D. Di Nucci, and F. Palomba, “Unlocking code simplicity: The role of prompt patterns in managing llm code complexity,” in2025 IEEE International Conference on Software Analysis, Evolution and Reengineering-Companion (SANER-C). IEEE, 2025, pp. 140–143.",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES"
+      ],
+      "char_start": 26252,
+      "char_end": 27612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fcdc56ed33c51814f2152089f41f3a8",
+      "kind": "reference",
+      "text": "[22] A. Della Porta, S. Lambiase, and F. Palomba, “Do prompt patterns affect code quality? a first empirical assessment of chatgpt-generated code,” inProceedings of the 29th International Conference on Evaluation and Assessment in Software Engineering, 2025, pp. 181–192. [23] J. Richards and M. Wessel, “What you need is what you get: Theory of mind for an llm-based code understanding assistant,” in2024 IEEE International Conference on Software Maintenance and Evolution (IC- SME). IEEE, 2024, pp. 666–671. [24] H. Husain, H.-H. Wu, T. Gazit, M. Allamanis, and M. Brockschmidt, “Codesearchnet challenge: Evaluating the state of semantic code search,” arXiv preprint arXiv:1909.09436, 2019. [25] S. Lu, D. Guo, S. Ren, J. Huang, A. Svyatkovskiy, A. Blanco,",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES"
+      ],
+      "char_start": 27614,
+      "char_end": 28372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38fa16bd906956ee8571a380e3671036",
+      "kind": "heading",
+      "text": "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES",
+        "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine"
+      ],
+      "char_start": 28374,
+      "char_end": 28439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91ec4085f41598afda0d6e2a850b36d4",
+      "kind": "paragraph",
+      "text": "learning benchmark dataset for code understanding and generation,” arXiv preprint arXiv:2102.04664, 2021. [26] T. J. McCabe, “A complexity measure,”IEEE Transactions on software Engineering, no. 4, pp. 308–320, 1976. [27] F. D. Daviset al., “Technology acceptance model: Tam,”Al-Suqri, MN, Al-Aufi, AS: Information seeking behavior and technology adoption, vol. 205, no. 219, p. 5, 1989. [28] S. G. Hart and L. E. Staveland, “Development of nasa-tlx (task load index): Results of empirical and theoretical research,” inAdvances in psychology. Elsevier, 1988, vol. 52, pp. 139–183.",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "TARS: A Theory-of-Mind Agent for Personalized",
+        "REFERENCES",
+        "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine"
+      ],
+      "char_start": 28441,
+      "char_end": 29021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.15948",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

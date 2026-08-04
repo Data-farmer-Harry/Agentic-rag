@@ -1,0 +1,4289 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "ca258ef180b8b6c3ed4ef89078be6d0db077b7045ead51682ef2117d88e3e7de",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:0299f1638b0b4b51fe36ef4178a8e224",
+      "kind": "heading",
+      "text": "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME"
+      ],
+      "char_start": 0,
+      "char_end": 39,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4d6b9c8088002fae995192a5715e7dc",
+      "kind": "heading",
+      "text": "TRAINING FORLLM AGENTS",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "TRAINING FORLLM AGENTS"
+      ],
+      "char_start": 41,
+      "char_end": 63,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0046fd04ab0217c24d35007f8962f7b0",
+      "kind": "heading",
+      "text": "Yanbo Wang Jinhua Hao ∗ Yuze Shi Kun Yuan Ming Sun",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Yanbo Wang Jinhua Hao ∗ Yuze Shi Kun Yuan Ming Sun"
+      ],
+      "char_start": 65,
+      "char_end": 115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44cc41f920e98fcc71d68b15a7ab1161",
+      "kind": "heading",
+      "text": "Kuaishou Technology",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Kuaishou Technology"
+      ],
+      "char_start": 117,
+      "char_end": 136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23508e776e8c191084e86dc52bf63b14",
+      "kind": "heading",
+      "text": "ABSTRACT",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "ABSTRACT"
+      ],
+      "char_start": 138,
+      "char_end": 146,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96b83662068c731e499e6758db8b7dc8",
+      "kind": "paragraph",
+      "text": "LLM agents often degrade over long episodes: as trajectories grow, they revisit explored states, repeat failed actions, and lose strategies that previously worked. Test-time training (TTT) offers a way to adapt model weights to the evolving task state, but existing LLM TTT methods largely adapt once to a fixed input. We study continuous TTT in multi-turn agent episodes, where each update changes the policy that generates later training text. This creates a self-training loop that helps when new trajectory information appears, but can amplify drift when the agent gets stuck and repeatedly trains on similar text. We find that update-text repetition distinguishes these regimes and introduce Agentic Test-Time Training (aTTT), a token-level reweighting method that downweights the loss on tokens appearing in repeatedn-grams from prior updates while leaving novel tokens fully weighted. To run such updates inside live episodes, we build a concurrent serving system using vLLM’s runtime LoRA API, limiting overhead to 1.9×the no-TTT cost. aTTT improves success by up to 5.0 points on ALFWorld and 4.9 points on SWEbench Lite. The gains concentrate where models already have task competence but drift over long trajectories, suggesting that aTTT mainly preserves existing competence rather than teaching new abilities.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "ABSTRACT"
+      ],
+      "char_start": 148,
+      "char_end": 1470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b71e33721e200c9f652720c9cdaea354",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "INTRODUCTION"
+      ],
+      "char_start": 1472,
+      "char_end": 1484,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:159bba668f918b9c90c484402a9256b2",
+      "kind": "paragraph",
+      "text": "LLM agents that interact with environments over many turns face a failure mode that worsens with trajectory length. As episodes grow, agents often revisit explored states, repeat failed actions, or explore so slowly that they stop making progress. These failures do not always indicate that the task is beyond the model’s competence. Many occur on instances that the model has a nontrivial chance of solving, but where a particular long rollout drifts away from useful evidence and previously promising strategies. The problem is therefore not simply whether the model can solve the task in principle, but whether it can preserve and act on that potential as the trajectory unfolds. Several strategies address parts of this problem, but none directly targets within-episode drift. Reflexion (Shinn et al., 2023) and related methods revise prompts across trials, leaving the agent unchanged within a single episode. Longer context windows expose the full trajectory to the model, but the trajectory itself can become difficult to use as it grows, and models increasingly fail to retrieve or act on earlier evidence (Liu et al., 2024). Decoding-time repetition penalties can suppress repeated surface tokens, but they do not adapt the policy that keeps revisiting the same states or taking the same actions. We therefore seek a mechanism that adapts the agent during the episode, especially on trajectories where the model retains task-solving potential but begins to lose it through repetition and slow exploration.",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "INTRODUCTION"
+      ],
+      "char_start": 1486,
+      "char_end": 3000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a3fa0246795cbeece70d462c4101086",
+      "kind": "paragraph",
+      "text": "Agent trajectories provide a natural signal for test-time training. Each episode produces a taskspecific stream of actions, observations, and feedback, which records what the agent has tried, where it has made progress, and where it begins to drift. Static TTT methods such as qTTT (Bansal et al.,",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "INTRODUCTION"
+      ],
+      "char_start": 3002,
+      "char_end": 3299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce5547b61c7d2fca276a0b9adff2caf0",
+      "kind": "heading",
+      "text": ", In-Place TTT (Feng et al., 2026), and ETT (Zahirnia et al., 2025) show that adapting to test-",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        ", In-Place TTT (Feng et al., 2026), and ETT (Zahirnia et al., 2025) show that adapting to test-"
+      ],
+      "char_start": 3301,
+      "char_end": 3396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6baa4b74f7084b890550ef5add7ff97",
+      "kind": "paragraph",
+      "text": "time text can improve language-model behavior, but they adapt to a fixed input and then stop. Agent episodes are different. The input grows over time, and the model’s own outputs can become part of the future training stream. This growing, self-generated training stream motivates our focus on ∗Corresponding author. 1",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        ", In-Place TTT (Feng et al., 2026), and ETT (Zahirnia et al., 2025) show that adapting to test-"
+      ],
+      "char_start": 3398,
+      "char_end": 3716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fbcb9a622169dd535ec13a200f2a296",
+      "kind": "table",
+      "text": "arXiv:2607.03441v1  [cs.LG]  3 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        ", In-Place TTT (Feng et al., 2026), and ETT (Zahirnia et al., 2025) show that adapting to test-"
+      ],
+      "char_start": 3718,
+      "char_end": 3757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:207d40792aeba4d2fc9689fcedbb01c9",
+      "kind": "heading",
+      "text": "Static TTT",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Static TTT"
+      ],
+      "char_start": 3759,
+      "char_end": 3769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0a00ed2ac585b513980d1b0c9833dc5",
+      "kind": "paragraph",
+      "text": "Adapts once on a fixed input Ours: aTTT Suppresses repetition, preserves novelty static input once frozen Trajectory (no further updates) no feedback loop",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Static TTT"
+      ],
+      "char_start": 3771,
+      "char_end": 3925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f9e1d1f50bb6f533a0e1f906f3f3859",
+      "kind": "heading",
+      "text": "Agent/env",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Agent/env"
+      ],
+      "char_start": 3927,
+      "char_end": 3936,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9ae486b82a6446e56ef27d30d9d0b2b",
+      "kind": "paragraph",
+      "text": "step Training tokens Self / Env / Summary Repetition filter",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Agent/env"
+      ],
+      "char_start": 3938,
+      "char_end": 3997,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb411c2f7a41d37bcaf75629ca7d6779",
+      "kind": "heading",
+      "text": "Token-weighted",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted"
+      ],
+      "char_start": 3999,
+      "char_end": 4013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:323790911b81cd1dca0d7b3ff2a951fa",
+      "kind": "paragraph",
+      "text": "↓ Next turn",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted"
+      ],
+      "char_start": 4015,
+      "char_end": 4026,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c973b9f2ef91bd2fd1e80b1432b8215",
+      "kind": "caption",
+      "text": "Figure 1: Static TTT and aTTT differ in when adaptation occurs. Static TTT adapts once to a fixed",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted"
+      ],
+      "char_start": 4028,
+      "char_end": 4125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:035dbc06f44228112f1ee2cd5e7b47c8",
+      "kind": "paragraph",
+      "text": "input and then freezes the update, leaving the later trajectory outside the training loop. aTTT instead updates during the episode: each agent-environment step provides training text, repeated content is filtered through token weighting, and the updated adapter is used in later turns. continuous test-time training in multi-turn agent episodes, where adaptation and data generation are coupled throughout the rollout. Continuous adaptation creates a risk that does not appear in static TTT. At each update, the current policy helps produce the text used for training. The resulting update then changes the policy that produces later text. This feedback can help when the agent keeps discovering new information, because later updates carry fresh evidence from the trajectory. It can also hurt when the agent gets stuck. In that case, later updates often replay actions, observations, or reasoning patterns that earlier updates have already reinforced. The update stream then strengthens the behavior that prevents progress. We call this failure mode therepeated self-training loop, as illustrated in Figure 1. This failure becomes visible through update-text repetition. As shown in Figure 3, successful trajectories continue to introduce new content, while failed trajectories show an early and sustained rise in repetition. We use this observation to introduce Agentic Test-Time Training(aTTT), a token-level reweighting method for multi-turn TTT. Instead of dropping an entire repeated update, aTTT downweights the loss on tokens that appear in repeatedn-grams from prior updates while keeping novel",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted"
+      ],
+      "char_start": 4127,
+      "char_end": 5730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1556443e25e09f48a640b639e57e1ac2",
+      "kind": "paragraph",
+      "text": "tokens fully weighted. This lets the agent preserve new trajectory information without repeatedly training on the same stuck patterns. Across ALFWorld and SWE-bench Lite, aTTT improves over static pre-rollout adaptation and unfiltered in-episode training. As reported in Table 1, aTTT improves ALFWorld success rates by up to",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted"
+      ],
+      "char_start": 5732,
+      "char_end": 6057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e728f4c5b88f2e31292c0adb024d100",
+      "kind": "heading",
+      "text": "points. On SWE-bench Lite, the gain reaches 4.9 points. The gains concentrate in settings where",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "points. On SWE-bench Lite, the gain reaches 4.9 points. The gains concentrate in settings where"
+      ],
+      "char_start": 6059,
+      "char_end": 6154,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10bfaf6d85f3760b9ab9e884ab4f046a",
+      "kind": "paragraph",
+      "text": "the model has a meaningful chance of solving the task but loses progress over long trajectories. This supports our view that aTTT mainly stabilizes existing task-solving potential rather than teaching new abilities from scratch. To make this practical, we build a concurrent serving system on vLLM’s runtime LoRA API (Kwon et al., 2023), which serves 16 episodes simultaneously, runs 6.6×faster than a sequential implementation, and keeps wall-clock cost to 1.9×the no-TTT baseline. Our contributions can be listed as follows:",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "points. On SWE-bench Lite, the gain reaches 4.9 points. The gains concentrate in settings where"
+      ],
+      "char_start": 6156,
+      "char_end": 6682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d9ca077ecc8d3dbb814e4759508a79f",
+      "kind": "heading",
+      "text": "We formulate continuous test-time training for multi-turn LLM agents, where the model is",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We formulate continuous test-time training for multi-turn LLM agents, where the model is"
+      ],
+      "char_start": 6684,
+      "char_end": 6772,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9df55b4b2729f14ba7eb885e7ff58d22",
+      "kind": "paragraph",
+      "text": "updated throughout an episode rather than once on a fixed input. This setting introduces an endogenous feedback loop in which each update can influence the text used for later updates.",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We formulate continuous test-time training for multi-turn LLM agents, where the model is"
+      ],
+      "char_start": 6774,
+      "char_end": 6958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9a4b7fe6b58969ef57c8f38c0ad62ab",
+      "kind": "heading",
+      "text": "We identify update-text repetition as a simple signal of when this feedback loop becomes",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We identify update-text repetition as a simple signal of when this feedback loop becomes"
+      ],
+      "char_start": 6960,
+      "char_end": 7048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:084fe8809e6e0cc4aa31723517bde33b",
+      "kind": "paragraph",
+      "text": "harmful, and propose aTTT. aTTT downweights the training loss on tokens appearing in repeatedn-grams from prior updates while keeping novel tokens fully weighted.",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We identify update-text repetition as a simple signal of when this feedback loop becomes"
+      ],
+      "char_start": 7050,
+      "char_end": 7212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a00af8b4be7f4c71e7874dae850b47e3",
+      "kind": "heading",
+      "text": "We show that aTTT improves agent performance on ALFWorld and SWE-bench Lite, with",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We show that aTTT improves agent performance on ALFWorld and SWE-bench Lite, with"
+      ],
+      "char_start": 7214,
+      "char_end": 7295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:156d10dbef5b89bc89e98d947bf0533e",
+      "kind": "paragraph",
+      "text": "gains concentrated in settings where models have task-solving potential but drift over long trajectories. This suggests that aTTT mainly stabilizes existing competence rather than teaching new abilities from scratch.",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Token-weighted",
+        "We show that aTTT improves agent performance on ALFWorld and SWE-bench Lite, with"
+      ],
+      "char_start": 7297,
+      "char_end": 7513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e76c98549f6667b08f2215e75dcc7366",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "RELATEDWORK"
+      ],
+      "char_start": 7515,
+      "char_end": 7526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2498a7e5a56e744be72924bc6baf3c78",
+      "kind": "paragraph",
+      "text": "Test-time training and adaptation.Test-time training adapts model parameters at inference time using signals available from the test input (Sun et al., 2020). Existing methods instantiate this 2",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "RELATEDWORK"
+      ],
+      "char_start": 7528,
+      "char_end": 7722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cecdf6bb4c966cf2b650e40bb5042c6",
+      "kind": "paragraph",
+      "text": "idea through entropy minimization (TENT, Wang et al., 2020), input augmentation (MEMO, Zhang et al., 2022), masked autoencoding (Gandelsman et al., 2022), and analyses of when self-supervised test-time objectives help (Liu et al., 2021). A separate line of work studies the risk of continual adaptation, where repeated updates can accumulate errors or collapse. Methods such as EATA (Niu et al., 2022), CoTTA (Wang et al., 2022), and SAR (Niu et al., 2023) address this risk through sample selection, weight restoration, or reliability filtering. These methods generally adapt on externally supplied test examples. In contrast, multi-turn agents create an endogenous setting: the adapted policy helps generate the future text that will be used for later updates. TTT for language models.Recent work extends TTT to language models. Hardt and Sun (Hardt & Sun, 2024) combine TTT with nearest-neighbor retrieval. qTTT (Bansal et al., 2025) improves long-context retrieval by updating query projections, ETT (Zahirnia et al., 2025) expands longcontext capacity through chunked adaptation, and In-Place TTT (Feng et al., 2026) performs efficient chunk-wise next-token adaptation. TTT has also been studied as a mechanism for few-shot learning (Aky¨urek et al., 2024). These methods adapt to a fixed text input or a fixed context before using the adapted model. Our setting is different because the input is a growing agent trajectory, and later training text can depend on earlier adapted outputs. Test-time adaptation of LLM agents.Closest to our setting, Chen et al. (2026) and Acikgoz",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "RELATEDWORK"
+      ],
+      "char_start": 7724,
+      "char_end": 9306,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba11e323e4d45d59b4ab2004a30230b6",
+      "kind": "paragraph",
+      "text": "et al. (2025) also adapt LLM agents at test time. Their goals are complementary to ours. Chen et al. (2026) adapt agents to unfamiliar environment formats and transition dynamics, while Acikgoz et al. (2025) generate synthetic training examples from uncertain cases to improve missing capabilities. We instead focus on within-episode drift in tasks where the model has nontrivial task-solving potential but may lose progress over a long rollout. The challenge is not primarily environment mismatch or capability acquisition, but the feedback loop created when repeated agent behavior becomes repeated training data. Reflexion (Shinn et al., 2023) and related prompting methods revise behavior across trials; our method updates weights within a single trial. Long-context degradation and self-generated collapse.Our work also relates to long-context degradation and collapse under self-generated data. Lost-in-the-middle (Liu et al., 2024) shows that models can fail to use information in long contexts. In agent episodes, the relevant evidence may remain in the trajectory, but the policy may stop using it reliably as the rollout grows. Separately, training on self-generated data can cause distributional collapse (Shumailov et al., 2024), self-distillation can amplify errors (Mobahi et al., 2020), and policy entropy can collapse during reinforcement learning (Cui et al., 2025). These phenomena usually unfold over many training iterations. We study a compressed version at test time, where repeated actions, observations, or",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "RELATEDWORK"
+      ],
+      "char_start": 9308,
+      "char_end": 10838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4078ea2e6db738e1d267e0224a3b0c44",
+      "kind": "paragraph",
+      "text": "reasoning patterns can return as repeated update text within a single episode.",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "RELATEDWORK"
+      ],
+      "char_start": 10840,
+      "char_end": 10918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:415e8e3454c3803c7e59d9157f64dabb",
+      "kind": "heading",
+      "text": "AGENTICTEST-TIMETRAINING",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "AGENTICTEST-TIMETRAINING"
+      ],
+      "char_start": 10920,
+      "char_end": 10944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06eccf7ab3ec799e5bc84fcd7bf7a671",
+      "kind": "paragraph",
+      "text": "We study test-time training inside a single agent episode. Unlike static TTT, an agent episode produces a growing trajectory whose later content depends on the current policy. Once the policy is updated, it can influence the actions, observations, and text that appear in later updates. The training stream is therefore endogenous: it is partly shaped by the model being trained. This creates the central challenge for multi-turn TTT. When the agent is making progress, new update text can carry useful trajectory information. When the agent gets stuck, the update stream can replay the same actions, observations, or reasoning patterns, causing later updates to reinforce behavior that has already failed. We introduceAgentic Test-Time Training(aTTT), which updates an episode-specific adapter during the rollout while reducing the loss contribution of tokens that appear in repeated n-grams from earlier updates.",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "AGENTICTEST-TIMETRAINING"
+      ],
+      "char_start": 10946,
+      "char_end": 11860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6e84d6410af7238c5821ac47f754e10",
+      "kind": "caption",
+      "text": "Figure 2 gives an overview of the online update loop. The rest of this section first formalizes contin-",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "AGENTICTEST-TIMETRAINING"
+      ],
+      "char_start": 11862,
+      "char_end": 11965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:197a415f7627c63e00d878953adfeb3e",
+      "kind": "paragraph",
+      "text": "uous TTT for agent trajectories and the update signals we consider, then defines update-text repetition as a diagnostic for harmful self-reinforcement, and finally presents the token-level reweighting objective used by aTTT. 3",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "AGENTICTEST-TIMETRAINING"
+      ],
+      "char_start": 11967,
+      "char_end": 12193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68fb9605c9c4f1438254e45996b78a19",
+      "kind": "paragraph",
+      "text": "Episode interaction Obs. Policy Action/Text Env. Trajectory buffer every  steps",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "AGENTICTEST-TIMETRAINING"
+      ],
+      "char_start": 12195,
+      "char_end": 12274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:567b920d5e3fbba162192e9b01d799cf",
+      "kind": "heading",
+      "text": "Select",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Select"
+      ],
+      "char_start": 12276,
+      "char_end": 12282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9ece5282cfdc4f852fd10237b4a3d0d",
+      "kind": "equation",
+      "text": "Self/Env/Sum.",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Select"
+      ],
+      "char_start": 12284,
+      "char_end": 12297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8dcca9455a35ff8b2d509ad15396012",
+      "kind": "heading",
+      "text": "Repetition Adapter",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter"
+      ],
+      "char_start": 12299,
+      "char_end": 12317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:547b3a17b4e62da2b840a8f772b20ab9",
+      "kind": "paragraph",
+      "text": "Repetition-aware loss prior updates used in later turns",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter"
+      ],
+      "char_start": 12319,
+      "char_end": 12374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbcb147c513fb495f807c2df9bd32139",
+      "kind": "caption",
+      "text": "Figure 2: Overview of aTTT. EveryKsteps, the trajectory buffer provides update text from Self,",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter"
+      ],
+      "char_start": 12376,
+      "char_end": 12470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62e6709b25273f525cc39b0c866c5d03",
+      "kind": "paragraph",
+      "text": "Env, or Summary signals. Previous update texts are used to measure repetition and compute tokenleveln-gram exposure. The repetition-aware loss downweights repeated spans, updates an episodespecific adapter, and the adapted policy is used in later turns.",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter"
+      ],
+      "char_start": 12472,
+      "char_end": 12725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:610b17725ded41c6553da95e183d9361",
+      "kind": "heading",
+      "text": "ONLINETTTFORAGENTEPISODES",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter",
+        "ONLINETTTFORAGENTEPISODES"
+      ],
+      "char_start": 12727,
+      "char_end": 12752,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:affeef17f0047a7259c57c24de3c80f8",
+      "kind": "paragraph",
+      "text": "Consider an agent with policyπθ interacting with an environment overTsteps. At each environment stept, the agent receives an observationo t and produces a messagem t = (rt, ut), wherer t is the reasoning trace andu t is the executable action. The trajectory up to steptis τt = (o1, m1, o2, m2, . . . , ot, mt).(1) Letkindex test-time updates, and lett k be the environment step at which thek-th update is performed. At updatek, we select a candidate textx k from the current trajectoryτ tk and adapt the policy with next-token prediction: θk+1 =θ k −η∇ θk LNTP(xk, θk),(2) LNTP(xk, θk) =− P",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Repetition Adapter",
+        "ONLINETTTFORAGENTEPISODES"
+      ],
+      "char_start": 12754,
+      "char_end": 13344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aedde81103a42cc8816dad5abacbfdca",
+      "kind": "heading",
+      "text": "logπ θk (xk,i |x k,<i).",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "logπ θk (xk,i |x k,<i)."
+      ],
+      "char_start": 13346,
+      "char_end": 13369,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42cf12d50a69b8b4668cf5dab1cceeda",
+      "kind": "paragraph",
+      "text": "The source ofx k determines what information enters the update stream. We study three training signals: xSelf k =m tk ,(3) xEnv k =o tk ,(4) xSummary k =g(τ tk ).(5) Self trains on the agent’s own reasoning and action tokens, so it has the most direct path from model output to future training text. Env trains on environment-generated observations and does not directly replay the model’s output. Summary trains on a compressed progress note produced by a separate LLM callg(τ tk ), which aggregates information across the trajectory at the cost of one additional inference step. For Self and Env, we use only the most recent step rather than the full prefix. This keeps the update focused on the current state and avoids repeatedly training on the entire early trajectory. The adapter persists within the episode, so earlier updates continue to affect later turns.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "logπ θk (xk,i |x k,<i)."
+      ],
+      "char_start": 13371,
+      "char_end": 14237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc8709df93cc5efeef67eb2e4254d1a3",
+      "kind": "heading",
+      "text": "UPDATE-TEXTREPETITION",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "logπ θk (xk,i |x k,<i).",
+        "UPDATE-TEXTREPETITION"
+      ],
+      "char_start": 14239,
+      "char_end": 14260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feacf78f709b5c2bc307c3dcb09d552d",
+      "kind": "paragraph",
+      "text": "Online TTT introduces a feedback loop that is absent from single-input adaptation. In static TTT, the training text is fixed before the update. In agent episodes, the current policy helps produce the trajectory, the trajectory supplies update text, and the updated policy then produces later trajectory content. Each update can therefore influence the text used for future updates. 4",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "logπ θk (xk,i |x k,<i).",
+        "UPDATE-TEXTREPETITION"
+      ],
+      "char_start": 14262,
+      "char_end": 14645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0281a0b4f6fe6cdbaa8f45906a5b2078",
+      "kind": "heading",
+      "text": "2 3 4 5 6",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 14647,
+      "char_end": 14656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95b210ff561afecd36d0c01232a1dbf1",
+      "kind": "paragraph",
+      "text": "TTT update index k 0 20 40 60 80Update-text repetition (\\%) successful episodes failed episodes",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 14658,
+      "char_end": 14753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7eee3b0c4175f1ab682f6ba3986ec18e",
+      "kind": "caption",
+      "text": "Figure 3: Update-text repetition as a di-",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 14755,
+      "char_end": 14796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3a5dc028bb44da2a4dd2aac7d4b406a",
+      "kind": "paragraph",
+      "text": "agnostic signal. On Qwen3.5-9B with the Self signal, failed episodes show an early and sustained rise in repetition across TTT updates. This loop has two regimes. When the agent is making progress, later update texts contain new observations, actions, and state information. Updating on this text can help the model retain useful trajectory evidence as the context grows. When the agent gets stuck, later update texts often repeat actions, observations, or reasoning patterns that earlier updates have already reinforced. Updating again on the same patterns can strengthen the behavior that prevents progress. We useupdate-text repetitionas an operational signal of the stuck regime. Letx k be the candidate text for the k-th update, and letH k ={x 1, . . . , xk−1}be the set of previous update texts in the same episode. We define repetition as the largest word-level Jaccard overlap between the current update text and any previous update text: ρ(xk) = max x′∈Hk J",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 14798,
+      "char_end": 15764,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:754e48484a523dee3b6c404401b5c252",
+      "kind": "paragraph",
+      "text": "W(x k), W(x′)",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 15766,
+      "char_end": 15779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ceb7284f871948275e7a1888e0c5174",
+      "kind": "paragraph",
+      "text": ",(6) whereW(x)is the set of whitespace-tokenized words inxandJis Jaccard similarity. For the first update in an episode,H k is empty and we setρ(x k) = 0. High repetition means that the candidate update largely replays text used by an earlier update. We also define the corresponding novelty score ν(xk) = 1−ρ(xk).(7) We use this score in Section 4 to build a sequence-level baseline that skips an update whenν(x k) falls below a threshold. As shown in Figure 3, update-text repetition separates successful and failed trajectories early in the episode. Successful episodes continue to produce comparatively novel update text, while failed episodes show an early and sustained rise in repetition. This supports using repetition as a diagnostic signal that a candidate update may contain little new information and may instead reinforce an existing stuck pattern. We use repetition in this operational sense, without assuming that repetition alone causes failure.",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6"
+      ],
+      "char_start": 15781,
+      "char_end": 16742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:398b135b377e20991e593e7ea3a27aee",
+      "kind": "heading",
+      "text": "REPETITION-AWARETOKENREWEIGHTING",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6",
+        "REPETITION-AWARETOKENREWEIGHTING"
+      ],
+      "char_start": 16744,
+      "char_end": 16776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6db44a292e7b5ca950fc70c9e0e97187",
+      "kind": "paragraph",
+      "text": "A repeated update is rarely entirely useless. It may contain a repeated reasoning template together with a new observation, object name, location, or action. A sequence-level filter that drops the whole update can remove these useful tokens along with the repeated text. aTTT therefore keeps each update but changes how much each token contributes to the loss. LetH tok k be the concatenation of all token sequences used in previous updates within the same episode. Tokenize the current update text asx k = [xk,1, . . . , xk,L]. For each token positionj, we compute its maximumn-gram exposure in the previous update history: fk(j) = max g∋j count",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6",
+        "REPETITION-AWARETOKENREWEIGHTING"
+      ],
+      "char_start": 16778,
+      "char_end": 17424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b9b40e61be3aa9895e072739c0b6df9",
+      "kind": "paragraph",
+      "text": "g,H tok k",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6",
+        "REPETITION-AWARETOKENREWEIGHTING"
+      ],
+      "char_start": 17426,
+      "char_end": 17435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1dd788c4fe1065418c2ebd4f68a531d1",
+      "kind": "paragraph",
+      "text": ",(8) where the maximum is over alln-grams inx k that contain positionj. We then assign the token-level loss weight wk,j = max",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6",
+        "REPETITION-AWARETOKENREWEIGHTING"
+      ],
+      "char_start": 17437,
+      "char_end": 17562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:491cf213caf074dc5734c9f765bd01f0",
+      "kind": "paragraph",
+      "text": "wmin, 1",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6",
+        "REPETITION-AWARETOKENREWEIGHTING"
+      ],
+      "char_start": 17564,
+      "char_end": 17571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff5d03898b5f01d19cc6b0940d9dbf1d",
+      "kind": "heading",
+      "text": "+fk(j)",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "+fk(j)"
+      ],
+      "char_start": 17573,
+      "char_end": 17579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44548fc2c0aa56b408093d4d5a6d7d40",
+      "kind": "paragraph",
+      "text": ".(9) Tokens that do not appear in repeatedn-grams keep weight1. Tokens inside frequently repeated n-grams receive smaller weights, down to the floorw min. The repetition-aware loss is LaTTT(xk, θk) = 1 L LX j=1 wk,j CE(xk,j ,ˆxk,j ;θ k).(10) Because repeated tokens have smaller loss weights, their gradient contribution is reduced. Novel tokens remain fully weighted and can still update the adapter. Algorithm 1 gives the full procedure. 5",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "+fk(j)"
+      ],
+      "char_start": 17581,
+      "char_end": 18022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88f4ae4fd36eab5225f2c05d266ab5f0",
+      "kind": "paragraph",
+      "text": "Algorithm 1aTTT update Input: update textx k, token historyH tok k ,n-gram sizen, floorw min",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "+fk(j)"
+      ],
+      "char_start": 18024,
+      "char_end": 18116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b91b6ab86dcfef8327f876b58cfc156e",
+      "kind": "heading",
+      "text": "Tokenizex k into[x k,1, . . . , xk,L]",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Tokenizex k into[x k,1, . . . , xk,L]"
+      ],
+      "char_start": 18118,
+      "char_end": 18155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed8fa1e485523c48d771b7b9e0c36a52",
+      "kind": "heading",
+      "text": "forj= 1toLdo",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "forj= 1toLdo"
+      ],
+      "char_start": 18157,
+      "char_end": 18169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98aea81b8e22bb062adc352f12f905f6",
+      "kind": "heading",
+      "text": "f k(j)←max g∋j count(g,H tok",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "f k(j)←max g∋j count(g,H tok"
+      ],
+      "char_start": 18171,
+      "char_end": 18199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0059d09c3df4746b7a4bad2f939e84c8",
+      "kind": "paragraph",
+      "text": "k )",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "f k(j)←max g∋j count(g,H tok"
+      ],
+      "char_start": 18201,
+      "char_end": 18204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e5cbf0e7829458d2e17f16a981cdab9",
+      "kind": "heading",
+      "text": "w k,j ←max(w min,1/(1 +f k(j)))",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "w k,j ←max(w min,1/(1 +f k(j)))"
+      ],
+      "char_start": 18206,
+      "char_end": 18237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b890fd555a3ab6ef53d3e0403f51fe5",
+      "kind": "heading",
+      "text": "end for",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "end for"
+      ],
+      "char_start": 18239,
+      "char_end": 18246,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abf588d76152f1210de2abc012196c0e",
+      "kind": "heading",
+      "text": "θ k+1 ←θ k −η∇ θk",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "θ k+1 ←θ k −η∇ θk"
+      ],
+      "char_start": 18248,
+      "char_end": 18265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4db460efef86578a59de2bb75901bb0d",
+      "kind": "paragraph",
+      "text": "1 L PL j=1 wk,j ·CE(x k,j ,ˆxk,j ;θ k)",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "θ k+1 ←θ k −η∇ θk"
+      ],
+      "char_start": 18267,
+      "char_end": 18305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:661273fa8d0193e3a434d6363679b7bf",
+      "kind": "heading",
+      "text": "H tok",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "H tok"
+      ],
+      "char_start": 18307,
+      "char_end": 18312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:879d7a3a6e1cb2982f608647ab81ed6f",
+      "kind": "paragraph",
+      "text": "k+1 ← Htok k ∥[x k,1, . . . , xk,L]",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "H tok"
+      ],
+      "char_start": 18314,
+      "char_end": 18349,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:383a7e96af0fbe92b55b43adc00c57a6",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS"
+      ],
+      "char_start": 18351,
+      "char_end": 18362,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f616acc2d0bbd2bb8ce67809c627d28a",
+      "kind": "paragraph",
+      "text": "We evaluate aTTT as an online adaptation method for multi-turn agents. The experiments ask whether in-episode updates improve over no adaptation and static pre-rollout TTT, whether repetition-aware token reweighting improves over simpler filtering baselines, and when the gains appear across models, task types, and trajectory lengths.",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS"
+      ],
+      "char_start": 18364,
+      "char_end": 18699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b9871f00ff93c80de3db2dc83ac01be",
+      "kind": "heading",
+      "text": "EXPERIMENTALSETUP",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS",
+        "EXPERIMENTALSETUP"
+      ],
+      "char_start": 18701,
+      "char_end": 18718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e20ab66f7adcdca3186807ad0c7b5f8",
+      "kind": "paragraph",
+      "text": "Datasets.We evaluate on ALFWorld (Shridhar et al., 2020) and SWE-bench Lite (Jimenez et al.,",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS",
+        "EXPERIMENTALSETUP"
+      ],
+      "char_start": 18720,
+      "char_end": 18812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7fc8a81c71e446e1035fc2f7f676e01",
+      "kind": "heading",
+      "text": "ALFWorld is a household instruction-following benchmark with immediate environment",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS",
+        "ALFWorld is a household instruction-following benchmark with immediate environment"
+      ],
+      "char_start": 18814,
+      "char_end": 18896,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0932d6144ac82df8820ce18dcc3e6b36",
+      "kind": "paragraph",
+      "text": "feedback and a 50-step budget. SWE-bench Lite is a software-engineering benchmark with longer trajectories and deferred verification. Appendix B reports the details of experiment settings. Models.We evaluate Qwen3.5-4B, Qwen3.5-9B, and Qwen3.5-27B (Team, 2026), and Gemma-",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "EXPERIMENTS",
+        "ALFWorld is a household instruction-following benchmark with immediate environment"
+      ],
+      "char_start": 18898,
+      "char_end": 19170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37f7545726d683503b7380995aad2066",
+      "kind": "heading",
+      "text": "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,"
+      ],
+      "char_start": 19172,
+      "char_end": 19269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c762b0ef300d20ec5c67370dc4237df",
+      "kind": "paragraph",
+      "text": "which lets us test whether aTTT helps uniformly or only under particular competence and horizon regimes. Training details, seeds, and hyperparameters are in Appendix C. Compared methods.We compare several adaptation and control settings. ReAct is the no-TTT baseline. qTTT (Bansal et al., 2025) is static pre-rollout adaptation. No filter denotes online TTT with the same in-episode update schedule as aTTT but with the vanilla next-token prediction loss. Sequence filter uses the update-text novelty score from Section 3 to skip highly repeated updates entirely. aTTT is our online TTT method, which keeps each selected update but applies repetitionaware token-level loss reweighting. For online methods, the update text comes from one of three sources: Self, Env, or Summary. We also evaluate non-parametric controls, including in-context delivery of the same Summary text and decoding-time repetition penalties, in Section 4.5. Metrics and protocol.For both benchmarks, we report success rate, averaged over three seeds with standard error. Unless otherwise noted, aTTT uses a LoRA adapter that is reset between episodes and persists within an episode. The default update cadence isK=5agent steps. System and throughput.Online TTT requires many in-episode updates. We decouple inference from training with per-episode LoRA adapters served through vLLM’s runtime LoRA API (Kwon et al., 2023). The system runs 16 episodes concurrently and keeps wall-clock cost to 1.9×the no-TTT run Architecture and throughput details are in Appendix A.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,"
+      ],
+      "char_start": 19271,
+      "char_end": 20809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:837dfe69c2752dedf58d6953c65a1113",
+      "kind": "heading",
+      "text": "MAINRESULTS",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,",
+        "MAINRESULTS"
+      ],
+      "char_start": 20811,
+      "char_end": 20822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85267d40d2d06f1754990583b8147fe8",
+      "kind": "paragraph",
+      "text": "Online adaptation needs repetition control.Table 1 shows that adapting only once before the rollout is not sufficient for agent episodes. qTTT stays close to ReAct across models, suggesting that pre-rollout adaptation cannot exploit the trajectory information that appears during interaction. Online TTT has access to this information, but the unfiltered variant is inconsistent. It improves in some settings, while stagnating or degrading in others. This supports our central claim that inepisode updates are useful only when the repeated self-training loop is controlled. Repetition-aware 6",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,",
+        "MAINRESULTS"
+      ],
+      "char_start": 20824,
+      "char_end": 21416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:108fea7ab7649f50b80117bdc2f4fbbd",
+      "kind": "caption",
+      "text": "Table 1: ALFWorld success rates (%), mean±SE over three seeds. Bold indicates the best filter",
+      "order": 85,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,",
+        "MAINRESULTS"
+      ],
+      "char_start": 21418,
+      "char_end": 21511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c29ece79f00b6e6c006c0ea75af63456",
+      "kind": "paragraph",
+      "text": "within each signal-model block.",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "12B (Team et al., 2025). These models span different baseline success rates and failure profiles,",
+        "MAINRESULTS"
+      ],
+      "char_start": 21513,
+      "char_end": 21544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb07918d1c0ac3d2ec62c057ec2c3bc0",
+      "kind": "heading",
+      "text": "Signal Filter Qwen3.5-4B Gemma-3-12B Qwen3.5-9B",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Signal Filter Qwen3.5-4B Gemma-3-12B Qwen3.5-9B"
+      ],
+      "char_start": 21546,
+      "char_end": 21593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e47ebdaef210a850d1ff60c33c66bae",
+      "kind": "paragraph",
+      "text": "ReAct1.9 ±0.5 22.4±0.6 50.7±0.8 qTTT2.6 ±0.6 22.6±1.7 52.4±1.4",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Signal Filter Qwen3.5-4B Gemma-3-12B Qwen3.5-9B"
+      ],
+      "char_start": 21595,
+      "char_end": 21657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cea7ac76e782138451e4986a6f4c30c9",
+      "kind": "heading",
+      "text": "Self",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Self"
+      ],
+      "char_start": 21659,
+      "char_end": 21663,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8e11b09990196130e297f3d65bc626e",
+      "kind": "paragraph",
+      "text": "No filter2.1 ±0.4 22.1±1.1 53.1±1.9 Sequence filter3.1 ±1.0 23.8±0.9 53.8±1.7 aTTT3.6 ±1.1 24.3±1.1 55.7±1.4 Env No filter4.3 ±0.4 21.7±1.3 51.0±1.0 Sequence filter5.5 ±0.5 22.9±1.1 52.1±1.1 aTTT4.5 ±1.0 25.0±1.1 55.5±1.3",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Self"
+      ],
+      "char_start": 21665,
+      "char_end": 21886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b15085581e508a6fa8926257e15df839",
+      "kind": "heading",
+      "text": "Summary",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Summary"
+      ],
+      "char_start": 21888,
+      "char_end": 21895,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aebf45725c0139c9371fc15b73feaa59",
+      "kind": "paragraph",
+      "text": "No filter4.5 ±0.5 25.5±1.3 52.1±0.8 Sequence filter4.3 ±0.4 26.2±1.4 54.0±1.7 aTTT4.8 ±0.2 26.7±0.6 54.3±0.7 methods generally improve over unfiltered online TTT, showing that update-text repetition is a useful signal for identifying low-novelty updates that may reinforce stuck behavior.",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Summary"
+      ],
+      "char_start": 21897,
+      "char_end": 22185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caa3ce254aeeb718a0f062975aee8576",
+      "kind": "heading",
+      "text": "20 40 60 80",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "20 40 60 80"
+      ],
+      "char_start": 22187,
+      "char_end": 22198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ace4d06cdee13fbf7aa28efa222b7f8b",
+      "kind": "paragraph",
+      "text": "No-TTT baseline success rate (%) 0 2 4 6Best aTTT gain (pp) 4B 12B* 9B 27B 9B 27B same model +4.9pp",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "20 40 60 80"
+      ],
+      "char_start": 22200,
+      "char_end": 22299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64966d20dc7cbccc276120ce1d1f5423",
+      "kind": "heading",
+      "text": "ALFWorld",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "ALFWorld"
+      ],
+      "char_start": 22301,
+      "char_end": 22309,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13ed81194985cac816df4b876085d5c4",
+      "kind": "heading",
+      "text": "SWE-bench",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench"
+      ],
+      "char_start": 22311,
+      "char_end": 22320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:686a8362690852327bfd9f0c9f3a8aff",
+      "kind": "caption",
+      "text": "Figure 4: aTTT is most effective when",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench"
+      ],
+      "char_start": 22322,
+      "char_end": 22359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f348dc124d3b500faec2efa548d3980",
+      "kind": "paragraph",
+      "text": "baseline task-solving potential and trajectory length coexist. 12B ∗ denotes Gemma-3-12B. aTTT preserves novelty without external supervision.aTTT is usually stronger than sequence filtering because it avoids an all-or-nothing decision. A sequence filter can remove repeated updates, but it also discards new observations, object names, locations, or action outcomes that appear inside partially repeated text. aTTT keeps each update and only reduces the loss on repeated token spans, leaving novel tokens fully weighted. The gains should also be interpreted in light of the supervision available at test time. aTTT does not use external knowledge, solved demonstrations, or additional task-specific training data. All update text comes from the live episode itself. Therefore, even gains of a few points are meaningful, because they come from stabilizing the agent during inference rather than injecting new task knowledge. The best update source remains model-dependent, with Env strongest for Qwen3.5-4B, Self and Env both strong for Qwen3.5-9B, and Summary strongest for Gemma-3- 12B. This shows a limitation of the method. aTTT makes a chosen update stream safer, but does not by itself solve source selection.",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench"
+      ],
+      "char_start": 22361,
+      "char_end": 23576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f95169e7c3fb7e06ab72aad057f9d4f",
+      "kind": "heading",
+      "text": "CROSS-BENCHMARKEVALUATION",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench",
+        "CROSS-BENCHMARKEVALUATION"
+      ],
+      "char_start": 23578,
+      "char_end": 23603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dadf733cb94b1c41234df73897471728",
+      "kind": "caption",
+      "text": "Table 2: SWE-bench Lite resolve rates (%),",
+      "order": 100,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench",
+        "CROSS-BENCHMARKEVALUATION"
+      ],
+      "char_start": 23605,
+      "char_end": 23647,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9346e92f1d54114c6ea9f1d18396258e",
+      "kind": "paragraph",
+      "text": "mean±SE over three seeds.",
+      "order": 101,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SWE-bench",
+        "CROSS-BENCHMARKEVALUATION"
+      ],
+      "char_start": 23649,
+      "char_end": 23674,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1c3050ea3a3afa16179dc7161fd8297",
+      "kind": "heading",
+      "text": "Qwen3.5-9B Qwen3.5-27B",
+      "order": 102,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-9B Qwen3.5-27B"
+      ],
+      "char_start": 23676,
+      "char_end": 23698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5fc84ed819e54135e0e9e4d1edbd0a5f",
+      "kind": "paragraph",
+      "text": "No TTT35.6 ±0.4 57.8±0.6 aTTT38.4 ±0.6 (+2.9)62.7 ±1.0 (+4.9) We next evaluate whether the same online adaptation rule remains useful outside ALFWorld. SWE-bench Lite differs in domain, feedback structure, and horizon: the agent must edit software repositories, verification is deferred, and trajectories are substantially longer. We use the Summary signal for aTTT because it provides a compact trajectory-level update source for long software-engineering episodes. As shown in Table 2, aTTT improves resolve rates for both models, with a 2.9-point gain on Qwen3.5-9B and a 4.9-point gain on Qwen3.5-27B. These results are consistent with the ALFWorld pattern, but they should not be read as universal gains from adaptation. aTTT is most effective when the model has nontrivial task-solving potential and the trajectory is long enough for repeated updates to become low-novelty. Qwen3.5-27B gains little from adaptation on shorter ALFWorld 7",
+      "order": 103,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-9B Qwen3.5-27B"
+      ],
+      "char_start": 23700,
+      "char_end": 24642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98065dbf81da8b117fe37ba40a3f6387",
+      "kind": "heading",
+      "text": "2 3 4 5 6 7 8 9",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9"
+      ],
+      "char_start": 24644,
+      "char_end": 24659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7b4defaaade456848bafe55b223d748",
+      "kind": "paragraph",
+      "text": "Mid-episode update index",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9"
+      ],
+      "char_start": 24661,
+      "char_end": 24685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:286070897f82c9ed1e502b24a05a5021",
+      "kind": "heading",
+      "text": "0",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 24687,
+      "char_end": 24688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bc3f6375f32d034e54e408b83c5fc87",
+      "kind": "heading",
+      "text": "5",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "5"
+      ],
+      "char_start": 24690,
+      "char_end": 24691,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3f111b689a1a3dbf44da0658433d05c",
+      "kind": "heading",
+      "text": "0",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 24693,
+      "char_end": 24694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db651880f890690c1ad6ccdb1f07e814",
+      "kind": "heading",
+      "text": "5",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "5"
+      ],
+      "char_start": 24696,
+      "char_end": 24697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd97ab44e224510c72f8ac51f2111aaa",
+      "kind": "heading",
+      "text": "0",
+      "order": 110,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 24699,
+      "char_end": 24700,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee6ebbe8541d52b4d019a64689c184bc",
+      "kind": "paragraph",
+      "text": "KL(adapted ‖ base) (a) Adapter drift on failed episodes No filter Token reweighting Sequence filter 1–10 11–20 21–30 31–40 41–50 Episode step 0 20 40 60 80Self-text repetition (%) (b) Repetition on rescued episodes No TTT (fails) aTTT (succeeds)",
+      "order": 111,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 24702,
+      "char_end": 24947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6528d8fe3847822dbe723839bfa66388",
+      "kind": "caption",
+      "text": "Figure 6: Repetition and adapter drift on diagnostic subsets. Left: on failed episodes, unfiltered on-",
+      "order": 112,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 24949,
+      "char_end": 25051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64a4fdf35de395b15d99211f2a21e67a",
+      "kind": "paragraph",
+      "text": "line TTT moves farther from the base model than aTTT. Right: in rescued pairs, no-TTT trajectories become increasingly repetitive, while aTTT trajectories remain less repetitive before completion. episodes, where it is already relatively stable, but benefits on SWE-bench Lite. For this model, mean update-text repetition on SWE-bench Lite is about six times higher than on ALFWorld.",
+      "order": 113,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 25053,
+      "char_end": 25436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5525f701c9eb50f3269e3b1db6ceaab",
+      "kind": "caption",
+      "text": "Figure 4 summarizes this regime across model scales and horizons. Gains are small when the model",
+      "order": 114,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 25438,
+      "char_end": 25534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e244e8097db9f89fbbd148dc4f43ddf",
+      "kind": "paragraph",
+      "text": "is too weak to act reliably, and also small when the model is already stable on short trajectories. The largest gains appear when baseline task-solving potential and long-horizon drift coexist.",
+      "order": 115,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "0"
+      ],
+      "char_start": 25536,
+      "char_end": 25729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c280f1e9710d7b2bc783a83f47e07a8",
+      "kind": "heading",
+      "text": "WHENDOES ATTT HELP?",
+      "order": 116,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "2 3 4 5 6 7 8 9",
+        "WHENDOES ATTT HELP?"
+      ],
+      "char_start": 25731,
+      "char_end": 25750,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82ec2d8800a81590af85cc3debf3700d",
+      "kind": "heading",
+      "text": "40 50 60 70 80",
+      "order": 117,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "40 50 60 70 80"
+      ],
+      "char_start": 25752,
+      "char_end": 25766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85532a79d1ef4c9cd664872cb944511f",
+      "kind": "paragraph",
+      "text": "Success rate (%)",
+      "order": 118,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "40 50 60 70 80"
+      ],
+      "char_start": 25768,
+      "char_end": 25784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82cdb50dd2726ece3ff9c1ee743eb059",
+      "kind": "heading",
+      "text": "Pick-and-place",
+      "order": 119,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Pick-and-place"
+      ],
+      "char_start": 25786,
+      "char_end": 25800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0eaa1808b0e1ae9f493e0699463910d",
+      "kind": "heading",
+      "text": "Pick-two",
+      "order": 120,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Pick-two"
+      ],
+      "char_start": 25802,
+      "char_end": 25810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04ffa53fa85a690856e301669259d2b7",
+      "kind": "heading",
+      "text": "Look-at-object",
+      "order": 121,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 25812,
+      "char_end": 25826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6d0a310860b36c1f645e74f4a10b446",
+      "kind": "paragraph",
+      "text": "No TTT Seq. filter aTTT",
+      "order": 122,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 25828,
+      "char_end": 25851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f687102065f56b37f5213ec9c4ccce5",
+      "kind": "caption",
+      "text": "Figure 5: ALFWorld success by task type.",
+      "order": 123,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 25853,
+      "char_end": 25893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d984463f2d3398369e156f9451c198a0",
+      "kind": "paragraph",
+      "text": "Gains concentrate on pick-two tasks, where the agent must sustain progress across multiple object searches. Repetition and adapter drift.We first examine rescued pairs, defined as ALFWorld games that fail without TTT but succeed with aTTT under the same seed. Figure 6 shows that aTTT changes the adapter without inducing excessive drift. In the left panel, unfiltered online TTT moves far from the base model on failed episodes, with KL divergence rising above 2.0 in later updates. Sequence filtering is the most conservative because it skips repeated updates entirely. aTTT lies between these two extremes: it makes a non-trivial adapter update, but keeps the KL divergence below 0.5, suggesting that token-level reweighting can adapt the policy while avoiding the large drift caused by repeatedly training on redundant text. The right panel shows the corresponding trajectory-level pattern. In rescued pairs, no-TTT trajectories become increasingly repetitive as the episode progresses, with self-text repetition rising above 80%. In contrast, aTTT trajectories remain less repetitive through the middle of the episode and decline as the agent completes the task. The two arms have similar repetition in the first 10 steps, and the gap appears after step 21. On average, aTTT-rescued runs finish in 26.3 steps, while the corresponding no-TTT runs reach the 50-step budget. Together, these diagnostics suggest that aTTT helps when the agent begins to repeat low-novelty behavior, by allowing useful adaptation while limiting self-reinforcing drift.",
+      "order": 124,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 25895,
+      "char_end": 27446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88e5fc72d2624b0ebe790ae2e33c7b7c",
+      "kind": "paragraph",
+      "text": "Task type.ALFWorld contains 103 pick-and-place games, 24 pick-two games, and 13 look-atobject games. Figure 5 shows that aTTT improves over no TTT and sequence filtering across all three coarse task types. The gain is also clear on look-at-object tasks, which have the lowest baseline success rate in this split. Failure signatures and update sources.Table 3 profiles how the three models fail on ALFWorld and reports the strongest update signal observed in the main sweep. The best signal is modeldependent: Env works best for Qwen3.5-4B, Self is slightly strongest for Qwen3.5-9B with Env close behind, and Summary is strongest for Gemma-3-12B. We do not interpret these patterns as a causal mapping from failure type to signal type. Instead, they show that repetition control alone 8",
+      "order": 125,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 27448,
+      "char_end": 28234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8c92f14a91e99f885a0ba308a65f537",
+      "kind": "paragraph",
+      "text": "does not determine performance: aTTT makes a chosen update stream safer, but the usefulness of that stream still depends on the model and trajectory. Selecting or combining update signals online therefore remains a separate open problem. Appendix G provides a representative rescued trajectory.",
+      "order": 126,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 28236,
+      "char_end": 28530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84e99f6dc100ecb9216c81a28c227f08",
+      "kind": "caption",
+      "text": "Table 3: Failure profiles and strongest observed update signal on ALFWorld. The best signal is",
+      "order": 127,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 28532,
+      "char_end": 28626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b240bf738fe41411294c792ec67c70c",
+      "kind": "paragraph",
+      "text": "selected from the main sweep and varies across models.",
+      "order": 128,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Look-at-object"
+      ],
+      "char_start": 28628,
+      "char_end": 28682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0eb9a498c45ea2ed57e22b03494f604a",
+      "kind": "heading",
+      "text": "Qwen3.5-4B Qwen3.5-9B Gemma-3-12B",
+      "order": 129,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B Qwen3.5-9B Gemma-3-12B"
+      ],
+      "char_start": 28684,
+      "char_end": 28717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:389035e2906d6af2f7643be677acef9c",
+      "kind": "paragraph",
+      "text": "Unparseable actions 30% 2% 6% Repeats prev. action 71% 31% 7% Repeats within last 3 87% 34% 45% Dominant failure invalid actions mid-ep. loops slow expl.",
+      "order": 130,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B Qwen3.5-9B Gemma-3-12B"
+      ],
+      "char_start": 28719,
+      "char_end": 28872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7c77258a984d7262c4c3cd0bf57cb9",
+      "kind": "heading",
+      "text": "Best signal Env Self Summary",
+      "order": 131,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary"
+      ],
+      "char_start": 28874,
+      "char_end": 28902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb248280fd93f9c55092a1d8a6310d33",
+      "kind": "equation",
+      "text": "Best gain+3.6 +5.0 +4.3",
+      "order": 132,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary"
+      ],
+      "char_start": 28904,
+      "char_end": 28927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0955a1130aa58a2b5b2d636acc7fc623",
+      "kind": "heading",
+      "text": "ABLATIONS ANDCONTROLS",
+      "order": 133,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary",
+        "ABLATIONS ANDCONTROLS"
+      ],
+      "char_start": 28929,
+      "char_end": 28950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f137818f787ad561244e08fc6ec8ea0c",
+      "kind": "paragraph",
+      "text": "Is repetition filtering just fewer updates?We first test whether the gain comes from filtering repeated updates or simply from training on fewer updates. The random-drop control removes updates at the same empirical rate as the sequence filter, but chooses which updates to drop at random.",
+      "order": 134,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary",
+        "ABLATIONS ANDCONTROLS"
+      ],
+      "char_start": 28952,
+      "char_end": 29241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6db6cd2c311d3c059155d78c49f8ebad",
+      "kind": "caption",
+      "text": "Figure 7 shows that random dropping does not match repetition-based filtering. This supports the",
+      "order": 135,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary",
+        "ABLATIONS ANDCONTROLS"
+      ],
+      "char_start": 29243,
+      "char_end": 29339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3a66011549e90a50b293d7b179706d7",
+      "kind": "paragraph",
+      "text": "role of the diagnostic itself: the skipped updates are not arbitrary, but concentrated in parts of the episode where the update stream has become repetitive. For the 4B Self signal, 97% of late-episode updates are skipped compared to 16% of early updates.",
+      "order": 136,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Best signal Env Self Summary",
+        "ABLATIONS ANDCONTROLS"
+      ],
+      "char_start": 29341,
+      "char_end": 29596,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d00801c8143be283fc3c60eb00e1da1",
+      "kind": "heading",
+      "text": "55",
+      "order": 137,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "55"
+      ],
+      "char_start": 29598,
+      "char_end": 29600,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26fbdc56cb2b85b47b6d83075c1a7e1a",
+      "kind": "paragraph",
+      "text": "no TTT no filtering random filter aTTT",
+      "order": 138,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "55"
+      ],
+      "char_start": 29602,
+      "char_end": 29640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1943ab893d78eaff682673c96cc9260",
+      "kind": "heading",
+      "text": "Qwen3.5-9B",
+      "order": 139,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-9B"
+      ],
+      "char_start": 29642,
+      "char_end": 29652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7d5e86086c7efa03b071337e4f247bf",
+      "kind": "heading",
+      "text": "24 26",
+      "order": 140,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "24 26"
+      ],
+      "char_start": 29654,
+      "char_end": 29659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91167818d94dee5306bba477f69511dd",
+      "kind": "heading",
+      "text": "Gemma-3-12B",
+      "order": 141,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Gemma-3-12B"
+      ],
+      "char_start": 29661,
+      "char_end": 29672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c8c28977a50386fa0e4958a31dd72ec",
+      "kind": "heading",
+      "text": "4",
+      "order": 142,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "4"
+      ],
+      "char_start": 29674,
+      "char_end": 29675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef8292c66d76038aa312d8b621b9cee",
+      "kind": "heading",
+      "text": "Qwen3.5-4B",
+      "order": 143,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 29677,
+      "char_end": 29687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4df812ce8ecd6b6d2556a8a9ee0a370d",
+      "kind": "caption",
+      "text": "Figure 7: Random-drop control. Dropping the same number of updates at random does not match",
+      "order": 144,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 29689,
+      "char_end": 29780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddc3ad3235372e1c5d96cc26b8ecac95",
+      "kind": "paragraph",
+      "text": "the gain from repetition-based filtering. How sensitive is aTTT to update cadence?We update the adapter once everyKagent steps.",
+      "order": 145,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 29782,
+      "char_end": 29909,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0599b652c43ddbae48be081ce82f2e55",
+      "kind": "caption",
+      "text": "Table 4 reports Qwen3.5-9B on ALFWorld with the Self signal and aTTT, varyingKfrom 1 to 10.",
+      "order": 146,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 29911,
+      "char_end": 30002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdc5c1715b53e7e2ac34a63bca990ea8",
+      "kind": "paragraph",
+      "text": "SmallKgives low novelty and small gains, whileK=5andK=10raise novelty above 0.5 and give larger gains. Cadence controls how often update text enters the stream, while aTTT controls how much repeated spans contribute once an update is selected.",
+      "order": 147,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 30004,
+      "char_end": 30247,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66e602d929d5dc2b25a5b7ef15da9035",
+      "kind": "caption",
+      "text": "Table 4: Update cadence ablation (Qwen3.5-9B, Self signal, three seeds).",
+      "order": 148,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 30249,
+      "char_end": 30321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a1a7a2b54f4bd65b7febef5b1da323c",
+      "kind": "paragraph",
+      "text": "CadenceKSR (%) Mean novelty vs. No TTT K=1(every step)51.0 ±2.6 0.42+0.3 K=2 51.9 ±4.3 0.42+1.2 K=5(default)55.7 ±1.4 0.56+5.0 K=10 54.5 ±2.9 0.58+3.8 aTTT usesn=3throughout. Appendix D shows that performance is stable fornbetween 3 and 5. Why not put the same text in context?We test whether the same trajectory signal can be delivered through the prompt rather than through weight updates. We use the Summary signal, which is the most compact update source and therefore the strongest candidate for in-context delivery. On ALFWorld with Qwen3.5-9B, in-context injection scores 49.3%, below the no-TTT baseline of",
+      "order": 149,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B"
+      ],
+      "char_start": 30323,
+      "char_end": 30937,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebcca39f494436bdbad9142563712a55",
+      "kind": "heading",
+      "text": "7% and below TTT with the same Summary signal at 54.3%. This does not imply that prompting",
+      "order": 150,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B",
+        "7% and below TTT with the same Summary signal at 54.3%. This does not imply that prompting"
+      ],
+      "char_start": 30939,
+      "char_end": 31029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8192d25014d9c2e2d92deaaedabcb6c2",
+      "kind": "paragraph",
+      "text": "9",
+      "order": 151,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B",
+        "7% and below TTT with the same Summary signal at 54.3%. This does not imply that prompting"
+      ],
+      "char_start": 31031,
+      "char_end": 31032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:909444674837a031a582b0741edb40e3",
+      "kind": "paragraph",
+      "text": "cannot use summaries in general, but it shows that, under matched update text, prompt delivery does not reproduce the benefit of adapter updates. One likely reason is that injected summaries consume prompt budget and must compete with the growing trajectory, while adapter updates persist without adding prompt tokens. Details are in Appendix E. Why not use decoding-time repetition penalties?We also test whether a decoding-time repetition penalty can address the same failure mode. On Qwen3.5-9B with the Self signal, a standard repetition penalty of 1.1 averages 49.7% across three seeds, below both the no-TTT baseline at",
+      "order": 152,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B",
+        "7% and below TTT with the same Summary signal at 54.3%. This does not imply that prompting"
+      ],
+      "char_start": 31034,
+      "char_end": 31659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa7039244facf42a1c86bfebad231ff4",
+      "kind": "heading",
+      "text": "7% and aTTT at 55.7%. The gap suggests that the relevant repetition is not only a surface-token",
+      "order": 153,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B",
+        "7% and aTTT at 55.7%. The gap suggests that the relevant repetition is not only a surface-token"
+      ],
+      "char_start": 31661,
+      "char_end": 31756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f47ac58560cf2e7fcc130709e664c53e",
+      "kind": "paragraph",
+      "text": "problem. Decoding penalties discourage recently generated tokens within the response, but they do not update the policy that selects actions across the episode. aTTT instead changes the adapter state used in later turns, allowing trajectory information to affect subsequent action probabilities. What does token reweighting preserve?The advantage of aTTT over sequence filtering is most visible when an update is only partly redundant. A low-novelty text can still contain a new observation, object name, location, or action outcome inside a repeated template. Sequence filtering drops the whole update in this case. Token-level reweighting instead keeps those useful tokens available while reducing the loss on repeated spans. This is why aTTT can improve over an all-or-nothing filter, especially for Env updates where repeated observation framing is often mixed with new state information.",
+      "order": 154,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Qwen3.5-4B",
+        "7% and aTTT at 55.7%. The gap suggests that the relevant repetition is not only a surface-token"
+      ],
+      "char_start": 31758,
+      "char_end": 32650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:190e7faf9a034e3e6979d6e61911ab18",
+      "kind": "heading",
+      "text": "DISCUSSION",
+      "order": 155,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "DISCUSSION"
+      ],
+      "char_start": 32652,
+      "char_end": 32662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29201c629317e016c4719f0e6b727514",
+      "kind": "paragraph",
+      "text": "Redundancy is not relevance.aTTT controls redundant self-reinforcement once an update source has been chosen, but it does not decide which source is most useful for a given model or trajectory. This limitation appears in the ALFWorld results: the best update source varies across models, and no single source is uniformly strongest. In particular, Qwen3.5-4B benefits most from Env, Qwen3.5- 9B from Self with Env close behind, and Gemma-3-12B from Summary. Selecting or combining update signals online remains an open problem.",
+      "order": 156,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "DISCUSSION"
+      ],
+      "char_start": 32664,
+      "char_end": 33191,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a23e537d038fbac95dc4131e67e4434",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 157,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "CONCLUSION"
+      ],
+      "char_start": 33193,
+      "char_end": 33203,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f36a5cc9fbcd4d35c70fd316326cff16",
+      "kind": "paragraph",
+      "text": "Continuous TTT inside multi-turn agent episodes creates an endogenous feedback loop, where an adapted policy can shape the text used for later updates. We introduced aTTT, which uses updatetext repetition to downweight the loss on tokens appearing in repeatedn-grams while leaving novel tokens fully weighted. Across ALFWorld and SWE-bench Lite, aTTT improves performance most in settings where models have nontrivial task-solving potential but drift over long trajectories. These results suggest that in-episode weight updates can stabilize useful agent behavior without acting as broad capability training.",
+      "order": 158,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "CONCLUSION"
+      ],
+      "char_start": 33205,
+      "char_end": 33813,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f62798229013cfd3e15c25282b6ab4d9",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 159,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "REFERENCES"
+      ],
+      "char_start": 33815,
+      "char_end": 33825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:235ef279888a274735c0e2f71907b8f9",
+      "kind": "paragraph",
+      "text": "Emre Can Acikgoz, Cheng Qian, Heng Ji, Dilek Hakkani-T¨ur, and Gokhan Tur. Self-improving llm agents at test-time.arXiv preprint arXiv:2510.07841, 2025. Ekin Aky¨urek, Mehul Damani, Adam Zweiger, Linlu Qiu, Han Guo, Jyothish Pari, Yoon Kim, and Jacob Andreas. The surprising effectiveness of test-time training for few-shot learning.arXiv preprint arXiv:2411.07279, 2024. Rachit Bansal, Aston Zhang, Rishabh Tiwari, Lovish Madaan, Sai Surya Duvvuri, Devvrit Khatri, David Brandfonbrener, David Alvarez-Melis, Prajjwal Bhargava, Mihir Sanjay Kale, et al. Let’s (not) just put things in context: Test-time training for long-context llms.arXiv preprint arXiv:2512.13898, 2025. Arthur Chen, Zuxin Liu, Jianguo Zhang, Akshara Prabhakar, Zhiwei Liu, Shelby Heinecke, Silvio Savarese, Victor Zhong, and Caiming Xiong. Test-time adaptation for llm agents via environment interaction. InThe Fourteenth International Conference on Learning Representations, 2026. 10",
+      "order": 160,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "REFERENCES"
+      ],
+      "char_start": 33827,
+      "char_end": 34782,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e759d44c7005cb110228f32b3345336",
+      "kind": "paragraph",
+      "text": "Ganqu Cui, Yuchen Zhang, Jiacheng Chen, Lifan Yuan, Zhi Wang, Yuxin Zuo, Haozhan Li, Yuchen Fan, Huayu Chen, Weize Chen, et al. The entropy mechanism of reinforcement learning for reasoning language models.arXiv preprint arXiv:2505.22617, 2025. Guhao Feng, Shengjie Luo, Kai Hua, Ge Zhang, Di He, Wenhao Huang, and Tianle Cai. In-place test-time training.arXiv preprint arXiv:2604.06169, 2026. Yossi Gandelsman, Yu Sun, Xinlei Chen, and Alexei Efros. Test-time training with masked autoencoders.Advances in Neural Information Processing Systems, 35:29374–29385, 2022. Moritz Hardt and Yu Sun. Test-time training on nearest neighbors for large language models. In International Conference on Learning Representations, volume 2024, pp. 54625–54640, 2024. Carlos E Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik Narasimhan. Swe-bench: Can language models resolve real-world github issues? InInternational Conference on Learning Representations, volume 2024, pp. 54107–54157, 2024. Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica. Efficient memory management for large language model serving with pagedattention. InProceedings of the 29th symposium on operating systems principles, pp. 611–626, 2023. Nelson F Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua, Fabio Petroni, and Percy Liang. Lost in the middle: How language models use long contexts.Transactions of the association for computational linguistics, 12:157–173, 2024.",
+      "order": 161,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "REFERENCES"
+      ],
+      "char_start": 34784,
+      "char_end": 36340,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9704a403a468181b643e1949d3b27277",
+      "kind": "paragraph",
+      "text": "Yuejiang Liu, Parth Kothari, Bastien Van Delft, Baptiste Bellot-Gurlet, Taylor Mordan, and Alexandre Alahi. Ttt++: When does self-supervised test-time training fail or thrive?Advances in Neural Information Processing Systems, 34:21808–21820, 2021. Hossein Mobahi, Mehrdad Farajtabar, and Peter Bartlett. Self-distillation amplifies regularization in hilbert space.Advances in Neural Information Processing Systems, 33:3351–3361, 2020. Shuaicheng Niu, Jiaxiang Wu, Yifan Zhang, Yaofo Chen, Shijian Zheng, Peilin Zhao, and Mingkui Tan. Efficient test-time model adaptation without forgetting. InInternational conference on machine learning, pp. 16888–16905. PMLR, 2022. Shuaicheng Niu, Jiaxiang Wu, Yifan Zhang, Zhiquan Wen, Yaofo Chen, Peilin Zhao, and Mingkui Tan. Towards stable test-time adaptation in dynamic wild world.arXiv preprint arXiv:2302.12400, 2023.",
+      "order": 162,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "REFERENCES"
+      ],
+      "char_start": 36342,
+      "char_end": 37203,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e2a61e78e6ff05176330724e5ff63c4",
+      "kind": "heading",
+      "text": "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion",
+      "order": 163,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion"
+      ],
+      "char_start": 37205,
+      "char_end": 37297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:321c2f85e93bbee8a75cf420261b02ea",
+      "kind": "paragraph",
+      "text": "Language agents with verbal reinforcement learning.Advances in neural information processing systems, 36:8634–8652, 2023. Mohit Shridhar, Xingdi Yuan, Marc-Alexandre C ˆot´e, Yonatan Bisk, Adam Trischler, and Matthew Hausknecht. Alfworld: Aligning text and embodied environments for interactive learning.arXiv preprint arXiv:2010.03768, 2020. Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Nicolas Papernot, Ross Anderson, and Yarin Gal. Ai models collapse when trained on recursively generated data.Nature, 631(8022):755–759, 2024. Yu Sun, Xiaolong Wang, Zhuang Liu, John Miller, Alexei Efros, and Moritz Hardt. Test-time training with self-supervision for generalization under distribution shifts. InInternational conference on machine learning, pp. 9229–9248. PMLR, 2020. Gemma Team, Aishwarya Kamath, Johan Ferret, Shreya Pathak, Nino Vieillard, Ramona Merhej,",
+      "order": 164,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion"
+      ],
+      "char_start": 37299,
+      "char_end": 38162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5ff92be77368a5b90b7577a5db45b77",
+      "kind": "heading",
+      "text": "Sarah Perrin, Tatiana Matejovicova, Alexandre Ram´e, Morgane Rivi`ere, Louis Rouillard, Thomas",
+      "order": 165,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Sarah Perrin, Tatiana Matejovicova, Alexandre Ram´e, Morgane Rivi`ere, Louis Rouillard, Thomas"
+      ],
+      "char_start": 38164,
+      "char_end": 38258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdc2a49fea675fd5abc92f8c2bfcb1e9",
+      "kind": "heading",
+      "text": "Mesnard, Geoffrey Cideron, Jean bastien Grill, Sabela Ramos, Edouard Yvinec, Michelle Cas-",
+      "order": 166,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Mesnard, Geoffrey Cideron, Jean bastien Grill, Sabela Ramos, Edouard Yvinec, Michelle Cas-"
+      ],
+      "char_start": 38260,
+      "char_end": 38350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebf8b934cea1d016e28af7bc4a30a80c",
+      "kind": "paragraph",
+      "text": "bon, Etienne Pot, Ivo Penchev, Ga ¨el Liu, Francesco Visin, Kathleen Kenealy, Lucas Beyer, Xi-",
+      "order": 167,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Mesnard, Geoffrey Cideron, Jean bastien Grill, Sabela Ramos, Edouard Yvinec, Michelle Cas-"
+      ],
+      "char_start": 38352,
+      "char_end": 38446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b38b897eb9014f17240c4b84bb3d514f",
+      "kind": "heading",
+      "text": "aohai Zhai, Anton Tsitsulin, Robert Busa-Fekete, Alex Feng, Noveen Sachdeva, Benjamin Cole-",
+      "order": 168,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "aohai Zhai, Anton Tsitsulin, Robert Busa-Fekete, Alex Feng, Noveen Sachdeva, Benjamin Cole-"
+      ],
+      "char_start": 38448,
+      "char_end": 38539,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c871a213086d1b3365962e4a4c690d19",
+      "kind": "paragraph",
+      "text": "man, Yi Gao, Basil Mustafa, Iain Barr, Emilio Parisotto, David Tian, Matan Eyal, Colin Cherry, 11",
+      "order": 169,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "aohai Zhai, Anton Tsitsulin, Robert Busa-Fekete, Alex Feng, Noveen Sachdeva, Benjamin Cole-"
+      ],
+      "char_start": 38541,
+      "char_end": 38638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6ae7c0db0ccdd3ad009043b2285b54a",
+      "kind": "paragraph",
+      "text": "Jan-Thorsten Peter, Danila Sinopalnikov, Surya Bhupatiraju, Rishabh Agarwal, Mehran Kazemi, Dan Malkin, Ravin Kumar, David Vilar, Idan Brusilovsky, Jiaming Luo, Andreas Steiner, Abe",
+      "order": 170,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "aohai Zhai, Anton Tsitsulin, Robert Busa-Fekete, Alex Feng, Noveen Sachdeva, Benjamin Cole-"
+      ],
+      "char_start": 38640,
+      "char_end": 38821,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3672ee54680de0ba341ff085f15ad1d7",
+      "kind": "heading",
+      "text": "Friesen, Abhanshu Sharma, Abheesht Sharma, Adi Mayrav Gilady, Adrian Goedeckemeyer, Alaa",
+      "order": 171,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Friesen, Abhanshu Sharma, Abheesht Sharma, Adi Mayrav Gilady, Adrian Goedeckemeyer, Alaa"
+      ],
+      "char_start": 38823,
+      "char_end": 38911,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6aed12d437c9343b96b51f4fcc26386a",
+      "kind": "heading",
+      "text": "Saade, Alex Feng, Alexander Kolesnikov, Alexei Bendebury, Alvin Abdagic, Amit Vadi, Andr´as",
+      "order": 172,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Saade, Alex Feng, Alexander Kolesnikov, Alexei Bendebury, Alvin Abdagic, Amit Vadi, Andr´as"
+      ],
+      "char_start": 38913,
+      "char_end": 39004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffb615e352ceb2e24d9b61d83d736c86",
+      "kind": "paragraph",
+      "text": "Gy¨orgy, Andr´e Susano Pinto, Anil Das, Ankur Bapna, Antoine Miech, Antoine Yang, Antonia Paterson, Ashish Shenoy, Ayan Chakrabarti, Bilal Piot, Bo Wu, Bobak Shahriari, Bryce Petrini, Charlie Chen, Charline Le Lan, Christopher A. Choquette-Choo, CJ Carey, Cormac Brick, Daniel",
+      "order": 173,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Saade, Alex Feng, Alexander Kolesnikov, Alexei Bendebury, Alvin Abdagic, Amit Vadi, Andr´as"
+      ],
+      "char_start": 39006,
+      "char_end": 39282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b1b10adca2393e345600fdfed032658",
+      "kind": "heading",
+      "text": "Deutsch, Danielle Eisenbud, Dee Cattle, Derek Cheng, Dimitris Paparas, Divyashree Shivaku-",
+      "order": 174,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Deutsch, Danielle Eisenbud, Dee Cattle, Derek Cheng, Dimitris Paparas, Divyashree Shivaku-"
+      ],
+      "char_start": 39284,
+      "char_end": 39374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6e04c47adbf19c680dd94ff508e5d25",
+      "kind": "paragraph",
+      "text": "mar Sreepathihalli, Doug Reid, Dustin Tran, Dustin Zelle, Eric Noland, Erwin Huizenga, Eu-",
+      "order": 175,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Deutsch, Danielle Eisenbud, Dee Cattle, Derek Cheng, Dimitris Paparas, Divyashree Shivaku-"
+      ],
+      "char_start": 39376,
+      "char_end": 39466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efa03280483e98f14177f060eedee5f3",
+      "kind": "heading",
+      "text": "gene Kharitonov, Frederick Liu, Gagik Amirkhanyan, Glenn Cameron, Hadi Hashemi, Hanna",
+      "order": 176,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "gene Kharitonov, Frederick Liu, Gagik Amirkhanyan, Glenn Cameron, Hadi Hashemi, Hanna"
+      ],
+      "char_start": 39468,
+      "char_end": 39553,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c9837f7f4fc07a100ca0348d84f46fc",
+      "kind": "heading",
+      "text": "Klimczak-Pluci´nska, Harman Singh, Harsh Mehta, Harshal Tushar Lehri, Hussein Hazimeh, Ian",
+      "order": 177,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Klimczak-Pluci´nska, Harman Singh, Harsh Mehta, Harshal Tushar Lehri, Hussein Hazimeh, Ian"
+      ],
+      "char_start": 39555,
+      "char_end": 39645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:859fe844464583f42f4f1d8cdbf38e2f",
+      "kind": "paragraph",
+      "text": "Ballantyne, Idan Szpektor, Ivan Nardini, Jean Pouget-Abadie, Jetha Chan, Joe Stanton, John Wieting, Jonathan Lai, Jordi Orbay, Joseph Fernandez, Josh Newlan, Ju yeong Ji, Jyotinder Singh, Kat Black, Kathy Yu, Kevin Hui, Kiran V odrahalli, Klaus Greff, Linhai Qiu, Marcella Valentine,",
+      "order": 178,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Klimczak-Pluci´nska, Harman Singh, Harsh Mehta, Harshal Tushar Lehri, Hussein Hazimeh, Ian"
+      ],
+      "char_start": 39647,
+      "char_end": 39930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:932d68c20b66cc2d7ca1f5d0d2cdc5d3",
+      "kind": "heading",
+      "text": "Marina Coelho, Marvin Ritter, Matt Hoffman, Matthew Watson, Mayank Chaturvedi, Michael",
+      "order": 179,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Marina Coelho, Marvin Ritter, Matt Hoffman, Matthew Watson, Mayank Chaturvedi, Michael"
+      ],
+      "char_start": 39932,
+      "char_end": 40018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cfa9cfc27eab985d5058bef96c5200d",
+      "kind": "paragraph",
+      "text": "Moynihan, Min Ma, Nabila Babar, Natasha Noy, Nathan Byrd, Nick Roy, Nikola Momchev, Nilay Chauhan, Noveen Sachdeva, Oskar Bunyan, Pankil Botarda, Paul Caron, Paul Kishan Rubenstein, Phil Culliton, Philipp Schmid, Pier Giuseppe Sessa, Pingmei Xu, Piotr Stanczyk, Pouya Tafti, Rakesh Shivanna, Renjie Wu, Renke Pan, Reza Rokni, Rob Willoughby, Rohith Vallu, Ryan Mullins, Sara Smoot, Sertan Girgin, Shariq Iqbal, Shashir Reddy, Shruti Sheth, Siim P ˜oder, Sijal Bhatnagar, Sindhu Raghuram Panyam, Sivan Eiger, Susan Zhang, Tianqi Liu, Trevor Yacovone, Tyler Liechty, Uday Kalra, Utku Evci, Vedant Misra, Vincent Roseberry, Vlad Feinberg, Vlad Kolesnikov, Woohyun Han, Woosuk Kwon, Xi Chen, Yinlam Chow, Yuvein Zhu, Zichuan Wei, Zoltan Egyed, Victor Cotruta, Minh Giang, Phoebe Kirk, Anand Rao, Kat Black, Nabila Babar, Jessica Lo, Erica Moreira, Luiz Gustavo Martins, Omar Sanseviero, Lucas Gonzalez, Zach Gleicher, Tris Warkentin, Vahab Mirrokni, Evan Senter, Eli Collins, Joelle Barral, Zoubin Ghahramani, Raia Hadsell, Yossi Matias, D. Sculley, Slav Petrov, Noah Fiedel, Noam Shazeer, Oriol Vinyals, Jeff Dean, Demis Hassabis, Koray Kavukcuoglu, Clement Farabet, Elena Buchatskaya,",
+      "order": 180,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Marina Coelho, Marvin Ritter, Matt Hoffman, Matthew Watson, Mayank Chaturvedi, Michael"
+      ],
+      "char_start": 40020,
+      "char_end": 41202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dd6ec412147f48d8797728cfa29372c",
+      "kind": "heading",
+      "text": "Jean-Baptiste Alayrac, Rohan Anil, Dmitry, Lepikhin, Sebastian Borgeaud, Olivier Bachem, Ar-",
+      "order": 181,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Jean-Baptiste Alayrac, Rohan Anil, Dmitry, Lepikhin, Sebastian Borgeaud, Olivier Bachem, Ar-"
+      ],
+      "char_start": 41204,
+      "char_end": 41296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06deb3efa9af6f2b70c51de33ce47b0b",
+      "kind": "paragraph",
+      "text": "mand Joulin, Alek Andreev, Cassidy Hardin, Robert Dadashi, and L ´eonard Hussenot. Gemma 3 technical report, 2025. URLhttps://arxiv.org/abs/2503.19786. Qwen Team. Qwen3.5: Accelerating productivity with native multimodal agents, February 2026. URLhttps://qwen.ai/blog?id=qwen3.5. Dequan Wang, Evan Shelhamer, Shaoteng Liu, Bruno Olshausen, and Trevor Darrell. Tent: Fully test-time adaptation by entropy minimization.arXiv preprint arXiv:2006.10726, 2020. Qin Wang, Olga Fink, Luc Van Gool, and Dengxin Dai. Continual test-time domain adaptation. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, pp. 7201– 7211, 2022. John Yang, Carlos E Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik R Narasimhan, and Ofir Press. SWE-agent: Agent-computer interfaces enable automated software engineering.",
+      "order": 182,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Jean-Baptiste Alayrac, Rohan Anil, Dmitry, Lepikhin, Sebastian Borgeaud, Olivier Bachem, Ar-"
+      ],
+      "char_start": 41298,
+      "char_end": 42140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:449cecb8ebe2e00004f588c4c7c1fd13",
+      "kind": "heading",
+      "text": "InThe Thirty-eighth Annual Conference on Neural Information Processing Systems, 2024. URL",
+      "order": 183,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "InThe Thirty-eighth Annual Conference on Neural Information Processing Systems, 2024. URL"
+      ],
+      "char_start": 42142,
+      "char_end": 42231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8a181b8321dd2406c975f34939dad24",
+      "kind": "paragraph",
+      "text": "https://arxiv.org/abs/2405.15793. Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models.arXiv preprint arXiv:2210.03629, 2022. Kiarash Zahirnia, Zahra Golpayegani, Walid Ahmed, and Yang Liu. Ett: Expanding the long context understanding capability of llms at test-time.arXiv preprint arXiv:2507.06313, 2025. Marvin Zhang, Sergey Levine, and Chelsea Finn. Memo: Test time robustness via adaptation and augmentation.Advances in neural information processing systems, 35:38629–38642, 2022. 12",
+      "order": 184,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "InThe Thirty-eighth Annual Conference on Neural Information Processing Systems, 2024. URL"
+      ],
+      "char_start": 42233,
+      "char_end": 42819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04700c9600508ed9e123ac65e10ece9b",
+      "kind": "heading",
+      "text": "A SYSTEMARCHITECTURE ANDTHROUGHPUT",
+      "order": 185,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "A SYSTEMARCHITECTURE ANDTHROUGHPUT"
+      ],
+      "char_start": 42821,
+      "char_end": 42855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33a8a5c60c3760e9af5503532423838a",
+      "kind": "paragraph",
+      "text": "aTTT requires repeated private updates while many agent episodes remain active. Our implementation decouples training from inference using vLLM’s runtime LoRA API (Kwon et al., 2023). A frozen base model serves 16 episodes concurrently, each with a private LoRA adapter slot. Dedicated training GPUs compute updates asynchronously and hot-swap the resulting adapter into the serving engine in under 100 ms. An update to one episode does not block generation for the others.",
+      "order": 186,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "A SYSTEMARCHITECTURE ANDTHROUGHPUT"
+      ],
+      "char_start": 42857,
+      "char_end": 43330,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b063553e97c8cf0bb5f2f2bf3523aa8c",
+      "kind": "caption",
+      "text": "Figure 8 sketches the architecture, and Table 5 reports throughput on ALFWorld with Qwen3.5-9B.",
+      "order": 187,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "A SYSTEMARCHITECTURE ANDTHROUGHPUT"
+      ],
+      "char_start": 43332,
+      "char_end": 43427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9ccc2d241ca28ce40954a0d60ef9c68",
+      "kind": "paragraph",
+      "text": "vLLM inference engine Concurrent episodes TTT training engine Episode A → Episode B → Episode C → Episode N → Frozen base model Loaded once, shared by all LoRA adapter slots Actions Extract signal",
+      "order": 188,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "A SYSTEMARCHITECTURE ANDTHROUGHPUT"
+      ],
+      "char_start": 43429,
+      "char_end": 43625,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07481815169f6a8d34d057fce8b99967",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 189,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Trajectory"
+      ],
+      "char_start": 43627,
+      "char_end": 43637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d2702b17f4f39abf6d097df97f62f82",
+      "kind": "paragraph",
+      "text": "text TTT loss Updated adapter",
+      "order": 190,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Trajectory"
+      ],
+      "char_start": 43639,
+      "char_end": 43668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a81d699827c9eba42519bcb9173d2b0",
+      "kind": "heading",
+      "text": "Hot-swap",
+      "order": 191,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Hot-swap"
+      ],
+      "char_start": 43670,
+      "char_end": 43678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f4b6e1fe87c3be6851f87251f73646f",
+      "kind": "caption",
+      "text": "Figure 8: Concurrent serving pipeline for online TTT. Each episode maintains a private LoRA",
+      "order": 192,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Hot-swap"
+      ],
+      "char_start": 43680,
+      "char_end": 43771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:064547916c54244c80e12a1832f6d1a3",
+      "kind": "paragraph",
+      "text": "adapter, while a separate training engine computes updates and hot-swaps adapters into the vLLM inference engine without blocking other episodes.",
+      "order": 193,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Hot-swap"
+      ],
+      "char_start": 43773,
+      "char_end": 43918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:942ae8605047d8f14040dadbb3a3546a",
+      "kind": "caption",
+      "text": "Table 5: Wall-clock cost of 140 ALFWorld episodes. Concurrent aTTT costs 1.9×the no-TTT run",
+      "order": 194,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Hot-swap"
+      ],
+      "char_start": 43920,
+      "char_end": 44011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:beb254bb3d218df4625b297f9a1d0342",
+      "kind": "paragraph",
+      "text": "and is 6.6×faster than a sequential implementation.",
+      "order": 195,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Hot-swap"
+      ],
+      "char_start": 44013,
+      "char_end": 44064,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9750c4b73a62eb0ae4f7b0cb4c57315",
+      "kind": "heading",
+      "text": "Configuration Wall-clock vs. No TTT",
+      "order": 196,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Configuration Wall-clock vs. No TTT"
+      ],
+      "char_start": 44066,
+      "char_end": 44101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4401471a1f5904b219d915f0ad7ab434",
+      "kind": "paragraph",
+      "text": "No TTT 14.6 min 1.0× Ours 28.3 min 1.9× Sequential 186 min 12.7×",
+      "order": 197,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Configuration Wall-clock vs. No TTT"
+      ],
+      "char_start": 44103,
+      "char_end": 44167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5aafc82e8c0ef7bdb6bd0b1f6631a031",
+      "kind": "heading",
+      "text": "B BENCHMARK ANDSCAFFOLDDETAILS",
+      "order": 198,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "B BENCHMARK ANDSCAFFOLDDETAILS"
+      ],
+      "char_start": 44169,
+      "char_end": 44199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2245f8b737ab3a9d01f1b322dfd3c423",
+      "kind": "paragraph",
+      "text": "ALFWorld (Shridhar et al., 2020) contains 140 text-based household tasks, each with a 50-step budget. We use ReAct-style prompting (Yao et al., 2022) on Qwen3.5-4B, Qwen3.5-9B, Qwen3.5- 27B, and Gemma-3-12B. We evaluate SWE-bench Lite (Jimenez et al., 2024) on 150 instances. The agent uses a miniswe-agent scaffold (Yang et al., 2024) with bash tools and a 150-call budget per issue. We run Qwen3.5-9B and Qwen3.5-27B on this benchmark.",
+      "order": 199,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "B BENCHMARK ANDSCAFFOLDDETAILS"
+      ],
+      "char_start": 44201,
+      "char_end": 44638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83f7cd97c7ddd6f4dc3bff515da6b722",
+      "kind": "heading",
+      "text": "SIGNALCONSTRUCTION ANDTRAININGDETAILS",
+      "order": 200,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SIGNALCONSTRUCTION ANDTRAININGDETAILS"
+      ],
+      "char_start": 44640,
+      "char_end": 44677,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6bc42735f5a4a5ed40b719bf47827b7",
+      "kind": "paragraph",
+      "text": "The three training signals expose different parts of the repeated update loop. At each scheduled update,Selfuses the model’s latest reasoning and action tokensm t.Envuses the latest observation 13",
+      "order": 201,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SIGNALCONSTRUCTION ANDTRAININGDETAILS"
+      ],
+      "char_start": 44679,
+      "char_end": 44875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d73d255debe5a29af470340878517495",
+      "kind": "paragraph",
+      "text": "ot verbatim.Summaryprompts the base model to compress the trajectory into a short progress note. Self and Env train only on the most recent step, not the full prefix, so they reflect the current state without replaying the entire trajectory. Unless noted otherwise, TTT uses a LoRA adapter of rank 8 andα=16, a learning rate of5×10 −4, two gradient steps per update, and a cadence ofK=5agent steps. The adapter persists within an episode and is reset between episodes. The sequence-level filter uses Jaccard similarity over whitespace-tokenized words with thresholdτ=0.5, and the token-level reweighting uses3-grams with a weight floorw min=0.05.",
+      "order": 202,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "SIGNALCONSTRUCTION ANDTRAININGDETAILS"
+      ],
+      "char_start": 44877,
+      "char_end": 45523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdc757c0b84f78c8473014af08e49119",
+      "kind": "heading",
+      "text": "D HYPERPARAMETERSENSITIVITY",
+      "order": 203,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "D HYPERPARAMETERSENSITIVITY"
+      ],
+      "char_start": 45525,
+      "char_end": 45552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1e9568034afa184b78e41617d560874",
+      "kind": "caption",
+      "text": "Table 6 reports a LoRA rank sweep on Qwen3.5-27B across 140 ALFWorld games. Performance",
+      "order": 204,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "D HYPERPARAMETERSENSITIVITY"
+      ],
+      "char_start": 45554,
+      "char_end": 45641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf5457e1801b239f1cef374aab519fdd",
+      "kind": "paragraph",
+      "text": "is stable across ranks 4 to 16 and degrades modestly at rank 32. We use rank 8 throughout as a conservative default.",
+      "order": 205,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "D HYPERPARAMETERSENSITIVITY"
+      ],
+      "char_start": 45643,
+      "char_end": 45759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f3623ad3a5e60abbe2afff32b580a41",
+      "kind": "caption",
+      "text": "Table 6: LoRA rank sensitivity on Qwen3.5-27B. Performance is robust across ranks 4–16.",
+      "order": 206,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "D HYPERPARAMETERSENSITIVITY"
+      ],
+      "char_start": 45761,
+      "char_end": 45848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0ec9189b50a379fde1653e8e419559c",
+      "kind": "paragraph",
+      "text": "LoRA rank∆pp vs baseline 4−0.7",
+      "order": 207,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "D HYPERPARAMETERSENSITIVITY"
+      ],
+      "char_start": 45850,
+      "char_end": 45880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c23811b36cdb5afa82be55ceb09389f",
+      "kind": "heading",
+      "text": "(default)±0",
+      "order": 208,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "(default)±0"
+      ],
+      "char_start": 45882,
+      "char_end": 45893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72ed20178085949bd394ed09c305e0a8",
+      "kind": "paragraph",
+      "text": "16−1.4 32−4.3",
+      "order": 209,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "(default)±0"
+      ],
+      "char_start": 45895,
+      "char_end": 45908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d20c96f0bbae6af7a4863ac08d463dc",
+      "kind": "caption",
+      "text": "Table 7:N-gram window size sensitivity (Qwen3.5-9B, Summary signal). Robust acrossn=3–5;",
+      "order": 210,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "(default)±0"
+      ],
+      "char_start": 45910,
+      "char_end": 45998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:054921305b4c5adad91f6e85f4eacb8c",
+      "kind": "paragraph",
+      "text": "we usen=3throughout. n-gram size SR (%) n=2 52.8 ±1.8 n=3(default)54.3 ±0.7 n=4 54.5 ±0.6 n=5 54.1 ±0.8",
+      "order": 211,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "(default)±0"
+      ],
+      "char_start": 46000,
+      "char_end": 46103,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33e8265c4107a539cc174e9aba981089",
+      "kind": "heading",
+      "text": "E IN-CONTEXTBASELINEDETAILS",
+      "order": 212,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "E IN-CONTEXTBASELINEDETAILS"
+      ],
+      "char_start": 46105,
+      "char_end": 46132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:875878f0ce1e7f80084cf5c7c4307ad5",
+      "kind": "paragraph",
+      "text": "To test whether weight updates are necessary, we construct an in-context baseline that delivers the same Summary text through the prompt rather than through a LoRA update. At each scheduled update point, the Summary is appended to the system message as a structured plan note. The agent then generates its next action conditioned on this extended context. On Qwen3.5-9B, in-context injection scores 49.3%, below the 51.4% no-TTT baseline. The same Summary text used for TTT weight updates yields 54.3%. The in-context version fails because the injected plan text competes for attention with the growing trajectory. On episodes longer than 30 steps, the injected note is displaced by more recent observations, and the agent reverts to the same stuck patterns seen in the no-TTT condition. Weight-level internalization avoids this competition by compressing the task-relevant pattern into adapter parameters that persist regardless of context length.",
+      "order": 213,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "E IN-CONTEXTBASELINEDETAILS"
+      ],
+      "char_start": 46134,
+      "char_end": 47082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7983341e6a2ffd34f92e4e438dfc7107",
+      "kind": "heading",
+      "text": "F POLICY-LEVELDIAGNOSTICS",
+      "order": 214,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "F POLICY-LEVELDIAGNOSTICS"
+      ],
+      "char_start": 47084,
+      "char_end": 47109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e82c6366266fe94dc4a8314614b00770",
+      "kind": "caption",
+      "text": "Figure 9 provides a supplementary view of how aTTT affects action selection. Action changes",
+      "order": 215,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "F POLICY-LEVELDIAGNOSTICS"
+      ],
+      "char_start": 47111,
+      "char_end": 47202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c7deaec8cecb185f4d9406a233339a8",
+      "kind": "paragraph",
+      "text": "concentrate in low-margin decisions, where the base model is less certain, and aTTT increases crossseed action diversity across models. These diagnostics are consistent with the drift results in the main text: aTTT tends to alter uncertain choices in repeated regimes rather than broadly rewriting high-confidence behavior. 14",
+      "order": 216,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "F POLICY-LEVELDIAGNOSTICS"
+      ],
+      "char_start": 47204,
+      "char_end": 47530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e9a0faac1ad364a802bcb1585370715",
+      "kind": "paragraph",
+      "text": "<0.020.02-0.050.05-0.100.10-0.20 >0.20 Base model action margin 0 10 20 30 40 50Action flip rate (%) (a) TTT intervenes only at uncertain decisions 4B 9B 12B",
+      "order": 217,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "F POLICY-LEVELDIAGNOSTICS"
+      ],
+      "char_start": 47532,
+      "char_end": 47689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbb82439d2c0bbf1f6d4d5d6c3bbfa25",
+      "kind": "heading",
+      "text": "Model",
+      "order": 218,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model"
+      ],
+      "char_start": 47691,
+      "char_end": 47696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2cc629fe7399a07d9f3e7932f67b6ef",
+      "kind": "heading",
+      "text": "2",
+      "order": 219,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "2"
+      ],
+      "char_start": 47698,
+      "char_end": 47699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac49290d7c8519c8d1c802b754a633df",
+      "kind": "heading",
+      "text": "4",
+      "order": 220,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "4"
+      ],
+      "char_start": 47701,
+      "char_end": 47702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfe67ddc69120a3a64f7c425064cfbb8",
+      "kind": "heading",
+      "text": "6",
+      "order": 221,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "6"
+      ],
+      "char_start": 47704,
+      "char_end": 47705,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c2985163c7486cf72df3eecd8d49eac",
+      "kind": "heading",
+      "text": "8",
+      "order": 222,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "8"
+      ],
+      "char_start": 47707,
+      "char_end": 47708,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26f28e9ea66824f0b808d2402fbb8467",
+      "kind": "heading",
+      "text": "0",
+      "order": 223,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "0"
+      ],
+      "char_start": 47710,
+      "char_end": 47711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f01542050fb95a062402d2f3ed685cd",
+      "kind": "heading",
+      "text": "2Action diversity (cross-seed)",
+      "order": 224,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "2Action diversity (cross-seed)"
+      ],
+      "char_start": 47713,
+      "char_end": 47743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56bdfa095bd7df86d33f5549eb271b62",
+      "kind": "paragraph",
+      "text": "(b) TTT preserves action diversity",
+      "order": 225,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "Model",
+        "2Action diversity (cross-seed)"
+      ],
+      "char_start": 47745,
+      "char_end": 47779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59af2ee9615022d59d4c5d280ab0813e",
+      "kind": "heading",
+      "text": "No TTT",
+      "order": 226,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "No TTT"
+      ],
+      "char_start": 47781,
+      "char_end": 47787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b96ecf6534c4de280f639af2e94fb38",
+      "kind": "paragraph",
+      "text": "aTTT",
+      "order": 227,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "No TTT"
+      ],
+      "char_start": 47789,
+      "char_end": 47793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd2f101ab4ebff6aa5795ecfe49ec8e6",
+      "kind": "caption",
+      "text": "Figure 9: Policy-level diagnostics. Action changes concentrate in low-margin decisions, and aTTT",
+      "order": 228,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "No TTT"
+      ],
+      "char_start": 47795,
+      "char_end": 47891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:431eea0754a34a66aff318a8674d87ab",
+      "kind": "paragraph",
+      "text": "increases cross-seed action diversity across models.",
+      "order": 229,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "No TTT"
+      ],
+      "char_start": 47893,
+      "char_end": 47945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcc2095a10ec723ce87099dde4948b51",
+      "kind": "heading",
+      "text": "G CASESTUDY: STEP-BY-STEPCOMPARISON",
+      "order": 230,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "G CASESTUDY: STEP-BY-STEPCOMPARISON"
+      ],
+      "char_start": 47947,
+      "char_end": 47982,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc4b714140d5abd6f73eb8aac33bf68d",
+      "kind": "paragraph",
+      "text": "No TTT — Fail at 50 steps Task:put two soapbar in garbagecan Steps 1–6: explore cabinets, find soapbar 1 & 4 on countertop 1 Step 7:take soapbar 1 from countertop 1 →You pick up the soapbar 1. Step 8:take soapbar 4 from countertop 1 →Nothing happens. Step 9:put soapbar 1 in/on countertop 1 →You put the soapbar 1 on the countertop 1. Step 10:take soapbar 4 from countertop 1 →You pick up the soapbar 4. Step 11:put soapbar 4 in/on countertop 1 →You put the soapbar 4 on the countertop 1. ⟲Steps 12–50 repeat this pick-up/put-down cycle. The agent never visits the garbagecan. aTTT — Success in 14 steps Task:put two soapbar in garbagecan Steps 1–6: identical to No TTT Step 7:take soapbar 1 from countertop 1 →You pick up the soapbar 1. Step 8:take soapbar 4 from countertop 1 →Nothing happens. Step 9:go to garbagecan 1 →You arrive at garbagecan 1. Step 10:put soapbar 1 in/on garbagecan 1 →You put the soapbar 1 in the garbagecan 1. Step 11:go to countertop 1 →You arrive at countertop 1. Step 12:take soapbar 4 from countertop 1 →You pick up the soapbar 4. Step 13:go to garbagecan 1 →You arrive at garbagecan 1. Step 14:put soapbar 4 in/on garbagecan 1 →You put the soapbar 4 in the garbagecan 1. ✓Task completed.",
+      "order": 231,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "G CASESTUDY: STEP-BY-STEPCOMPARISON"
+      ],
+      "char_start": 47984,
+      "char_end": 49202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10c5f1f0971a66c3b0192173895dfb2a",
+      "kind": "caption",
+      "text": "Figure 10: Case study:put two soapbar in garbagecan(game 100, Qwen3.5-9B). Both agents",
+      "order": 232,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "G CASESTUDY: STEP-BY-STEPCOMPARISON"
+      ],
+      "char_start": 49204,
+      "char_end": 49290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c97f2f44a1ea894f907f8476581fea1c",
+      "kind": "paragraph",
+      "text": "explore identically through step 8. At step 9, the no-TTT agent puts the soapbar back down and enters a 41-step loop. The aTTT agent carries it to the garbagecan and finishes in 14 steps. 15",
+      "order": 233,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "NOTIMELIKE THEPRESENT: AGENTICTEST-TIME",
+        "G CASESTUDY: STEP-BY-STEPCOMPARISON"
+      ],
+      "char_start": 49292,
+      "char_end": 49482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 15,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.03441",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,3965 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "8bfb1e8d764324e5f3ebe2f14589f4238069edb44666c0b5b2c5e1af18ad784a",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:e811baebe0180b53ce276ca137edc21d",
+      "kind": "heading",
+      "text": "DepRepair: LLM-Based Source-Code Repair for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for"
+      ],
+      "char_start": 0,
+      "char_end": 43,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a94a1d0b150969124301fb53becc112a",
+      "kind": "heading",
+      "text": "Dependency Breaking Changes",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Dependency Breaking Changes"
+      ],
+      "char_start": 45,
+      "char_end": 72,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d90af91c28ccd55b6a618b67e28f403",
+      "kind": "paragraph",
+      "text": "Shenghao Yang∗, Bo Lu †, Yaochen Liu †, Yu Kang †, Qiongfang Zhang †, Chetan Bansal †, Saravan Rajmohan †, Minghua Ma †",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Dependency Breaking Changes"
+      ],
+      "char_start": 74,
+      "char_end": 193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c480e1b1f7775943decf8164c132084",
+      "kind": "heading",
+      "text": "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA"
+      ],
+      "char_start": 195,
+      "char_end": 243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e1438bbdf786e33c1c4f602b285d5f9",
+      "kind": "paragraph",
+      "text": "Email: shenghay@andrew.cmu.edu †Microsoft Email: minghuama@microsoft.com Abstract—Modern software projects depend on numerous third-party libraries, whose updates often introduce breaking changes. Adapting consumer code to such changes remains laborintensive and error-prone. Existing work either characterizes dependency breaking changes without producing a verified consumer-side patch, or studies automated repair only in settings where the failure and repair context are contained within the target repository. However, dependency breaking changes violate this assumption: the decisive repair evidence lies upstream in release notes and API diffs, and no failing test localizes where the consumer breaks, leaving the repair under-informed. To study this cross-repository problem on real data, we introduce DepBench, a benchmark of 95 real-world dependency-update instances across four ecosystems, each paired with a Dockerbased executable oracle that runs the consumer’s own tests. To address these challenges, we propose DEPREPAIR, a singlecall LLM approach that grounds repair in structured upstream evidence through three components: an evidence filter that distills relevant upstream changes, a usage locator that identifies affected consumer sites, and a subcategory-aware guide that tailors repairs to the breaking-change type. Evaluated on DEPBENCH, DEPREPAIRattains the highest executable pass rate on each backbone, achieving 89.5% with GPT-5.5 and 82.1% with Claude Opus 4.6. We further find that raw upstream evidence reduces",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA"
+      ],
+      "char_start": 245,
+      "char_end": 1785,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea242328475cd9bd1faf66118aa44b0f",
+      "kind": "paragraph",
+      "text": "LLM and agent pass rates by 7–23 percentage points, whereas structured evidence consistently improves them. Index Terms—program repair, upstream evidence, large language model",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA"
+      ],
+      "char_start": 1787,
+      "char_end": 1962,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:990ab15b80f12f8c6858228e0bf6809f",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 1964,
+      "char_end": 1976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:872494f048d7b0f34b6be2e8b8430fcb",
+      "kind": "paragraph",
+      "text": "Software projects depend heavily on third-party libraries, and a modern application typically pulls in dozens of direct and transitive dependencies that it must keep up to date for security fixes, new features, and performance improvements. When upstream libraries update, they often introduce breaking changes, such as API migrations, renames, import migrations, and paradigm shifts [1]. Such changes usually cause compilation errors or runtime failures in downstream consumer code, forcing developers to manually adapt their projects to the new library version. However, adapting consumer code to such changes is timeconsuming and error-prone. Studies show that developers frequently delay dependency updates primarily because of the perceived cost [2], and 81.5% of studied projects keep outdated Work done during an internship at Microsoft. dependencies [3]. The resulting technical lag exposes projects to known vulnerabilities and missed performance gains [4]. Thus, the tension between the cost of manual adaptation and the risk of falling behind motivates automated tools that repair the consumer code so that projects can keep their dependencies up to date. Research on dependency management has emerged to understand and tame breaking changes from dependency updates. One categorycharacterizesbreaking changes, measuring how often upstream updates break their consumers and how the resulting risk propagates through the software supply chain [1], [5], [6]. The other category builds tooling thatassistsmigration",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 1978,
+      "char_end": 3499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2755468441e40b6e71dd8cc50263474f",
+      "kind": "paragraph",
+      "text": "by reusing how the library or its earlier clients evolved [7], [8]. However, for a specific project, most of this work neither localizes the exact consumer sites that must change nor emits a verified source patch that adapts the project to the new version. As a result, a developer facing a concrete upgrade is still left to find and edit every affected line by hand. In contrast, rule-based and LLM-based methods focus on localizing and repairing the broken consumer code. Rulebased approaches rewrite outdated API usages into their replacements using transformation rules that are hand-crafted or mined from past migrations [7], [9]. LLM-based program repair instead synthesizes a patch directly from the consumer code and a failing test, assuming the fix can be found within the project itself. This paradigm was established by SWE-bench [10] and now drives coding agents such as Codex CLI [11] and Claude Code [12]. Despite their difference in form, both treat dependency breaking-change repair as a same-repository problem, overlooking its inherently crossrepository nature. This leaves the repair under-informed and the model prone to abstain or mis-apply the fix, since the evidence for what to change resides upstream in release notes and API diffs, and no failing test localizes where the breakage occurs. For example, when a project upgrades JUnit from 4 to 5, the required@Before→@BeforeEachrename appears only in the JUnit 5 release notes, not in the consumer’s own code or tests. To study this cross-repository problem in real data, we need",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 3501,
+      "char_end": 5054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fae88cac45cf2d540ebbc0e36278a59c",
+      "kind": "paragraph",
+      "text": "a benchmark that no prior work provides: its instances must be driven by real dependency upgrades, carry the upstream",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 5056,
+      "char_end": 5173,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31e23f47ec63ae522bcbe94ed299c484",
+      "kind": "table",
+      "text": "arXiv:2607.17957v1  [cs.SE]  20 Jul 2026",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 5175,
+      "char_end": 5215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ca1c365e29fb85bf0e110e06bdaeb0b",
+      "kind": "paragraph",
+      "text": "evidence required to repair them, and be verified by running the consumer’s own tests. We therefore design a four-stage construction strategy to establish such a benchmark. It first mines dependency-update pull requests from GitHub, then filters them for repository and pull-request quality, next confirms the changes are caused by the upgrade and backed by upstream evidence, and finally keeps only instances whose upgrade breaks the consumer’s tests and whose patch repairs them in Docker. Through this strategy, we construct DEPBENCH, which includes 95 real-world instances across four ecosystems—Maven (38), npm (33), Cargo (15), and PyPI (9)—each paired with a Docker-based executable oracle that runs the consumer’s own test suite. Constructing DEPBENCHand analyzing its instances let us pinpoint the central challenges of cross-repository breakingchange repair. First, the decisive repair evidence is external and noisy, so the correct fix must be distilled from upstream release notes rather than read off the consumer code. In 57 of the 95 instances (60%) the developer’s patch adopts an upstream API symbol (e.g., a new import or namespace) that never appears in the consumer’s pre-upgrade sources. Second, localization gets no help from a failing test, so the affected call sites and imports must be found by other means and are widely diffuse. In DEPBENCH, the gold patches span a median of 10 files and",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "∗Carnegie Mellon University, Pittsburgh, PA, USA",
+        "INTRODUCTION"
+      ],
+      "char_start": 5217,
+      "char_end": 6632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9892769c37a69f0573d430d69460536b",
+      "kind": "heading",
+      "text": "edit hunks, and 85 of the 95 (89%) touch more than one",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "edit hunks, and 85 of the 95 (89%) touch more than one"
+      ],
+      "char_start": 6634,
+      "char_end": 6688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b56f5c6ee89f61f15fff2e8da3b52ad",
+      "kind": "paragraph",
+      "text": "file. Third, no single repair strategy fits all, so the edit must be tailored to the breaking-change type, which ranges across direct renames (27), compound API migrations (25), import migrations (23), and paradigm shifts (20). To address these challenges, we propose DEPREPAIR, a single-call LLM approach that treats dependency repair as an evidence-grounding problem. Specifically, DEPREPAIR structures the upstream evidence with three key components: (1)upstream evidence filter, which first collects and distills breaking-change information from the upstream library into a compact set of migration rules; (2)consumer-side usage locator, which then identifies the specific call sites and imports affected in the downstream project; and (3)subcategoryaware guide, which finally tailors the repair instructions to the type of breaking change (e.g., API migration, rename, import migration, or paradigm shift). To systematically evaluate DEPREPAIRand isolate the role of cross-repository evidence, we investigate four research questions (RQs): •RQ1 (Overall comparison):How does DEPREPAIR compare with prompt baselines and state-of-the-art coding agents, and are the differences statistically significant? This establishes whether grounding a single LLM call in structured upstream evidence can match multi-turn agents that repeatedly read and edit the repository. •RQ2 (Failure taxonomy):When repair fails,howdoes it fail? Characterizing the failure modes reveals whether the bottleneck is producinganyfix or producing acorrect",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "edit hunks, and 85 of the 95 (89%) touch more than one"
+      ],
+      "char_start": 6690,
+      "char_end": 8219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0b359cb7060d321df9907531183afe1",
+      "kind": "paragraph",
+      "text": "one, which dictates where evidence should intervene. •RQ3 (Evidence form and ablation):How does the formof upstream evidence—and each DEPREPAIR component—affect repair for both LLMs and agents? This tests our central hypothesis that the value of crossrepository context lies in itsprocessing, not its mere provision. •RQ4 (Subcategory analysis):How does performance vary across breaking-change subcategories, and where does structured evidence help most? We summarize our key findings as follows. ForRQ1, DEPREPAIRattains the highest executable pass rate on each backbone—89.5% with GPT-5.5 and 82.1% with Claude Opus 4.6—matching or surpassing multi-turn coding agents with a single LLM call, which shows that the bottleneck is access to the right cross-repository evidence rather than the amount of in-repository interaction. ForRQ2, the empty patch dominates: the most common failure is emittingnousable patch rather than an incorrect one, and raw upstream evidence aggravates it—Direct LLM (upstream) returns an empty patch on 32 of 95 instances, whereas DEPREPAIRcuts this to 10. For RQ3, cross-repository evidence helps only when structured— supplying the raw upstream changelog lowers pass rates by up to 10.5 percentage points for LLMs and up to 23.2 for agents, whereas the same evidence distilled into migration rules consistently improves them. ForRQ4, DEPREPAIR’s gains concentrate on direct-rename and compound API migrations, whereas paradigm shifts—which demand structural refactoring beyond rule-level edits—remain the hardest residual, solved on",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "edit hunks, and 85 of the 95 (89%) touch more than one"
+      ],
+      "char_start": 8221,
+      "char_end": 9783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d6c2ed9d0be62d6897b0e97177b2820",
+      "kind": "paragraph",
+      "text": "only 65–70% of cases even by the best method. Our contributions are: •We shift the perspective on dependency breaking-change repair from a same-repository task to a cross-repository one, recognizing that the decisive repair evidence lies upstream rather than in the consumer project. •We introduce DEPBENCH, a benchmark of 95 realworld dependency-update instances across four ecosystems, each with a verified ground-truth patch and a Docker-based executable oracle. •We propose DEPREPAIR, a single-call approach that grounds the model in distilled upstream evidence and tailors its guidance to the breaking-change type, matching or surpassing state-of-the-art coding agents at a fraction of their cost. •We show that raw upstream evidence hurts both LLMs and agents while distilled evidence consistently helps, and that theempty patch—not incorrect repair—is the dominant failure mode, which structured evidence sharply reduces (from 32 to 10 of 95 instances).",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "edit hunks, and 85 of the 95 (89%) touch more than one"
+      ],
+      "char_start": 9785,
+      "char_end": 10745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:195f40fbd727a522b8b9e5c3c4fbc9bc",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "edit hunks, and 85 of the 95 (89%) touch more than one",
+        "RELATEDWORK"
+      ],
+      "char_start": 10747,
+      "char_end": 10758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:671499db3c5ea113902c469fd9f19af3",
+      "kind": "heading",
+      "text": "A. Dependency Updates and Breaking Changes",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Dependency Updates and Breaking Changes"
+      ],
+      "char_start": 10760,
+      "char_end": 10802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5240c335aa6498e53ad309c75192d37",
+      "kind": "paragraph",
+      "text": "Prior work on dependency management measures the breaking-change problem or assists migration, but none automatically generates the consumer-side source patch that adapts a downstream project to an upstream update. One line characterizesthe problem empirically, quantifying the prevalence and client-side impact of breaking changes, behavioral",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Dependency Updates and Breaking Changes"
+      ],
+      "char_start": 10804,
+      "char_end": 11147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92b1000ebf06b431525d04e3879883ef",
+      "kind": "paragraph",
+      "text": "incompatibilities, and semantic-versioning violations across ecosystems [1], [5], [13]–[17], showing that most projects run outdated dependencies and negotiate breaking changes and API deprecations at a real cost [2], [3], [9], [18], [19]. This breaking-change burden is what keeps projects from staying current, with direct consequences for the software supply chain: stale and bloated dependencies, as well as dependency conflicts, expose projects to known vulnerabilities and supplychain attacks [6], [20]–[28], yet even automated upgrade pull requests are frequently ignored because they break the consumer’s build [29]–[31]. A second line providestooling that supports, but does not fully automate, migration: Henkel and Diwan [7] record and replay library-side API refactorings (CatchUp!), Lu et al. [4] propose strategies for minimizing breaking changes when mitigating technical lag, and earlier studies chart how libraries are migrated in practice [8], [32] and test for breaking changes across versions [33]. DEPRE- PAIRcloses this gap: rather than measuring or recording breaking changes, it distills upstream evidence into structured migration rules and uses them to generate the consumer-side source patch that resolves the breakage.",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Dependency Updates and Breaking Changes"
+      ],
+      "char_start": 11149,
+      "char_end": 12395,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65f8d16af5805defc2dd4ea731e45c71",
+      "kind": "heading",
+      "text": "B. Same-Repository Repair",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Same-Repository Repair"
+      ],
+      "char_start": 12397,
+      "char_end": 12422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:118f46dde16c056f6c912e5324a640e2",
+      "kind": "paragraph",
+      "text": "Existing automated repair for breaking changes, whether rule-based or LLM-based, shares a common assumption: the information needed to fix the code already livesinsidethe consumer project (or in rules derived from past migrations of it). We organize prior work along these two lines and contrast both with our cross-repository view.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Same-Repository Repair"
+      ],
+      "char_start": 12424,
+      "char_end": 12756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3f90538baead5791314a62b172d8538",
+      "kind": "heading",
+      "text": "Rule-Based Repair:Rule-based approaches rewrite out-",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Rule-Based Repair:Rule-based approaches rewrite out-"
+      ],
+      "char_start": 12758,
+      "char_end": 12810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b73754f43d8dffa6104a27ca2bd2c20",
+      "kind": "paragraph",
+      "text": "dated API usages into their replacements using transformation rules. Dig and Johnson characterized how APIs evolve through refactorings [9], and Henkel and Diwan’s CatchUp! records refactorings in the library and replays them on consumers [7]. To avoid hand-written rules, later work mines adaptations automatically: Dagenais and Robillard’s SemDiff recommends replacement methods by analyzing how the framework itself adapts to its own changes [34], Nguyen et al.’s LibSync learns API-usage adaptation patterns from already-migrated clients [35], Fazzini et al.’s AppEvolve infers and applies update edits from examples of other projects that completed the same migration [36], Xu et al.’s Meditor infers and applies API migration edits from prior client commits [37], and Lamothe et al.’s A3 assists API migrations using code examples [38]. These methods pre-encode the fix as transformation rules; they depend on either curated rules or a corpus of prior migrations, and they struggle when the upstream evidence is unstructured release notes rather than clean before/after examples. DEPREPAIRinstead distills such raw upstream evidence into migration rules at repair time, removing the dependence on pre-existing rule sets or migrated exemplars.",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Rule-Based Repair:Rule-based approaches rewrite out-"
+      ],
+      "char_start": 12812,
+      "char_end": 14060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba59a695e0950602bc36e6eead462233",
+      "kind": "heading",
+      "text": "LLM-Based Repair:Automated program repair has a",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "LLM-Based Repair:Automated program repair has a"
+      ],
+      "char_start": 14062,
+      "char_end": 14109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07b2d3bc9b1179c0e62e9d27b3e9ac89",
+      "kind": "paragraph",
+      "text": "long history, and large language models now drive its strongest results [39]–[42]. SWE-bench established real-world GitHub issues as a benchmark for this setting [10], spurring a range of repair systems. Agentless follows a non-agentic, two-phase localize-then-repair pipeline [43], whereas SWE-agent [44], OpenHands [45], AutoCodeRover [46], RepairAgent [47], and repository-level planners such as CodePlan [48] grant the model autonomy to navigate and edit repository files over multiple turns, and commercial agents such as Codex CLI [11] and Claude Code [12] apply the same paradigm in practice. All of these assume asame-repositorysetting: the bug report, relevant code, and fix reside within a single project, and the model recovers the fix by reading and editing that project. Dependency breaking-change repair violates this assumption, because the decisive evidence lies in the upstream library; DEPREPAIRaddresses this by explicitly grounding a single LLM call in distilled cross-repository evidence.",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "LLM-Based Repair:Automated program repair has a"
+      ],
+      "char_start": 14111,
+      "char_end": 15120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59ea801897d2776caf734787781aedfe",
+      "kind": "heading",
+      "text": "BENCHMARK",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "LLM-Based Repair:Automated program repair has a",
+        "BENCHMARK"
+      ],
+      "char_start": 15122,
+      "char_end": 15131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35d586c0f15d82fe68b78dd8f4acdd0c",
+      "kind": "heading",
+      "text": "A. Construction",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Construction"
+      ],
+      "char_start": 15133,
+      "char_end": 15148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48db81d08da2bf1481b2b1495dc8ddf3",
+      "kind": "paragraph",
+      "text": "We construct DEPBENCH, a benchmark of real-world dependency update instances drawn from open-source projects. Each instance represents a pull request that updates a dependency to a new major version and modifies consumer source code to adapt to breaking API changes introduced by the update. Fig. 1 summarizes the construction pipeline, which proceeds from candidate harvesting through quality filtering to oracle construction. a) Data sources.:We draw from four popular package ecosystems: Maven, npm, Cargo, and PyPI, covering both statically and dynamically typed languages. Within them we target 10 popular libraries undergoing a well-documented major-version transition: JUnit 4→5 and Spring Boot 2.7→3.0 (Maven), Vue 2→3, Next.js 12→13, and ESLint 8→9 (npm), Clap 3→4 and Tokio 0.3→1.0 (Cargo), and Pydantic 1.10→2.0, SQLAlchemy 1.4→2.0, and NumPy 1.26→2.0 (PyPI). b) Candidate harvest.:To collect genuine migration pull requests with high recall, we combine two complementary strategies.Query-driven retrievaluses keywords to search GitHub for pull requests that both bump a dependency version in a manifest file (e.g.pom.xml,package.json, Cargo.toml, orrequirements.txt) and modify source files in the same commit.Dependency-graph traversalfollows each library’s reverse dependency graph to consumers still pinning the old major version, surfacing migration commits that keyword search misses.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Construction"
+      ],
+      "char_start": 15150,
+      "char_end": 16551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f710b77cea878dc4201f5d93e5bda48",
+      "kind": "heading",
+      "text": "Quality Filter.:To retain only instances that are",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality Filter.:To retain only instances that are"
+      ],
+      "char_start": 16553,
+      "char_end": 16602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1047da9ed3dbbb01bad40bd0aae88d9",
+      "kind": "paragraph",
+      "text": "genuine, reproducible, and evidence-bearing, each candidate must clear three gates.Repository quality: the project must build, excluding forks and abandoned repositories, so an executable environment is reconstructable.Pull-request quality: the source edits must be caused by the update, excluding rollbacks, lockfile- or manifest-only changes, unrelated build churn, and patches touching files outside the consumer snapshot.Evidence quality: usable upstream signals—release notes, changelogs, or an API diff—must exist, since these are the inputs that DEPREPAIRand the upstream baselines consume.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality Filter.:To retain only instances that are"
+      ],
+      "char_start": 16604,
+      "char_end": 17201,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:439564f75456d5b2655c82f3f74781f3",
+      "kind": "heading",
+      "text": "Candidate Harvest",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Candidate Harvest"
+      ],
+      "char_start": 17203,
+      "char_end": 17220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8268b51560ec5bc5cd20ab2048be5b9",
+      "kind": "heading",
+      "text": "Query-driven",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Query-driven"
+      ],
+      "char_start": 17222,
+      "char_end": 17234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a56836dcd25cb1cf3edb1cb598499643",
+      "kind": "heading",
+      "text": "Retrieval",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Retrieval"
+      ],
+      "char_start": 17236,
+      "char_end": 17245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9dce5fc432857797c85580d4cb29d87c",
+      "kind": "heading",
+      "text": "Dependency-",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Dependency-"
+      ],
+      "char_start": 17247,
+      "char_end": 17258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ae4b59a490989c6c8054eb8b69a642e",
+      "kind": "paragraph",
+      "text": "graph traversal",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Dependency-"
+      ],
+      "char_start": 17260,
+      "char_end": 17275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec69f5f750819f8f0ec31a81e59df13d",
+      "kind": "heading",
+      "text": "Quality Filter",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality Filter"
+      ],
+      "char_start": 17277,
+      "char_end": 17291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e51fdbe05390eb15a31a15a89524331",
+      "kind": "heading",
+      "text": "Repository",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Repository"
+      ],
+      "char_start": 17293,
+      "char_end": 17303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d9cff336f078dffaa9d8079a0c26361",
+      "kind": "heading",
+      "text": "Quality",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality"
+      ],
+      "char_start": 17305,
+      "char_end": 17312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ab3f7ca2458004203e8c1c72c4d3173",
+      "kind": "heading",
+      "text": "Pull-Request",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Pull-Request"
+      ],
+      "char_start": 17314,
+      "char_end": 17326,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73e25e09d6fe0989552dd6f33364a485",
+      "kind": "heading",
+      "text": "Quality",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality"
+      ],
+      "char_start": 17328,
+      "char_end": 17335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec15f61449ef179aa37d988c16fe841f",
+      "kind": "heading",
+      "text": "Evidence",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Evidence"
+      ],
+      "char_start": 17337,
+      "char_end": 17345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a43e94a726444b3633c3dee4bcef95cb",
+      "kind": "heading",
+      "text": "Quality",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Quality"
+      ],
+      "char_start": 17347,
+      "char_end": 17354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:204ac4879ffad386fe2c089966994e49",
+      "kind": "heading",
+      "text": "Oracle Construction",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Oracle Construction"
+      ],
+      "char_start": 17356,
+      "char_end": 17375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0e36cab4fdd8f1293378e3bd6f03783",
+      "kind": "heading",
+      "text": "Image",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Image"
+      ],
+      "char_start": 17377,
+      "char_end": 17382,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70ce5230048e71f1a00045e93943312a",
+      "kind": "heading",
+      "text": "Construction",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Construction"
+      ],
+      "char_start": 17384,
+      "char_end": 17396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:145be553f11f69b05e515c75cc7a2889",
+      "kind": "heading",
+      "text": "Negative",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Negative"
+      ],
+      "char_start": 17398,
+      "char_end": 17406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecd5e8f6fb4c5565a7961420c49cc985",
+      "kind": "heading",
+      "text": "Test",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Test"
+      ],
+      "char_start": 17408,
+      "char_end": 17412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ae0b48b7ae784977353e37f7df5fe03",
+      "kind": "heading",
+      "text": "DepBenchData",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DepBenchData"
+      ],
+      "char_start": 17414,
+      "char_end": 17426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37bb1ef695f276715a1d00db0e61779d",
+      "kind": "heading",
+      "text": "Sources",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Sources"
+      ],
+      "char_start": 17428,
+      "char_end": 17435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28fdb580fd16b2b95cc6bd43a453eda8",
+      "kind": "caption",
+      "text": "Fig. 1. Construction pipeline for DEPBENCH. Candidate pull requests are first harvested from popular packages across four ecosystems by query-driven",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Sources"
+      ],
+      "char_start": 17437,
+      "char_end": 17585,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5aa979cb3fb407a533d5c21696e6227d",
+      "kind": "paragraph",
+      "text": "retrieval and dependency-graph traversal. They are then passed through quality filters that retain only genuine, reproducible, and evidence-bearing PRs, and finally paired with a Docker-based executable oracle, yielding 95 self-contained instances. d) Oracle construction.:We package the pre-update snapshot, update metadata, upstream evidence, and the developer’s gold patch into a self-contained Docker image, then probe it with two checks: anegative testconfirming the un-repaired snapshot actually fails the breakage-related tests, and apositive testconfirming the gold patch makes those tests pass. Building successfully is necessary but not sufficient: we keep onlyfeasibleinstances—those exhibiting real, reproducible breakage that the gold patch demonstrably repairs. The 95 feasible instances surviving all three stages constitute DEPBENCH.",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Sources"
+      ],
+      "char_start": 17587,
+      "char_end": 18436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cdd140e55bf40898fbed5edeca5b9f6",
+      "kind": "heading",
+      "text": "B. Breaking-Change Taxonomy",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy"
+      ],
+      "char_start": 18438,
+      "char_end": 18465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:775dc7c858e7095f79b8d0bc2fa114d7",
+      "kind": "paragraph",
+      "text": "We classify each instance into one of four subcategories based on the type of upstream breaking change: •Direct rename(27 instances): Symbols, types, or import paths are renamed in the upstream API (e.g., clap::App→clap::Command). •Compound API migration(25): Multiple related APIs change simultaneously, requiring coordinated multi-site modifications (e.g., Spring Boot annotation and property changes). •Import migration(23): The module structure is reorganized upstream, requiring import path updates throughout the consumer (e.g., JUnit 4→JUnit 5 namespace migration). •Paradigm shift(20): The upstream API’s design philosophy changes fundamentally (e.g., Vue 2 Options API→ Vue 3 Composition API), requiring structural refactoring beyond simple renaming.",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy"
+      ],
+      "char_start": 18467,
+      "char_end": 19226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c01b8d4ead6fc725b8f3077b2ce7490",
+      "kind": "heading",
+      "text": "Benchmark Statistics",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy",
+        "Benchmark Statistics"
+      ],
+      "char_start": 19228,
+      "char_end": 19248,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcfa1e6a1708100749bc14d02d0c53d8",
+      "kind": "paragraph",
+      "text": "The final benchmark comprises 95 instances across four package ecosystems, partitioned cleanly into the four breakingchange subcategories above, as shown in Table I. Table II shows the target packages and their version transitions. Each instance provides on the order of ten source files as context to the tool, and the ground-truth patches modify tens of diff hunks on average (up to several hundred), reflecting the non-trivial nature of real-world migration edits.",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy",
+        "Benchmark Statistics"
+      ],
+      "char_start": 19250,
+      "char_end": 19717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:002c3d5abdad8ce2e3cb97590f85c8a9",
+      "kind": "heading",
+      "text": "APPROACH",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy",
+        "APPROACH"
+      ],
+      "char_start": 19719,
+      "char_end": 19727,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5dfa92349fd38b6105d88f1b0d03080",
+      "kind": "paragraph",
+      "text": "DEPREPAIRgrounds the entire repair in the upstream evidence. Because raw evidence is not directly actionable,",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Breaking-Change Taxonomy",
+        "APPROACH"
+      ],
+      "char_start": 19729,
+      "char_end": 19838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:059df61dc35dcf668ee14d9310d55174",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE I"
+      ],
+      "char_start": 19840,
+      "char_end": 19847,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:767a1af8b4d591f8dd6afd16511e74ec",
+      "kind": "heading",
+      "text": "BENCHMARK DISTRIBUTION BY ECOSYSTEM AND BREAKING-CHANGE",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "BENCHMARK DISTRIBUTION BY ECOSYSTEM AND BREAKING-CHANGE"
+      ],
+      "char_start": 19849,
+      "char_end": 19904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f976b16e1fa609e1e285ae3422a7780",
+      "kind": "paragraph",
+      "text": "SUBCATEGORY.",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "BENCHMARK DISTRIBUTION BY ECOSYSTEM AND BREAKING-CHANGE"
+      ],
+      "char_start": 19906,
+      "char_end": 19918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:185fc26d94f03bbb520ec6538c49b71b",
+      "kind": "heading",
+      "text": "Subcategory Maven npm Cargo PyPI Total",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Subcategory Maven npm Cargo PyPI Total"
+      ],
+      "char_start": 19920,
+      "char_end": 19958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08301205093a3350e7f22ff6dbcf2dfa",
+      "kind": "paragraph",
+      "text": "Direct rename 0 6 15 6 27 Compound API migr. 19 4 0 2 25 Import migration 19 4 0 0 23 Paradigm shift 0 19 0 1 20 Total 38 33 15 9 95",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Subcategory Maven npm Cargo PyPI Total"
+      ],
+      "char_start": 19960,
+      "char_end": 20092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:123d9a6b5fca550223e62557d97956d4",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE II"
+      ],
+      "char_start": 20094,
+      "char_end": 20102,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1ffd44bc6b62a306869ca7829cdff25",
+      "kind": "paragraph",
+      "text": "TARGET PACKAGES AND VERSION TRANSITIONS.",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE II"
+      ],
+      "char_start": 20104,
+      "char_end": 20144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb02890cd367de5e5ec66677c99e8d67",
+      "kind": "heading",
+      "text": "Package EcosystemnVersion",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Package EcosystemnVersion"
+      ],
+      "char_start": 20146,
+      "char_end": 20171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1480e26a3bff0227bd4244253be92f9a",
+      "kind": "paragraph",
+      "text": "Vue npm 20 2→3 JUnit Maven 19 4→5 Spring Boot Maven 19 2.7→3.0 Clap Cargo 11 3→4 Next.js npm 8 12→13 Pydantic PyPI 6 1.10→2.0 ESLint npm 5 8→9 Tokio Cargo 4 0.3→1.0 SQLAlchemy PyPI 2 1.4→2.0 NumPy PyPI 1 1.26→2.0 DEPREPAIRstructures it into the three decisions a repair must make:whatchanged upstream,whereit affects the consumer, andhowto edit. Each decision is produced by a dedicated transformation and composed into a single LLM call, as shown in Fig. 2. We use the JUnit 4→5 migrationexec-114as a running example throughout this section.",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Package EcosystemnVersion"
+      ],
+      "char_start": 20173,
+      "char_end": 20715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:854744fe3e276f01a875f97580b3d614",
+      "kind": "heading",
+      "text": "A. Problem Formulation",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Problem Formulation"
+      ],
+      "char_start": 20717,
+      "char_end": 20739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24dc177012b22672df345ee80681c004",
+      "kind": "paragraph",
+      "text": "We formalize dependency breaking-change repair as a function of three inputs. Thedependency updateu= (p, vold , vnew )names the packagepand its old and new versions. Theconsumer snapshotC={f 1, . . . , fn}is the set of source files in the project before the update is applied. Theupstream evidenceEis the unstructured documentation associated withu, such as release notes, changelogs, migration guides, and version diffs. The goal is to produce a patch∆(a unified diff overC) such that, after applying∆and bumping ptov new , the consumer’s own test suite passes.",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Problem Formulation"
+      ],
+      "char_start": 20741,
+      "char_end": 21303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6822115687a803acbc87318e8bb7fc5c",
+      "kind": "heading",
+      "text": "Raw Evidence",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Raw Evidence"
+      ],
+      "char_start": 21305,
+      "char_end": 21317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a30bd556e54d9fe01e802f1e8d35917e",
+      "kind": "heading",
+      "text": "Clear Rules",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Clear Rules"
+      ],
+      "char_start": 21319,
+      "char_end": 21330,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae56426cb6f60024854cc81f82dfbbd4",
+      "kind": "paragraph",
+      "text": "① Evidence Distiller",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Clear Rules"
+      ],
+      "char_start": 21332,
+      "char_end": 21352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8930adf671aded520a6d63f5953c1f5e",
+      "kind": "heading",
+      "text": "Localized Code",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Localized Code"
+      ],
+      "char_start": 21354,
+      "char_end": 21368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6632e510a119dfc6606d84c724d7d42",
+      "kind": "paragraph",
+      "text": "② Code Locator",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Localized Code"
+      ],
+      "char_start": 21370,
+      "char_end": 21384,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ca2ff9f74f2994eb1a7467c2736426d",
+      "kind": "heading",
+      "text": "User Code",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "User Code"
+      ],
+      "char_start": 21386,
+      "char_end": 21395,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77610396465b34cf9a41d29a9d95ca96",
+      "kind": "paragraph",
+      "text": "③ Subcategory Guide",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "User Code"
+      ],
+      "char_start": 21397,
+      "char_end": 21416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c542f1c268f8a97447981f3c8e486a6d",
+      "kind": "heading",
+      "text": "Subcategories",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Subcategories"
+      ],
+      "char_start": 21418,
+      "char_end": 21431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76aa3009992af948dd49a6355f6e9a7f",
+      "kind": "heading",
+      "text": "Import Migration",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Import Migration"
+      ],
+      "char_start": 21433,
+      "char_end": 21449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23b444cf912a6b3412a7bcc277881e0a",
+      "kind": "heading",
+      "text": "Direct Rename",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Direct Rename"
+      ],
+      "char_start": 21451,
+      "char_end": 21464,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:490fa8606adb8693ef2dfb51a6592b1c",
+      "kind": "heading",
+      "text": "Paradigm Shift",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Paradigm Shift"
+      ],
+      "char_start": 21466,
+      "char_end": 21480,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88a079f505ca266a729255143380bfc2",
+      "kind": "heading",
+      "text": "API Migration",
+      "order": 80,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "API Migration"
+      ],
+      "char_start": 21482,
+      "char_end": 21495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e47d7fcb5def5490202cadf945732ad0",
+      "kind": "heading",
+      "text": "Paradigm Shift",
+      "order": 81,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Paradigm Shift"
+      ],
+      "char_start": 21497,
+      "char_end": 21511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6288094c13bd337e29b45d6a9d63067a",
+      "kind": "heading",
+      "text": "Guidance",
+      "order": 82,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Guidance"
+      ],
+      "char_start": 21513,
+      "char_end": 21521,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d97a6767deede5db3cf71678f32e8db",
+      "kind": "heading",
+      "text": "Import Migration",
+      "order": 83,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Import Migration"
+      ],
+      "char_start": 21523,
+      "char_end": 21539,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b855e4bbd7e6804299a88c1dbfef3dd2",
+      "kind": "heading",
+      "text": "Guidance",
+      "order": 84,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Guidance"
+      ],
+      "char_start": 21541,
+      "char_end": 21549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0f9691481aa1be5d93d782fc4218c3d",
+      "kind": "paragraph",
+      "text": "④ Single-turn LLM",
+      "order": 85,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Guidance"
+      ],
+      "char_start": 21551,
+      "char_end": 21568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ebb579cddef23b3623b27213eef65c9",
+      "kind": "heading",
+      "text": "Guidance",
+      "order": 86,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Guidance"
+      ],
+      "char_start": 21570,
+      "char_end": 21578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43ebf132b53fc346b3e4be222876b210",
+      "kind": "heading",
+      "text": "Prompt",
+      "order": 87,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Prompt"
+      ],
+      "char_start": 21580,
+      "char_end": 21586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff0673aa9932298d43df0ac402c09f56",
+      "kind": "heading",
+      "text": "Unified Diff",
+      "order": 88,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Unified Diff"
+      ],
+      "char_start": 21588,
+      "char_end": 21600,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08a24d87c5eaba14ba76cf8e683505a2",
+      "kind": "caption",
+      "text": "Fig. 2. Overview of the DEPREPAIRapproach. Three evidence transformations: anevidence filterthat distills raw upstream changelogs into structured",
+      "order": 89,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Unified Diff"
+      ],
+      "char_start": 21602,
+      "char_end": 21747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a53a3f9d19058eb3db8d70ec3e52b181",
+      "kind": "paragraph",
+      "text": "migration rules (what), ausage locatorthat connects those rules to affected consumer call sites (where), and asubcategory guidethat tailors the repair strategy to the breaking-change type (how). Finally, all these are assembled into a single LLM call that emits a unified diff, verified by the Docker-based executable oracle. This formulation makes thecross-repositorynature of the task explicit: the signal that determines a correct∆is concentrated inE, which originates outsideC, and unlike conventional repair there is no failing test insideCthat localizes the fault. DEPREPAIRproduces∆in a single generation step that composes three evidence-derived inputs: ∆ = LLM",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Unified Diff"
+      ],
+      "char_start": 21749,
+      "char_end": 22418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9337ae6598b1275a0d61ef1289f3c106",
+      "kind": "paragraph",
+      "text": "ASSEMBLE(R, L, g, C)",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Unified Diff"
+      ],
+      "char_start": 22420,
+      "char_end": 22440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6d52060abc756f494345ef638c9c938",
+      "kind": "paragraph",
+      "text": ",(1) where the migration rulesR, the localization hintL, and the subcategory instructiongare produced by three transformations of the inputs:",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Unified Diff"
+      ],
+      "char_start": 22442,
+      "char_end": 22583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e32ab8c1117f1d9a02dc53dc041e7c2c",
+      "kind": "heading",
+      "text": "R=FILTER(u, E),(2)",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "R=FILTER(u, E),(2)"
+      ],
+      "char_start": 22585,
+      "char_end": 22603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69f1fbdac156e7dfafb97a47249e1ede",
+      "kind": "heading",
+      "text": "L=LOCALIZE(C, R),(3)",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "L=LOCALIZE(C, R),(3)"
+      ],
+      "char_start": 22605,
+      "char_end": 22625,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3c4531075070436f33fb724a0c2ce36",
+      "kind": "paragraph",
+      "text": "g=GUIDE(u).(4) The four subsections below develop these operators in turn.",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "L=LOCALIZE(C, R),(3)"
+      ],
+      "char_start": 22627,
+      "char_end": 22701,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40db080f74c861e8afaee71d6dd989c7",
+      "kind": "heading",
+      "text": "B. Evidence Filter:whatchanged",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Evidence Filter:whatchanged"
+      ],
+      "char_start": 22703,
+      "char_end": 22733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b779c10904adedc01d8496584df0843",
+      "kind": "paragraph",
+      "text": "To address the noise interference caused by raw upstream evidence, the evidence filter distills the raw evidenceEinto a compact, structured set ofmigration rulesR. Specifically, it first gathers candidate evidence for the version range (vold , vnew )from sources that are routinely available across ecosystems: •release notes and changelogs from the package registry (Maven Central, npm, crates.io, PyPI); •upstream source diffs between the two versions, when the project is open source; •deprecation and removal markers in API documentation; and •dedicated migration guides, when the maintainers publish them. However, this evidence is often noisy, mixing a few consumer-visible breaking changes with many internal refactorings, performance notes, and unrelated features. Thus, the filter then prompts the backbone LLM to distill this evidence into a list of rules, where each ruler∈Rrecords theold API surface, itsnewreplacement, and a one-line description of the required edit, discarding the surrounding prose. For our running exampleexec-114, this stage yields rules for the JUnit 4→5 namespace move and annotation renames, such as: {old: \"org.junit.Before\", new: \"org.junit.jupiter.api.BeforeEach\", kind: import+annotation rename} so that downstream reasoning operates on actionable facts rather than narrative text.",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Evidence Filter:whatchanged"
+      ],
+      "char_start": 22735,
+      "char_end": 24057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f0c2473a942a183f8b9723411c8f20c",
+      "kind": "heading",
+      "text": "Usage Locator:whereit matters",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Evidence Filter:whatchanged",
+        "Usage Locator:whereit matters"
+      ],
+      "char_start": 24059,
+      "char_end": 24088,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3938805faec667d043d0be19dbadf5cf",
+      "kind": "paragraph",
+      "text": "The second stage, LOCALIZE, identifies which parts of the consumer are affected by the rules inR, producing a localization hintL. Whereas conventional repair localizes from a failing test or a bug report, no such signal exists here; our localization is insteadAPI-driven, connecting each rule’s old API surface to its usage sites inC. For every ruler∈R we scan the consumer files for: •imports of changed or removed symbols; •call sites of modified APIs; •code patterns matching renamed or restructured constructs; and •transitive uses reached through local wrappers or reexports. The result is a list of (file, line, matched rule) anchors that narrows the model’s attention to the regions that actually need editing. Onexec-114, LOCALIZEflags the JUnit imports and the@Before/@Testannotation sites across the test files, pointing the model straight at the lines to change.",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Evidence Filter:whatchanged",
+        "Usage Locator:whereit matters"
+      ],
+      "char_start": 24090,
+      "char_end": 24963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d0e950b877e2d5e51e7f9dec58a4460",
+      "kind": "paragraph",
+      "text": "D. Subcategory Guide:howto edit Knowingwhatchanged andwhereit is used still leaves openhowto edit: the same rules call for a mechanical sweep in one case and a structural rewrite in another. The third stage, GUIDE, supplies the model with an editing strategy matched to the kind of change at hand. It first classifies the change type based on the migration rulesR: pure symbol substitutions as a direct rename, relocated import paths as animport migration, several interacting rules as acompound API migration, and rules that alter a design contract as aparadigm shift. It then attaches the matching instructiongthat tells the model how to apply the rules: •fordirect renames,gemphasizes systematic, exhaustive symbol replacement across all occurrences; •forimport migrations,gstresses updating import paths consistently while leaving call sites intact; •forcompound API migrations,gwarns that several related changes must be applied together or the patch will regress; and •forparadigm shifts,ginstructs the model to perform structural refactoring guided by the migration rules rather than a one-to-one substitution. Onexec-114, the rules touch a namespace, several annotations, and an assertion API at once, so GUIDEreads the change as a compound API migration and tells the model to apply the three in concert.",
+      "order": 100,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Evidence Filter:whatchanged",
+        "Usage Locator:whereit matters"
+      ],
+      "char_start": 24965,
+      "char_end": 26278,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aac02c8c4837b0f1160dc5ee6697982c",
+      "kind": "heading",
+      "text": "E. Assembly and Single-Call Generation",
+      "order": 101,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "E. Assembly and Single-Call Generation"
+      ],
+      "char_start": 26280,
+      "char_end": 26318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2175825a0ab5b1ffcf58e399c7fc3567",
+      "kind": "paragraph",
+      "text": "Finally, ASSEMBLEcomposes the four ingredients into a single prompt: system instructions fixing the output format, the migration rulesR, the localization hintL, the subcategory instructiong, and the consumer sourceC. The backbone LLM answers in one call with a unified diff∆, which we apply to the consumer snapshot and verify with the Docker-based executable oracle (Section V).",
+      "order": 102,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "E. Assembly and Single-Call Generation"
+      ],
+      "char_start": 26320,
+      "char_end": 26699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5affcdea07a208a5a48544b2baf80349",
+      "kind": "heading",
+      "text": "EVALUATION",
+      "order": 103,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "E. Assembly and Single-Call Generation",
+        "EVALUATION"
+      ],
+      "char_start": 26701,
+      "char_end": 26711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ead8ae7c1009df15132de2b64373985",
+      "kind": "heading",
+      "text": "A. Research Questions",
+      "order": 104,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Research Questions"
+      ],
+      "char_start": 26713,
+      "char_end": 26734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:086c2526bf3ebdcc8b7aa7fb1444ce17",
+      "kind": "paragraph",
+      "text": "We investigate four research questions: •RQ1(Overall comparison): How does DEPREPAIRcompare with baseline approaches and state-of-the-art coding agents, and are the differences statistically significant? •RQ2(Failure taxonomy): When repair fails,howdoes it fail, and what does the distribution of failure modes reveal about the underlying difficulty? •RQ3(Evidence form and ablation): How does theformof upstream evidence—and each DEPREPAIRcomponent— affect repair performance for both LLMs and agents? •RQ4(Subcategory analysis): How does repair performance vary across breaking-change subcategories, and where does structured evidence help most?",
+      "order": 105,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "A. Research Questions"
+      ],
+      "char_start": 26736,
+      "char_end": 27383,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b3666bef5fdf5351649c71f6e211a2c",
+      "kind": "heading",
+      "text": "B. Experimental Setup",
+      "order": 106,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup"
+      ],
+      "char_start": 27385,
+      "char_end": 27406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:580216b5ad679c2415db4b581ed90244",
+      "kind": "paragraph",
+      "text": "Models.We evaluate with two LLM backbones to ensure generalizability: GPT-5.5 (OpenAI) and Claude Opus 4.6 (Anthropic), both set with a 300-second timeout and temperature 0. Direct LLM baselines.Our method DEPREPAIRis a single-call (non-agentic) LLM approach. We therefore compare it against the same single-call interface without structured evidence, which we termDirect LLM[39], prompting each backbone once to emit a unified diff under two evidence conditions: •DEPREPAIR(our method): Full pipeline with structured migration rules, localization hints, and subcategory-aware instructions; unified diff output. •Direct LLM (upstream): Raw upstream changelog/migration guide included verbatim; unified diff output. •Direct LLM (minimal): Only dependency update metadata and consumer code; no upstream evidence; unified diff output. Agentic baselines.We compare against two state-of-theart coding agents that follow the agentic, multi-turn repair paradigm [44], each evaluated in bothminimalandupstream configurations: •Codex CLI[11]: OpenAI’s coding agent (GPT-5.5 backbone) with multi-turn file editing. •Claude Code[12]: Anthropic’s coding agent (Claude Opus 4.6 backbone) with autonomous planning and editing. Controlled generation setting.To isolate the role of upstream evidence, every method—prompt baselines and agents alike—generates its patch from the same consumer snapshot without an in-loop build/test environment, and the resulting patch is verified afterwards by the shared Docker oracle. This holds the execution interface fixed across methods, so that",
+      "order": 107,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup"
+      ],
+      "char_start": 27408,
+      "char_end": 28975,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e134455f0d4f84322863557ab6b96e3e",
+      "kind": "paragraph",
+      "text": "differences in pass rate reflect theformof cross-repository evidence rather than the amount of in-repository execution feedback available during generation. Evaluation oracle.We use anexecution-based oracle, which grounds every verdict in the consumer’s own tests rather than textual similarity to the developer patch. For each instance, we build the consumer project in a Docker container, apply the candidate patch, and run the project’s test suite. An instance is counted as PASSif all breakage-related tests pass, and FAILotherwise. Instances where the LLM times out or returns an API error are counted as failures. We report the pass rate: PASS/95across all feasible instances.",
+      "order": 108,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup"
+      ],
+      "char_start": 28977,
+      "char_end": 29659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b818ece4bb74095fc2982d187716c32",
+      "kind": "heading",
+      "text": "RQ1: Overall Comparison",
+      "order": 109,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup",
+        "RQ1: Overall Comparison"
+      ],
+      "char_start": 29661,
+      "char_end": 29684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73e2c4615c5c0cd38ddf4c68a1b46fd2",
+      "kind": "paragraph",
+      "text": "Table III presents the main results across all methods and both backbones. We test each pairwise gap to DEPREPAIRwith theMc- Nemar paired test(exact binomial form when the discordant count is small). •DEPREPAIRattains the highest pass rate.On both backbones it tops every baseline and agent, reaching",
+      "order": 110,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup",
+        "RQ1: Overall Comparison"
+      ],
+      "char_start": 29686,
+      "char_end": 29986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:619a22e38ec3617f094c9a9ae4c17488",
+      "kind": "heading",
+      "text": "5% on GPT-5.5 and 82.1% on Opus 4.6.",
+      "order": 111,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup",
+        "5% on GPT-5.5 and 82.1% on Opus 4.6."
+      ],
+      "char_start": 29988,
+      "char_end": 30024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d46c62b954a0f73fa435bd940187499f",
+      "kind": "paragraph",
+      "text": "•DEPREPAIRsignificantly beats the same-backbone Direct LLM.DEPREPAIRadds+7 instances on GPT-5.5",
+      "order": 112,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "B. Experimental Setup",
+        "5% on GPT-5.5 and 82.1% on Opus 4.6."
+      ],
+      "char_start": 30026,
+      "char_end": 30121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29889aad0cf0b5c38de5bffa3dfeb7a2",
+      "kind": "heading",
+      "text": "TABLE III",
+      "order": 113,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE III"
+      ],
+      "char_start": 30123,
+      "char_end": 30132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e307c6502f00705208c44611ccc7d923",
+      "kind": "heading",
+      "text": "OVERALL COMPARISON ON95BENCHMARK INSTANCES,GROUPED BY",
+      "order": 114,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "OVERALL COMPARISON ON95BENCHMARK INSTANCES,GROUPED BY"
+      ],
+      "char_start": 30134,
+      "char_end": 30187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c2164c66f5b541d6f49f3507845a4a5",
+      "kind": "heading",
+      "text": "BACKBONE. PASS RATE= PASS/95. ON EACH BACKBONE, DEPREPAIR IS",
+      "order": 115,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "BACKBONE. PASS RATE= PASS/95. ON EACH BACKBONE, DEPREPAIR IS"
+      ],
+      "char_start": 30189,
+      "char_end": 30249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13c67ac4c36aba7bc965c55abbc3850c",
+      "kind": "heading",
+      "text": "SIGNIFICANTLY HIGHER THAN EVERY OTHER METHOD(MCNEMAR",
+      "order": 116,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "SIGNIFICANTLY HIGHER THAN EVERY OTHER METHOD(MCNEMAR"
+      ],
+      "char_start": 30251,
+      "char_end": 30303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec07bcfa85505b36f9b82994faf27ed6",
+      "kind": "heading",
+      "text": "PAIRED TEST,p <0.05)EXCEPT THE RUNNER-UP(†),WHOSE GAP TO",
+      "order": 117,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "PAIRED TEST,p <0.05)EXCEPT THE RUNNER-UP(†),WHOSE GAP TO"
+      ],
+      "char_start": 30305,
+      "char_end": 30361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b567a336335324e083ffde709c67f655",
+      "kind": "paragraph",
+      "text": "DEPREPAIR IS NOT STATISTICALLY SIGNIFICANT.",
+      "order": 118,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "PAIRED TEST,p <0.05)EXCEPT THE RUNNER-UP(†),WHOSE GAP TO"
+      ],
+      "char_start": 30363,
+      "char_end": 30406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c5eb2a93f0885bb44f1e53140b3091a",
+      "kind": "heading",
+      "text": "Method Pass Rate",
+      "order": 119,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method Pass Rate"
+      ],
+      "char_start": 30408,
+      "char_end": 30424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44da930d2d43a727fd09f2a9310f6268",
+      "kind": "paragraph",
+      "text": "GPT-5.5 backbone",
+      "order": 120,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method Pass Rate"
+      ],
+      "char_start": 30426,
+      "char_end": 30442,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83026f2fae11ee27507bc9fce5977669",
+      "kind": "heading",
+      "text": "DEPREPAIR85 89.5%",
+      "order": 121,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR85 89.5%"
+      ],
+      "char_start": 30444,
+      "char_end": 30461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7bdbda0d641ee9865b615b210c95e7e",
+      "kind": "paragraph",
+      "text": "Agentic Codex (minimal) 83 87.4%† Direct LLM (minimal) 78 82.1% Direct LLM (upstream) 71 74.7% Agentic Codex (upstream) 70 73.7% Claude Opus 4.6 backbone",
+      "order": 122,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR85 89.5%"
+      ],
+      "char_start": 30463,
+      "char_end": 30616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:128e554e9f971bf17de413790f57c063",
+      "kind": "heading",
+      "text": "DEPREPAIR78 82.1%",
+      "order": 123,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR78 82.1%"
+      ],
+      "char_start": 30618,
+      "char_end": 30635,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b16f349f3e91bccd1645b409eb233737",
+      "kind": "paragraph",
+      "text": "Agentic Claude Code (minimal) 77 81.1%† Direct LLM (minimal) 68 71.6% Direct LLM (upstream) 58 61.1% Agentic Claude Code (upstream) 55 57.9% (p=0.016) and+10 on Opus 4.6 (p=0.002) over Direct LLM (minimal), withnoinstance regressing in the other direction (b01=0on both backbones)—a clean, one-sided improvement. •DEPREPAIRmatches, but does not beat, the strongest agent.The closest competitors are the cross-architecture agents in their minimal configurations—Codex (87.4%) and Claude Code (81.1%). DEPREPAIR’s edge here is only+2 and+1 instances and doesnotreach significance, so the honest reading ison par with the best agents, not ahead of them. •Raw upstream evidence sinks the agents.Both agents are strong with minimal context but collapse once fed the raw changelog—Codex to 73.7% and Claude Code to",
+      "order": 124,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR78 82.1%"
+      ],
+      "char_start": 30637,
+      "char_end": 31445,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8405d55aa7256c704506e668e93a202b",
+      "kind": "heading",
+      "text": "9%, both significantly below DEPREPAIR(p<0.001).",
+      "order": 125,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR78 82.1%",
+        "9%, both significantly below DEPREPAIR(p<0.001)."
+      ],
+      "char_start": 31447,
+      "char_end": 31495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14ea1cbf0cb79ebd836315dddf080f9e",
+      "kind": "paragraph",
+      "text": "D. RQ2: The Empty Patch as the Dominant Failure To analyze repair failure modes, we examine the artifact each method generates before oracle evaluation, distinguishing a produced candidate patch from anempty patch(i.e., no code diff). Failures rarely arise from explicit abstention; instead, the model often incorrectly concludes that the consumer code remains compatible and needs no modification. Such falsenegative localization errors manifest as empty patches despite the existence of a required repair. Because empty patches are identifiable directly from generation logs, independent of oracle behavior, they serve as a robust proxy for localization failures. Table IV summarizes each method’s empty-patch frequency over the 95 benchmark instances. Two findings stand out. •The empty patch is the dominant failure.Even the strongest LLM baselines decline to emit a patch on roughly a fifth of instances (21/95), andrawupstream evidence makes this sharply worse—Direct LLM (upstream) returns an empty patch on 32/95 (33.7%) and Agentic Claude Code on 35/95 (36.8%). The largest single barrier",
+      "order": 126,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR78 82.1%",
+        "9%, both significantly below DEPREPAIR(p<0.001)."
+      ],
+      "char_start": 31497,
+      "char_end": 32594,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fefce0c73fc25264afc24d4f9ca3c607",
+      "kind": "heading",
+      "text": "TABLE IV",
+      "order": 127,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE IV"
+      ],
+      "char_start": 32596,
+      "char_end": 32604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e62fc7184e19780721a2b634474b28d",
+      "kind": "heading",
+      "text": "GENERATION-SIDE EMPTY PATCHES:NUMBER OF INSTANCES(OUT OF95)",
+      "order": 128,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "GENERATION-SIDE EMPTY PATCHES:NUMBER OF INSTANCES(OUT OF95)"
+      ],
+      "char_start": 32606,
+      "char_end": 32665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1bd2d4b61c0aff905d1d11270195bb3",
+      "kind": "heading",
+      "text": "ON WHICH THE METHOD EMITSnoPATCH. RAW UPSTREAM EVIDENCE",
+      "order": 129,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ON WHICH THE METHOD EMITSnoPATCH. RAW UPSTREAM EVIDENCE"
+      ],
+      "char_start": 32667,
+      "char_end": 32722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0ad171ef32b93d1e8612c83240d4cb7",
+      "kind": "paragraph",
+      "text": "DRIVES THE MODEL TO EMIT AN EMPTY PATCH FAR MORE OFTEN; DEPREPAIR’S STRUCTURED EVIDENCE DOES SO LEAST. Method Empty patches Rate",
+      "order": 130,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ON WHICH THE METHOD EMITSnoPATCH. RAW UPSTREAM EVIDENCE"
+      ],
+      "char_start": 32724,
+      "char_end": 32852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2f2c6e8039978b03884cbc772a554f8",
+      "kind": "heading",
+      "text": "DEPREPAIR10 10.5%",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR10 10.5%"
+      ],
+      "char_start": 32854,
+      "char_end": 32871,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8b9843c0bab713daabb3aab582605fa",
+      "kind": "paragraph",
+      "text": "Direct LLM (minimal) 21 22.1% Agentic Codex (minimal) 21 22.1% Direct LLM (upstream) 32 33.7% Agentic Claude Code (minimal) 35 36.8% is thereforeproducing any fix at all, and unstructured evidence aggravates it. •DEPREPAIRattacks exactly this barrier.It returns an empty patch on only 10/95 instances (10.5%), less than half the rate of Direct LLM (minimal), and— crucially—the patches itdoesemit almost always pass: on GPT-5.5 every one of the 85 emitted diffs clears the executable oracle. In other words, structured evidence converts the model’s non-answers into small, applicable, oracle-passing patches. This empty-patch gap is the largest single lever on pass rate: the raw-evidence configurations abstain on 32–35 of 95 instances, whereas DEPREPAIRdoes so on only 10, turning non-answers into applicable patches. E. RQ3a: Evidence as a Double-Edged Sword A surprising finding is that providing raw upstream evidence hurtsperformance for both LLMs and agents.",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR10 10.5%"
+      ],
+      "char_start": 32873,
+      "char_end": 33838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15507c49fc6f556da6ce3df8fc15d6a6",
+      "kind": "heading",
+      "text": "TABLE V",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE V"
+      ],
+      "char_start": 33840,
+      "char_end": 33847,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f43586442c7656110ea83c727401412b",
+      "kind": "heading",
+      "text": "IMPACT OF EVIDENCE FORM ON PASS RATE. RAW EVIDENCE",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "IMPACT OF EVIDENCE FORM ON PASS RATE. RAW EVIDENCE"
+      ],
+      "char_start": 33849,
+      "char_end": 33899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b93226f42a327ff7c8087e5a624d8714",
+      "kind": "heading",
+      "text": "CONSISTENTLY REDUCES PERFORMANCE VS.THE NO-EVIDENCE",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "CONSISTENTLY REDUCES PERFORMANCE VS.THE NO-EVIDENCE"
+      ],
+      "char_start": 33901,
+      "char_end": 33952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e61ed92ef862786f3852be778eb8c8d2",
+      "kind": "paragraph",
+      "text": "BASELINE.",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "CONSISTENTLY REDUCES PERFORMANCE VS.THE NO-EVIDENCE"
+      ],
+      "char_start": 33954,
+      "char_end": 33963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e685ef74df8e100f08d0dd97b14ccff",
+      "kind": "heading",
+      "text": "Method Minimal Upstream∆",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method Minimal Upstream∆"
+      ],
+      "char_start": 33965,
+      "char_end": 33989,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9682bf363c3671c71d75da9790293d4",
+      "kind": "paragraph",
+      "text": "Direct LLM (GPT-5.5) 82.1% 74.7%−7.4pp Agentic Codex (GPT-5.5) 87.4% 73.7%−13.7pp Direct LLM (Opus 4.6) 71.6% 61.1%−10.5pp Agentic Claude Code (Opus) 81.1% 57.9%−23.2pp Table V shows that raw upstream evidence reduces pass rates by 7–23 percentage points across all methods, and two observations stand out. •Raw evidence hurts every method.The drops are large and directionally consistent across every method– backbone pair, and Claude Code is the most severely affected (−23.2pp), possibly because its longer agent loop amplifies the misleading effect of unstructured evidence. •Structured evidence reverses the effect.DEPREPAIR’s structured evidence extraction turns the loss into a gain: pass ratesincreaseby 7.4pp (GPT-5.5, 82.1%→89.5%) and 10.5pp (Opus 4.6, 71.6%→82.1%) over the minimal baseline.",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method Minimal Upstream∆"
+      ],
+      "char_start": 33991,
+      "char_end": 34793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fd1c3ca2a508a0cfe17a83368b8eabc",
+      "kind": "paragraph",
+      "text": "This reveals a fundamental insight:the value of upstream evidence depends entirely on how it is processed. Raw changelogs and migration guides contain both actionable information and irrelevant noise; LLMs and agents lack the ability to reliably separate the two, leading to worse outcomes than having no evidence at all.",
+      "order": 139,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method Minimal Upstream∆"
+      ],
+      "char_start": 34795,
+      "char_end": 35116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dba4613c5ba03dc42d505439c4c8e921",
+      "kind": "heading",
+      "text": "F . RQ3b: Component Ablation",
+      "order": 140,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "F . RQ3b: Component Ablation"
+      ],
+      "char_start": 35118,
+      "char_end": 35146,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a0d4c12ed3d7ae894f26887e8ca7fd6",
+      "kind": "paragraph",
+      "text": "Table VI presents the ablation results for both backbones.",
+      "order": 141,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "F . RQ3b: Component Ablation"
+      ],
+      "char_start": 35148,
+      "char_end": 35206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08f7f42731ea13a62eb9f295dc91d415",
+      "kind": "heading",
+      "text": "TABLE VI",
+      "order": 142,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE VI"
+      ],
+      "char_start": 35208,
+      "char_end": 35216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d050d6ed8e1ca432d53cb368ea500a5",
+      "kind": "paragraph",
+      "text": "ABLATION STUDY:CONTRIBUTION OF EACHDEPREPAIR COMPONENT.",
+      "order": 143,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE VI"
+      ],
+      "char_start": 35218,
+      "char_end": 35273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:988f059dc2da6e4e5805d8a592bd5739",
+      "kind": "heading",
+      "text": "Components Result",
+      "order": 144,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Components Result"
+      ],
+      "char_start": 35275,
+      "char_end": 35292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24bdfb55d5195e0327373f1f159e1def",
+      "kind": "heading",
+      "text": "ConfigurationRules Loc. SubCat Pass Rate",
+      "order": 145,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ConfigurationRules Loc. SubCat Pass Rate"
+      ],
+      "char_start": 35294,
+      "char_end": 35334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33b4351609ed02c143b67ebb9a6d60c7",
+      "kind": "paragraph",
+      "text": "Claude Opus 4.6 backbone Full DEPREPAIR✓ ✓ ✓78 82.1% −Subcategory✓ ✓— 58 61.1% −Evidence — —✓58 61.1% Minimal (no components) — — — 68 71.6% GPT-5.5 backbone Full DEPREPAIR✓ ✓ ✓85 89.5% −Subcategory✓ ✓— 82 86.3% −Evidence — —✓80 84.2% Minimal (no components) — — — 78 82.1% The two backbones expose complementary effects, but converge on one message: evidence and guidance only help when supplied together. •On Opus, a half-pipeline is worse than none.Removing either subcategory instructions or structured evidence drops the pass rate by 21.0pp (82.1%→61.1%); both contrasts against the full pipeline are large enough to be highly significant under McNemar (p<0.001). Strikingly, both ablated configurations (61.1%) landbelowthe minimal baseline with no components at all (71.6%). This mirrors the evidence pattern in Section V-E: structured ruleswithoutcategory-specific guidance act as noise, just as raw evidence does, because the model cannot tell which of the supplied rules apply. •The contribution is backbone-dependent.On the weaker Opus backbone, the full pipeline adds 10.5 percentage points over the minimal configuration. In contrast, the stronger GPT-5.5 backbone already achieves",
+      "order": 146,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ConfigurationRules Loc. SubCat Pass Rate"
+      ],
+      "char_start": 35336,
+      "char_end": 36530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86648d646af58c10a0b01907feb4f266",
+      "kind": "heading",
+      "text": "1% with the minimal prompt and therefore benefits",
+      "order": 147,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ConfigurationRules Loc. SubCat Pass Rate",
+        "1% with the minimal prompt and therefore benefits"
+      ],
+      "char_start": 36532,
+      "char_end": 36581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81d35933f2607ee7e969bee1b78bb87a",
+      "kind": "paragraph",
+      "text": "less from the additional components. Removing either component still retains 84.2–86.3%, remaining above the minimal baseline. The consistent takeaway across backbones is thatevidence and guidance must work together: supplying one without the other is at best neutral and at worst actively harmful.",
+      "order": 148,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ConfigurationRules Loc. SubCat Pass Rate",
+        "1% with the minimal prompt and therefore benefits"
+      ],
+      "char_start": 36583,
+      "char_end": 36881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8938237e14108b7e1ad3753398eb7e8b",
+      "kind": "heading",
+      "text": "G. RQ4: Per-Subcategory Analysis",
+      "order": 149,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "G. RQ4: Per-Subcategory Analysis"
+      ],
+      "char_start": 36883,
+      "char_end": 36915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59f5e6ce9490f80a6bc6588e9f63acbd",
+      "kind": "paragraph",
+      "text": "Table VII breaks down DEPREPAIR’s performance by breaking-change subcategory. Table VII exposes a clear difficulty gradient across subcategories.",
+      "order": 150,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "G. RQ4: Per-Subcategory Analysis"
+      ],
+      "char_start": 36917,
+      "char_end": 37062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe55c116ee5ddd358281324cefefdf4e",
+      "kind": "heading",
+      "text": "TABLE VII",
+      "order": 151,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE VII"
+      ],
+      "char_start": 37064,
+      "char_end": 37073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58a27b787a4f3d8b87ad86bb4d435fda",
+      "kind": "paragraph",
+      "text": "PASS RATES BY BREAKING-CHANGE SUBCATEGORY(BEST METHODS).",
+      "order": 152,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "TABLE VII"
+      ],
+      "char_start": 37075,
+      "char_end": 37131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82c1441cfaccab305be065265a780a77",
+      "kind": "heading",
+      "text": "COUNTS IN PARENTHESES ARE THE NUMBER OF INSTANCES PER",
+      "order": 153,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "COUNTS IN PARENTHESES ARE THE NUMBER OF INSTANCES PER"
+      ],
+      "char_start": 37133,
+      "char_end": 37186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2f1c36979c024ca0f3b02b1319ee7c9",
+      "kind": "paragraph",
+      "text": "SUBCATEGORY.",
+      "order": 154,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "COUNTS IN PARENTHESES ARE THE NUMBER OF INSTANCES PER"
+      ],
+      "char_start": 37188,
+      "char_end": 37200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e25e6ff1f850945579c4e07cf5f7b73",
+      "kind": "heading",
+      "text": "Method CAM DR IM PS All",
+      "order": 155,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method CAM DR IM PS All"
+      ],
+      "char_start": 37202,
+      "char_end": 37225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c9f9da5cc0eb123965bc30a4d6ecf08",
+      "kind": "paragraph",
+      "text": "(25) (27) (23) (20) (95)",
+      "order": 156,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "Method CAM DR IM PS All"
+      ],
+      "char_start": 37227,
+      "char_end": 37251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b6a9185a3d5f9e205bae67b782dc956",
+      "kind": "heading",
+      "text": "DEPREPAIR(GPT-5.5)96% 93% 100%65%89.5%",
+      "order": 157,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR(GPT-5.5)96% 93% 100%65%89.5%"
+      ],
+      "char_start": 37253,
+      "char_end": 37291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34e7e5cf30afd6a2c7cc876816e60bf2",
+      "kind": "paragraph",
+      "text": "Agentic Codex (GPT) 92% 89%100%65% 87.4% Direct LLM (GPT-5.5) 88% 81%100%55% 82.1% DEPREPAIR(Opus) 80% 78%100% 70% 82.1% Agentic Claude Code (Opus) 84% 81%100%55% 81.1% Direct LLM (Opus) 64% 63%100%60% 71.6% •Import migration is saturated.Every method in Table VII achieves 100% on import migration, so it offers no room to separate methods. •DEPREPAIR’s gains concentrate on CAM and DR. DEPREPAIR’s advantage lands on compound API migration (CAM) and direct rename (DR), where structured evidence most directly helps: on the Opus backbone it lifts CAM from 64% to 80% (+16pp) and DR from 63% to 78% (+15pp) over the minimal baseline, and on GPT-",
+      "order": 158,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR(GPT-5.5)96% 93% 100%65%89.5%"
+      ],
+      "char_start": 37293,
+      "char_end": 37939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:537bd1e2395e18b668403ae06f667991",
+      "kind": "heading",
+      "text": "it lifts CAM from 88% to 96% (+8pp) and DR from",
+      "order": 159,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR(GPT-5.5)96% 93% 100%65%89.5%",
+        "it lifts CAM from 88% to 96% (+8pp) and DR from"
+      ],
+      "char_start": 37941,
+      "char_end": 37988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:020818f1f301e1d47165464cbcfd78b6",
+      "kind": "paragraph",
+      "text": "81% to 93% (+12pp). •Paradigm shift is the residual gap.Paradigm shift (PS) is now the hardest subcategory: even DEPREPAIRreaches only 65% (GPT-5.5) and 70% (Opus), and the minimal baselines fall to 55–60%. It is also lifted—+10pp on both backbones (GPT 55%→65%, Opus 60%→70%)— but remains the residual gap, as it demands structural refactoring beyond the rule-level edits that structured evidence most readily supplies. Broken down by ecosystem, DEPREPAIR(GPT-5.5) solves all 38 Maven instances and 14 of 15 Cargo instances, with npm (26/33) and PyPI (7/9) trailing; the PyPI pocket—once a complete blind spot—is now largely repairable, leaving paradigm-shift instances as the clearest target for future work.",
+      "order": 160,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "DEPREPAIR(GPT-5.5)96% 93% 100%65%89.5%",
+        "it lifts CAM from 88% to 96% (+8pp) and DR from"
+      ],
+      "char_start": 37990,
+      "char_end": 38700,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8cb15cfd939c0cb7756ff1cd033851d",
+      "kind": "heading",
+      "text": "H. Case Studies",
+      "order": 161,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "H. Case Studies"
+      ],
+      "char_start": 38702,
+      "char_end": 38717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b2da714c0fe41d35b152d90dcbef0ff",
+      "kind": "paragraph",
+      "text": "We close with three real DEPREPAIRpatches (Figs. 3–",
+      "order": 162,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "H. Case Studies"
+      ],
+      "char_start": 38719,
+      "char_end": 38770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e20a3bdbf0c8aae155394397d1334b0d",
+      "kind": "heading",
+      "text": "that make the RQ4 difficulty gradient concrete, spanning",
+      "order": 163,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 38772,
+      "char_end": 38828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73129897e0e22a55aa8550d23a987ee7",
+      "kind": "paragraph",
+      "text": "compound API migration (CAM), direct rename (DR), and paradigm shift (PS) across three ecosystems—Maven, PyPI, and npm. Each shows how, once the upstream change is distilled into migration rules and localized to the affected sites, a single call emits a compact edit whoseshapematches the kind of migration. •exec-068 (junit, CAM).The structured rules tie the JUnit 4→5 namespace move, the Mockito runner-to-extension switch (@RunWith(MockitoJUnitRunner)→ @ExtendWith(MockitoExtension)), and the @Before→@BeforeEach/Assert→Assertions renames into one change; DEPREPAIRapplies all of",
+      "order": 164,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 38830,
+      "char_end": 39412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:301bb2e0fa7cf918a0c7a5c9d4ef3787",
+      "kind": "paragraph",
+      "text": "exec-068 : JUnit 4→5 (Maven, CAM) -import org.junit.Assert; -import org.junit.Before; -import org.junit.runner.RunWith; +import org.junit.jupiter.api.Assertions; +import org.junit.jupiter.api.BeforeEach; +import org.junit.jupiter.api.extension.ExtendWith; -import org.mockito.junit.MockitoJUnitRunner; +import org.mockito.junit.jupiter.MockitoExtension; @@ -@RunWith(MockitoJUnitRunner.class) +@ExtendWith(MockitoExtension.class) public class AdapterFactoryTest {",
+      "order": 165,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39414,
+      "char_end": 39877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2cbe08ec4e74609899f905ed5964e7f",
+      "kind": "list_item",
+      "text": "- @Before",
+      "order": 166,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39879,
+      "char_end": 39888,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46735f34956848d31be193c839dd2d38",
+      "kind": "list_item",
+      "text": "+ @BeforeEach",
+      "order": 167,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39890,
+      "char_end": 39903,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:042af3905a85bd9c06220a83d842cfbb",
+      "kind": "paragraph",
+      "text": "public void setup() { ... }",
+      "order": 168,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39905,
+      "char_end": 39932,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61607f322a9d19728bf42f91ae3d748a",
+      "kind": "list_item",
+      "text": "- Assert.assertTrue(factory.isModelClass(...));",
+      "order": 169,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39934,
+      "char_end": 39981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8271efc19fdfef4975b1e9e7c95f9ce",
+      "kind": "list_item",
+      "text": "+ Assertions.assertTrue(factory.isModelClass(...)",
+      "order": 170,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 39983,
+      "char_end": 40032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:440c14cf6f95603ec21f4b25bfc4f843",
+      "kind": "paragraph",
+      "text": ");",
+      "order": 171,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40034,
+      "char_end": 40036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dde7be6675955c9b437e009b44b35d51",
+      "kind": "caption",
+      "text": "Fig. 3. CAM. DEPREPAIRapplies the JUnit 4→5 namespace move, the",
+      "order": 172,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40038,
+      "char_end": 40101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ff152a039a236fd1961bad88b58e9cf",
+      "kind": "paragraph",
+      "text": "Mockito runner-to-extension switch, and the annotation/assertion renames together in one coordinated patch. exec-180 : Pydantic 1→2 (PyPI, DR) -from pydantic import BaseModel, Field, validator +from pydantic import BaseModel, ConfigDict, Field, validator @@",
+      "order": 173,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40103,
+      "char_end": 40360,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23cdc41e890ae6ba3f13393a6158a0e4",
+      "kind": "list_item",
+      "text": "- ... for key, value in self.dict().items() ...",
+      "order": 174,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40362,
+      "char_end": 40409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32f47aeeb600969610c51289c48bc95a",
+      "kind": "list_item",
+      "text": "+ ... for key, value in self.model_dump().items()",
+      "order": 175,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40411,
+      "char_end": 40460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b8a8591e8bd5049c6334612a46dacd0",
+      "kind": "paragraph",
+      "text": "... @@",
+      "order": 176,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40462,
+      "char_end": 40468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e28f2050fd37ecfd957597eafb78e95a",
+      "kind": "list_item",
+      "text": "- return {a for a in cls.__dict__[\"__fields__\"].",
+      "order": 177,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40470,
+      "char_end": 40518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b398caa11ae97f5005624835451a669",
+      "kind": "paragraph",
+      "text": "keys() ...}",
+      "order": 178,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40520,
+      "char_end": 40531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33ae9e2b491d20f170f6d76560117826",
+      "kind": "list_item",
+      "text": "+ return {a for a in cls.model_fields.keys() ...}",
+      "order": 179,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40533,
+      "char_end": 40582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:189ad07aac6f451de7610e80e6beeed2",
+      "kind": "paragraph",
+      "text": "@@",
+      "order": 180,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40584,
+      "char_end": 40586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d37d5196d7fc486fb8bda27d164311a",
+      "kind": "list_item",
+      "text": "- self.__fields__[field].alias for field in self.",
+      "order": 181,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40588,
+      "char_end": 40637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:778beb0dcc2dc061ca6adbd6b46cc24a",
+      "kind": "paragraph",
+      "text": "__fields_set__",
+      "order": 182,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40639,
+      "char_end": 40653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f996a5a0ba986761aab114fa9ac6cad",
+      "kind": "list_item",
+      "text": "+ self.model_fields[field].alias for field in",
+      "order": 183,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40655,
+      "char_end": 40700,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbe44d16dbf729ffbc0bab721a891ed7",
+      "kind": "paragraph",
+      "text": "self.model_fields_set",
+      "order": 184,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40702,
+      "char_end": 40723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6660450d39b4e8d207312340006ad21",
+      "kind": "caption",
+      "text": "Fig. 4. DR. The Pydantic v2 renames are pure symbol substitutions;",
+      "order": 185,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40725,
+      "char_end": 40791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df34d33b9b8d6f7ab1dd33e91dcef2d1",
+      "kind": "paragraph",
+      "text": "DEPREPAIRsweeps every occurrence and adds theConfigDictimport that the new names require. them together, as a partial CAM that omits any one would leave the test uncompilable. •exec-180 (pydantic, DR).The Pydantic v2 renames are pure symbol substitutions—.dict()→.model_dump(), __fields__→model_fields, __fields_set__→model_fields_set—which DEPREPAIRsweeps exhaustively while pulling in the ConfigDictimport the new API needs. •exec-841 (vue, PS).The Vue 2 idiom getCurrentInstance().proxy.$nextTick(...) has no one-to-one Vue 3 replacement; DEPREPAIR rewrites it into the standalonenextTick(...)import and call—the kind of structural pattern change (not renaming) that keeps PS the residual gap (RQ4). Read together, the three trace one capability at rising difficulty: a coordinated multi-API rewrite for CAM, a mechanical symbol sweep for DR, and a structural replacement for PS— exec-841 : Vue 2→3 (npm, PS) import { defineComponent,",
+      "order": 186,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 40793,
+      "char_end": 41730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be34bc801b72faaf03135f49db5cf7dc",
+      "kind": "list_item",
+      "text": "- getCurrentInstance,",
+      "order": 187,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41732,
+      "char_end": 41753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d284cb44b558f93c8fd874ff9da787e",
+      "kind": "paragraph",
+      "text": "h,",
+      "order": 188,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41755,
+      "char_end": 41757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef549e1b27d02ea3092759c6c97035a6",
+      "kind": "list_item",
+      "text": "+ nextTick,",
+      "order": 189,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41759,
+      "char_end": 41770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7815ea83d4a7a58cd4cf6b93beef69d",
+      "kind": "paragraph",
+      "text": "ref, } from ’vue’; @@ expose(publicApi);",
+      "order": 190,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41772,
+      "char_end": 41812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:452cdf1099b9440435c069aadb25a10e",
+      "kind": "list_item",
+      "text": "- const instance = getCurrentInstance();",
+      "order": 191,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41814,
+      "char_end": 41854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad065f57afeda61bc8c066c1ab5c4938",
+      "kind": "list_item",
+      "text": "- instance?.proxy?.$nextTick(() => {",
+      "order": 192,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41856,
+      "char_end": 41892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e240230c752d94f8c4ecc4f3be3b961",
+      "kind": "list_item",
+      "text": "+ nextTick(() => {",
+      "order": 193,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41894,
+      "char_end": 41912,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab4ea5c5fcc70d58e9c266b21ac82345",
+      "kind": "paragraph",
+      "text": "for (const key in innerRef.value) { ... }",
+      "order": 194,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41914,
+      "char_end": 41955,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72cf9c9ffb795a3e79c47a2baa91a472",
+      "kind": "caption",
+      "text": "Fig. 5. PS. The Vue 2 instance-proxy idiom has no symbol-level equivalent;",
+      "order": 195,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 41957,
+      "char_end": 42031,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b3ed853c21534070ddbec5f03388769",
+      "kind": "paragraph",
+      "text": "DEPREPAIRrestructures it into the standalonenextTickimport and call—a pattern rewrite, not a rename. each landing precisely on the migrated API surface that the structured evidence identified.",
+      "order": 196,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning"
+      ],
+      "char_start": 42033,
+      "char_end": 42225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a998544ac72e3e5b136d0ae47740e081",
+      "kind": "heading",
+      "text": "DISCUSSION",
+      "order": 197,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "DISCUSSION"
+      ],
+      "char_start": 42227,
+      "char_end": 42237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32431e7850c3d1e7a11379b210a8bfbd",
+      "kind": "paragraph",
+      "text": "Why structured evidence wins.The dominant failure is theempty patch: facing a raw changelog, the model must decidewhatchanged,whereit matters, andhowto edit at once, and often does none—returning no patch (32 of 95 for Direct LLM (upstream) and 35 for Agentic Claude Code, versus 10 for DEPREPAIR). DEPREPAIRfactors this decision—evidence extraction answerswhat, localizationwhere, and subcategory guidancehow—converting non-answers into small, oraclepassing patches. The value of cross-repository context thus lies in itsprocessing, not its mereprovision(RQ3): raw text is counterproductive, whereas distilled rules reliably help. We do not overclaim: in a single call DEPREPAIRsignificantly beats the same-backbone Direct LLM (minimal) and every raw-evidence configuration, while onlymatchingthe strongest cross-architecture agent on each backbone. Threats to validity.We organize threats along the four standard dimensions. •Statistical conclusion validity.All methods run on the same 95 instances, so we use thepairedMcNemar test (exact binomial form when discordant pairs are few) and Fisher’s exact test as a conservative check. At n=95power is limited, so we separaterankingclaims (DEPREPAIRis first on each backbone) fromsignificance claims, stating only that it significantly beats the samebackbone Direct LLM (minimal) and all raw-evidence configurations whilematchingthe strongest agent. •Construct validity.The oracle counts an instance as repaired iff the breakage-related tests pass, which cannot certify correctness beyond test coverage; we mitigate",
+      "order": 198,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "DISCUSSION"
+      ],
+      "char_start": 42239,
+      "char_end": 43803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97990bfa5e029bd900ce8ab780db8ad9",
+      "kind": "paragraph",
+      "text": "this with the developer’s own test suite and executable verdicts rather than file-level equivalence. Subcategory labels are author-assigned and released for scrutiny. •Internal validity.Outputs are re-applied and re-executed in freshly rebuilt containers, so the oracle is deterministic; generation uses temperature 0 with no retries, and timeouts or errors count as failures.",
+      "order": 199,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "DISCUSSION"
+      ],
+      "char_start": 43805,
+      "char_end": 44181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12a62de4b269b18c2f1ee7b5d4ba0cdf",
+      "kind": "paragraph",
+      "text": "•External validity.Results may not generalize beyond the studied packages and ecosystems; we mitigate singlemodel bias with two very different backbones (GPT-5.5 and Claude Opus 4.6) that show consistent trends. Limitations. •Data volume.DEPBENCHcurrently comprises 95 instances, which limits statistical power; we are expanding it toward 200 instances to sharpen significance and broaden coverage. •Data distribution.Instances are unevenly spread across ecosystems and subcategories (e.g., Maven 38 vs. PyPI 9; paradigm shift only 20), so some per-cell rates rest on small samples; a more balanced distribution would make subcategory comparisons more robust. Generalizability.While evaluated on four ecosystems, DE- PREPAIR’s approach is ecosystem-agnostic: the upstream evidence extraction, localization, and subcategory-aware prompting stages apply to any language. The consistent improvement across two very different LLM backbones (GPT-5.5 and Claude Opus 4.6) suggests that DEPREPAIR’s benefits are not model-specific.",
+      "order": 200,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "DISCUSSION"
+      ],
+      "char_start": 44183,
+      "char_end": 45207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdf5d4b4d4307a5fe0feea1fa089f541",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 201,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "CONCLUSION"
+      ],
+      "char_start": 45209,
+      "char_end": 45219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc39a99e5f3a5422ec13cf9e42052bcb",
+      "kind": "paragraph",
+      "text": "We presented DEPREPAIR, an LLM-based approach to source-code repair for dependency breaking changes. By combining upstream evidence extraction, consumer-side usage localization, and subcategory-aware prompt construction, DEPREPAIRattains the highest executable pass rate on each backbone—89.5% (GPT-5.5) and 82.1% (Claude Opus 4.6)— on a benchmark of 95 real-world instances,significantly beating the same-backbone Direct LLM (minimal) baseline on both backbones and ranking ahead of state-of-the-art coding agents. A generation-side analysis shows that theempty patch—the model emits no usable patch—is the dominant failure mode: raw upstream evidence drives empty patches on up to a third of instances, whereas DEPREPAIRemits one on only 10 of 95 and nearly every patch it does emit passes, identifying the empty patch as the largest single barrier that structured evidence relieves. Our analysis further reveals that raw upstream evidence is a double-edged sword—hurting both LLMs (up to−10.5pp) and agents (up to−23.2pp)—while structured evidence extraction is essential for effective repair. These findings highlight the importance of cross-repository contextprocessing, not merelyprovision, in LLM-based program repair.",
+      "order": 202,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "that make the RQ4 difficulty gradient concrete, spanning",
+        "CONCLUSION"
+      ],
+      "char_start": 45221,
+      "char_end": 46446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5aa282931e634afb44b1dafc445cd898",
+      "kind": "heading",
+      "text": "ACKNOWLEDGMENT",
+      "order": 203,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 46448,
+      "char_end": 46462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:864e1d7af30f9e866558157c5481a709",
+      "kind": "paragraph",
+      "text": "Generative AI tools were used to assist with drafting and editing portions of this manuscript. All technical content, experimental results, and conclusions were produced and verified by the authors.",
+      "order": 204,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 46464,
+      "char_end": 46662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25771094b615221b336f8db574ed2d96",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 205,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "REFERENCES"
+      ],
+      "char_start": 46664,
+      "char_end": 46674,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:313cca212c04d577f15e5920399fe875",
+      "kind": "reference",
+      "text": "[1] S. Raemaekers, A. van Deursen, and J. Visser, “Semantic versioning and impact of breaking changes in the maven repository,”Journal of Systems and Software, vol. 129, pp. 140–158, 2017. [2] C. Bogart, C. K ¨astner, J. Herbsleb, and F. Thung, “How to break an api: cost negotiation and community values in three software ecosystems,” in Proceedings of the 2016 24th ACM SIGSOFT International Symposium on Foundations of Software Engineering, 2016, pp. 109–120. [3] R. G. Kula, D. M. German, A. Ouni, T. Ishio, and K. Inoue, “Do developers update their library dependencies? an empirical study on the impact of security advisories on library migration,”Empirical Software Engineering, vol. 23, no. 1, pp. 384–417, 2018. [4] R. Lu, L. Zhang, K. Li, M. Zhang, and Y . Chen, “Minimizing breaking changes and redundancy in mitigating technical lag for java projects,” arXiv preprint arXiv:2511.06762, 2025. [5] A. Decan, T. Mens, and P. Grosjean, “An empirical comparison of dependency network evolution in seven software packaging ecosystems,” vol. 24, no. 1. Springer, 2019, pp. 381–416. [6] M. Zimmermann, C.-A. Staicu, C. Tenny, and M. Pradel, “Small world with high risks: A study of security threats in the npm ecosystem,” in28th USENIX Security symposium (USENIX security 19), 2019, pp. 995–1010. [7] J. Henkel and A. Diwan, “Catchup! capturing and replaying refactorings to support api evolution,” inProceedings of the 27th international conference on Software engineering, 2005, pp. 274–283. [8] C. Teyton, J.-R. Falleri, and X. Blanc, “Mining library migration graphs,”",
+      "order": 206,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "REFERENCES"
+      ],
+      "char_start": 46676,
+      "char_end": 48252,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:171d4154ad9e4d17e5111ead2f5ea1d2",
+      "kind": "paragraph",
+      "text": "in2012 19th Working Conference on Reverse Engineering. IEEE, 2012, pp. 289–298. [9] D. Dig and R. Johnson, “How do apis evolve? a story of refactoring,” Journal of software maintenance and evolution: Research and Practice, vol. 18, no. 2, pp. 83–107, 2006. [10] C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, and K. Narasimhan, “Swe-bench: Can language models resolve real-world github issues?” inInternational Conference on Learning Representations, vol. 2024, 2024, pp. 54 107–54 157. [11] OpenAI, “Codex CLI is a coding agent that runs in your terminal,” https://github.com/openai/codex, 2025, apache-2.0 license. Accessed:",
+      "order": 207,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "REFERENCES"
+      ],
+      "char_start": 48254,
+      "char_end": 48894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36e761e6175bc35b0a9c9023581c6bc4",
+      "kind": "heading",
+      "text": "06-13.",
+      "order": 208,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13."
+      ],
+      "char_start": 48896,
+      "char_end": 48902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf2c4c201e44759eef994001f157fc59",
+      "kind": "paragraph",
+      "text": "[12] Anthropic, “Claude code is an agentic coding tool,” https://code.claude.com/docs/en/overview, 2025, accessed: 2026-06-13. [13] L. Xavier, A. Brito, A. Hora, and M. T. Valente, “Historical and impact analysis of api breaking changes: A large-scale study,” in2017 IEEE 24th International Conference on Software Analysis, Evolution and Reengineering (SANER). IEEE, 2017, pp. 138–147. [14] A. Brito, L. Xavier, A. Hora, and M. T. Valente, “Why and how java developers break apis,” in2018 IEEE 25th International Conference on Software Analysis, Evolution and Reengineering (SANER). IEEE, 2018, pp. 255–265. [15] L. Ochoa, T. Degueule, J.-R. Falleri, and J. Vinju, “Breaking bad? semantic versioning and impact of breaking changes in maven central: An external and differentiated replication study,”Empirical Software Engineering, vol. 27, no. 3, p. 61, 2022. [16] S. Mostafa, R. Rodriguez, and X. Wang, “Experience paper: a study on behavioral backward incompatibilities of java software libraries,” in Proceedings of the 26th ACM SIGSOFT international symposium on software testing and analysis, 2017, pp. 215–225. [17] D. Jayasuriya, V . Terragni, J. Dietrich, S. Ou, and K. Blincoe, “Understanding breaking changes in the wild,” inProceedings of the 32nd ACM SIGSOFT International Symposium on Software Testing and Analysis, 2023, pp. 1433–1444. [18] E. Derr, S. Bugiel, S. Fahl, Y . Acar, and M. Backes, “Keep me updated: An empirical study of third-party library updatability on android,” in Proceedings of the 2017 ACM SIGSAC conference on computer and",
+      "order": 209,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13."
+      ],
+      "char_start": 48904,
+      "char_end": 50463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a44206a92cc4251da0cb22d84e80464e",
+      "kind": "paragraph",
+      "text": "communications security, 2017, pp. 2187–2200. [19] A. A. Sawant, R. Robbes, and A. Bacchelli, “To react, or not to react: Patterns of reaction to api deprecation,”Empirical Software Engineering, vol. 24, no. 6, pp. 3824–3870, 2019. [20] A. Decan, T. Mens, and E. Constantinou, “On the impact of security vulnerabilities in the npm package dependency network,” inProceedings of the 15th international conference on mining software repositories, 2018, pp. 181–191. [21] I. Pashchenko, H. Plate, S. E. Ponta, A. Sabetta, and F. Massacci, “Vulnerable open source dependencies: Counting those that matter,” inProceedings of the 12th ACM/IEEE international symposium on empirical software engineering and measurement, 2018, pp. 1–10. [22] M. Ohm, H. Plate, A. Sykosch, and M. Meier, “Backstabber’s knife collection: A review of open source software supply chain attacks,” in",
+      "order": 210,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13."
+      ],
+      "char_start": 50465,
+      "char_end": 51333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4fc964185a90c88183b3167484e9e3e",
+      "kind": "paragraph",
+      "text": "International Conference on Detection of Intrusions and Malware, and Vulnerability Assessment. Springer, 2020, pp. 23–43. [23] P. Ladisa, H. Plate, M. Martinez, and O. Barais, “Sok: Taxonomy of attacks on open-source software supply chains,” in2023 IEEE Symposium on Security and Privacy (SP). IEEE, 2023, pp. 1509–1526. [24] C. Soto-Valero, N. Harrand, M. Monperrus, and B. Baudry, “A comprehensive study of bloated dependencies in the maven ecosystem,” Empirical Software Engineering, vol. 26, no. 3, p. 45, 2021. [25] Y . Wang, M. Wen, Z. Liu, R. Wu, R. Wang, B. Yang, H. Yu, Z. Zhu, and S.-C. Cheung, “Do the dependency conflicts in my project matter?” in Proceedings of the 2018 26th ACM joint meeting on european software engineering conference and symposium on the foundations of software engineering, 2018, pp. 319–330. [26] Y . Wang, M. Wen, Y . Liu, Y . Wang, Z. Li, C. Wang, H. Yu, S.-",
+      "order": 211,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13."
+      ],
+      "char_start": 51335,
+      "char_end": 52231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cea8df35891d8ba7cb303fd389fd1d66",
+      "kind": "heading",
+      "text": "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency",
+      "order": 212,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13.",
+        "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency"
+      ],
+      "char_start": 52233,
+      "char_end": 52292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61fb489167a669a3cc57ed221e41bcb4",
+      "kind": "paragraph",
+      "text": "conflicts for python library ecosystem,” inProceedings of the ACM/IEEE 42nd international conference on software engineering, 2020, pp. 125– 135. [27] Y . Wang, B. Chen, K. Huang, B. Shi, C. Xu, X. Peng, Y . Wu, and Y . Liu, “An empirical study of usages, updates and risks of third-party libraries in java projects,” in2020 IEEE International conference on software maintenance and evolution (ICSME). IEEE, 2020, pp. 35–45. [28] C. Liu, S. Chen, L. Fan, B. Chen, Y . Liu, and X. Peng, “Demystifying the vulnerability propagation and its evolution via dependency trees in the npm ecosystem,” inProceedings of the 44th international conference on software engineering, 2022, pp. 672–684. [29] J. Cox, E. Bouwers, M. Van Eekelen, and J. Visser, “Measuring dependency freshness in software systems,” in2015 IEEE/ACM 37th IEEE International Conference on Software Engineering, vol. 2. IEEE, 2015, pp. 109–118. [30] S. Mirhosseini and C. Parnin, “Can automated pull requests encourage software developers to upgrade out-of-date dependencies?” in2017 32nd IEEE/ACM international conference on automated software engineering (ASE). IEEE, 2017, pp. 84–94. [31] M. Alfadel, D. E. Costa, E. Shihab, and M. Mkhallalati, “On the use of dependabot security pull requests,” in2021 IEEE/ACM 18th International conference on mining software repositories (MSR). IEEE, 2021, pp. 254–265. [32] B. E. Cossette and R. J. Walker, “Seeking the ground truth: a retroactive study on the evolution and migration of software libraries,” inProceedings of the ACM SIGSOFT 20th International Symposium on the",
+      "order": 213,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13.",
+        "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency"
+      ],
+      "char_start": 52294,
+      "char_end": 53872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12cfab7c01a1623e166eb4149737da3e",
+      "kind": "paragraph",
+      "text": "Foundations of Software Engineering, 2012, pp. 1–11. [33] G. Mezzetti, A. Møller, and M. T. Torp, “Type regression testing to detect breaking changes in node. js libraries,” in32nd European Conference on Object-Oriented Programming, ECOOP 2018. Dagstuhl Publishing, 2018, pp. 7–1. [34] B. Dagenais and M. P. Robillard, “Recommending adaptive changes for framework evolution,”ACM Transactions on Software Engineering and Methodology (TOSEM), vol. 20, no. 4, pp. 1–35, 2011. [35] H. A. Nguyen, T. T. Nguyen, G. Wilson Jr, A. T. Nguyen, M. Kim, and T. N. Nguyen, “A graph-based approach to api usage adaptation,”ACM Sigplan Notices, vol. 45, no. 10, pp. 302–321, 2010. [36] M. Fazzini, Q. Xin, and A. Orso, “Automated api-usage update for android apps,” inProceedings of the 28th ACM SIGSOFT international symposium on software testing and analysis, 2019, pp. 204–215. [37] S. Xu, Z. Dong, and N. Meng, “Meditor: inference and application of api migration edits,” in2019 IEEE/ACM 27th International Conference on Program Comprehension (ICPC). IEEE, 2019, pp. 335–346. [38] M. Lamothe, W. Shang, and T.-H. P. Chen, “A3: Assisting android api migrations using code examples,”IEEE Transactions on Software Engineering, vol. 48, no. 2, pp. 417–431, 2020. [39] C. S. Xia, Y . Wei, and L. Zhang, “Automated program repair in the era of large pre-trained language models,” in2023 IEEE/ACM 45th International Conference on Software Engineering (ICSE). IEEE, 2023, pp. 1482–1494. [40] Z. Fan, X. Gao, M. Mirchev, A. Roychoudhury, and S. H. Tan,",
+      "order": 214,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13.",
+        "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency"
+      ],
+      "char_start": 53874,
+      "char_end": 55406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ad9a54a014851823c8f3cbd8eb01aae",
+      "kind": "paragraph",
+      "text": "“Automated repair of programs from large language models,” in2023 IEEE/ACM 45th International Conference on Software Engineering (ICSE). IEEE, 2023, pp. 1469–1481. [41] M. Jin, S. Shahriar, M. Tufano, X. Shi, S. Lu, N. Sundaresan, and A. Svyatkovskiy, “Inferfix: End-to-end program repair with llms,” in Proceedings of the 31st ACM joint european software engineering conference and symposium on the foundations of software engineering, 2023, pp. 1646–1656. [42] X. Hou, Y . Zhao, Y . Liu, Z. Yang, K. Wang, L. Li, X. Luo, D. Lo, J. Grundy, and H. Wang, “Large language models for software engineering: A systematic literature review,”ACM Transactions on Software Engineering and Methodology, vol. 33, no. 8, pp. 1–79, 2024. [43] C. S. Xia, Y . Deng, S. Dunn, and L. Zhang, “Agentless: Demystifying llm-based software engineering agents,”arXiv preprint arXiv:2407.01489, 2024. [44] J. Yang, C. Jimenez, A. Wettig, K. Lieret, S. Yao, K. Narasimhan, and O. Press, “Swe-agent: Agent-computer interfaces enable automated software engineering,”Advances in Neural Information Processing Systems, vol. 37, pp. 50 528–50 652, 2024. [45] X. Wang, B. Li, Y . Song, F. F. Xu, X. Tang, M. Zhuge, J. Pan, Y . Song, B. Li, J. Singhet al., “Openhands: An open platform for ai software developers as generalist agents,” inInternational Conference on Learning Representations, vol. 2025, 2025, pp. 65 882–65 919. [46] Y . Zhang, H. Ruan, Z. Fan, and A. Roychoudhury, “Autocoderover: Autonomous program improvement,” inProceedings of the 33rd ACM",
+      "order": 215,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13.",
+        "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency"
+      ],
+      "char_start": 55408,
+      "char_end": 56936,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbdbe0a47a35c4945631c765c126387c",
+      "kind": "paragraph",
+      "text": "SIGSOFT International Symposium on Software Testing and Analysis, 2024, pp. 1592–1604. [47] I. Bouzenia, P. Devanbu, and M. Pradel, “Repairagent: An autonomous, llm-based agent for program repair,” in2025 IEEE/ACM 47th International Conference on Software Engineering (ICSE). IEEE, 2025, pp. 2188–2200. [48] R. Bairi, A. Sonwane, A. Kanade, V . D. C, A. Iyer, S. Parthasarathy, S. Rajamani, B. Ashok, and S. Shet, “Codeplan: Repository-level coding using llms and planning,”Proceedings of the ACM on Software Engineering, vol. 1, no. FSE, pp. 675–698, 2024.",
+      "order": 216,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "DepRepair: LLM-Based Source-Code Repair for",
+        "06-13.",
+        "Cheung, C. Xu, and Z. Zhu, “Watchman: Monitoring dependency"
+      ],
+      "char_start": 56938,
+      "char_end": 57495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 11,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 11
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.17957",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 11,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

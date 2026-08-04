@@ -1,0 +1,48 @@
+model:
+  provider: custom:hermesgraph
+  default: gpt-5.6
+  base_url: http://host.docker.internal:55523/v1
+  api_mode: chat_completions
+
+providers:
+  hermesgraph:
+    name: HermesGraph Model Gateway
+    base_url: http://host.docker.internal:55523/v1
+    key_env: OPENAI_API_KEY
+    default_model: gpt-5.6
+    transport: chat_completions
+
+agent:
+  max_turns: 30
+  gateway_timeout: 300
+
+terminal:
+  backend: docker
+
+platform_toolsets:
+  api_server:
+    - memory
+    - skills
+    - todo
+
+plugins:
+  enabled:
+    - hermesgraph-bridge
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  nudge_interval: 1
+  write_approval: false
+
+skills:
+  external_dirs: []
+  template_vars: true
+  inline_shell: false
+  guard_agent_created: true
+  creation_nudge_interval: 1
+  write_approval: false
+
+gateway:
+  api_server:
+    max_concurrent_runs: 4

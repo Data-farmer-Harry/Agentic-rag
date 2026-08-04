@@ -1,0 +1,1395 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "63884d90ef504d56cbe15e33e388a4bf5baac48d1660fde51dce57f7780e3bab",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:ba5fea78f2b07cc998a92e15a5b5e45f",
+      "kind": "heading",
+      "text": "Beyond Text Editing",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing"
+      ],
+      "char_start": 0,
+      "char_end": 19,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79184ba0017eb46c1066c7a9da50480b",
+      "kind": "heading",
+      "text": "Algebraic Manipulation of Source Code",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Algebraic Manipulation of Source Code"
+      ],
+      "char_start": 21,
+      "char_end": 58,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47514dae85256d8a4940563ee89f6526",
+      "kind": "heading",
+      "text": "Kevin Pulo",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Kevin Pulo"
+      ],
+      "char_start": 60,
+      "char_end": 70,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3617bd6033ed51afd9b72623abd1dcb9",
+      "kind": "heading",
+      "text": "MongoDB Research",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MongoDB Research"
+      ],
+      "char_start": 72,
+      "char_end": 88,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d8f84ff28cadfb96b63d28e1d3fdfdf",
+      "kind": "paragraph",
+      "text": "kevin.pulo@mongodb.com Abstract—Source code is almost universally edited as plain text. However, the mismatch between the syntactic and semantic requirements of valid and correct code, and the unconstrained text editing process trying to produce it, introduces friction that degrades the programming task. It is also increasingly costly in the era of LLM-based coding agents, which must materialize their high-level plan of intended changes as low-level text edits dispersed throughout the codebase, often requiring them to reread large portions of code. We propose the novel alternative approach ofsource code algebra, where the codebase is modified by applying to it a sequence oflogical algebraic operations. Each operation makes the full set of changes necessary for a single semantic change, analogous tomathematical equation rewriting. We sketch initial properties of such operations — including composition, nullipotency, and commutativity — that distinguish this approach from text editing, and make it well-suited as a substrate for agentic code editing. A feasibility probe with our proof-of-concept implementation (SCAS) suggests that LLM agents can use source code algebra to complete a non-local, cross-file code change with both higher success rates and one to two orders of magnitude fewer tokens, relative to text-based baselines. While preliminary, this is consistent with the hypothesis that having LLMs emit algebraic operations, rather than rewritten code, is a promising direction for code editing — and motivates broader future research into",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MongoDB Research"
+      ],
+      "char_start": 90,
+      "char_end": 1653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab0ec54967964d569d4d1783112913f2",
+      "kind": "paragraph",
+      "text": "source code algebra, such as comprehensive operator libraries, formal properties, and human-facing tooling.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MongoDB Research"
+      ],
+      "char_start": 1655,
+      "char_end": 1762,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de8cf61d6c062b178c6f0179918ac02b",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MongoDB Research",
+        "INTRODUCTION"
+      ],
+      "char_start": 1764,
+      "char_end": 1776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f4672847baa446193805b9f0b53ba7a",
+      "kind": "paragraph",
+      "text": "LLM-based coding agents are now a routine part of software development, but the way they modify source code has not fundamentally changed: agents read text, plan a change, and emit text edits — sometimes via patches, sometimes by rewriting whole files, sometimes guided by sophisticated indexing and retrieval. The agent must identify every location that needs to change, materialize each edit in a syntactically and semantically valid way, and keep enough of the codebase in context to do this reliably, even though that can mean rereading large portions of code repeatedly. This burden is not new. Human programmers have always faced it, despite advances such as IDEs, syntax highlighting, code completion, static analysis, and refactoring tools. The unconstrained nature of text editing can lead to deficiencies in the resulting code: not just typos and syntax errors (which are often easily found and fixed), but more significant problems from the mental effort required to text-edit at scale — failing to cascade the downstream implications of changes, or subtle logic errors from focus being scattered over multiple in-flight changes, or across many locations in the codebase. This paper presents a novel alternative. Rather than mod- (a) 3(x−4) = 2(−2x+ 1)",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MongoDB Research",
+        "INTRODUCTION"
+      ],
+      "char_start": 1778,
+      "char_end": 3041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d48fe9a840968328bd00197d361edb9a",
+      "kind": "heading",
+      "text": "Expand",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Expand"
+      ],
+      "char_start": 3043,
+      "char_end": 3049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e895c92ff47d38110623e5d167a2eb5",
+      "kind": "equation",
+      "text": "− − − − − →3x−12 =−4x+ 2Gather− − − − − →3x+ 4x= 12 + 2",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Expand"
+      ],
+      "char_start": 3051,
+      "char_end": 3106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b89c1d2ea6a4005018c7728e21859580",
+      "kind": "heading",
+      "text": "Factorize(x)",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Factorize(x)"
+      ],
+      "char_start": 3108,
+      "char_end": 3120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:558e9f8dddb00657b16e2989274848fc",
+      "kind": "heading",
+      "text": "Factorize(1)",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Factorize(1)"
+      ],
+      "char_start": 3122,
+      "char_end": 3134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cc687b961832bf496cd2a84de3d5b04",
+      "kind": "heading",
+      "text": "Simplify",
+      "order": 12,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Simplify"
+      ],
+      "char_start": 3136,
+      "char_end": 3144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:776b97061fa7cf0c180575ae21415634",
+      "kind": "paragraph",
+      "text": "− − − − − − − → 7x= 14 Scale( 1",
+      "order": 13,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Simplify"
+      ],
+      "char_start": 3146,
+      "char_end": 3177,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:effda6f43fc2431d9abcc4d757d565af",
+      "kind": "heading",
+      "text": ")",
+      "order": 14,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        ")"
+      ],
+      "char_start": 3179,
+      "char_end": 3180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c107d49dbe2c2b7a4f1672f8206951f6",
+      "kind": "paragraph",
+      "text": "− − − − − − →x= 2 (b) def score(hits, misses) A : total = hits + misses accuracy = hits / total bonus = 0 ifaccuracy > 0.9: bonus = 10 elifaccuracy > 0.8: bonus = 5 returnhits * 2 - misses + bonus print(score(10, 3)) print(score(23, 1)) AddParam(A, includeBonus,",
+      "order": 15,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        ")"
+      ],
+      "char_start": 3182,
+      "char_end": 3444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d83766e86be0ec1de36cb9b0f80cca2",
+      "kind": "heading",
+      "text": "True)",
+      "order": 16,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "True)"
+      ],
+      "char_start": 3446,
+      "char_end": 3451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb1268c84a76e9f12f196022c5db032a",
+      "kind": "paragraph",
+      "text": "− − − − − − − − − − − − − → defscore(hits, misses , includeBonus ): total = hits + misses accuracy = hits / total bonus = 0 ifaccuracy > 0.9: bonus = 10 elifaccuracy > 0.8: bonus = 5 B returnhits * 2 - misses + bonus print(score(10, 3 ,True )) print(score(23, 1 ,True )) MakeCond(B, includeBonus) − − − − − − − − − − − − − → defscore(hits, misses, includeBonus): total = hits + misses accuracy = hits / total bonus = 0 ifincludeBonus: ifaccuracy > 0.9: bonus = 10 elifaccuracy > 0.8: bonus = 5 returnhits * 2 - misses + bonus print(score(10, 3,True)) print(score(23, 1,True)) (c) defscore(hits, misses): total = hits + misses accuracy = hits / total bonus = 0 ifaccuracy > 0.9: bonus = 10 elifaccuracy > 0.8: bonus = 5 D returnhits * 2 - misses + bonus print(score(10, 3)) print(score(23, 1)) procedureMakeOptional( T , name) AddParam(GetEnclosingFn( T ), name,true) MakeCond( T , name) end procedure",
+      "order": 17,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "True)"
+      ],
+      "char_start": 3453,
+      "char_end": 4353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdd063ad3062acad40819c5a99b21a62",
+      "kind": "heading",
+      "text": "MakeOptional(D,includeBonus)",
+      "order": 18,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 4355,
+      "char_end": 4383,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e84a774732b9f2ae449a8c43d7ea94b6",
+      "kind": "paragraph",
+      "text": "− − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − − → defscore(hits, misses , includeBonus ): total = hits + misses accuracy = hits / total bonus = 0 ifincludeBonus: ifaccuracy > 0.9: bonus = 10 elifaccuracy > 0.8: bonus = 5 returnhits * 2 - misses + bonus print(score(10, 3 ,True )) print(score(23, 1 ,True ))",
+      "order": 19,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 4385,
+      "char_end": 4723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1768a715c733a4ca5f11672285af6721",
+      "kind": "caption",
+      "text": "Figure 1.(a)Mathematical equations are manipulated by iteratively rewriting them using algebraic identities and properties, leading to a rigorous and",
+      "order": 20,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 4725,
+      "char_end": 4874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9462d34cb821318819ecb9130f8d3d1d",
+      "kind": "paragraph",
+      "text": "methodical process.(b)Source code algebraextends this idea by treating the entire codebase as “the equation”, allowing the programmer to manipulate the source code by applying global logical transformation operations to it. Calligraphic parameters to operations (e.g. A) denote the targeted region of code. Output colors indicate added or moved code. Here, theAddParamoperation adds a new parameter to a function, including updating all calls to the function, and theMakeCondoperation makes the targeted code execute conditionally.(c)Like mathematical algebra, operations can be composed to create more sophisticated source code manipulations. This allows the programmer to operate closer to their higher-level mental plan of intended code changes. Here, a new operationMakeOptionalis defined, which abstracts the changes from(b)into the higher-level concept of “make the targeted code execute optionally, based on a new parameter of the enclosing function”.",
+      "order": 21,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 4876,
+      "char_end": 5834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f13ac58fc8302bbcf0dc9d0c985c404",
+      "kind": "table",
+      "text": "arXiv:2607.18742v1  [cs.SE]  21 Jul 2026",
+      "order": 22,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 5836,
+      "char_end": 5876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:802929ac56b6fbb8dea9f779022d63c7",
+      "kind": "paragraph",
+      "text": "ifying source code by editing its text representation, the programmer (human or LLM) interactively applies a sequence oflogical “source code algebra” operationsto the entire codebase. Each operation makes all the changes necessary for a single semantic step, and a sequence of operations can produce any new feature, bugfix, optimization, refactoring, or other desired change. For example, an individual operation might convert a tuple to a struct (TupleToStruct), introduce a wrapper around a function (WrapFunction), or make some statements execute conditionally (MakeCond). A source code algebra system provides a library of such operations. This approach is inspired by mathematical equation rewriting, where the mathematician applies strategically-chosen operations that take advantage of algebraic properties to carefully and gradually transform the equation into the desired form. Each modification is small enough to verify, allowing their composition to be shown correct. The algebraic approach to programming is analogous — the entire codebase is the “equation”, and instead of tinkering with it ad-hoc in a text editor, the programmer systematically applies operations, each of which provides certain guarantees about the resulting code.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 5878,
+      "char_end": 7126,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6cf332ae00235356bd3b9c421cb12f2b",
+      "kind": "caption",
+      "text": "Fig. 1 illustrates this concept. Fig. 1(a) shows the familiar",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 7128,
+      "char_end": 7189,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47577cdee0ec8b98e1f854710614a537",
+      "kind": "paragraph",
+      "text": "arithmetic algebra concept to find a solution for the value ofxin the equation. Fig. 1(b) presents an example Python function for performing a “score” calculation. This source code is modified in two stages. First, a new parameter is added to thescorefunction called includeBonus. This is achieved by applying theAddParam operation to the function signature declaration A, which adds the parameter to the function signature, but is also responsible for adjusting all call sites toscoreto pass the given value. This operation is similar to the “Change function signature” refactoring tool found in contemporary IDEs, along with other refactoring-oriented operations such asRenameto change the name of a symbol and all references to it. However, as shown throughout this paper, the source code algebra approach has benefits beyond refactoring. The second modification makes the assignment of non-zero values tobonusonly happen when indicated byincludeBonus. This is achieved by applying theMakeCondoperation to those statements B, with the condition expression as its argument. UnlikeAddParamorRename, this kind of operation is not found in existing refactoring tools. Going even further, Fig. 1(c) shows that it is possible to algebraically compose these source code operations, thereby creating a new, higher-level operation. For example, the MakeOptionaloperation is defined to encapsulate the idea of “make this code execute conditionally, based on a new parameter to the enclosing function”. Applying it to the same original",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 7191,
+      "char_end": 8718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4d14bd46c6a2520d29152126604739c",
+      "kind": "paragraph",
+      "text": "code produces the same result as applyingAddParamand MakeCondseparately. Additionally, the algebraic properties ofMakeOptionalcan be derived from those of the operations it calls (AddParam,MakeCond, andGetEnclosingFn). This paper (I) introduces source code algebra; (II) positions it against prior work; (III) sketches initial algebraic properties and their benefits; (IV) presents a feasibility probe showing accuracy improvements and one to two orders of magnitude token reduction on a non-local task; (V) concludes with future directions.",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)"
+      ],
+      "char_start": 8720,
+      "char_end": 9261,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82a07a3042a05c22dee52e90f8b7783e",
+      "kind": "heading",
+      "text": "RELATED WORK",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "RELATED WORK"
+      ],
+      "char_start": 9263,
+      "char_end": 9275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:492c46be774ca2db3fc7d4f368620f0e",
+      "kind": "paragraph",
+      "text": "Many source code algebra operations preserve program behavior, making them similar to well-studiedrefactoring tools [1], [2]. A central feature of source code algebra is operation composability, and while there has been some research into composable refactoring [3], [4], it is not commonly found in actual systems. Source code algebra can be seen as a generalization of refactoring to include changes that alter program behavior in well-controlled ways (see Section III-A). Source code algebra is conceptually adjacent toformal methods and program verification[5]–[8]. The distinction is that these areas focus on the programs themselves, and their algebraic laws are used to prove properties about program construction and equivalences. This makes them highly relevant for language designers and compiler optimizers, but not the day-to-day programming of a software engineer. By contrast, source code algebra is focused not on provable properties of programs, but on the process of making changes to programs,",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "RELATED WORK"
+      ],
+      "char_start": 9277,
+      "char_end": 10288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55bc0d72d11106f1c9bc720d506540c5",
+      "kind": "heading",
+      "text": "e. editing source code. Specifically, the programmer can only",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "e. editing source code. Specifically, the programmer can only"
+      ],
+      "char_start": 10290,
+      "char_end": 10351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f83cba3c3e9814ebdb4ab5796eeacb1b",
+      "kind": "paragraph",
+      "text": "perform syntactically and semantically valid changes, each of which can be reasoned about. This keeps the programmer “on track”, similar to an applied mathematician performing a series of valid transformations to an equation. Advanced source code algebra systems might utilise symbolic algebra [9] to simplify or normalize operation sequences, and proof assistants [10] to derive properties about operations. Visual programmingsystems [11], [12] have source code that is represented non-textually.Structural and syntaxdirected editors[13], [14] allow the programmer to directly modify the structure of the source code (typically the abstract syntax tree).Intentional programming[15] sought to eschew a canonical text-based syntax in favor of the AST, alongside various views/projections of the tree, and projectional editors allow editing via these views.Language workbenches [16], [17] are a yet-higher abstraction, which express these concepts in terms of inter-related domain-specific languages that, together with enabling tools, permit development in language-oriented programming[18], [19]. By contrast to these prior approaches, source code algebra accepts text-based source code, including existing well-established programming languages, paradigms, and environments. While structural and projectional editing ensures that source code stays structurally sound, source code algebra extends this to preserve semantic validity. For example, theAddParam(and related) operations mean that it’s not possible for function call arguments to not",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "e. editing source code. Specifically, the programmer can only"
+      ],
+      "char_start": 10353,
+      "char_end": 11897,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7a2d4086b1bcf636c1a66716ed425ce",
+      "kind": "paragraph",
+      "text": "match the function definition. Aspect-oriented programming[20] allows source code modules to be separated and composed more independently. This helps to localize code changes and thereby reduce extensive codebase-wide modifications, but doesn’t completely eliminate them, requiring the programmer to identify and make them as",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "e. editing source code. Specifically, the programmer can only"
+      ],
+      "char_start": 11899,
+      "char_end": 12224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72ca9522bc822c654c7ccc3289c2ec26",
+      "kind": "paragraph",
+      "text": "necessary. By contrast, each source code algebra operation ensures that it performs all relevant modifications. Thestacked diffsapproach [21], [22] to code review encourages splitting changes into smaller individual changes that, while developed cumulatively, are reviewed and landed separately. Version control systems (VCSs) aimed at maintainingpatch stacks[23], [24] or withmutable histories[24]– [26] are similar, but extend this decomposition throughout the development process. Some systems go even further, using patch algebras[27]–[30] to construct the codebase from the patches, rather than storing a commit graph of codebase snapshots. These approaches are similar to source code algebra, except they remain fundamentally text-based. For example, as explained in Section III-B, this means the patches in Fig. 3 will result in merge conflicts (albeit with less impact than traditional VCSs), whereas Fig. 4 shows how source code algebra avoids this problem. ModernLLM-backed agentic coding assistantsuse sophisticated indexing and retrieval [31], [32], plan-based context selection [33], or autonomous tool-use frameworks [34], [35] to make targeted code changes — but in all cases the agent itself is responsible for identifying every location that must be edited and producing the necessary text edits. By contrast, source code algebra operations automatically make all relevant changes, off-loading this burden from the LLM and allowing it to focus on determining a suitable sequence of operations. We hypothesize that this sequence of operations is",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "e. editing source code. Specifically, the programmer can only"
+      ],
+      "char_start": 12226,
+      "char_end": 13787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68f4918f23845011d54d260f4dc8fdfe",
+      "kind": "paragraph",
+      "text": "closely aligned to the higher-level conceptual plan of required code changes, and therefore well-suited for existing LLMs to generate (supported by the results in Section IV). These operations can then be used as input for a deterministic source code algebra system, enabling the LLM to make reliable, highlevel “conceptual source code edits”, rather than stochastic, low-level text edits. Human review might also be easier when LLM output is expressed as source code algebra operations. Coccinelle [36] addressescollateral evolution, propagating changes via pattern-based semantic patches in a DSL (SmPL). Comby [37] generalizes this across languages, while codemod frameworks such as jscodeshift [38] and OpenRewrite [39] express transformations as AST-walking scripts or composable recipes. These share source code algebra’s goal of capturing one conceptual change as a single structural unit, but each transformation is a bespoke script lacking the algebraic properties that source code algebra treats as first-class.",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "e. editing source code. Specifically, the programmer can only"
+      ],
+      "char_start": 13789,
+      "char_end": 14810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0bc4f5b44c12f3e54cb451970fad0ba",
+      "kind": "heading",
+      "text": "DETAILS",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "DETAILS"
+      ],
+      "char_start": 14812,
+      "char_end": 14819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06b38730a76789b8deedf2dc5042e539",
+      "kind": "paragraph",
+      "text": "The most basic properties of source code algebra operations are that each operation should make the COMPLETEset of modifications necessary for the semantic change they implement, multiple operations are COMPOSABLE(particularly for building operations at higher levels of abstraction), and operations give DETERMINISTICoutput for any given input. To give a flavor of some further properties and their benefits, we now sketchpotencyandcommutativity. Fig. 2 summarises the properties presented in this paper. COMPLETEOperations perform all necessary modifications for a semantic change COMPOSABLEMultiple operations can be combined into a higher-level operation (h=f◦g) DETERMINISTICFor a given input, operation output is always the same NULLIPOTENTOperation does not alter behavior PLURIPOTENTOperation might alter behavior COMMUTATIVEOperation composition is symmetric (f◦g≡g◦f)",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "DETAILS"
+      ],
+      "char_start": 14821,
+      "char_end": 15698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61d92e438c62fb6c6bd8628b444b7ebb",
+      "kind": "caption",
+      "text": "Figure 2. Basic properties of source code algebra operations.",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "MakeOptional(D,includeBonus)",
+        "DETAILS"
+      ],
+      "char_start": 15700,
+      "char_end": 15761,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2402534af3544f25514bb5631ec8c670",
+      "kind": "heading",
+      "text": "A. Potency",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Potency"
+      ],
+      "char_start": 15763,
+      "char_end": 15773,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42c267f2e360a4a38ebb7529e742aac5",
+      "kind": "paragraph",
+      "text": "Applying an algebraic operation to a mathematical equation results in an equation that is different, but still equivalent to the original form. Similarly, sometimes it is the case that applying a source code algebra operation to a codebase results in code that has changed, but which remainsfunctionally equivalentto the original, i.e. behavior-preserving. We say these operations are NULLIPOTENT. With mathematical equations, the focus is always on nullipotent manipulations, to have confidence that the final result is a solution to the original problem. With software engineering, this corresponds to the task of pure refactoring. However, unlike equations, in software development it is often desirable to have functional changes, for example, new features, bug fixes, and so on. In source code algebra, this is achieved by PLURIPOTENToperations, which are behavioraltering. It is usually desirable for these behavioral changes to be tightly controlled — each pluripotent operation should be designed to make only a single conceptual change, and be free from unintended side effects. An advantage of source code algebra is that it brings the issue of nullipotency vs pluripotency to the fore. Since source code is modified by applying a sequence of source code algebra operations, the potency of each operation can be considered in isolation, as well as in the context of surrounding operations. Like equation rewriting, the decomposition facilitates reasoning about the whole, by reasoning about the parts. TheAddParamoperation in Fig. 1 is nullipotent, because",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Potency"
+      ],
+      "char_start": 15775,
+      "char_end": 17341,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3f88d04e40c6bde6a279046b94f903e",
+      "kind": "paragraph",
+      "text": "the newly-added parameter is not (yet) used by the function (since it has only just been added to the scope), and as such cannot influence the behavior of the program. TheMakeCond operation is generally pluripotent, since it causes previously always-executed statements to only sometimes be executed. However, in this scenario it iscontextually nullipotent, because the condition isincludeBonus, which is alwaysTrue(by virtue of the arguments to theAddParamoperation) — and so the affected statements continue to always be executed. Therefore, theMakeOptionaloperation is nullipotent, because it modifies the codebase toallowthe targeted statements to be conditionally executed, but without actually causing that to happen. There would only be a change in functionality if",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Potency"
+      ],
+      "char_start": 17343,
+      "char_end": 18115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaad8af32fad160d0aa00fdeef64a037",
+      "kind": "paragraph",
+      "text": "asubsequentoperation were to modify ascorecall site to passFalse(or add a new such call site) — and any such subsequent operation must necessarily be pluripotent. It would be ideal if the potency of every operation could be known, however we have not studied this question, and our intuition is that operation potency is decidable only in certain cases (and undecidable in general, due to Rice’s theorem [40]). Nevertheless, even in the absence of provable potency, we still believe it to be a useful consideration, as illustrated by the above example.",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Potency"
+      ],
+      "char_start": 18117,
+      "char_end": 18669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98aa8bc84ce8770f357c01c140ed595b",
+      "kind": "heading",
+      "text": "B. Commutativity",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity"
+      ],
+      "char_start": 18671,
+      "char_end": 18687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d629da4ef114c0d2218cb71009d2e57f",
+      "kind": "paragraph",
+      "text": "A related concept is operation COMMUTATIVITY, which is when the compositionf◦gof two operationsfandgis symmetric, i.e.f◦g≡g◦f. Source code operations are not always commutative, but there are benefits when they are — which is again analogous to the situation with mathematical function composition. For example, consider the pair of text patches shown in Fig. 3(a) and (b); the first changes the name of a function parameter, while the second changes the order of the parameters. With traditional text-based patch or revision control systems, attempting to apply both of these patches leads to amerge conflict, requiring manual intervention to resolve the desired final state shown in Fig. 3(c). By contrast, consider if these changes are instead represented by (or alternatively, were caused by) the operations shown in Fig. 4, rather than by text-based patches. Here, changing the parameter name is achieved by the Rename(A,message)operation, while the parameter order is changed byMoveParam( A,+1)(to move the parameter’s position to be 1 later in the parameter list).",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity"
+      ],
+      "char_start": 18689,
+      "char_end": 19760,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0be63d9ae029439f51fe815b88a5da74",
+      "kind": "caption",
+      "text": "Fig. 4 illustrates that these operations are commutative, and",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity"
+      ],
+      "char_start": 19762,
+      "char_end": 19823,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0ff4493333ddb57e4f5d5b1cb6408d4",
+      "kind": "paragraph",
+      "text": "can be applied in either order to achieve the desired output without any merge conflicts. Although a simple example, this concept can be extended to other situations where the order of changes is significant, for example rebasing or merging VCS branches, or linearized commit queues. This shows how commutative source code algebra operations can provide benefits that are unavailable or difficult in traditional text-based systems.",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity"
+      ],
+      "char_start": 19825,
+      "char_end": 20256,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28f4fb524fc626c1cc82eb37826193b5",
+      "kind": "heading",
+      "text": "EVALUATION",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 20258,
+      "char_end": 20268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff3e516ebcdf812e0042811410e4ace4",
+      "kind": "paragraph",
+      "text": "We have developed an open-source proof-of-concept source code algebra implementation, known asSource Code Algebraic System (SCAS)[41]. Source code syntax is parsed with tree-sitter [42], “enriched” with semantic information derived from (usually language-specific) static analysis, and the resulting tree stored as a MongoDB [43] collection. It exposes operations as composable Unix-style programs, and integrates as a tool an LLM agent can call. SCAS relies on the AST enrichment, which currently uses Spoon [44] for Java, but is moving to support more languages viasemanticToken-enabled LSP [45] servers. A feasibility probe was conducted to investigate if SCAS can be used as-is by existing agentic LLM frameworks, requiring only access to the tool and its associated documentation -voidfn(char * msg,inttype); +voidfn(char * message,inttype); -voidfn( char* msg, inttype); +voidfn(inttype ,char * msg); (a)changing argument name (b)changing argument order -voidfn( char* msg, inttype); +voidfn(inttype ,char * message); (c)intended merge of(a)and(b)after resolving conflicts",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 20270,
+      "char_end": 21348,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ac59c146df1ba78d94da19f203665d6",
+      "kind": "caption",
+      "text": "Figure 3. Merging text-based patches can result in conflicts that require",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 21350,
+      "char_end": 21423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af5330642bfd23cb45c0b15712a2802a",
+      "kind": "paragraph",
+      "text": "manual resolution. voidfn(char * msg A ,inttype); Rename(A,message)↓ ↓MoveParam( A,+1) voidfn(char * msgmessage A ,inttype); voidfn( , inttype , char* msg A ); MoveParam(A,+1)↓ ↓Rename( A,message) voidfn( , inttype , char* message); voidfn(inttype,char * msgmessage); ↓ ↓ voidfn(inttype,char * message);",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 21425,
+      "char_end": 21728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55741b2d1f82531108b7994a32e0a90d",
+      "kind": "caption",
+      "text": "Figure 4. Commutative operations can be applied in any order without",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 21730,
+      "char_end": 21798,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76415647ff966bba98d7c81bb768461e",
+      "kind": "paragraph",
+      "text": "introducing conflicts. (i.e. via in-context learning, without model fine-tuning or special model/agent architectures). The experimental setup consisted of various LLMs in a ReAct framework [46], implemented using LangChain [47], with tool access to SCAS (including a built-in contextual helpoperation). The task is a single cross-file symbol rename (a Java class method), in a synthetic codebase 1 of∼5.5k lines of code (∼500kb,∼200k tokens, across 8 files), with deliberately ambiguous symbol names (such that naive textbased replacement will fail). This setup was chosen as a minimum viable demonstration for the feasibility of an LLM in-context learning the concept of source code algebra, and then subsequently applying appropriate SCAS operations to modify the codebase algebraically, without text edits. A familiar task (symbol rename) is used to avoid problems where the LLM misunderstands the request. The system is compared against two baselines: (1) the “plain” LLM with one-shot prompting (i.e. without an agentic framework, tools, or other strategies such as chain of thought prompting), and reduced input codebase size of∼20k tokens (due to context window constraints), and (2) the Cursor [48] coding assistant (v2.5.20) running in Agent mode. The SCAS implementation, tool definitions, prompts, evaluation codebase, and full input/output transcripts are available in a branch of the SCAS repository [41].",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "B. Commutativity",
+        "EVALUATION"
+      ],
+      "char_start": 21800,
+      "char_end": 23218,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e646cf91d1dba418286a8bfc6244f828",
+      "kind": "heading",
+      "text": "A. Results",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Results"
+      ],
+      "char_start": 23220,
+      "char_end": 23230,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a73e24c9604e806e42fdb6bebbb33b8a",
+      "kind": "caption",
+      "text": "Fig. 5 shows the results of the experiment. Each model-",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Results"
+      ],
+      "char_start": 23232,
+      "char_end": 23287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a97e2e3fde71338b17a961967ed95bc",
+      "kind": "paragraph",
+      "text": "system pair was executed 3 times. Output code was inspected by the author and judged for correctness according to: •✓=⇒the source code was correctly modified. •∼=⇒the resulting source code was mostly correct, requiring only minor corrections, e.g. the model may have made extraneous (albeit correct) changes, or may have elided some unchanged sections of code. •✗=⇒the source code was not correctly modified. 1Generated with the assistance of the Cursor AI coding tool.",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Results"
+      ],
+      "char_start": 23289,
+      "char_end": 23758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3065d43a416f0289f87460dd9e46f63b",
+      "kind": "paragraph",
+      "text": "One-shot (full) One-shot (small ∗) Cursor (full) SCAS (full)",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "A. Results"
+      ],
+      "char_start": 23760,
+      "char_end": 23820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9d97eb7d3b7245bb81dcf24dea84555",
+      "kind": "heading",
+      "text": "Model Result Tokens Result Tokens Result Tokens Result Tokens",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 23822,
+      "char_end": 23883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ab5031b51e8bd94767b8be534b5aa0f",
+      "kind": "paragraph",
+      "text": "gpt-4o-minin/a n/a✗ ✗ ✗25k (123%)n/a n/a✓✗ ✗11k (5.48%) gpt-5-minin/a n/a✓✓✓51k (255%)✓ ✗ ✗545k (272%)✓✓✓19k (9.66%) claude-4.5-sonnetn/a n/a✓✓✓60k (302%)✓✓✓1,124k (562%)✓✓✓23k (11.3%) claude-4.5-haikun/a n/a✗ ✗ ✗30k (151%)✓ ✗ ✗434k (217%)✓✓✓19k (9.30%) claude-4.5-opusn/a n/a✓✓✓60k (302%)✗ ✗ ✗109k (54%)✓✓✓18k (9.22%) gpt-5.2∼∼✗204k (102%)✓✓✗49k (246%)∼∼∼778k (389%)✓✓✓7k (3.71%)",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 23885,
+      "char_end": 24265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e43641c03df6d7b5aac608941c18390f",
+      "kind": "caption",
+      "text": "Figure 5. Experimental results from various LLM-based systems to solve a synthetic coding exercise. The full input source code is∼200k tokens, while",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 24267,
+      "char_end": 24415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30fbb6fa89a54ab1970b1cf201a87094",
+      "kind": "paragraph",
+      "text": "the small ∗ source code is reduced by∼90% to∼20k tokens.One-shotis a plain LLM without tools, agentic framework, or any other strategies.Cursoris the Cursor coding assistant in Agent mode.SCASis the POC source code algebra implementation as a ReAct style tool in LangChain, including in-context learning of how to use the SCAS system. Each model-system combination was run 3 times. The output was inspected and aResultof✓indicates that the source code was correctly modified,∼indicates mostly correct output (requiring only minor corrections), and✗indicates that the source code was not correctly modified.Tokensindicates the total input and output tokens used by the system on the median run, including as a percentage of the input codebase size (200k for full, or 20k for small ∗). For One-shot (full),n/aindicates that the model’s context window is too small for the input codebase. For Cursor,n/a indicates that the model is not available in the system. The source code algebra system compares favorably to the text-editing baselines, producing correct results more often and with fewer tokens. The total number of tokens (input and output) were recorded; the minimum and maximum of the 3 runs were discarded, leaving the median token usage. Unsurprisingly, the One-shot performance is poor. While it can usually produce a correctly renamed method definition, it fails to update the corresponding call sites in all but the most capable model tested (gpt-5.2). Even when this can be achieved, the tokens required grows in proportion to the input",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 24417,
+      "char_end": 25965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8453913982b506485c4d0a5819115e84",
+      "kind": "paragraph",
+      "text": "source code (with a coefficient of∼2, since the complete source code must be input and output). Cursor is sometimes able to correctly update all locations of the source code, however, doing so requires a large number of tokens — up to∼5 times the size of the input source code. When using SCAS the agent successfully completes the task, except when using the least-capable model (gpt-4o-mini). It also requires strikingly fewer tokens with SCAS: around 7k – 23k tokens, or∼3% – 11% of the codebase size, which is roughly one to two orders of magnitude lower than Cursor’s ∼217% – 562%. SCAS requires fewer tokens because with it, the model doesn’t need to identify and make all the cascading changes — whereas Cursor likely does require this. Additionally, the SCAS token usage remains low despite also including the agent’s exploratory in-context learning of how to use the SCAS system, suggesting that these learning costs are low. The SCAS token usage is expected to scale with the size of the immediately relevant section of source code — rather than the size of all modified code, or the whole codebase — because SCAS offloads the requirement for the model or agent to find and update all necessary code sites. These preliminary results are consistent with our hypothesis that source code algebra is a useful approach for modifying source code, and the hypothesis that LLMs are able to translate their high-level plan into source code algebra operations. This is encouraging evidence that the approach warrants further research, especially as a substrate for coding agents.",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 25967,
+      "char_end": 27545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc3b7a514bf425159bc18e08f855d2fe",
+      "kind": "paragraph",
+      "text": "Limitations:This is a feasibility probe — a single nonlocal task, on one synthetic codebase, in one language, with limited repetition and inspection-judged correctness. Broader evaluation across benchmarks, languages, and baselines is left to future work.",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens"
+      ],
+      "char_start": 27547,
+      "char_end": 27802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff92e4fde61578808bdbfc60e3a9cb05",
+      "kind": "heading",
+      "text": "CONCLUSIONS AND FUTURE WORK",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens",
+        "CONCLUSIONS AND FUTURE WORK"
+      ],
+      "char_start": 27804,
+      "char_end": 27831,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7999c7c0614d92a8d0104d7019f8e3f1",
+      "kind": "paragraph",
+      "text": "This paper has proposedsource code algebra: a way of modifying a codebase by applying a sequence of logical algebraic operations to it, rather than by editing text. The approach treats code modifications as composable units with reasoning-friendly properties — including nullipotency and commutativity — analogous to how mathematicians rewrite equations using algebraic identities. An initial probe with our proof-of-concept implementation (SCAS) shows that LLM agents are able to drive source code algebra to complete a non-local, cross-file code change with high accuracy, and roughly one to two orders of magnitude fewer tokens than text-based baselines. While preliminary, this is consistent with the hypothesis that having LLM agents emit algebraic operations, rather than rewriting or text editing source code, is a promising direction for LLM coding agents. Several directions warrant further investigation. The operator library is currently small and Java-focused; expanding both its breadth and language coverage is a prerequisite for detailed evaluation on standard benchmarks such as SWEbench [49]. The properties sketched in Section III warrant formal study — particularly the decidability of nullipotency and commutativity, conditions for their automated deduction, identification of other potentially-useful properties (or a full characterization of the formal algebra), and determination of a minimal sufficient set of operations. Source code algebra is equally applicable to human programmers, especially if sup-",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens",
+        "CONCLUSIONS AND FUTURE WORK"
+      ],
+      "char_start": 27833,
+      "char_end": 29361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0fb9e6ae09ae38e58c56b4599c01951",
+      "kind": "paragraph",
+      "text": "ported by interactive tooling, with potential benefits for code authoring, code review, and disciplined program evolution that remain to be investigated empirically. We believe source code algebra is a research direction worth pursuing, both as a substrate for agentic code editing systems and as a way of bringing some of mathematics’ methodical discipline to the way software is changed.",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "Model Result Tokens Result Tokens Result Tokens Result Tokens",
+        "CONCLUSIONS AND FUTURE WORK"
+      ],
+      "char_start": 29363,
+      "char_end": 29752,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88d279d485f52e282ead222c93476cd9",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "REFERENCES"
+      ],
+      "char_start": 29754,
+      "char_end": 29764,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4967797a900e6749e11e3c406040262a",
+      "kind": "reference",
+      "text": "[1] T. Mens and T. Tourwe, “A survey of software refactoring,”IEEE Transactions on Software Engineering, vol. 30, no. 2, pp. 126–139, 2004. [2] Y . Golubevet al., “One thousand and one stories: A large-scale survey of software refactoring,” inProceedings of the 29th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE 2021), 2021, pp. 160– 172, also available as arXiv:2107.07357. [3] G. Kniesel and H. Koch, “Static composition of refactorings,” Science of Computer Programming, vol. 52, no. 1, pp. 9–51, 2004, special Issue on Program Transformation. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0167642304000462 [4] J. Henkel and A. Diwan, “CatchUp! Capturing and replaying refactorings to support API evolution,” in27th International Conference",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "REFERENCES"
+      ],
+      "char_start": 29766,
+      "char_end": 30619,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f2a8d9cc89d40e30de233aa611dc23a",
+      "kind": "heading",
+      "text": "on Software Engineering. Los Alamitos, CA, USA: IEEE Computer",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "on Software Engineering. Los Alamitos, CA, USA: IEEE Computer"
+      ],
+      "char_start": 30621,
+      "char_end": 30682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c92a49e4d5850d6b233eb9fb3a639b65",
+      "kind": "paragraph",
+      "text": "Society, May 2005, pp. 274–283. [Online]. Available: https://doi. ieeecomputersociety.org/10.1109/ICSE.2005.1553570 [5] C. A. R. Hoareet al., “Laws of programming,”Commun. ACM, vol. 30, no. 8, p. 672–686, Aug. 1987. [Online]. Available: https://doi.org/10.1145/27651.27653 [6] P. Borbaet al., “Algebraic reasoning for object-oriented programming,” Science of Computer Programming, vol. 52, no. 1, pp. 53–100, 2004, special Issue on Program Transformation. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S0167642304000474 [7] E. M. Clarke and J. M. Wing, “Formal methods: State of the art and future directions,”ACM Computing Surveys, vol. 28, no. 4, pp. 626–643, 1996. [8] T. Hoare and S. van Staden, “In praise of algebra,”Form. Asp. Comput., vol. 24, no. 4–6, p. 423–431, Jul. 2012. [Online]. Available: https://doi.org/10.1007/s00165-012-0249-0 [9] J. von zur Gathen and J. Gerhard,Modern Computer Algebra, 3rd ed. Cambridge, UK: Cambridge University Press, 2013. [10] H. Geuvers, “Proof assistants: History, ideas and future,”Sadhana, vol. 34, no. 1, pp. 3–25, 2009. [Online]. Available: https://doi.org/10. 1007/s12046-009-0001-5 [11] M. Boshernitsan and M. S. Downes, “Visual programming languages: a survey,” Tech. Rep. UCB/CSD-04-1368, Dec 2004. [Online]. Available: http://www2.eecs.berkeley.edu/Pubs/TechRpts/2004/6201.html [12] P. P. Ray, “A survey on visual programming languages in internet of things,”Scientific Programming, vol. 2017, no. 1, p. 1231430,",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "on Software Engineering. Los Alamitos, CA, USA: IEEE Computer"
+      ],
+      "char_start": 30684,
+      "char_end": 32176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d56c6fd65c5505010d212d225265d91f",
+      "kind": "heading",
+      "text": "[Online]. Available: https://onlinelibrary.wiley.com/doi/abs/10.",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Beyond Text Editing",
+        "on Software Engineering. Los Alamitos, CA, USA: IEEE Computer",
+        "[Online]. Available: https://onlinelibrary.wiley.com/doi/abs/10."
+      ],
+      "char_start": 32178,
+      "char_end": 32242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9a104419381f9a5ff6ee9f66f8b1c2b",
+      "kind": "paragraph",
+      "text": "1155/2017/1231430 [13] T. Teitelbaum and T. Reps, “The Cornell program synthesizer: a syntax-directed programming environment,”Commun. ACM, vol. 24, no. 9, p. 563–573, Sep. 1981. [Online]. Available: https://doi.org/10. 1145/358746.358755 [14] V . Donzeau-Gougeet al., “Programming environments based on structured editors: The MENTOR experience,” inInteractive Programming Environments, D. R. Barstow, H. E. Shrobe, and E. Sandewall, Eds. McGraw-Hill, 1984, pp. 128–140. [15] C. Simonyi, M. Christerson, and S. Clifford, “Intentional software,” inProceedings of the 21st annual ACM SIGPLAN conference on Object-oriented programming systems, languages, and applications, ser. OOPSLA ’06. ACM, 2006, pp. 451–464. [16] M. Fowler, “Language workbenches: The killer-app for domain specific languages?” https://martinfowler.com/articles/languageWorkbench.html, 2005, accessed: 2026-05-11. [17] S. Erdweget al., “Evaluating and comparing language workbenches: Existing results and benchmarks for the future,”Computer Languages, Systems & Structures, vol. 44, pp. 24–47, 2015, special issue on SLE",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "on Software Engineering. Los Alamitos, CA, USA: IEEE Computer",
+        "[Online]. Available: https://onlinelibrary.wiley.com/doi/abs/10."
+      ],
+      "char_start": 32244,
+      "char_end": 33334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfe446cc4080e6e8a0dda7804dc638c7",
+      "kind": "heading",
+      "text": "and SLE 2014. [Online]. Available: https://www.sciencedirect.",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Beyond Text Editing",
+        "and SLE 2014. [Online]. Available: https://www.sciencedirect."
+      ],
+      "char_start": 33336,
+      "char_end": 33397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2817cdc49d07f65d92391d03361f4a8",
+      "kind": "paragraph",
+      "text": "com/science/article/pii/S1477842415000573 [18] M. P. Ward, “Language-oriented programming,”Software – Concepts and Tools, vol. 15, no. 4, pp. 147–161, 1994. [19] S. Dmitriev, “Language oriented programming: The next programming paradigm,” JetBrains onBoard, Issue 1. https://www.onboard.jetbrains. com/articles/04/10/lop/, 2004, accessed: 2026-05-11. [20] G. Kiczaleset al., “Aspect-oriented programming,” inECOOP’97 - Object-Oriented Programming, ser. Lecture Notes in Computer Science, vol. 1241. Springer, 1997, pp. 220–242. [21] “Stacked diffs.” [Online]. Available: https://graphite.com/guides/ stacked-diffs [22] “The stacking workflow.” [Online]. Available: https://www.stacking.dev/ [23] “Stacked Git.” [Online]. Available: https://stacked-git.github.io/ [24] D. Goode and M. Bolin, “Sapling: Source control that’s user-friendly and scalable,” https://engineering.fb.com/2022/11/15/open-source/ sapling-source-control-scalable/, 2022, Meta Engineering Blog. [25] M. von Zweigbergk and the Jujutsu contributors, “Jujutsu: A gitcompatible version control system,” https://github.com/jj-vcs/jj, 2021. [26] D. Alden, “Jujutsu: a new, git-compatible version control system,” LWN.net, Jan. 2024. [Online]. Available: https://lwn.net/Articles/958468/ [27] D. Roundy, “Darcs: Distributed version management in haskell,” in Proceedings of the 2005 ACM SIGPLAN Workshop on Haskell, ser. Haskell ’05. Tallinn, Estonia: ACM, 2005, pp. 1–8. [28] P.- ´E. Meunier and F. Becker, “Pijul: A distributed version control system based on a theory of patches,” https://pijul.org/, accessed 2026-02-11.",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "and SLE 2014. [Online]. Available: https://www.sciencedirect."
+      ],
+      "char_start": 33399,
+      "char_end": 34987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f36b3a0a1c5c008de328dbb1a7b60506",
+      "kind": "paragraph",
+      "text": "[29] ——, “Pijul model: Patch theory for distributed version control,” https: //pijul.org/model/, accessed 2026-02-11. [30] P.- ´E. Meunier, “Pijul, a purely functional version control system,” Tutorial at the ACM SIGPLAN International Conference on Functional Programming (ICFP 2018), 2018, https://icfp18.sigplan.org/details/icfp-2018-Tutorials/9/ T09-Pijul-a-purely-functional-version-control-system-. [31] Engineer’s Codex, “How cursor indexes codebases fast,” https: //read.engineerscodex.com/p/how-cursor-indexes-codebases-fast, 2025, accessed: 2026-02-16. [32] S. Kinney, “Mastering context management in cursor,” https://stevekinney.com/courses/ai-development/cursor-context, 2025, accessed: 2026-02-16. [33] R. Bairiet al., “Codeplan: Repository-level coding using llms and planning,”Proc. ACM Softw. Eng., vol. 1, no. FSE, Jul. 2024. [Online]. Available: https://doi.org/10.1145/3643757 [34] J. Yanget al., “SWE-agent: Agent-computer interfaces enable automated software engineering,” inAdvances in Neural Information Processing Systems, A. Globersonet al., Eds., vol. 37. Curran Associates, Inc., 2024, pp. 50 528–50 652. [Online]. Available: https://proceedings.neurips.cc/paper files/paper/ 2024/file/5a7c947568c1b1328ccc5230172e1e7c-Paper-Conference.pdf [35] Y . Zhanget al., “AutoCodeRover: Autonomous program improvement,” inProceedings of the 33rd ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA), 2024. [Online]. Available: https://doi.org/10.1145/3650212.3680384 [36] Y . Padioleauet al., “Documenting and automating collateral evolutions",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "and SLE 2014. [Online]. Available: https://www.sciencedirect."
+      ],
+      "char_start": 34989,
+      "char_end": 36573,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc1e874c36a5371c6d2f50db95d4defd",
+      "kind": "paragraph",
+      "text": "in linux device drivers,” inEuroSys 2008, Glasgow, Scotland, Mar. 2008, pp. 247–260. [37] R. van Tonder and C. L. Goues, “Lightweight multi-language syntax transformation with parser parser combinators,” inProc. of the 40th ACM SIGPLAN Conf. on Programming Language Design and Implementation, ser. PLDI ’19. Phoenix, AZ, USA: ACM, 2019, pp. 363–378. [38] Meta Platforms, Inc., “jscodeshift: A JavaScript codemod toolkit,” https: //github.com/facebook/jscodeshift, accessed 2026-05-14. [39] Moderne, Inc., “OpenRewrite: Automated mass refactoring of source code,” https://github.com/openrewrite/rewrite, accessed 2026-05-14. [40] H. G. Rice, “Classes of recursively enumerable sets and their decision problems,”Transactions of the American Mathematical Society, vol. 74, no. 2, pp. 358–366, 1953. [41] K. Pulo, “Source Code Algebraic System (SCAS),” 2026. [Online]. Available: https://github.com/mongodb-labs/scas [42] M. Brunsfeldet al., “tree-sitter/tree-sitter: v0.26.3,” 2025. [Online]. Available: https://zenodo.org/doi/10.5281/zenodo.4619183 [43]MongoDB Manual, MongoDB Inc., 2025, version 8.x. [Online]. Available: https://www.mongodb.com/docs/manual/ [44] R. Pawlaket al., “Spoon: A Library for Implementing Analyses and Transformations of Java Source Code,”Software: Practice and Experience, vol. 46, pp. 1155–1179, 2015. [Online]. Available: https://hal.archives-ouvertes.fr/hal-01078532/document [45] Microsoft, “Language Server Protocol,” https://microsoft.github.io/ language-server-protocol/, accessed: 2026-06-08.",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "and SLE 2014. [Online]. Available: https://www.sciencedirect."
+      ],
+      "char_start": 36575,
+      "char_end": 38102,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:050937ccbe31366f4b34351a7e945e06",
+      "kind": "paragraph",
+      "text": "[46] S. Yaoet al., “ReAct: Synergizing reasoning and acting in language models,” 2023. [Online]. Available: https://arxiv.org/abs/2210.03629 [47] H. Chase, “Langchain,” https://github.com/langchain-ai/langchain, 2022. [48] Anysphere, Inc., “Cursor: The AI Code Editor,” 2023. [Online]. Available: https://cursor.com/ [49] C. E. Jimenezet al., “SWE-bench: Can language models resolve realworld github issues?” inThe Twelfth International Conference on Learning Representations, 2024. [Online]. Available: https: //openreview.net/forum?id=VTF8yNQM66",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Beyond Text Editing",
+        "and SLE 2014. [Online]. Available: https://www.sciencedirect."
+      ],
+      "char_start": 38104,
+      "char_end": 38651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.18742",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,4849 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "da24383d5c99c43243849dcd033240c60f88520c62935847b363a8ef960fd572",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:38d4e2e430c6d3fd2e323df05a30e774",
+      "kind": "paragraph",
+      "text": "Yuqi Chen1 Vincent Siu 1 Yang Liu1 Dawn Song 2 Chenguang Wang 1",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 63,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5232fcb2f9c17cf05628993cc6060e3d",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 65,
+      "char_end": 73,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23af63a97147003435e11485cbfb65fa",
+      "kind": "paragraph",
+      "text": "Tool-augmented large language models extend their capabilities beyond parametric knowledge through external tools, but tend to invoke them unnecessarily. We investigate whether tool-use decisions have any stable internal representation that can be extracted and manipulated, a question that is non-trivial given that tools exist entirely in context at inference time and have no direct encoding in model weights. We show that steering vectors extracted from heading-anchors positions exert bidirectional causal control over tool-invocation behavior across five open-source models and three domains, suppressing unnecessary tool use most effectively in domains where parametric reasoning suffices. However, geometric analysis reveals that this causal effectiveness does not correspond to clean linear structure: toolinvocation steps exhibit diffuse, bimodal alignment with the suppression vector rather than the consistent negative alignment a linear encoding account would predict, and different tool types recruit largely distinct internal signatures with low cross-tool feature overlap. We hypothesize these geometric properties are indicative of the non-parametric nature of tools, and distinguish tool-use steering vectors from those extracted for parametrically grounded concepts. The relationship between this geometric irregularity and the observed causal effectiveness remains an open question.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 75,
+      "char_end": 1477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16bf39c5b42ca8dc85385a017acd7874",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1479,
+      "char_end": 1491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:038a8b385c45b95ace920a13b99acec5",
+      "kind": "paragraph",
+      "text": "Tool-augmented LLMs have become a dominant paradigm for complex reasoning and real-world tasks (Yao et al., 2023; Levy et al., 2024; Schick et al., 2023). External tools such as web search, code execution, and user-interaction modules 1Department of Computer Science and Engineering, UC Santa Cruz 2Department of Computer Science, UC Berkeley. Correspondence to: Chenguang Wang<chenguangwang@ucsc.edu>. Published at the Second Workshop on Agents in the Wild: Safety, Security, and Beyond (AIWILD) at ICML 2026. Copyright 2026 by the author(s). extend model capabilities beyond parametric knowledge, improving performance on tasks requiring up-to-date information, precise computation, or clarification of underspecified intent (Schick et al., 2023; Schneider, 2025). However, tool augmentation also introduces a persistent failure mode:tool overuse. Models may invoke tools even when internal reasoning would suffice, repeat calls without meaningful progress, or rely on tools in ways that increase latency and cost while providing limited benefit (Qian et al., 2025; Shen et al., 2024). Unnecessary tool calls can expose the system to noisy retrieval, execution failures, and avoidable error propagation (Wang et al., 2025). Existing mitigations either require expensive retraining (Qian et al., 2025; Shen et al., 2024) or operate at the output interface rather than on the internal activations underlying tool selection (Wang et al., 2025), leaving the latent decision to invoke a tool unaddressed. We ask whether tool-use decisions have any stable inter-",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 1493,
+      "char_end": 3051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94093ae70e52944d662b0418fea8a209",
+      "kind": "paragraph",
+      "text": "nal representation that can be extracted and manipulated. This is non-obvious: unlike concepts such as sentiment or factuality that are encoded in model weights through training, tools exist entirely in context at inference time, and standard assumptions from the linear representation hypothesis (Park et al., 2024) and representation engineering (Zou et al., 2023) do not straightforwardly apply to concepts with no parametric grounding. Prior steering work has targeted concepts with clear parametric grounding (sentiment, refusal, truthfulness) (Panickssery et al., 2023; Siu et al., 2025a); we are among the first to apply it to a behavior that is explicitly non-parametric by construction. Following contrastive activation addition (Turner et al., 2023; Panickssery et al., 2023), we extract hidden states at structured tool-heading positions in reasoning trajectories to build toolspecific steering vectors, and evaluate their causal and geometric properties across five open-source instruction-tuned models and three domains. Applying these vectors via activation addition suppresses tool use substantially below baseline, while orthogonalizing hidden states with respect to them amplifies tool use above it. This bidirectional behavioral control, shown in Figure 1, confirms that the extracted vectors are causally relevant to tool-use decisions despite the absence of any stable parametric encoding of tools in model weights. Suppression is most 1",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3053,
+      "char_end": 4510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22cfed88e938d97b07893c52ece3492c",
+      "kind": "table",
+      "text": "arXiv:2607.05790v1  [cs.AI]  7 Jul 2026",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4512,
+      "char_end": 4551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9973615eaf0e06caf7529833096924d6",
+      "kind": "caption",
+      "text": "Figure 1.Average tool calls per query across five models under three conditions. Base Model Tool Prompt is the prompt-only baseline",
+      "order": 7,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4553,
+      "char_end": 4684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6309a556b0d07f1dd8683969bff6db93",
+      "kind": "paragraph",
+      "text": "without hidden-state intervention. Activation Addition subtracts the steering vector from the residual stream, suppressing tool use below the baseline. Orthogonalization projects hidden states to be orthogonal to the steering vector, removing the suppressive component and amplifying tool use above the baseline. The opposing directions of the two interventions confirm that the extracted vector encodes a causally effective, bidirectional tool-use direction in the residual stream. effective in domains where parametric reasoning suffices, and degrades where external retrieval or user clarification is genuinely required, with larger models showing greater resistance across all domains. However, geometric analysis reveals that causal effectiveness does not correspond to clean linear structure. Toolinvocation steps exhibit a diffuse bimodal cosine similarity distribution with respect to the suppression vector rather than the consistent negative alignment a linear encoding account would predict, and different tool types recruit largely distinct internal feature dimensions with low cross-tool overlap. These properties are consistent with the non-parametric nature of tools and distinguish tool-use steering vectors from those extracted for parametrically grounded concepts. The relationship between this geometric irregularity and the observed causal effectiveness remains an open question, and we discuss it in the context of the multi-turn dependency structure of tool-augmented trajectories that limits direct",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 4686,
+      "char_end": 6207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5bf0f51a695e84e085c7b29cc8d4d036",
+      "kind": "paragraph",
+      "text": "reconciliation with the probing analysis.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 6209,
+      "char_end": 6250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b398eaa8f756bb2d49f07cf23a4afb03",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Related Work"
+      ],
+      "char_start": 6252,
+      "char_end": 6264,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98284927051aebca70245edf7e816793",
+      "kind": "paragraph",
+      "text": "Representation Theory.The linear representation hypothesis (Park et al., 2024) predicts that concepts encoded in model weights should be linearly decodable from activations, with supporting evidence from word vector arithmetic (Mikolov et al., 2013) and superposition theory (Elhage et al., 2022). Empirical work on refusal (Arditi et al.,",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Introduction",
+        "Related Work"
+      ],
+      "char_start": 6266,
+      "char_end": 6605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f437b28789f699a240ca7d3e83906277",
+      "kind": "heading",
+      "text": "and truthfulness (Burns et al., 2023) has found steer-",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-"
+      ],
+      "char_start": 6607,
+      "char_end": 6661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abab31d56fe72718b722c3e6fd66635a",
+      "kind": "paragraph",
+      "text": "ing vectors with clean geometric properties consistent with this account. More recent work has complicated the picture: concept directions can span multi-dimensional subspaces rather than single directions (Wollschl¨ager et al., 2025; Siu et al., 2025c), and their geometry can exhibit complex dependencies on context and layer depth. Our work extends this line of inquiry to a setting where linear representability is not expected to hold by construction: because tools are injected through context rather than encoded in weights, the geometric irregularity we observe is a predicted consequence of the non-parametric nature of tools rather than an anomaly, and it distinguishes tool-use steering vectors from those studied in prior representation theory work. Activation Steering.Steering methods identify directions in activation space corresponding to target behaviors and modulate them via vector addition or orthogonalization (Zou et al., 2023; Arditi et al., 2024; Turner et al., 2023; Panickssery et al., 2023; Siu et al., 2025a). Directions are commonly extracted from contrastive data pairs (Burns et al., 2023; Arditi et al., 2024; Zou et al., 2023) and have been used for both behavior elicitation and concept removal (Ravfogel et al., 2020; Siu et al., 2025b). Inference-time steering uses probes or classifiers (Li et al., 2023; Lee et al., 2024) to conditionally apply interventions during forward passes. Prior steering work has largely assumed that the concept being steered has stable parametric grounding; our work ap-",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-"
+      ],
+      "char_start": 6663,
+      "char_end": 8200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f6bc2d8f32e3495c678e9bf50e3df74",
+      "kind": "paragraph",
+      "text": "plies these methods to a concept that explicitly lacks it, and examines the consequences for both causal effectiveness and geometric structure. LLM Tool Use.Tool-use methods extend language models with external functions, APIs, and environments, enabling access to up-to-date information, specialized computation, and domain-specific expertise beyond parametric memory (Schick et al., 2023; Yao et al., 2023; Qin et al., 2023; Qu et al., 2025; Shen, 2024). Prior work studies how models decidewhento call tools,whichtools to select, andhowto 2",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-"
+      ],
+      "char_start": 8202,
+      "char_end": 8745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56651e1b439125d4a5c3ffeadd5f8284",
+      "kind": "paragraph",
+      "text": "incorporate tool outputs into subsequent reasoning (Qian et al., 2024d). Recent work further improves tool-use robustness through tool creation, external module integration, and alignment for more efficient tool calling under uncertainty or knowledge-boundary awareness (Qian et al., 2024a; Liu et al., 2025; Qian et al., 2024c; Xu et al., 2025). At the same time, dedicated evaluations show that models still struggle with unnecessary or incorrect tool calls, motivating benchmarks for deciding whether tools are needed and which tools should be used (Huang et al., 2024; Ning et al.,",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-"
+      ],
+      "char_start": 8747,
+      "char_end": 9332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a85a8c3c8c7aa2bd206dbcdbb05a146",
+      "kind": "heading",
+      "text": "Closely related to these efforts, recent work studies",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Closely related to these efforts, recent work studies"
+      ],
+      "char_start": 9334,
+      "char_end": 9387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e502edb1a2aedc3b9d73bd65255a8317",
+      "kind": "paragraph",
+      "text": "tool overuse and adaptive tool calling based on model uncertainty or self-awareness (Wang et al., 2025; Shen et al., 2024; Qian et al., 2025). In contrast to methods that explicitly optimize external tool interaction policies, our work focuses on inducing the desired behavior through inference-time manipulation of internal representations.",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Closely related to these efforts, recent work studies"
+      ],
+      "char_start": 9389,
+      "char_end": 9730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a41aed0806c912a148a2f1a074931f61",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Methodology"
+      ],
+      "char_start": 9732,
+      "char_end": 9743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e5eca084f59dbe612a390d39ef0f06f",
+      "kind": "paragraph",
+      "text": "We study inference-time suppression of tool calls in structured tool-augmented generation. In our setting, the model emits intermediate reasoning using explicit section Heading- Anchors such as ### Reasoning , ### Search , ### Code, ### AskUser , and ### Final Response . Rather than steering the model globally throughout generation, we intervene locally at heading-formation steps, where the decoder is about to select the next section label. This yields a lightweight test-time intervention that requires no parameter updates. During one inference run, we fix a target steering payload and a predefined intervention layer l⋆. The method then has three parts: (i) construct heading-anchored steering vectors from complete trajectories, (ii) detect imminent Heading- Anchors formation ###, and (iii) rerun only the triggered decoding step with a local hook-based suppression at layer l⋆.",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Methodology"
+      ],
+      "char_start": 9745,
+      "char_end": 10633,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b58ab7f7bee0f2fe65c5a6b1342fda88",
+      "kind": "heading",
+      "text": "Heading-Anchored Steering Vectors",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Methodology",
+        "Heading-Anchored Steering Vectors"
+      ],
+      "char_start": 10635,
+      "char_end": 10668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc4db7d623b33fdf598f7b238d9e97da",
+      "kind": "paragraph",
+      "text": "For each tool type k∈ {Code,Search,AskUser}, we collect a set of complete labeled multi-turn trajectories with",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "and truthfulness (Burns et al., 2023) has found steer-",
+        "Methodology",
+        "Heading-Anchored Steering Vectors"
+      ],
+      "char_start": 10670,
+      "char_end": 10780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e57a61afeec1819e8a9bc32ce2cba1db",
+      "kind": "heading",
+      "text": "Heading-Anchors",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Heading-Anchors"
+      ],
+      "char_start": 10782,
+      "char_end": 10797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efc6b66e8174e04a50521bb3dc4e99e2",
+      "kind": "paragraph",
+      "text": "Dk ={(x i, yi)}Nk i=1, where xi is the prompt and yi is the full structured response containing Heading-Anchors, tool calls and the corresponding tool outputs. We run the model on the full promptresponse sequence and extract the hidden states from layer l⋆. As a result, each Heading-Anchor representation is computed in the full left-to-right context induced by the preceding reasoning and tool interactions. We represent each heading occurrence by the hidden state at the token corresponding to its leading ### anchor marker. Let Ri denote the set of anchor positions for all occurrences of ### Reasoning in trajectory yi, and let T k",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Heading-Anchors"
+      ],
+      "char_start": 10799,
+      "char_end": 11435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:427016dcc39aa08c2c27ba01318ebeb1",
+      "kind": "heading",
+      "text": "denote the",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "denote the"
+      ],
+      "char_start": 11437,
+      "char_end": 11447,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63077d03e8834744ce2924a4dbb8bf0e",
+      "kind": "paragraph",
+      "text": "set of anchor positions for all occurrences of the target heading k. For each layer l, we first average Heading-Anchor states within each trajectory: ¯h(l) R,i = 1",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "denote the"
+      ],
+      "char_start": 11449,
+      "char_end": 11612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6b19a1ce8e9ea00dc339e4321a6f660",
+      "kind": "table",
+      "text": "|Ri|",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "denote the"
+      ],
+      "char_start": 11614,
+      "char_end": 11618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5e7ba359a5f8a2ad59a757a27b1f0ba",
+      "kind": "paragraph",
+      "text": "X t∈Ri h(l) i,t , ¯h(l) k,i = 1 |T k",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "denote the"
+      ],
+      "char_start": 11620,
+      "char_end": 11656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d834fb690400f9a2e20f94e8e4e823e",
+      "kind": "heading",
+      "text": "|",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "|"
+      ],
+      "char_start": 11658,
+      "char_end": 11659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:655531017b2ec80fdc86c49ecb5a8d4b",
+      "kind": "paragraph",
+      "text": "X t∈T k i h(l) i,t (1) We then form a sample-level steering delta ∆(l) k,i = ¯h(l) R,i − ¯h(l) k,i,(2) And average these deltas across multiple trajectories: v(l) k = 1 Nk NkX i=1 ∆(l) k,i.(3) Under this definition, v(l) k points from the ### Reasoning state to the corresponding target tool-heading state. Adding v(l⋆) k therefore acts as a suppressive intervention, shifting the hidden state away from the tool-heading representation. This construction is intentionally performed at the sample level rather than by pooling all heading occurrences across the dataset before taking a single global difference of means. We do so because trajectories can contain different numbers of ### Reasoning and tool Heading-Anchors. A pooled estimator would therefore overweight trajectories with many anchor occurrences, whereas our formulation gives each trajectory a more comparable contribution to the final steering vector.",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|"
+      ],
+      "char_start": 11661,
+      "char_end": 12578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2bfcf96bf0fbad53f6fe9c55ae08992",
+      "kind": "heading",
+      "text": "Activation Addition and Orthogonalization",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Activation Addition and Orthogonalization"
+      ],
+      "char_start": 12580,
+      "char_end": 12621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:503ac2567750916e668bc15a87669cf3",
+      "kind": "paragraph",
+      "text": "We then utilize the obtained steering vector v(l) k in two different ways. At a specific layer l∗ on the Heading-Anchor tokens ###, we perform activation addition (Turner et al., 2023; Panickssery et al., 2023; Siu et al., 2025a), altering the layer input h(l⋆) t as following to suppress tool use with steering coefficientα. In our experiments we setα= 1. ˜h(l⋆) t =h (l⋆) t +αv (l⋆) k .(4) We also test orthogonalizing the hidden states to the vector (Arditi et al., 2024; Siu et al., 2025b) on this Heading- Anchor tokens, to study steering to encourage tool use by removing the suppression vector. ˜h(l⋆) t =h (l⋆) t −proj v(l⋆ ) k",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Activation Addition and Orthogonalization"
+      ],
+      "char_start": 12623,
+      "char_end": 13258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:101ad955a0221678d694e9ac112e37ee",
+      "kind": "paragraph",
+      "text": "h(l⋆) t",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Activation Addition and Orthogonalization"
+      ],
+      "char_start": 13260,
+      "char_end": 13267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1b26a66c67a5a75c55b7a7fc1608535",
+      "kind": "paragraph",
+      "text": ",proj v(h) = ⟨h, v⟩ ∥v∥2 2 v (5) 3",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Activation Addition and Orthogonalization"
+      ],
+      "char_start": 13269,
+      "char_end": 13303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36dd94a782636aa383d53b461b9ff01d",
+      "kind": "heading",
+      "text": "Experimental Setup",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Experimental Setup"
+      ],
+      "char_start": 13305,
+      "char_end": 13323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:961a7819deae5d5e983a1a13f1ea879a",
+      "kind": "paragraph",
+      "text": "Tasks and Domains.We evaluate on the Math, Time, and Intention tasks from the SMART benchmark (Qian et al.,",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Experimental Setup"
+      ],
+      "char_start": 13325,
+      "char_end": 13432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae7596d718ac39db001766b3162e1aae",
+      "kind": "heading",
+      "text": "These three domains expose complementary tool-",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "These three domains expose complementary tool-"
+      ],
+      "char_start": 13434,
+      "char_end": 13480,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdf2975d7286543a019721909696d815",
+      "kind": "paragraph",
+      "text": "use regimes: Math contains many cases where parametric reasoning suffices without external computation, Time requires access to up-to-date information unavailable in model weights, and Intention requires recovering missing user-specific details through clarification. Together they test whether a suppressive intervention can reduce unnecessary tool calls without blocking those that are genuinely required. Models and Baselines.We evaluate five open-source instruction-tuned models: Mistral-7B, Llama-3.1-8B, Mistral-Nemo (12B), Mistral-Small (24B), and Llama-3.1- 70B (Jiang et al., 2023; Grattafiori et al., 2024). We compare against the base model with tool prompt from Qian et al. (2025), which provides the model with all available tools and their descriptions and allows it to decide independently whether and when to invoke them, following an iterative reasoning-then-execution loop until a final answer is produced. Prompts.Since the method described inMethodrelies on heading-anchors, we use different prompts compared to Qian et al. (2025). For each domain, we use the prompt templates as shown in A.1. Specifically,we instruct the model to format each turn with an explicit heading anchor, such that every response must begin with###followed by one of the predefined action types: Reasoning, Code, Search, AskUser, Final Response . In this form, it standardizes the intermediate structure of model outputs across domains, making the interaction trace easier to parse and analyze. Steering Vector Construction.To construct steering vec-",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "These three domains expose complementary tool-"
+      ],
+      "char_start": 13482,
+      "char_end": 15029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fc18d34b4dafadee9bfd6231a19c4c7",
+      "kind": "paragraph",
+      "text": "tors, we sample data from the training split of SMART benchmark (Qian et al., 2025). Specifically, we select 20 examples for each of the three domains used in our experiments:Math,Time, andIntention, yielding 60 examples in total. These examples are used only to generate structured trajectories for steering-vector extraction. Using the prompts above, we generate structured responses for the selected SMART training examples withGPT-4o(OpenAI,",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "These three domains expose complementary tool-"
+      ],
+      "char_start": 15031,
+      "char_end": 15476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d6b6a2e586d77428becc85fcad3cde3",
+      "kind": "heading",
+      "text": "These generated trajectories serve as the data for",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "These generated trajectories serve as the data for"
+      ],
+      "char_start": 15478,
+      "char_end": 15528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:599909312b00ec50b55cebb113fbad20",
+      "kind": "paragraph",
+      "text": "computing steering vectors described in Section 3.1. In particular, the explicit heading structure enables us to identify the hidden states corresponding to ### Reasoning and the target tool heading-anchors, from which we compute domain-relevant steering directions. Steering Configuration.As described in Section 3.1, we construct a separate steering vector for each tool type. In the main experiments, we restrict steering to the primary tool associated with each domain:CodeforMath,Search forTime, andAskUserforIntention. Evaluation Metrics.Following (Qian et al., 2025), for Math and Time we report task accuracy (ACC) and average tool calls per example (ToolAvgUse). For Intention we additionally reportMissing Details RecoveryandSummarized Intentionfrom the IN3 dataset (Qian et al., 2024b), alongside the overall task score andToolAvgUse.",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "These generated trajectories serve as the data for"
+      ],
+      "char_start": 15530,
+      "char_end": 16375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:197461c38064e4aaa10705a94c31bbc9",
+      "kind": "heading",
+      "text": "Steering Results",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Steering Results"
+      ],
+      "char_start": 16377,
+      "char_end": 16393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85f40388b4712002bec0fcba8227d410",
+      "kind": "paragraph",
+      "text": "Steering Layer SelectionWe sweep the steering vector across all layers, performing activation addition at each layer with coefficient α= 1 to minimize tool usage, and select the elbow of the resulting tool-usage curve (Figure 2). Mistral-7B uses layer 18 with 0.95 average tool calls per prompt, Llama-3.1-8B uses layer 16 with 0.70, Mistral- Nemo uses layer 23 with 0.82, Mistral-Small uses layer",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "|",
+        "Steering Results"
+      ],
+      "char_start": 16395,
+      "char_end": 16792,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbbe3ac3775135c1463338832356888a",
+      "kind": "heading",
+      "text": "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28.",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28."
+      ],
+      "char_start": 16794,
+      "char_end": 16847,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2f9680b4844ae7a3e85e4ba68b2f0c6",
+      "kind": "paragraph",
+      "text": "Despite differing in absolute depth, all five elbow points fall between normalized depths 0.45–0.60, suggesting that tooluse representations stabilize at a consistent relative depth across tested models. The steering layer is calibrated once per model and held fixed for all subsequent experiments. Tool Use Steering ResultsTable 1 presents the main experimental results across the three domains, while Figure 1 visualizes the corresponding changes in average tool usage. The central pattern is consistent across all five models: activation addition strongly suppresses tool invocation, whereas orthogonalization increases it above the base-model level. This bidirectional effect is itself non-trivial: tool use is not a clean parametrically encoded skill in model weights, with limited theoretical underpinnings on linear representability. The fact that addition and orthogonalization move behavior in opposite directions suggests that the extracted vector captures a relevant component of the model’s tool-use decision.",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28."
+      ],
+      "char_start": 16849,
+      "char_end": 17870,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d548364400a29c4aebf3a70a815f231",
+      "kind": "caption",
+      "text": "Table 1 also shows that reduced tool use does not translate",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28."
+      ],
+      "char_start": 17872,
+      "char_end": 17931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa3f247f4eb503fa86939dcd1fed2444",
+      "kind": "paragraph",
+      "text": "into uniform task outcomes across domains. InMath, activation addition drives tool usage close to zero for all models (e.g., from 3.90 to 0.56 for Mistral-7B, from 1.93 to 0.35 for Llama-3.1-8B, and from 1.55 to 0.13 for Mistral-Small), while accuracy drops only modestly relative to the base model in most cases. This suggests that many tool calls in Math are indeed redundant, and that parametric reasoning can often replace external computation. By contrast, in TimeandIntention, suppressing tool use is consistently accompanied by larger performance degradation. For example, on Time, Llama-3.1-8B drops from 56.0 to 45.0 ACC as tool usage falls from 2.05 to 1.50, and Mistral-Small drops from 62.0 to 49.0 as tool usage falls from 1.73 to",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28."
+      ],
+      "char_start": 17933,
+      "char_end": 18676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eee4c45a5d899cbb0989255948b88811",
+      "kind": "heading",
+      "text": "On Intention, activation addition substantially reduces",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28.",
+        "On Intention, activation addition substantially reduces"
+      ],
+      "char_start": 18678,
+      "char_end": 18733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fa16b69aa3acaa4d03aa09e0998fc53",
+      "kind": "paragraph",
+      "text": "Missing Details Recovery and Summarized Intention scores across all models, indicating that many of these tool calls are 4",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "with 0.63, and Llama-3.1-70B uses layer 45 with 1.28.",
+        "On Intention, activation addition substantially reduces"
+      ],
+      "char_start": 18735,
+      "char_end": 18857,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc9f4c723e1b20a004967fa34085714e",
+      "kind": "heading",
+      "text": "Method Model Math Time Intention",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Method Model Math Time Intention"
+      ],
+      "char_start": 18859,
+      "char_end": 18891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76a03a234aa8f9af770025c116c8110e",
+      "kind": "heading",
+      "text": "ACC ToolAvgUse ACC ToolAvgUse Missing Details",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ACC ToolAvgUse ACC ToolAvgUse Missing Details"
+      ],
+      "char_start": 18893,
+      "char_end": 18938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b002d84986ebe931810b9b4a8a8b0ab6",
+      "kind": "heading",
+      "text": "Recovery",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Recovery"
+      ],
+      "char_start": 18940,
+      "char_end": 18948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b258e5b8e3bad74fe2129122a3c38d1",
+      "kind": "heading",
+      "text": "Summarized",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Summarized"
+      ],
+      "char_start": 18950,
+      "char_end": 18960,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:680b7f58689504ebff95898672700e80",
+      "kind": "heading",
+      "text": "Intention ToolAvgUse",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Intention ToolAvgUse"
+      ],
+      "char_start": 18962,
+      "char_end": 18982,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:808daa23f230c30afe8a76a2efbbfef4",
+      "kind": "heading",
+      "text": "Base Model",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Base Model"
+      ],
+      "char_start": 18984,
+      "char_end": 18994,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94ca264cc8700819b6b3f41c9d16eb77",
+      "kind": "heading",
+      "text": "Tool Prompt",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Tool Prompt"
+      ],
+      "char_start": 18996,
+      "char_end": 19007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:366849f6f938997b1ee6478896a7318e",
+      "kind": "equation",
+      "text": "Mistral-7B13.33.9049.01.6748.84 / 21.70 63.03.80 Llama-3.1-8B51.01.9356.02.0554.76 / 25.90 70.23.77 Mistral-Nemo(12B)46.02.3559.0 1.19 31.35 / 5.8259.3 1.80 Mistral-Small(24B)76.01.5562.01.7345.74 / 33.62 78.22.52 Llama-3.1-70B67.53.5363.02.0845.74 / 35.96 61.72.71",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Tool Prompt"
+      ],
+      "char_start": 19009,
+      "char_end": 19274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a675719212597e04dcaf9c4d6a90344",
+      "kind": "heading",
+      "text": "Orthogonalization",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Orthogonalization"
+      ],
+      "char_start": 19276,
+      "char_end": 19293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:268045fdc29afbc87cd9ec41eed2cc43",
+      "kind": "equation",
+      "text": "Mistral-7B 11.8 4.82 40.0 2.92 13.92 / 3.18 58.0 4.82 Llama-3.1-8B 48.8 2.25 44.0 3.87 15.48 / 3.55 59.3 4.20 Mistral-Nemo(12B) 39.8 2.66 45.0 1.87 24.86 / 5.12 56.1 3.05 Mistral-Small(24B) 71.0 2.21 51.0 3.20 28.94 / 5.63 66.2 3.62 Llama-3.1-70B 60.5 4.31 48.0 2.99 31.42 / 6.21 56.0 3.59",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Orthogonalization"
+      ],
+      "char_start": 19295,
+      "char_end": 19584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6dc091085d46acd0653c1a259d8c626",
+      "kind": "heading",
+      "text": "Activation",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Activation"
+      ],
+      "char_start": 19586,
+      "char_end": 19596,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b53e7a7925d1a056d5057264db5e7dae",
+      "kind": "heading",
+      "text": "Addition",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 19598,
+      "char_end": 19606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f9fa3e954b09203c7e3575281b16f7e",
+      "kind": "equation",
+      "text": "Mistral-7B 11.80.5639.01.1214.3 / 4.67 57.62.34 Llama-3.1-8B 48.30.3545.01.5016.28 / 6.38 55.21.32 Mistral-Nemo(12B) 43.50.5247.0 1.20 27.36 / 5.5860.8 1.64 Mistral-Small(24B) 65.40.1349.01.4831.05 / 5.94 69.41.81 Llama-3.1-70B 63.20.8249.01.9033.21 / 7.68 55.92.47",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 19608,
+      "char_end": 19873,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2c277527642142e574c04ba220e2b70",
+      "kind": "caption",
+      "text": "Table 1.Performance comparison across three methods and three domains:Math,Time, andIntention. ForMathandTime, we report",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 19875,
+      "char_end": 19995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01f2fcf57a70d1fdb7a49a5259f9698d",
+      "kind": "paragraph",
+      "text": "task accuracy (ACC) and average tool usage (ToolAvgUse). ForIntention, we report Missing Details Recovery, Summarized Intention, and average tool usage. Results are grouped by model to enable fair comparison across methods. The best value is marked inbold. not redundant but necessary for recovering underspecified user information. This finding is relatively intuitive: the questions in Time and Intention are by construction unanswerable from parametric knowledge alone, so suppressing tool calls intuitively leads to larger performance drops.",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 19997,
+      "char_end": 20542,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e067131c8145ec421b21312ddb2886e",
+      "kind": "caption",
+      "text": "Figure 1 makes this pattern visually clear: activation ad-",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 20544,
+      "char_end": 20602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7400bfed04717483123774defc46ede7",
+      "kind": "paragraph",
+      "text": "dition suppresses tool use across all models and domains, while orthogonalization shifts behavior in the opposite direction. This domain asymmetry is strongest in Math, where tool calls are nearly eliminated, suggesting that many invocations are redundant. By contrast, Time and Intention remain more resistant to suppression, consistent with these domains relying more heavily on retrieval or clarification that cannot be replaced by parametric knowledge alone. Orthogonalization provides the complementary intervention. As shown in Table 1 and Figure 3, projecting hidden states to be orthogonal to the suppression direction increases tool usage above the base model across all models and domains. However, this additional tool use does not improve overall task performance; in most settings it instead lowers accuracy or intention quality relative to the base model. This indicates that the base model is not simply under-using tools. Rather, it already reflects a partial internal balance between tool invocation and direct answering, and removing the suppressive component pushes the model toward overuse. This suggests that steering tool use may entangle with parametric knowledge due to the non-parametric nature of tools, a phenomenon also observed in prior representation-steering work (Siu et al., 2025a). Taken together, the results suggest that the extracted direction primarily controlswhether the model invokes tools, but the utility of suppressing that behavior depends strongly on domain: it is comparatively",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 20604,
+      "char_end": 22128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44384ad78670abbe8f5d2ce58d957172",
+      "kind": "paragraph",
+      "text": "safe in Math, but much more harmful in Time and Intention, where tool access is often genuinely required.",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Addition"
+      ],
+      "char_start": 22130,
+      "char_end": 22235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16a3ae6f9960790eed21ec6f474e5aa0",
+      "kind": "heading",
+      "text": "Robustness Beyond the Literal Heading Token.Because",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because"
+      ],
+      "char_start": 22237,
+      "char_end": 22288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:420a74bbd5f89cfe6f6e35cfa1580915",
+      "kind": "paragraph",
+      "text": "the intervention is anchored on the formatted heading ### Code, a natural concern is whether it controls tool invocation or merely suppresses the literal surface string. We probe this with two controls on Llama-3.1-8B in the Math domain (full results in Appendix A.2). First, undercross-format transfer, we extract the Code vector under the Markdown heading schema but evaluate it under a JSON action schema 5",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because"
+      ],
+      "char_start": 22290,
+      "char_end": 22699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a1ad52674c4e2f534513c9e7b271b77",
+      "kind": "caption",
+      "text": "Figure 2.Average tool calls per query as a function of normalized steering layer depth across five models. Tool usage drops sharply as",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because"
+      ],
+      "char_start": 22701,
+      "char_end": 22835,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14e047d01ddfceb881439f4d1e0d0c0a",
+      "kind": "paragraph",
+      "text": "the steering layer moves into the middle of the network before plateauing, forming a clear elbow. Annotated points mark the selected elbow layer for each model; despite differing in absolute depth, all five fall within normalized depths 0.45–0.60, suggesting that tool-use representations stabilize at a surprisingly consistent relative depth across architectures. (e.g. {\"action\": \"code\", ...} ) in which the literal ### Code heading never appears; the Markdownextracted vector still removes 63.9% of tool calls with accuracy essentially unchanged (0.330→0.325 ). Second, under heading rename, we keep the vector extracted from ### Code but evaluate with renamed tool headings of the same semantics; suppression persists even when the active heading contains no occurrence of the word Code (e.g. 70.3% relative suppression under ### Action B). Both controls indicate that the effect is not solely the suppression of the literal heading token. It is nonetheless schema-sensitive: reverse transfer (JSON→Markdown) is much weaker (15.5%), and JSON→JSON reduces tool use but collapses accuracy through malformed generations. We therefore characterize the extracted direction as a schema- and anchor-sensitive tool-use control direction with partial transfer beyond literal heading tokens, rather than a fully format-independent representation. We note these are preliminary single-model, single-domain controls.",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because"
+      ],
+      "char_start": 22837,
+      "char_end": 24245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e9b5aa93199b78f000ab79ea356e58f",
+      "kind": "heading",
+      "text": "Geometric Analysis of the Steering Vector",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because",
+        "Geometric Analysis of the Steering Vector"
+      ],
+      "char_start": 24247,
+      "char_end": 24288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41880405f2b2fab17479b0d7da911608",
+      "kind": "heading",
+      "text": "Probing Expression of the Steering Vectors",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because",
+        "Geometric Analysis of the Steering Vector",
+        "Probing Expression of the Steering Vectors"
+      ],
+      "char_start": 24290,
+      "char_end": 24332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d717ef7463c4c2459be49b7bcda87c5b",
+      "kind": "paragraph",
+      "text": "To understand what the steering vector captures geometrically, we measure the cosine similarity between the extracted vector and the hidden states of unsteered prompts at both reasoning steps and tool-invocation steps. If the vector encoded a stable tool-suppression direction, tool-step hidden states should align negatively with it while reasoning-step hidden states should not. Importantly, these distributions are characterized on unsteered multi-turn trajectories, where each step is conditioned on prior tool interactions; the geometric relationship between the suppression vector and the hidden state distribution under orthogonalization in Figure 3 is therefore not directly comparable, as orthogonalization intervenes on a sequential process in which each modified step conditions all subsequent ones.",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because",
+        "Geometric Analysis of the Steering Vector",
+        "Probing Expression of the Steering Vectors"
+      ],
+      "char_start": 24334,
+      "char_end": 25144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b353226e15285585754140a8c4f82815",
+      "kind": "caption",
+      "text": "Figure 4 plots these distributions across all five models.",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because",
+        "Geometric Analysis of the Steering Vector",
+        "Probing Expression of the Steering Vectors"
+      ],
+      "char_start": 25146,
+      "char_end": 25204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75d34e56ce44ac4e876beaa8636c4215",
+      "kind": "paragraph",
+      "text": "Reasoning steps concentrate sharply at zero, indicating nearorthogonality to the steering vector across all architectures. Tool steps exhibit a generally negative alignment, but their distributions are often diffuse and bimodal, with substantial mass in both acute and oblique alignment with the steering vector. This is seemingly consistent with the non-parametric nature of tools: because tool definitions exist only in context at inference time and have no direct encoding in model weights, tool-step activations have no a priori reason to cluster along a consistent direction in the residual stream. The extracted vector therefore does not correspond to a stable concept direction in the sense assumed by prior representation engineering work (Zou et al., 2023; Panickssery et al.,",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Robustness Beyond the Literal Heading Token.Because",
+        "Geometric Analysis of the Steering Vector",
+        "Probing Expression of the Steering Vectors"
+      ],
+      "char_start": 25206,
+      "char_end": 25991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b65af8c22e9f6092b232787feb2575fa",
+      "kind": "heading",
+      "text": ", but rather captures something about the conditions",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 25993,
+      "char_end": 26045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20a6f53607c58f431d79978871660db9",
+      "kind": "paragraph",
+      "text": "under which the model defers to context. We hypothesize that steering effectiveness persists despite this geometric irregularity because the heading-anchor format concentrates the tool-invocation decision into a single token: intervening at this structural bottleneck may be sufficient for behavioral control even when the underlying concept has no consistent direction in the residual stream. In Llama-3.1-70B this geometric irregularity is most 6",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 26047,
+      "char_end": 26495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c391c4c24c06a54c27bcdee81745e5be",
+      "kind": "caption",
+      "text": "Figure 3.Average tool calls per query under orthogonalization and the base model prompt across five models and three domains.",
+      "order": 78,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 26497,
+      "char_end": 26622,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e23c44ce18808248e95f86200ce2e559",
+      "kind": "paragraph",
+      "text": "Orthogonalization projects hidden states to be orthogonal to the suppression vector at tool-heading positions, removing its suppressive component. Tool usage increases above the base model level in all cases, suggesting that the suppression vector is active in the unsteered baseline and that its removal releases tool-invocation behavior.",
+      "order": 79,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 26624,
+      "char_end": 26963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:018706e02345ee09b0b4d41bb18d72ef",
+      "kind": "caption",
+      "text": "Figure 4.Cosine similarity between the steering vector and hidden states at reasoning steps (blue) and tool-invocation steps (red) on",
+      "order": 80,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 26965,
+      "char_end": 27098,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b07ca0eef3031f047d9e973e4bdf00b",
+      "kind": "paragraph",
+      "text": "unsteered prompts, across five models. Reasoning steps concentrate sharply at zero, indicating near-orthogonality to the steering vector. Tool steps exhibit a diffuse bimodal distribution with mass on both the acute and oblique sides, inconsistent with the steering vector acting as a simple linear encoding of tool-use intent. This pattern is consistent across all five tested models. However, we note that due to the multi-turn nature of the evaluation, these similarities do not describe the responses intervened on in Section 5, since steering shifts the trajectory of each interaction. pronounced: the tool-step hidden states approach nearorthogonality to the mean-difference steering vector, making them difficult to distinguish from reasoning-step states under this vector alone. A key question is whether this reflects anabsenceof any linearly encoded heading-type information at scale, or merely a limitation of the mean-difference estimator. To disentangle the two, we compare the meandifference direction against alternative extractors on Llama-",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions"
+      ],
+      "char_start": 27100,
+      "char_end": 28156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f3dbe18cfc880208dab6875f66082cb",
+      "kind": "heading",
+      "text": "70B—a supervised linear probe, a diagonally whitened",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 28158,
+      "char_end": 28210,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5fd11e64dd596ea5c95a15f153cf073",
+      "kind": "paragraph",
+      "text": "mean difference, and norm-matched random and shuffledlabel controls—each scored for both linear separability and causal steering effect (Appendix A.3, Table 5). The results show that heading-type informationislinearly decodable at 70B: a linear probe separates Code from Reasoning heading states almost perfectly (validation AUROC 1.000), so we do not claim that the model lacks a linearly readable encoding of heading type. Crucially, however, this mostdecodable direction isnotthe most causally effective one. The mean-difference vector suppresses tool use far more strongly than the probe direction (held-out Math ToolAvgUse 0.235 vs. 1.235), the whitened estimator does not improve over it, and the random and shuffled controls are substantially weaker on both axes (Wu et al., 2025; Panickssery et al., 2023). We therefore revise the interpretation accordingly: rather than reading the 70B geometry as evidence of linearinseparabilityor of a failed estimator, we conclude that probing separability and causal controllability divergeat this scale. The heading-type concept is linearly readable, yet the direction that most effectivelycontrols tool invocation remains geometrically near-orthogonal to the tool-step states it acts on. This dissociation is itself consistent with the non-parametric account: causal leverage at the heading-anchor bottleneck does not require the steering direction to coincide with the cleanest decoding direction, 7",
+      "order": 83,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 28212,
+      "char_end": 29661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56327e412abfdf9f98ae54c5fbefd7b4",
+      "kind": "caption",
+      "text": "Figure 5.Pairwise cosine similarity between steering vectors extracted for code, search, and askuser tool types across five models. Code",
+      "order": 84,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 29663,
+      "char_end": 29799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6becc7d22a89ff03c60dd65a73e713b",
+      "kind": "paragraph",
+      "text": "and search vectors are consistently more similar to each other than either is to the askuser vector, suggesting that clarification-seeking recruits distinct internal structure relative to external computation and retrieval.",
+      "order": 85,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 29801,
+      "char_end": 30024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3603eaf697b7c0d5e3f005fa58e234c2",
+      "kind": "caption",
+      "text": "Table 2.Jaccard similarity of the top 10% feature-dimension indices selected by absolute steering-vector magnitude for the Code,",
+      "order": 86,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 30026,
+      "char_end": 30154,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35e88351187a709f043d76b3afc4237a",
+      "kind": "paragraph",
+      "text": "Search, andAskUsersteering vectors across models. Each value reports the mean overlap across vectors; the last column shows the three-way Jaccard overlap among all three vectors.",
+      "order": 87,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", but rather captures something about the conditions",
+        "70B—a supervised linear probe, a diagonally whitened"
+      ],
+      "char_start": 30156,
+      "char_end": 30334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d16cd6fd2953ca6e69505bd0a3fe9cb",
+      "kind": "heading",
+      "text": "Model Code&Search Code&AskUser Search&AskUser Three-way",
+      "order": 88,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way"
+      ],
+      "char_start": 30336,
+      "char_end": 30391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f72f1b0e3a2ec9b63d98c2a904c92c7a",
+      "kind": "paragraph",
+      "text": "Mistral-7B 0.198 0.143 0.179 0.0671 Llama-3.1-8B 0.181 0.117 0.127 0.0416 Mistral-Nemo(12B) 0.226 0.144 0.165 0.0639 Mistral-Small(24B) 0.228 0.149 0.170 0.0675 Llama-3.1-70B 0.178 0.108 0.140 0.0421 and the cosine analysis on unsteered multi-turn trajectories does not by itself explain the orthogonalization behavior.",
+      "order": 89,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way"
+      ],
+      "char_start": 30393,
+      "char_end": 30712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dccdacd5cb3e59b616bae9ec93fd687d",
+      "kind": "heading",
+      "text": "Cross-Tool Steering Vector Similarity",
+      "order": 90,
+      "page_number": 8,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Cross-Tool Steering Vector Similarity"
+      ],
+      "char_start": 30714,
+      "char_end": 30751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f572de2d8d0560fbad5597693bb6882",
+      "kind": "paragraph",
+      "text": "The steering vectors extracted for each tool type encode which feature dimensions of the residual stream are most strongly implicated in the decision to invoke that tool. To assess whether different tools draw on similar internal representations, we examine both the pairwise cosine similarity between steering vectors (Figure 5) and the Jaccard similarity of their top 10% of feature dimensions by absolute magnitude (Table 2). High overlap under either measure would indicate that different tool invocations recruit similar regions of the model’s feature space; low overlap would indicate largely distinct internal signatures. Both measures are consistent. Cosine similarities between steering vectors range from 0.324 to 0.643, with codesearch similarity the highest pairwise value across all five models and askuser the most dissimilar from both. Jaccard overlaps follow the same pattern: pairwise overlaps range from 0.108 to 0.228, with three-way overlap substantially lower at 0.042–0.068. The higher code-search similarity is consistent with both involving external computation over well-defined inputs, whereas askuser involves a fundamentally different pragmatic action directed at the user rather than an external system. The low three-way overlap confirms that tool-type specificity is the dominant structure, with little shared substrate across all three vectors.",
+      "order": 91,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Cross-Tool Steering Vector Similarity"
+      ],
+      "char_start": 30753,
+      "char_end": 32129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:606cf4d430d7afe2674fffee68ff099d",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 92,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Conclusion"
+      ],
+      "char_start": 32131,
+      "char_end": 32141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5da55159273cae23d82e8e87f6072a09",
+      "kind": "paragraph",
+      "text": "This paper investigates tool-use decisions in language models as an activation steering problem: tools are nonparametric, existing entirely in context at inference time with no direct encoding in model weights. Despite this, heading-anchored steering vectors exert bidirectional causal control over tool-invocation behavior across five models and three domains, suppressing tool use via activation addition and amplifying it via orthogonalization. Suppression is most effective in domains where parametric reasoning suffices, and degrades where external retrieval or clarification is genuinely required. Geometric analysis reveals that this causal effectiveness does not correspond to clean linear structure. Toolinvocation steps exhibit a diffuse bimodal cosine similarity distribution with respect to the suppression vector, and different tool types recruit largely distinct feature dimensions with low cross-tool overlap, distinguishing these vectors from those extracted for parametrically grounded concepts. The mechanism by which causal control persists despite geometric irregularity remains unresolved; the multi-turn dependency structure of tool-augmented trajectories further limits reconciliation of the orthogonalization results with the probing analysis. More broadly, these findings suggest that the boundary between parametric and non-parametric knowledge is less clean than behavioral evidence suggests, and that context-injected behaviors may be more amenable to representation-level intervention than their non-parametric",
+      "order": 93,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Conclusion"
+      ],
+      "char_start": 32143,
+      "char_end": 33682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76f09f5891d91c49621cce6ec2728934",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 94,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Conclusion"
+      ],
+      "char_start": 33684,
+      "char_end": 33685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af09d381da215db5929de78b1c679563",
+      "kind": "paragraph",
+      "text": "nature would predict.",
+      "order": 95,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Model Code&Search Code&AskUser Search&AskUser Three-way",
+        "Conclusion"
+      ],
+      "char_start": 33687,
+      "char_end": 33708,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ef80ed104a19062a7ee3e401cc72a8a",
+      "kind": "heading",
+      "text": "References",
+      "order": 96,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 33710,
+      "char_end": 33720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce7cd0b6544fe0667e1773df62d136bf",
+      "kind": "reference",
+      "text": "Arditi, A., Obeso, O., Syed, A., Paleka, D., Panickssery, N., Gurnee, W., and Nanda, N. Refusal in language models is mediated by a single direction. In Globersons, A., Mackey, L., Belgrave, D., Fan, A., Paquet, U., Tomczak, J. M., and Zhang, C. (eds.),Advances in",
+      "order": 97,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 33722,
+      "char_end": 33986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6c251b47dfc73c2d3bbec746486bd9a",
+      "kind": "heading",
+      "text": "Neural Information Processing Systems 38: Annual",
+      "order": 98,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Neural Information Processing Systems 38: Annual"
+      ],
+      "char_start": 33988,
+      "char_end": 34036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab45f5382a05d67184dd73e352de9eb6",
+      "kind": "heading",
+      "text": "Conference on Neural Information Processing Systems",
+      "order": 99,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Conference on Neural Information Processing Systems"
+      ],
+      "char_start": 34038,
+      "char_end": 34089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83241a52b6e01ec3d8c477994460dbb0",
+      "kind": "paragraph",
+      "text": "2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024, 2024. URL http://papers. nips.cc/paper_files/paper/2024/hash/ f545448535dfde4f9786555403ab7c49-Abstract-Conference. html.",
+      "order": 100,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Conference on Neural Information Processing Systems"
+      ],
+      "char_start": 34091,
+      "char_end": 34279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb6855ff94c7b9598bc7240070e660bc",
+      "kind": "heading",
+      "text": "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-",
+      "order": 101,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-"
+      ],
+      "char_start": 34281,
+      "char_end": 34337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7d6c017e8b7ee42b882b072bd91999e",
+      "kind": "paragraph",
+      "text": "ering latent knowledge in language models without supervision. InThe Eleventh International Conference on Learning Representations, ICLR 2023, Kigali, Rwanda, May 1-5, 2023. OpenReview.net, 2023. URL https: //openreview.net/pdf?id=ETKGuby0hcs. Elhage, N., Hume, T., Olsson, C., Schiefer, N., Henighan, T., Kravec, S., Hatfield-Dodds, Z., Lasenby, R., Drain, D., Chen, C., Grosse, R., McCandlish, S., Kaplan, J., Amodei, D., Wattenberg, M., and Olah, C. Toy models of superposition, 2022. URL https://arxiv.org/ abs/2209.10652. Grattafiori, A., Dubey, A., Jauhri, A., Pandey, A., Kadian, A., Al-Dahle, A., Letman, A., Mathur, A., Schelten, A., Vaughan, A., Yang, A., Fan, A., Goyal, A., Hartshorn, A., Yang, A., Mitra, A., Sravankumar, A., Korenev, A., Hinsvark, A., Rao, A., Zhang, A., Rodriguez, A., Gregerson, A., Spataru, A., Roziere, B., Biron, B., Tang, B., Chern, B., Caucheteux, C., Nayak, C., Bi, C., Marra,",
+      "order": 102,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-"
+      ],
+      "char_start": 34339,
+      "char_end": 35254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40bc632e03a8bc64db380a7f331215dc",
+      "kind": "heading",
+      "text": ", McConnell, C., Keller, C., Touret, C., Wu, C., Wong,",
+      "order": 103,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-",
+        ", McConnell, C., Keller, C., Touret, C., Wu, C., Wong,"
+      ],
+      "char_start": 35256,
+      "char_end": 35310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:200c18924c822ff9adf37f79284bd686",
+      "kind": "heading",
+      "text": ", Ferrer, C. C., Nikolaidis, C., Allonsius, D., Song, D.,",
+      "order": 104,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-",
+        ", Ferrer, C. C., Nikolaidis, C., Allonsius, D., Song, D.,"
+      ],
+      "char_start": 35312,
+      "char_end": 35369,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a797452679f7d25b61ee0f4afafb1e44",
+      "kind": "paragraph",
+      "text": "Pintz, D., Livshits, D., Wyatt, D., Esiobu, D., Choudhary, D., Mahajan, D., Garcia-Olano, D., Perino, D., Hupkes, D., Lakomkin, E., AlBadawy, E., Lobanova, E., Dinan, E., Smith, E. M., Radenovic, F., Guzm´an, F., Zhang, F., Synnaeve, G., Lee, G., Anderson, G. L., Thattai, G., Nail,",
+      "order": 105,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Burns, C., Ye, H., Klein, D., and Steinhardt, J. Discov-",
+        ", Ferrer, C. C., Nikolaidis, C., Allonsius, D., Song, D.,"
+      ],
+      "char_start": 35371,
+      "char_end": 35653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0db6b6334db083e4c4e5445d6b92543a",
+      "kind": "heading",
+      "text": "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-",
+      "order": 106,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-"
+      ],
+      "char_start": 35655,
+      "char_end": 35710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8488f99d79d17507b4e3043afca4b162",
+      "kind": "paragraph",
+      "text": "revaar, H., Xu, H., Touvron, H., Zarov, I., Ibarra, I. A., Kloumann, I., Misra, I., Evtimov, I., Zhang, J., Copet, J., Lee, J., Geffert, J., Vranes, J., Park, J., Mahadeokar, J., Shah, J., van der Linde, J., Billock, J., Hong, J., Lee, J., Fu, J., Chi, J., Huang, J., Liu, J., Wang, J., Yu, J., Bitton, J., Spisak, J., Park, J., Rocca, J., Johnstun, J., Saxe, J., Jia, J., Alwala, K. V ., Prasad, K., Upasani, K., Plawiak, K., Li, K., Heafield, K., Stone, K., El-Arini, K., Iyer, K., Malik, K., Chiu, K., Bhalla, K., Lakhotia, K., Rantala-Yeary,",
+      "order": 107,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-"
+      ],
+      "char_start": 35712,
+      "char_end": 36257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97eb0410e4f3c28d9695beafa5814b8e",
+      "kind": "heading",
+      "text": ", van der Maaten, L., Chen, L., Tan, L., Jenkins, L.,",
+      "order": 108,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-",
+        ", van der Maaten, L., Chen, L., Tan, L., Jenkins, L.,"
+      ],
+      "char_start": 36259,
+      "char_end": 36312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16518990bb1d4c9ffa52d3a2bcfba917",
+      "kind": "paragraph",
+      "text": "Martin, L., Madaan, L., Malo, L., Blecher, L., Landzaat,",
+      "order": 109,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-",
+        ", van der Maaten, L., Chen, L., Tan, L., Jenkins, L.,"
+      ],
+      "char_start": 36314,
+      "char_end": 36370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09afe3fd288a779a01a6b83bb4fbaae3",
+      "kind": "heading",
+      "text": ", de Oliveira, L., Muzzi, M., Pasupuleti, M., Singh,",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-",
+        ", de Oliveira, L., Muzzi, M., Pasupuleti, M., Singh,"
+      ],
+      "char_start": 36372,
+      "char_end": 36424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1534e259427bbbc865a9ea51ff2ec1c",
+      "kind": "paragraph",
+      "text": "M., Paluri, M., Kardas, M., Tsimpoukelli, M., Oldham, M., Rita, M., Pavlova, M., Kambadur, M., Lewis, M., Si, M., Singh, M. K., Hassan, M., Goyal, N., Torabi, N., Bashlykov, N., Bogoychev, N., Chatterji, N., Zhang, N., Duchenne, O., C ¸elebi, O., Alrassy, P., Zhang, P., Li, P., Vasic, P., Weng, P., Bhargava, P., Dubal, P., Krishnan, P., Koura, P. S., Xu, P., He, Q., Dong, Q., Srinivasan, R., Ganapathy, R., Calderer, R., Cabral, R. S., Stojnic, R., Raileanu, R., Maheswari, R., Girdhar, R., Patel, R., Sauvestre, R., Polidoro, R., Sumbaly, R., Taylor, R., Silva, R., Hou, R., Wang, R., Hosseini, S., Chennabasappa, S., Singh, S., Bell, S., Kim, S. S., Edunov, S., Nie, S., Narang, S., Raparthy, S., Shen, S., Wan, S., Bhosale, S., Zhang, S., Vandenhende, S., Batra, S., Whitman, S., Sootla, S., Collot, S., Gururangan, S., Borodinsky, S., Herman, T.,",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "G., Mialon, G., Pang, G., Cucurell, G., Nguyen, H., Ko-",
+        ", de Oliveira, L., Muzzi, M., Pasupuleti, M., Singh,"
+      ],
+      "char_start": 36426,
+      "char_end": 37279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dce6666d2a1d121b807034a9f873a89",
+      "kind": "heading",
+      "text": "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-"
+      ],
+      "char_start": 37281,
+      "char_end": 37339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bce8e0ef89720a6824ef6b808f91886",
+      "kind": "paragraph",
+      "text": "bacher, T., Mihaylov, T., Xiao, T., Karn, U., Goswami, V ., Gupta, V ., Ramanathan, V ., Kerkez, V ., Gonguet, V ., Do,",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-"
+      ],
+      "char_start": 37341,
+      "char_end": 37460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3011508b786db16d74f82b4d7923ab42",
+      "kind": "heading",
+      "text": ", V ogeti, V ., Albiero, V ., Petrovic, V ., Chu, W., Xiong,",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-",
+        ", V ogeti, V ., Albiero, V ., Petrovic, V ., Chu, W., Xiong,"
+      ],
+      "char_start": 37462,
+      "char_end": 37522,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:806f25c1075b1575261f6adebebd0dc1",
+      "kind": "paragraph",
+      "text": "W., Fu, W., Meers, W., Martinet, X., Wang, X., Wang,",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-",
+        ", V ogeti, V ., Albiero, V ., Petrovic, V ., Chu, W., Xiong,"
+      ],
+      "char_start": 37524,
+      "char_end": 37576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e72dbb6ff1e7e9052d92ad979083403d",
+      "kind": "heading",
+      "text": ", Tan, X. E., Xia, X., Xie, X., Jia, X., Wang, X., Gold-",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-",
+        ", Tan, X. E., Xia, X., Xie, X., Jia, X., Wang, X., Gold-"
+      ],
+      "char_start": 37578,
+      "char_end": 37634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c22618cd2bcd4a49b364e8caf5ada1a6",
+      "kind": "paragraph",
+      "text": "schlag, Y ., Gaur, Y ., Babaei, Y ., Wen, Y ., Song, Y ., Zhang, Y ., Li, Y ., Mao, Y ., Coudert, Z. D., Yan, Z., Chen, Z., Papakipos, Z., Singh, A., Srivastava, A., Jain, A., Kelsey, A., Shajnfeld, A., Gangidi, A., Victoria, A., Goldstand, A., Menon, A., Sharma, A., Boesenberg, A., Baevski, A., Feinstein, A., Kallet, A., Sangani, A., Teo, A., Yunus, A.,",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Fowler, T., Sheasha, T., Georgiou, T., Scialom, T., Speck-",
+        ", Tan, X. E., Xia, X., Xie, X., Jia, X., Wang, X., Gold-"
+      ],
+      "char_start": 37636,
+      "char_end": 37992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:612edec1dd2dc0d4c34d9195f147c6e5",
+      "kind": "heading",
+      "text": "Lupu, A., Alvarado, A., Caples, A., Gu, A., Ho, A., Poul-",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Lupu, A., Alvarado, A., Caples, A., Gu, A., Ho, A., Poul-"
+      ],
+      "char_start": 37994,
+      "char_end": 38051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcd23276064b050945ac48e3e343b593",
+      "kind": "paragraph",
+      "text": "ton, A., Ryan, A., Ramchandani, A., Dong, A., Franco, A., Goyal, A., Saraf, A., Chowdhury, A., Gabriel, A., Bharambe, A., Eisenman, A., Yazdan, A., James, B., Maurer, B., Leonhardi, B., Huang, B., Loyd, B., Paola, B. D., Paranjape, B., Liu, B., Wu, B., Ni, B., Hancock, B., Wasti, B., Spence, B., Stojkovic, B., Gamido, B., Montalvo, B., Parker, C., Burton, C., Mejia, C., Liu, C., Wang, C., Kim, C., Zhou, C., Hu, C., Chu, C.-H., Cai, C., Tindal, C., Feichtenhofer, C., Gao, C., Civin, D., Beaty, D., Kreymer, D., Li, D., Adkins, D., Xu, D., Testuggine, D., David, D., Parikh, D., Liskovich, D., Foss, D., Wang,",
+      "order": 119,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Lupu, A., Alvarado, A., Caples, A., Gu, A., Ho, A., Poul-"
+      ],
+      "char_start": 38053,
+      "char_end": 38665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1ddb73ccae876cbfe43d526544a333e",
+      "kind": "heading",
+      "text": "D., Le, D., Holland, D., Dowling, E., Jamil, E., Mont-",
+      "order": 120,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "D., Le, D., Holland, D., Dowling, E., Jamil, E., Mont-"
+      ],
+      "char_start": 38667,
+      "char_end": 38721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0650739a5243503d32364ea9344022df",
+      "kind": "paragraph",
+      "text": "gomery, E., Presani, E., Hahn, E., Wood, E., Le, E.-T., Brinkman, E., Arcaute, E., Dunbar, E., Smothers, E., Sun,",
+      "order": 121,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "D., Le, D., Holland, D., Dowling, E., Jamil, E., Mont-"
+      ],
+      "char_start": 38723,
+      "char_end": 38836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ae1b724a83973f164b9e61f9f48a93a",
+      "kind": "heading",
+      "text": "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-"
+      ],
+      "char_start": 38838,
+      "char_end": 38894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f5e249928952108637a2246276d7dda",
+      "kind": "paragraph",
+      "text": "gioni, F., Kanayet, F., Seide, F., Florez, G. M., Schwarz, G., Badeer, G., Swee, G., Halpern, G., Herman, G., Sizov, G., Guangyi, Zhang, Lakshminarayanan, G., Inan, H., Shojanazeri, H., Zou, H., Wang, H., Zha, H., Habeeb, H., Rudolph, H., Suk, H., Aspegren, H., Goldman, H., Zhan, H., Damlaj, I., Molybog, I., Tufanov, I., Leontiadis, I., Veliche, I.-E., Gat, I., Weissman, J., Geboski, J., Kohli, J., Lam, J., Asher, J., Gaya, J.-B., Marcus, J., Tang, J., 9",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-"
+      ],
+      "char_start": 38896,
+      "char_end": 39354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:385835e56c1493269c33a9722e72c70e",
+      "kind": "paragraph",
+      "text": "Chan, J., Zhen, J., Reizenstein, J., Teboul, J., Zhong, J., Jin, J., Yang, J., Cummings, J., Carvill, J., Shepard, J., McPhie, J., Torres, J., Ginsburg, J., Wang, J., Wu, K., U, K. H., Saxena, K., Khandelwal, K., Zand, K., Matosich, K., Veeraraghavan, K., Michelena, K., Li, K., Jagadeesh, K., Huang, K., Chawla, K., Huang, K., Chen, L., Garg,",
+      "order": 124,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-"
+      ],
+      "char_start": 39356,
+      "char_end": 39699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cf377efc3e4a8776bab20f4c8338cd1",
+      "kind": "heading",
+      "text": ", A, L., Silva, L., Bell, L., Zhang, L., Guo, L., Yu, L.,",
+      "order": 125,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-",
+        ", A, L., Silva, L., Bell, L., Zhang, L., Guo, L., Yu, L.,"
+      ],
+      "char_start": 39701,
+      "char_end": 39758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71b7b10743b88415c5691303a8ab3c97",
+      "kind": "paragraph",
+      "text": "Moshkovich, L., Wehrstedt, L., Khabsa, M., Avalani, M., Bhatt, M., Mankus, M., Hasson, M., Lennie, M., Reso, M., Groshev, M., Naumov, M., Lathi, M., Keneally, M., Liu, M., Seltzer, M. L., Valko, M., Restrepo, M., Patel, M., Vyatskov, M., Samvelyan, M., Clark, M., Macey, M., Wang, M., Hermoso, M. J., Metanat, M., Rastegari, M., Bansal, M., Santhanam, N., Parks, N., White, N., Bawa, N., Singhal, N., Egebo, N., Usunier, N., Mehta, N., Laptev, N. P., Dong, N., Cheng, N., Chernoguz, O., Hart, O., Salpekar, O., Kalinli, O., Kent, P., Parekh, P., Saab, P., Balaji, P., Rittner, P., Bontrager, P., Roux, P., Dollar, P., Zvyagina, P., Ratanchandani, P., Yuvraj, P., Liang, Q., Alao, R., Rodriguez, R., Ayub, R., Murthy, R., Nayani, R., Mitra, R., Parthasarathy, R., Li, R., Hogan, R., Battey, R., Wang, R., Howes, R., Rinott, R., Mehta, S., Siby, S., Bondu, S. J., Datta, S., Chugh, S., Hunt, S., Dhillon, S., Sidorov, S., Pan, S., Mahajan, S., Verma, S., Yamamoto, S., Ramaswamy, S., Lindsay, S., Lindsay, S., Feng, S., Lin, S., Zha, S. C., Patil, S., Shankar, S., Zhang, S., Zhang, S., Wang, S., Agarwal, S., Sajuyigbe,",
+      "order": 126,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "F., Kreuk, F., Tian, F., Kokkinos, F., Ozgenel, F., Cag-",
+        ", A, L., Silva, L., Bell, L., Zhang, L., Guo, L., Yu, L.,"
+      ],
+      "char_start": 39760,
+      "char_end": 40878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85bb251fb50a88b4a64b4f02481a19dc",
+      "kind": "heading",
+      "text": "S., Chintala, S., Max, S., Chen, S., Kehoe, S., Satter-",
+      "order": 127,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "S., Chintala, S., Max, S., Chen, S., Kehoe, S., Satter-"
+      ],
+      "char_start": 40880,
+      "char_end": 40935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe1231073e79521a24057b61d61dd685",
+      "kind": "paragraph",
+      "text": "field, S., Govindaprasad, S., Gupta, S., Deng, S., Cho, S., Virk, S., Subramanian, S., Choudhury, S., Goldman, S., Remez, T., Glaser, T., Best, T., Koehler, T., Robinson, T., Li, T., Zhang, T., Matthews, T., Chou, T., Shaked, T., V ontimitta, V ., Ajayi, V ., Montanez, V ., Mohan, V ., Kumar, V . S., Mangla, V ., Ionescu, V ., Poenaru, V ., Mihailescu, V . T., Ivanov, V ., Li, W., Wang, W., Jiang, W., Bouaziz, W., Constable, W., Tang, X., Wu, X., Wang, X., Wu, X., Gao, X., Kleinman, Y ., Chen, Y ., Hu, Y ., Jia, Y ., Qi, Y ., Li, Y ., Zhang, Y ., Zhang, Y ., Adi, Y ., Nam, Y ., Yu, Wang, Zhao, Y ., Hao, Y ., Qian, Y ., Li, Y ., He, Y ., Rait, Z., DeVito, Z., Rosnbrick, Z., Wen, Z., Yang, Z., Zhao, Z., and Ma, Z. The llama 3 herd of models, 2024. URL https://arxiv.org/abs/2407.21783. Huang, Y ., Shi, J., Li, Y ., Fan, C., Wu, S., Zhang, Q., Liu, Y ., Zhou, P., Wan, Y ., Gong, N. Z., and Sun, L. Metatool benchmark for large language models: Deciding whether to use tools and which to use, 2024. URL https:// arxiv.org/abs/2310.03128. Jiang, A. Q., Sablayrolles, A., Mensch, A., Bamford, C., Chaplot, D. S., de las Casas, D., Bressand, F., Lengyel,",
+      "order": 128,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "S., Chintala, S., Max, S., Chen, S., Kehoe, S., Satter-"
+      ],
+      "char_start": 40937,
+      "char_end": 42096,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4881198f2e7fd19ffe228a26b71be935",
+      "kind": "heading",
+      "text": "G., Lample, G., Saulnier, L., Lavaud, L. R., Lachaux, M.-",
+      "order": 129,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "G., Lample, G., Saulnier, L., Lavaud, L. R., Lachaux, M.-"
+      ],
+      "char_start": 42098,
+      "char_end": 42155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97e0dc3043a9ba1bdd684a006414fb7d",
+      "kind": "paragraph",
+      "text": "A., Stock, P., Scao, T. L., Lavril, T., Wang, T., Lacroix, T., and Sayed, W. E. Mistral 7b, 2023. URL https: //arxiv.org/abs/2310.06825. Lee, B. W., Padhi, I., Ramamurthy, K. N., Miehling, E.,",
+      "order": 130,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "G., Lample, G., Saulnier, L., Lavaud, L. R., Lachaux, M.-"
+      ],
+      "char_start": 42157,
+      "char_end": 42349,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:705a88bc8a9274bcb29ef5dfd8615100",
+      "kind": "heading",
+      "text": "Dognin, P., Nagireddy, M., and Dhurandhar, A. Program-",
+      "order": 131,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Dognin, P., Nagireddy, M., and Dhurandhar, A. Program-"
+      ],
+      "char_start": 42351,
+      "char_end": 42405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecb368d516d8f3f4e1d8681f7354eaaf",
+      "kind": "paragraph",
+      "text": "ming refusal with conditional activation steering, 2024. URLhttps://arxiv.org/abs/2409.05907.",
+      "order": 132,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dognin, P., Nagireddy, M., and Dhurandhar, A. Program-"
+      ],
+      "char_start": 42407,
+      "char_end": 42500,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25c37ba13bae720f8d810a4d778aca26",
+      "kind": "heading",
+      "text": "Levy, I., Wiesel, B., Marreed, S., Oved, A., Yaeli, A., and",
+      "order": 133,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Levy, I., Wiesel, B., Marreed, S., Oved, A., Yaeli, A., and"
+      ],
+      "char_start": 42502,
+      "char_end": 42561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34856404ba8a328385aca2c7517962ed",
+      "kind": "paragraph",
+      "text": "Shlomov, S. St-webagentbench: A benchmark for evaluating safety and trustworthiness in web agents.arXiv preprint arXiv:2410.06703, 2024. Li, K., Patel, O., Vi´egas, F., Pfister, H., and Wattenberg, M. Inference-time intervention: Eliciting truthful answers from a language model.Advances in Neural Information Processing Systems, 36:41451–41530, 2023. Liu, W., Huang, X., Zeng, X., Hao, X., Yu, S., Li, D., Wang, S., Gan, W., Liu, Z., Yu, Y ., Wang, Z., Wang, Y ., Ning, W., Hou, Y ., Wang, B., Wu, C., Wang, X., Liu, Y ., Wang, Y ., Tang, D., Tu, D., Shang, L., Jiang,",
+      "order": 134,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Levy, I., Wiesel, B., Marreed, S., Oved, A., Yaeli, A., and"
+      ],
+      "char_start": 42563,
+      "char_end": 43132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1863917e409894b2593f2d7b874fe06e",
+      "kind": "heading",
+      "text": ", Tang, R., Lian, D., Liu, Q., and Chen, E. Toolace",
+      "order": 135,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Levy, I., Wiesel, B., Marreed, S., Oved, A., Yaeli, A., and",
+        ", Tang, R., Lian, D., Liu, Q., and Chen, E. Toolace"
+      ],
+      "char_start": 43134,
+      "char_end": 43185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e000e21cd34bb8fea31e20e681e65d63",
+      "kind": "paragraph",
+      "text": "Winning the points of llm function calling, 2025. URL https://arxiv.org/abs/2409.00920. Mikolov, T., Yih, W.-t., and Zweig, G. Linguistic regularities in continuous space word representations. In Vanderwende, L., Daum´e III, H., and Kirchhoff, K. (eds.), Proceedings of the 2013 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, pp. 746–751, Atlanta, Georgia, 2013. Association for Computational Linguistics. URL https://aclanthology.org/ N13-1090. Ning, K., Su, Y ., Lv, X., Zhang, Y ., Liu, J., Liu, K., and Xu, J. Wtu-eval: A whether-or-not tool usage evaluation benchmark for large language models, 2024. URL https://arxiv.org/abs/2407.12823. OpenAI. Gpt-4 technical report, 2023. arXiv:2303.08774.",
+      "order": 136,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Levy, I., Wiesel, B., Marreed, S., Oved, A., Yaeli, A., and",
+        ", Tang, R., Lian, D., Liu, Q., and Chen, E. Toolace"
+      ],
+      "char_start": 43187,
+      "char_end": 43959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82ba58aca435832f5f38dbab0b1522aa",
+      "kind": "heading",
+      "text": "Panickssery, N., Gabrieli, N., Schulz, J., Tong, M., Hub-",
+      "order": 137,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Panickssery, N., Gabrieli, N., Schulz, J., Tong, M., Hub-"
+      ],
+      "char_start": 43961,
+      "char_end": 44018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f8f949570c0fc13fc66c0beaa521c56",
+      "kind": "paragraph",
+      "text": "inger, E., and Turner, A. M. Steering llama 2 via contrastive activation addition, 2023. URL https: //arxiv.org/abs/2312.06681. Park, K., Choe, Y . J., and Veitch, V . The linear representation hypothesis and the geometry of large language models. InForty-first International Conference on",
+      "order": 138,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Panickssery, N., Gabrieli, N., Schulz, J., Tong, M., Hub-"
+      ],
+      "char_start": 44020,
+      "char_end": 44309,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6521431969b0042da69822fe66bc469c",
+      "kind": "heading",
+      "text": "Machine Learning, ICML 2024, Vienna, Austria, July",
+      "order": 139,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Machine Learning, ICML 2024, Vienna, Austria, July"
+      ],
+      "char_start": 44311,
+      "char_end": 44361,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:483954f0eba3a9ae16a21eebe04061e7",
+      "kind": "heading",
+      "text": "27, 2024. OpenReview.net, 2024. URL https",
+      "order": 140,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "27, 2024. OpenReview.net, 2024. URL https"
+      ],
+      "char_start": 44363,
+      "char_end": 44404,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa003d4b89f1cffbf29bb3234fff59a3",
+      "kind": "paragraph",
+      "text": "//openreview.net/forum?id=UGpGkLzwpP. Qian, C., Han, C., Fung, Y . R., Qin, Y ., Liu, Z., and Ji, H. Creator: Tool creation for disentangling abstract and concrete reasoning of large language models, 2024a. URL https://arxiv.org/abs/2305.14318. 10",
+      "order": 141,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "27, 2024. OpenReview.net, 2024. URL https"
+      ],
+      "char_start": 44406,
+      "char_end": 44653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f9097ba4f0b39680915f266baac8d31",
+      "kind": "paragraph",
+      "text": "Qian, C., He, B., Zhuang, Z., Deng, J., Qin, Y ., Cong, X., Zhang, Z., Zhou, J., Lin, Y ., Liu, Z., and Sun, M. Tell me more! towards implicit user intention understanding of language model driven agents, 2024b. URL https: //arxiv.org/abs/2402.09205. Qian, C., Liang, S., Qin, Y ., Ye, Y ., Cong, X., Lin, Y ., Wu, Y .,",
+      "order": 142,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "27, 2024. OpenReview.net, 2024. URL https"
+      ],
+      "char_start": 44655,
+      "char_end": 44974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11cd4531a79c1045523f581e7a4f73ef",
+      "kind": "heading",
+      "text": "Liu, Z., and Sun, M. Investigate-consolidate-exploit: A",
+      "order": 143,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Liu, Z., and Sun, M. Investigate-consolidate-exploit: A"
+      ],
+      "char_start": 44976,
+      "char_end": 45031,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0509e0e5262e69390949cf7800b7d40",
+      "kind": "paragraph",
+      "text": "general strategy for inter-task agent self-evolution, 2024c. URLhttps://arxiv.org/abs/2401.13996.",
+      "order": 144,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Liu, Z., and Sun, M. Investigate-consolidate-exploit: A"
+      ],
+      "char_start": 45033,
+      "char_end": 45130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12b132e6e0d036527042b3fbd65016b0",
+      "kind": "heading",
+      "text": "Qian, C., Xiong, C., Liu, Z., and Liu, Z. Toolink: Linking",
+      "order": 145,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Qian, C., Xiong, C., Liu, Z., and Liu, Z. Toolink: Linking"
+      ],
+      "char_start": 45132,
+      "char_end": 45190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20a507a98e8885473ed061646a7143c7",
+      "kind": "paragraph",
+      "text": "toolkit creation and using through chain-of-solving on open-source model, 2024d. URL https://arxiv. org/abs/2310.05155. Qian, C., Acikgoz, E. C., Wang, H., Chen, X., Sil, A.,",
+      "order": 146,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Qian, C., Xiong, C., Liu, Z., and Liu, Z. Toolink: Linking"
+      ],
+      "char_start": 45192,
+      "char_end": 45366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a265b63b9809f20806f3a34f48571f7d",
+      "kind": "heading",
+      "text": "Hakkani-T¨ur, D., Tur, G., and Ji, H. SMART: Self-",
+      "order": 147,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Hakkani-T¨ur, D., Tur, G., and Ji, H. SMART: Self-"
+      ],
+      "char_start": 45368,
+      "char_end": 45418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dfa68ca645199445f5ff01879cc4f06",
+      "kind": "paragraph",
+      "text": "aware agent for tool overuse mitigation. In Che, W., Nabende, J., Shutova, E., and Pilehvar, M. T. (eds.), Findings of the Association for Computational Linguistics: ACL 2025, pp. 4604–4621, Vienna, Austria, July",
+      "order": 148,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Hakkani-T¨ur, D., Tur, G., and Ji, H. SMART: Self-"
+      ],
+      "char_start": 45420,
+      "char_end": 45632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4237de43c3350f8d78419410e30ac2ac",
+      "kind": "heading",
+      "text": "Association for Computational Linguistics. ISBN",
+      "order": 149,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Hakkani-T¨ur, D., Tur, G., and Ji, H. SMART: Self-",
+        "Association for Computational Linguistics. ISBN"
+      ],
+      "char_start": 45634,
+      "char_end": 45681,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:edd574e8de8aae22659b9d413a44d733",
+      "kind": "heading",
+      "text": "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+      "order": 150,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl."
+      ],
+      "char_start": 45683,
+      "char_end": 45733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3dec752a91ee75fb04f9f20e13b143d",
+      "kind": "heading",
+      "text": "URL https://aclanthology.org/2025.",
+      "order": 151,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 45735,
+      "char_end": 45769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bfbe4ff387e01ed52e1996743094c02",
+      "kind": "paragraph",
+      "text": "findings-acl.239/. Qin, Y ., Liang, S., Ye, Y ., Zhu, K., Yan, L., Lu, Y ., Lin, Y ., Cong, X., Tang, X., Qian, B., Zhao, S., Hong, L., Tian, R., Xie, R., Zhou, J., Gerstein, M., Li, D., Liu, Z., and Sun, M. Toolllm: Facilitating large language models to master 16000+ real-world apis, 2023. URL https://arxiv.org/abs/2307.16789. Qu, C., Dai, S., Wei, X., Cai, H., Wang, S., Yin, D., Xu, J., and Wen, J.-r. Tool learning with large language models: a survey.Frontiers of Computer Science, 19(8), January 2025. ISSN 2095-2236. doi:",
+      "order": 152,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 45771,
+      "char_end": 46301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f03993af75264be8fa90049262df9fb",
+      "kind": "heading",
+      "text": "1007/s11704-024-40678-2. URL http://dx.doi.",
+      "order": 153,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "1007/s11704-024-40678-2. URL http://dx.doi."
+      ],
+      "char_start": 46303,
+      "char_end": 46346,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b5711f1362b717d59790165caf2816e",
+      "kind": "equation",
+      "text": "org/10.1007/s11704-024-40678-2.",
+      "order": 154,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "1007/s11704-024-40678-2. URL http://dx.doi."
+      ],
+      "char_start": 46348,
+      "char_end": 46379,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d3d8cc47b9c85c71c207c4eeb8513a0",
+      "kind": "heading",
+      "text": "Ravfogel, S., Elazar, Y ., Gonen, H., Twiton, M., and Gold-",
+      "order": 155,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Ravfogel, S., Elazar, Y ., Gonen, H., Twiton, M., and Gold-"
+      ],
+      "char_start": 46381,
+      "char_end": 46440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:981d83b10b9251fca1836092a5966296",
+      "kind": "paragraph",
+      "text": "berg, Y . Null it out: Guarding protected attributes by iterative nullspace projection. In Jurafsky, D., Chai, J., Schluter, N., and Tetreault, J. (eds.),Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics, pp. 7237–7256, Online, 2020. Association for Computational Linguistics. doi: 10.18653/v1/",
+      "order": 156,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Ravfogel, S., Elazar, Y ., Gonen, H., Twiton, M., and Gold-"
+      ],
+      "char_start": 46442,
+      "char_end": 46774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b891e2a6590306ee6a45c4c08cab637f",
+      "kind": "heading",
+      "text": "acl-main.647. URL https://aclanthology.",
+      "order": 157,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Ravfogel, S., Elazar, Y ., Gonen, H., Twiton, M., and Gold-",
+        "acl-main.647. URL https://aclanthology."
+      ],
+      "char_start": 46776,
+      "char_end": 46815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6f1961332175dc2b3200d4c55a8d5eb",
+      "kind": "paragraph",
+      "text": "org/2020.acl-main.647. Schick, T., Dwivedi-Yu, J., Dess`ı, R., Raileanu, R., Lomeli,",
+      "order": 158,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Ravfogel, S., Elazar, Y ., Gonen, H., Twiton, M., and Gold-",
+        "acl-main.647. URL https://aclanthology."
+      ],
+      "char_start": 46817,
+      "char_end": 46901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7a1a8eecafc3d96b5020d84deabad78",
+      "kind": "heading",
+      "text": "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+      "order": 159,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and"
+      ],
+      "char_start": 46903,
+      "char_end": 46953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d78227fa65a732db204108a50d7381e9",
+      "kind": "paragraph",
+      "text": "Scialom, T. Toolformer: Language models can teach themselves to use tools.Advances in Neural Information Processing Systems, 36:68539–68551, 2023. Schneider, J. Generative to agentic ai: Survey, conceptualization, and challenges.arXiv preprint arXiv:2504.18875, 2025. Shen, Y ., Zhu, X., and Chen, L. SMARTCAL: An approach to self-aware tool-use evaluation and calibration. In Dernoncourt, F., Preo t ¸iuc-Pietro, D., and Shimorina, A. (eds.),Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing: Industry Track, pp. 774–789, Miami, Florida, US, November 2024. Association for Computational Linguistics. doi: 10.18653/v1/2024.emnlp-industry.",
+      "order": 160,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and"
+      ],
+      "char_start": 46955,
+      "char_end": 47630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7baf9d9ae9a564eac423b7936140b246",
+      "kind": "heading",
+      "text": "URL https://aclanthology.org/2024.",
+      "order": 161,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "URL https://aclanthology.org/2024."
+      ],
+      "char_start": 47632,
+      "char_end": 47666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ceedd057919904135b874b5d362f6354",
+      "kind": "paragraph",
+      "text": "emnlp-industry.59/. Shen, Z. Llm with tools: A survey, 2024. URL https: //arxiv.org/abs/2409.18807. Siu, V ., Crispino, N., Park, D., Henry, N. W., Wang, Z., Liu, Y ., Song, D., and Wang, C. Steeringsafety: A systematic safety evaluation framework of representation steering in llms, 2025a. URL https://arxiv.org/abs/",
+      "order": 162,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "URL https://aclanthology.org/2024."
+      ],
+      "char_start": 47668,
+      "char_end": 47985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5041f50732ee11d7b215e739ef1e7e5c",
+      "kind": "heading",
+      "text": "13450.",
+      "order": 163,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "13450."
+      ],
+      "char_start": 47987,
+      "char_end": 47993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf66b2e8addb891ac9cdc153baa9ed74",
+      "kind": "paragraph",
+      "text": "Siu, V ., Crispino, N., Yu, Z., Pan, S., Wang, Z., Liu, Y ., Song, D., and Wang, C. COSMIC: Generalized refusal direction identification in LLM activations. In Che, W., Nabende, J., Shutova, E., and Pilehvar, M. T. (eds.), Findings of the Association for Computational Linguistics: ACL 2025, pp. 25534–25553, Vienna, Austria, July 2025b. Association for Computational Linguistics. ISBN",
+      "order": 164,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "M., Hambro, E., Zettlemoyer, L., Cancedda, N., and",
+        "13450."
+      ],
+      "char_start": 47995,
+      "char_end": 48380,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:268ee33348165fb9063fb5d7e2a4f6c0",
+      "kind": "heading",
+      "text": "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+      "order": 165,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl."
+      ],
+      "char_start": 48382,
+      "char_end": 48432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a42964c07c4f7d722bbd8e41ff96387",
+      "kind": "heading",
+      "text": "URL https://aclanthology.org/2025.",
+      "order": 166,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 48434,
+      "char_end": 48468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f594ef4aa9b1b10375e36e27c37e2f7",
+      "kind": "paragraph",
+      "text": "findings-acl.1310/. Siu, V ., Henry, N. W., Crispino, N., Liu, Y ., Song, D., and Wang, C. Repit: Representing isolated targets to steer language models, 2025c. URL https://arxiv.org/ abs/2509.13281. Turner, A. M., Thiergart, L., Leech, G., Udell, D., Vazquez, J. J., Mini, U., and MacDiarmid, M. Steering language models with activation engineering, 2023. URL https: //arxiv.org/abs/2308.10248. Wang, H., Xue, B., Zhou, B., Zhang, T., Wang, C., Wang, H., Chen, G., and Wong, K.-F. Self-DC: When to reason and when to act? self divide-and-conquer for compositional unknown questions. In Chiruzzo, L., Ritter, A., and Wang, L. (eds.),Proceedings of the",
+      "order": 167,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 48470,
+      "char_end": 49121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd69ce5f3404e6393d51f2e42d72fed1",
+      "kind": "heading",
+      "text": "Conference of the Nations of the Americas Chap-",
+      "order": 168,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Conference of the Nations of the Americas Chap-"
+      ],
+      "char_start": 49123,
+      "char_end": 49170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b60a5d017e2ea2b3c8bea3aa865e366",
+      "kind": "paragraph",
+      "text": "ter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers), pp. 6510–6525, Albuquerque, New Mexico, April",
+      "order": 169,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Conference of the Nations of the Americas Chap-"
+      ],
+      "char_start": 49172,
+      "char_end": 49324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daa2bdcee6f8286ff6a4504e01e4c2cb",
+      "kind": "heading",
+      "text": "Association for Computational Linguistics. ISBN",
+      "order": 170,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Conference of the Nations of the Americas Chap-",
+        "Association for Computational Linguistics. ISBN"
+      ],
+      "char_start": 49326,
+      "char_end": 49373,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9d08eea011d1725b707683e5380e079",
+      "kind": "heading",
+      "text": "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long.",
+      "order": 171,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long."
+      ],
+      "char_start": 49375,
+      "char_end": 49423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b10ab533d9dba5cb1f7b6d6c5a0987ee",
+      "kind": "paragraph",
+      "text": "11",
+      "order": 172,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long."
+      ],
+      "char_start": 49425,
+      "char_end": 49427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4bbcd7b177e36f9c7a6f3d3293be3dd",
+      "kind": "heading",
+      "text": "URL https://aclanthology.org/2025.",
+      "order": 173,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 49429,
+      "char_end": 49463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81e644569166bc2ebf4f59713c4fa05d",
+      "kind": "paragraph",
+      "text": "naacl-long.331/. Wollschl¨ager, T., Elstner, J., Geisler, S., Cohen-Addad,",
+      "order": 174,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 49465,
+      "char_end": 49539,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3eaf58d09329289588d7abede049207d",
+      "kind": "heading",
+      "text": ", G¨unnemann, S., and Gasteiger, J. The geometry",
+      "order": 175,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long.",
+        ", G¨unnemann, S., and Gasteiger, J. The geometry"
+      ],
+      "char_start": 49541,
+      "char_end": 49589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d16f5a6c867d58fb09a08207b19bfe07",
+      "kind": "paragraph",
+      "text": "of refusal in large language models: Concept cones and representational independence, 2025. URLhttps: //arxiv.org/abs/2502.17420.",
+      "order": 176,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "8-89176-189-6. doi: 10.18653/v1/2025.naacl-long.",
+        ", G¨unnemann, S., and Gasteiger, J. The geometry"
+      ],
+      "char_start": 49591,
+      "char_end": 49720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8511df96dbb3ef0057104a615644d1e8",
+      "kind": "heading",
+      "text": "Wu, Z., Arora, A., Geiger, A., Wang, Z., Huang, J., Juraf-",
+      "order": 177,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Wu, Z., Arora, A., Geiger, A., Wang, Z., Huang, J., Juraf-"
+      ],
+      "char_start": 49722,
+      "char_end": 49780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5822c89a173c1395bf96accbbcb0158c",
+      "kind": "heading",
+      "text": "sky, D., Manning, C. D., and Potts, C. Axbench: Steer-",
+      "order": 178,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "sky, D., Manning, C. D., and Potts, C. Axbench: Steer-"
+      ],
+      "char_start": 49782,
+      "char_end": 49836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a8525579d42cc35092ac0208a60ff3e",
+      "kind": "paragraph",
+      "text": "ing llms? even simple baselines outperform sparse autoencoders, 2025. URL https://arxiv.org/abs/",
+      "order": 179,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "sky, D., Manning, C. D., and Potts, C. Axbench: Steer-"
+      ],
+      "char_start": 49838,
+      "char_end": 49934,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8d993bd6db0db1deec2d8642eae23ce",
+      "kind": "heading",
+      "text": "17148.",
+      "order": 180,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "sky, D., Manning, C. D., and Potts, C. Axbench: Steer-",
+        "17148."
+      ],
+      "char_start": 49936,
+      "char_end": 49942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3481823c1f9b66090b135439f6500da",
+      "kind": "paragraph",
+      "text": "Xu, H., Wang, Z., Zhu, Z., Pan, L., Chen, X., Fan, S., Chen, L., and Yu, K. Alignment for efficient tool calling of large language models. In Christodoulopoulos, C., Chakraborty, T., Rose, C., and Peng, V . (eds.),Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing, pp. 17776–17792, Suzhou, China, November 2025. Association for Computational Linguistics. ISBN 979-",
+      "order": 181,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "sky, D., Manning, C. D., and Potts, C. Axbench: Steer-",
+        "17148."
+      ],
+      "char_start": 49944,
+      "char_end": 50345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fea0d885f315d51395ab905000b844ae",
+      "kind": "heading",
+      "text": "89176-332-6. doi: 10.18653/v1/2025.emnlp-main.",
+      "order": 182,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "89176-332-6. doi: 10.18653/v1/2025.emnlp-main."
+      ],
+      "char_start": 50347,
+      "char_end": 50393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9eb9cf0a3120aa05744953516e603e75",
+      "kind": "heading",
+      "text": "URL https://aclanthology.org/2025.",
+      "order": 183,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "89176-332-6. doi: 10.18653/v1/2025.emnlp-main.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 50395,
+      "char_end": 50429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7069829fb869fcfff219054f5d316511",
+      "kind": "paragraph",
+      "text": "emnlp-main.898/. Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., and Cao, Y . React: Synergizing reasoning and acting in language models, 2023. URL https://arxiv. org/abs/2210.03629. Zou, A., Phan, L., Chen, S., Campbell, J., Guo, P., Ren, R., Pan, A., Yin, X., Mazeika, M., Dombrowski, A.-K., Goel, S., Li, N., Byun, M. J., Wang, Z., Mallen, A., Basart, S., Koyejo, S., Song, D., Fredrikson, M., Kolter, J. Z., and Hendrycks, D. Representation engineering: A top-down approach to ai transparency, 2023. URL https://arxiv.org/abs/2310.01405. 12",
+      "order": 184,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "89176-332-6. doi: 10.18653/v1/2025.emnlp-main.",
+        "URL https://aclanthology.org/2025."
+      ],
+      "char_start": 50431,
+      "char_end": 50991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85d68ce0522b1780527f8f912995b31b",
+      "kind": "heading",
+      "text": "A. Appendix",
+      "order": 185,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "A. Appendix"
+      ],
+      "char_start": 50993,
+      "char_end": 51004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c60c7a144f6a705c3650eaeb0718eb3",
+      "kind": "heading",
+      "text": "A.1. Prompts",
+      "order": 186,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "A.1. Prompts"
+      ],
+      "char_start": 51006,
+      "char_end": 51018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f189777e1c37c12cb4313e458781c47",
+      "kind": "heading",
+      "text": "Math-Domain Initial Prompt",
+      "order": 187,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt"
+      ],
+      "char_start": 51020,
+      "char_end": 51046,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6455c0cf635c3ae31ff2ece8d0ab630",
+      "kind": "paragraph",
+      "text": "### Task You are a highly capable assistant designed to solve tasks effectively using your knowledge and the tool set available for this domain. ### Principles",
+      "order": 188,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt"
+      ],
+      "char_start": 51048,
+      "char_end": 51207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4395840d32b46261efed65121b0b439b",
+      "kind": "heading",
+      "text": "Reason Independently",
+      "order": 189,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 51209,
+      "char_end": 51229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd002dfa8dcc4166f69468e0548aebd2",
+      "kind": "list_item",
+      "text": "- Leverage your own knowledge to analyze and solve reasoning steps whenever",
+      "order": 190,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 51231,
+      "char_end": 51306,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcb596ef00e6487b69dbbeff6f9b06b0",
+      "kind": "paragraph",
+      "text": "possible. Use the tool only when necessary.",
+      "order": 191,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 51308,
+      "char_end": 51351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d95cbc1fefbca1b9bdbc5eacbb8bc18b",
+      "kind": "heading",
+      "text": "Tool Usage",
+      "order": 192,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 51353,
+      "char_end": 51363,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b20108209952c5c5464891475443ca8a",
+      "kind": "list_item",
+      "text": "- Use code snippet ‘‘‘python ... ‘‘‘ inside a ‘### Code‘ step when",
+      "order": 193,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 51365,
+      "char_end": 51431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:809af698f64be7b61fac430ec14c2a58",
+      "kind": "paragraph",
+      "text": "computation is needed.",
+      "order": 194,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 51433,
+      "char_end": 51455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb21cb5373c15685dbc99f29ba7ab22c",
+      "kind": "heading",
+      "text": "Step-by-Step Approach",
+      "order": 195,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 51457,
+      "char_end": 51478,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c4f8135d36b5d6017bc458c2814862a",
+      "kind": "list_item",
+      "text": "- Work through reasoning systematically, breaking down the task into",
+      "order": 196,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 51480,
+      "char_end": 51548,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25e4fffc341fbb428f98db8ad0f4ba13",
+      "kind": "paragraph",
+      "text": "manageable steps. Rely on your knowledge until a gap is identified that requires tool support.",
+      "order": 197,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 51550,
+      "char_end": 51644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f70c1854caac294bac57796cd4787d92",
+      "kind": "list_item",
+      "text": "- Use only the domain-appropriate tool when needed.",
+      "order": 198,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 51646,
+      "char_end": 51697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:036e567456939693e39fcc2248a3ba50",
+      "kind": "heading",
+      "text": "Goal-Oriented Resolution",
+      "order": 199,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 51699,
+      "char_end": 51723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab40be61d98ad1a10f8c45ac078acddb",
+      "kind": "list_item",
+      "text": "- Conclude your reasoning process by achieving a clear, accurate, and succinct",
+      "order": 200,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 51725,
+      "char_end": 51803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c723a085a2bd3cd3f360cc04bdc6618f",
+      "kind": "paragraph",
+      "text": "solution based on your independent analysis and any tool findings. ### Output Guidelines",
+      "order": 201,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 51805,
+      "char_end": 51893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df7004fe798a4a2e3b19db97a7259893",
+      "kind": "list_item",
+      "text": "- Your answer must begin with ‘### Reasoning‘.",
+      "order": 202,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 51895,
+      "char_end": 51941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12f77cf3a2b3db28089eabaf221b18a7",
+      "kind": "list_item",
+      "text": "- After that, every step must begin with one of these section headers on its",
+      "order": 203,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 51943,
+      "char_end": 52019,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87f420a04edb23a5308765c6ceea1bbe",
+      "kind": "paragraph",
+      "text": "own line: ‘### Reasoning‘, ‘### Code‘, ‘### Final Response‘.",
+      "order": 204,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52021,
+      "char_end": 52081,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb710ec718a342d385751fc4f823bd23",
+      "kind": "list_item",
+      "text": "- If you need the tool, place the executable snippet inside a ‘### Code‘ step",
+      "order": 205,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52083,
+      "char_end": 52160,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d54c58eef30abd34cf0ca24c56459778",
+      "kind": "paragraph",
+      "text": "using ‘‘‘python ... ‘‘‘.",
+      "order": 206,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52162,
+      "char_end": 52186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c8b876fff1da03fa831b43bdb1f924d",
+      "kind": "list_item",
+      "text": "- Do not emit any other tool headings.",
+      "order": 207,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52188,
+      "char_end": 52226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6f91cd76e07165639a44acdf618fcb4",
+      "kind": "list_item",
+      "text": "- After a tool call, continue reasoning using the tool output when available.",
+      "order": 208,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52228,
+      "char_end": 52305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4968b0a07efeba52ccfb5f3e68c6bb65",
+      "kind": "list_item",
+      "text": "- End with a ‘### Final Response‘ step that directly answers the task. ###",
+      "order": 209,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Math-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 52307,
+      "char_end": 52381,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79bf20d0273f65c1151c65734b65b69b",
+      "kind": "heading",
+      "text": "Task",
+      "order": 210,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Task"
+      ],
+      "char_start": 52383,
+      "char_end": 52387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ee2cf7eee86739aeddc0db33c7391e8",
+      "kind": "paragraph",
+      "text": "13",
+      "order": 211,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Task"
+      ],
+      "char_start": 52389,
+      "char_end": 52391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e83ccd1f1df77f131111c4c303a13066",
+      "kind": "heading",
+      "text": "Time/Intention-Domain Initial Prompt",
+      "order": 212,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt"
+      ],
+      "char_start": 52393,
+      "char_end": 52429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91316d2e20e1ac8e4cd348a3dfca9ccb",
+      "kind": "paragraph",
+      "text": "### Task You are a highly capable assistant designed to solve tasks effectively using your knowledge and the tool set available for this domain. ### Principles",
+      "order": 213,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt"
+      ],
+      "char_start": 52431,
+      "char_end": 52590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12052710015bc3d625703e86d130f3a0",
+      "kind": "heading",
+      "text": "Reason Independently",
+      "order": 214,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 52592,
+      "char_end": 52612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15c8e52263b2c4067b9d131a28be7b2e",
+      "kind": "list_item",
+      "text": "- Leverage your own knowledge to analyze and solve reasoning steps whenever",
+      "order": 215,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 52614,
+      "char_end": 52689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:677ee6e6a789127ecdb046152ead8297",
+      "kind": "paragraph",
+      "text": "possible. Use the tool only when necessary.",
+      "order": 216,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Reason Independently"
+      ],
+      "char_start": 52691,
+      "char_end": 52734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78ce0304a60e055d872f3804449e5551",
+      "kind": "heading",
+      "text": "Tool Usage",
+      "order": 217,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 52736,
+      "char_end": 52746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8de4469cac0362b6ac1589f88e432d01",
+      "kind": "list_item",
+      "text": "- Use a ‘### Search‘ step whose content is a concise web search query when",
+      "order": 218,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 52748,
+      "char_end": 52822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:510abc3c540453c3f32a72e6ef8e8482",
+      "kind": "paragraph",
+      "text": "external information is needed.",
+      "order": 219,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 52824,
+      "char_end": 52855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbee101be589fcdc9d0320a035c80626",
+      "kind": "list_item",
+      "text": "- Use a ‘### AskUser‘ step whose content is the exact question that should be",
+      "order": 220,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 52857,
+      "char_end": 52934,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a31cf8b80203053adaf5c38945356904",
+      "kind": "paragraph",
+      "text": "asked to the user when user-specific clarification is needed.",
+      "order": 221,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Tool Usage"
+      ],
+      "char_start": 52936,
+      "char_end": 52997,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71b1fb6118ce641d9908e8c499279858",
+      "kind": "heading",
+      "text": "Step-by-Step Approach",
+      "order": 222,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 52999,
+      "char_end": 53020,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5879be4aac2b0204b21e396cadd66ec3",
+      "kind": "list_item",
+      "text": "- Work through reasoning systematically, breaking down the task into",
+      "order": 223,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 53022,
+      "char_end": 53090,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b6fd4af944f5251c9d60cc7a8c865f9",
+      "kind": "paragraph",
+      "text": "manageable steps. Rely on your knowledge until a gap is identified that requires tool support.",
+      "order": 224,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 53092,
+      "char_end": 53186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae52970137ae08a6b3546871abb8c622",
+      "kind": "list_item",
+      "text": "- Use only the domain-appropriate tool when needed.",
+      "order": 225,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Step-by-Step Approach"
+      ],
+      "char_start": 53188,
+      "char_end": 53239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ed522e86d7b69b4861019d18e1f957e",
+      "kind": "heading",
+      "text": "Goal-Oriented Resolution",
+      "order": 226,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53241,
+      "char_end": 53265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c33207d16a870db3ebf893efdc82eeb0",
+      "kind": "list_item",
+      "text": "- Conclude your reasoning process by achieving a clear, accurate, and succinct",
+      "order": 227,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53267,
+      "char_end": 53345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0236a026a0100716fcc440fbb2075529",
+      "kind": "paragraph",
+      "text": "solution based on your independent analysis and any tool findings. ### Output Guidelines",
+      "order": 228,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53347,
+      "char_end": 53435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71b72a8e538d5ecbe7f8437daa6e6332",
+      "kind": "list_item",
+      "text": "- Your answer must begin with ‘### Reasoning‘.",
+      "order": 229,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53437,
+      "char_end": 53483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86b1fbccd16ae0ef49b54aa971836623",
+      "kind": "list_item",
+      "text": "- After that, every step must begin with one of these section headers on its",
+      "order": 230,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53485,
+      "char_end": 53561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3eb05f3ce08549f721c8f50635a12093",
+      "kind": "paragraph",
+      "text": "own line: ‘### Reasoning‘, ‘### Search‘, ‘### AskUser‘, ‘### Final Response‘.",
+      "order": 231,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53563,
+      "char_end": 53640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ca0fe38afe7d048bc99964d8a5dbda9",
+      "kind": "list_item",
+      "text": "- If you use ‘### Search‘, place only the search query inside the step.",
+      "order": 232,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53642,
+      "char_end": 53713,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:036a46efff3ba31b32c14fbed64fbe50",
+      "kind": "list_item",
+      "text": "- If you use ‘### AskUser‘, place only the user-facing question inside the",
+      "order": 233,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53715,
+      "char_end": 53789,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d90af682eb6185b3d1cc1d7a7fab6bc8",
+      "kind": "paragraph",
+      "text": "step.",
+      "order": 234,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53791,
+      "char_end": 53796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93e3b40d131175c6b141413198c2d104",
+      "kind": "list_item",
+      "text": "- Do not emit any other tool headings.",
+      "order": 235,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53798,
+      "char_end": 53836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8d0ea0324f279d51192e7aba1803a87",
+      "kind": "list_item",
+      "text": "- After a tool call, continue reasoning using the tool output when available.",
+      "order": 236,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53838,
+      "char_end": 53915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1205d4eba85d2c1d9840697b663a735",
+      "kind": "list_item",
+      "text": "- End with a ‘### Final Response‘ step that directly answers the task.",
+      "order": 237,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53917,
+      "char_end": 53987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e40ad571ac986cc9aa058742791f592",
+      "kind": "paragraph",
+      "text": "### Task:",
+      "order": 238,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Time/Intention-Domain Initial Prompt",
+        "Goal-Oriented Resolution"
+      ],
+      "char_start": 53989,
+      "char_end": 53998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:879e363d011b2332cea4d6d22c6171ae",
+      "kind": "heading",
+      "text": "A.2. Robustness Beyond the Literal Heading Token",
+      "order": 239,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "A.2. Robustness Beyond the Literal Heading Token"
+      ],
+      "char_start": 54000,
+      "char_end": 54048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5e220347d2ac942cd42a509856fdc5c",
+      "kind": "paragraph",
+      "text": "To test whether the steering vector controls tool invocation or merely suppresses the literal surface string### Code , we run two control studies on Llama-3.1-8B in the Math domain. Relative Suppression denotes (Base−ActAdd)/Base on ToolAvgUse. In thecross-format transferstudy (Table 3), the Code vector is extracted under one output schema and evaluated under another; the markdown→json row applies a Markdown-extracted vector under a JSON action schema in which the literal ### Code heading is absent. The vector still suppresses 63.9% of tool calls with accuracy essentially unchanged, but transfer is asymmetric: the reverse json→markdown direction is much weaker (15.5%), and json→json reduces tool use while collapsing accuracy because JSON-format generations are frequently malformed. In theheading renamestudy (Table 4), the vector is always extracted from ### Code trajectories but evaluation uses alternative tool headings of the same semantics. Suppression persists even when the active heading contains no occurrence of the word Code (e.g. 70.3% under ### Action B) and accuracy is not degraded, though the effect weakens for some renames (e.g.### Execute,55.5%). 14",
+      "order": 240,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.2. Robustness Beyond the Literal Heading Token"
+      ],
+      "char_start": 54050,
+      "char_end": 55229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f74d68bbe326ba9d336be49b0865e3bb",
+      "kind": "caption",
+      "text": "Table 3.Cross-format transfer on Llama-3.1-8B (Math). The vector is extracted under the schema before the arrow and evaluated under",
+      "order": 241,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.2. Robustness Beyond the Literal Heading Token"
+      ],
+      "char_start": 55231,
+      "char_end": 55362,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84298917b5e90eafb851adfe77047f03",
+      "kind": "paragraph",
+      "text": "the schema after it.",
+      "order": 242,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.2. Robustness Beyond the Literal Heading Token"
+      ],
+      "char_start": 55364,
+      "char_end": 55384,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71c3289e19ff734b902fe69246d7fc3b",
+      "kind": "heading",
+      "text": "Schema",
+      "order": 243,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Schema"
+      ],
+      "char_start": 55386,
+      "char_end": 55392,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb7068da1d38b90c6ce959fbe5aed854",
+      "kind": "heading",
+      "text": "Base ActAdd Relative Base ActAdd",
+      "order": 244,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Base ActAdd Relative Base ActAdd"
+      ],
+      "char_start": 55394,
+      "char_end": 55426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fd876e4683a3491cdda0ddf6a1398c8",
+      "kind": "heading",
+      "text": "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy",
+      "order": 245,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55428,
+      "char_end": 55479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fed4470ee2b2f7fe0e5a0950ad53dda",
+      "kind": "paragraph",
+      "text": "markdown→markdown 3.150 0.225 92.9% 0.5075 0.495 markdown→json 1.053 0.380 63.9% 0.330 0.325 json→markdown 3.150 2.6625 15.5% 0.5075 0.5225 json→json 1.053 0.300 72.9% 0.330 0.010",
+      "order": 246,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55481,
+      "char_end": 55660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:176a73694e303bb2f250acbec445779f",
+      "kind": "caption",
+      "text": "Table 4.Heading rename on Llama-3.1-8B (Math). The vector is extracted from ### Code ; evaluation uses the renamed heading after",
+      "order": 247,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55662,
+      "char_end": 55790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a567a10eea033a0d7a3baaf5d805174",
+      "kind": "paragraph",
+      "text": "the arrow.",
+      "order": 248,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55792,
+      "char_end": 55802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2861d0a7b5a9518efd9b0119ea761e5",
+      "kind": "heading",
+      "text": "Schema",
+      "order": 249,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Schema"
+      ],
+      "char_start": 55804,
+      "char_end": 55810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14ee007af700c851780e6d205c6cfdf8",
+      "kind": "heading",
+      "text": "Base ActAdd Relative Base ActAdd",
+      "order": 250,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Base ActAdd Relative Base ActAdd"
+      ],
+      "char_start": 55812,
+      "char_end": 55844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a881889ef713468bda1f0d6388840350",
+      "kind": "heading",
+      "text": "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy",
+      "order": 251,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55846,
+      "char_end": 55897,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca0629566b2e3526e32dd2eb564cbb61",
+      "kind": "paragraph",
+      "text": "Code→Code 3.150 0.170 94.6% 0.5075 0.525 Code→Compute 2.877 0.245 91.5% 0.5427 0.530 Code→Execute 3.135 1.395 55.5% 0.5275 0.5475 Code→Action B 2.897 0.860 70.3% 0.525 0.550",
+      "order": 252,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ToolAvgUse ToolAvgUse Suppression Accuracy Accuracy"
+      ],
+      "char_start": 55899,
+      "char_end": 56072,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b07e2d021fe1d62b8989ff59c045bfc",
+      "kind": "heading",
+      "text": "A.3. Alternative Extraction Methods on Llama-3.1-70B",
+      "order": 253,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B"
+      ],
+      "char_start": 56074,
+      "char_end": 56126,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b69abc1e76d6f6440a60cad8a3caf998",
+      "kind": "paragraph",
+      "text": "To separate lineardecodabilityof heading type from thecausalsteering effect of the extracted direction on Llama-3.1-70B, we compare the mean-difference direction (used throughout the paper) against four alternatives at layer45 on the Math/Code heading pair: a supervised linear probe, a diagonally whitened mean difference, a norm-matched random direction, and a shuffled-label probe. Every direction is norm-matched to the original mean-difference vector and evaluated on 200 held-out Math examples. Val AUROC and Val F1 measure how well the direction separates Code from Reasoning heading states; ToolAvgUse and Accuracy measure the behavioral effect of steering with that direction (lower ToolAvgUse indicates stronger suppression). As shown in Table 5, the linear probe separates the two classes almost perfectly (AUROC1.000), confirming that headingtype information is linearly decodable at 70B. Yet this most-decodable direction is far weaker as a causal control (ToolAvgUse",
+      "order": 254,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B"
+      ],
+      "char_start": 56128,
+      "char_end": 57108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2bcdbc5a41bd9a124d327f1d3be2bd58",
+      "kind": "heading",
+      "text": "than the mean-difference vector (0.235), and the whitened estimator does not improve over the mean difference. The",
+      "order": 255,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B",
+        "than the mean-difference vector (0.235), and the whitened estimator does not improve over the mean difference. The"
+      ],
+      "char_start": 57110,
+      "char_end": 57224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eae31db153c161b3ce9bd3c6ed85bba7",
+      "kind": "paragraph",
+      "text": "random and shuffled controls are weak on both axes. Probing separability and causal controllability therefore diverge at this scale, and the mean-difference estimator is not simply a poor estimator for causal suppression at 70B.",
+      "order": 256,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B",
+        "than the mean-difference vector (0.235), and the whitened estimator does not improve over the mean difference. The"
+      ],
+      "char_start": 57226,
+      "char_end": 57454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe9cc732e1c31da075c6ae2b3d47b16e",
+      "kind": "caption",
+      "text": "Table 5.Alternative extraction directions on Llama-3.1-70B (Math/Code, layer 45, n= 200 ). Each direction is norm-matched to the",
+      "order": 257,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B",
+        "than the mean-difference vector (0.235), and the whitened estimator does not improve over the mean difference. The"
+      ],
+      "char_start": 57456,
+      "char_end": 57584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ffa20457e1cfbeec65392d446360d59",
+      "kind": "paragraph",
+      "text": "original mean-difference vector. AUROC/F1 measure linear separability of Code vs. Reasoning heading states; ToolAvgUse/Accuracy measure the causal steering effect.",
+      "order": 258,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "A.3. Alternative Extraction Methods on Llama-3.1-70B",
+        "than the mean-difference vector (0.235), and the whitened estimator does not improve over the mean difference. The"
+      ],
+      "char_start": 57586,
+      "char_end": 57749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:001ea41da4fe5247a2c38bf0ec87b438",
+      "kind": "heading",
+      "text": "Direction Val AUROC Val F1 ToolAvgUse Accuracy",
+      "order": 259,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Direction Val AUROC Val F1 ToolAvgUse Accuracy"
+      ],
+      "char_start": 57751,
+      "char_end": 57797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e385a72a44ae400d0c97af7f86734a9f",
+      "kind": "paragraph",
+      "text": "Mean difference 0.945 0.481 0.235 0.695 Linear probe 1.000 1.000 1.235 0.695 Diag-whitened mean difference 0.961 0.481 0.405 0.690 Random 0.614 0.361 1.680 0.740 Shuffled probe 0.631 0.332 1.755 0.735 15",
+      "order": 260,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Direction Val AUROC Val F1 ToolAvgUse Accuracy"
+      ],
+      "char_start": 57799,
+      "char_end": 58002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 15,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.05790",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

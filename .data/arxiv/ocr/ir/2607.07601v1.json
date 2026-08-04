@@ -1,0 +1,3432 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "270fffbf7447ed7b495b5319e387d5cf67272def106c4cf1b85a74e9d258c3e6",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:63b02fc925bdfc31035537511cfbbc67",
+      "kind": "heading",
+      "text": "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics"
+      ],
+      "char_start": 0,
+      "char_end": 59,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:365883f731d022e71b21111fa4b4b964",
+      "kind": "heading",
+      "text": "Simulation for Autonomous Driving Corner-Case Synthesis",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Simulation for Autonomous Driving Corner-Case Synthesis"
+      ],
+      "char_start": 61,
+      "char_end": 116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec695d2b09ec88349dca1752a1d66652",
+      "kind": "paragraph",
+      "text": "Kaicong Huang 1, Meng Ma 1, Ruimin Ke 1∗ Abstract— Safety evaluation for autonomous driving is dominated by rare, safety-critical interactions, motivating simulators that can deliberately synthesize corner cases with photorealistic observations. Corner-case generation is inherently a multisource problem spanning visual representation, scene reasoning, and vehicle trajectory generation and control. Prior knowledgeand model-based approaches typically focus on scene or trajectory components in isolation, while diffusion-based methods attempt end-to-end generation but still struggle to ensure spatiotemporal consistency and physical realism. To unify these aspects within a single framework, we propose CARLA-GS, a modular corner-case synthesis pipeline that decouples visual representation, semantic reasoning, and physics-based execution while maintaining tight cross-module coupling. Starting from real driving data, we reconstruct an editable gaussian scene with additional geometry-consistent constraints. A multiagent LLM then performs scene-level reasoning to identify risky interactions and generate intent-level waypoint trajectories, while the low-level motion control is delegated to CARLA, where a PID controller ensures kinematic and dynamic feasibility. The simulated vehicle states are finally re-projected into the gaussian scene for ego-centric rendering. This design enables high-level semantic reasoning, low-level physically executable motion, and photorealistic corner-case generation within a",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Simulation for Autonomous Driving Corner-Case Synthesis"
+      ],
+      "char_start": 118,
+      "char_end": 1635,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1907ac8c5e970a8668d1e4d2aca73871",
+      "kind": "paragraph",
+      "text": "unified pipeline. Experiments on the Waymo Open Dataset show, both quantitatively and qualitatively, that our framework enables controllable corner-case generation and produces photorealistic, spatiotemporally consistent videos aligned with semantic intent and physically feasible motion.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Simulation for Autonomous Driving Corner-Case Synthesis"
+      ],
+      "char_start": 1637,
+      "char_end": 1925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc526206da3fbd2a8d10d0f7c25da3c2",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Simulation for Autonomous Driving Corner-Case Synthesis",
+        "INTRODUCTION"
+      ],
+      "char_start": 1927,
+      "char_end": 1939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ac73f5bd8e7dd5948c926e1e7361e22",
+      "kind": "paragraph",
+      "text": "Autonomous driving (AD) operates in open-world traffic where safety evaluation is inherently a rare-event problem, known as the Curse of Rarity [1]. This motivates simulation pipelines that intentionally expose corner cases. Meanwhile, camera-centric AD systems require simulators to provide not only trajectory rollouts but also photorealistic observations for reliable closed-loop evaluation [2]. This requirement has renewed interest in scalable drivingscene reconstruction for safety-oriented simulation. NeRFbased methods achieve high-fidelity view synthesis but remain expensive for large-scale optimization and rendering [3], while diffusion-based world models provide strong generative diversity yet still struggle with physical plausibility and multi-view consistency under real-time constraints [4], [5]. In contrast, 3D/4D Gaussian Splatting (GS) [6], [7] enables real-time differentiable rendering with explicit scene primitives, making it attractive for urban driving simulation [8], [9], [10]. However, vanilla 3DGS is",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Simulation for Autonomous Driving Corner-Case Synthesis",
+        "INTRODUCTION"
+      ],
+      "char_start": 1941,
+      "char_end": 2973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7fb7b842cb9cdff8474a795ea0b1ba9",
+      "kind": "heading",
+      "text": "Department of Civil and Environmental Engineering, Rensselaer Poly-",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 2975,
+      "char_end": 3042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ebe0ecdf4ebe5392114fc6d99e6d4a9",
+      "kind": "paragraph",
+      "text": "technic Institute, 110 Eighth Street, Troy, NY USA 12180. ∗ Corresponding author. Email:ker@rpi.edu designed for photometric reconstruction, lacking instancelevel control over traffic participants and remaining sensitive to reconstruction artifacts that may affect occlusion or collision outcomes [11], [12]. Moreover, corner-case generation is not purely a visual problem. It requires semantic reasoning over agent intent, interaction context, and future motion evolution. Prior work synthesizes corner cases through data-driven, knowledgebased, or learning-based pipelines [13], [14], [15]. However, these approaches often lack semantic scene understanding and high-level decision reasoning for identifying plausible risky interactions, limiting their flexibility in generating targeted behaviors. Inspired by [16], we adopt LLM-based reasoning as a semantic planning module for corner-case synthesis. LLMs provide macro-level scene understanding and prompt-driven behavioral control, enabling intent-level risk specification while automatically selecting interacting agents from the scene. After scene-level analysis, the next step is to generate vehicle trajectories and execute them under realistic kinematic and dynamic constraints. While LLMs are effective for highlevel trajectory planning, they are not well suited to produce dynamically feasible control signals or guarantee collisionvalid outcomes. Embedding physics directly into 3DGS is also challenging, as Gaussian primitives are unstructured and lack the rigid topology required by conventional dynamics",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 3044,
+      "char_end": 4613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ae230d2120e1acfff6cd54c7bd23f9a",
+      "kind": "paragraph",
+      "text": "solvers. Although recent works augment Gaussians with physical attributes [17], [18], [19] or reconstruct simulation scenes via meshes [20], [21], faithful vehicle dynamics simulation remains limited. This motivates a modular design that delegates physics-consistent motion to dedicated simulators such as CARLA [22]. To overcome the above limitations, we proposeCARLA- GS, a modular pipeline for safety-critical corner-case synthesis. The key idea is todecouple visual representation, semantic reasoning, and physics-based simulation while preserving cross-module consistency. Specifically, we adopt Street Gaussians [9] as the backbone, whose objectbackground modeling strategy provides a strong foundation for instance-level vehicle editing. We further introduce geometry-consistent constraints to improve structural coherence of the reconstructed scene. In parallel, a multiagent LLM performs semantic scene analysis to identify the collision zone around the ego vehicle and select a target adversarial vehicle, and then generates an intentlevel corner-case trajectory in waypoint form. The resulting trajectories are then executed in CARLA, where a PID controller enforces kinematic and dynamic feasibility. Finally,",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 4615,
+      "char_end": 5836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4c4320ef12ddebac0c67ae45a8b2cb1",
+      "kind": "table",
+      "text": "arXiv:2607.07601v1  [cs.RO]  8 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 5838,
+      "char_end": 5877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:478aee4b3039b5a0368693e470b02114",
+      "kind": "caption",
+      "text": "Fig. 1. Overall framework of CARLA-GS. We decouple scene representation, risk reasoning, and physics simulation to leverage the strengths of each",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 5879,
+      "char_end": 6024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0849cff0eee90be54f570cf8cfa02fd",
+      "kind": "paragraph",
+      "text": "module. Specifically, 3D Gaussian Splatting provides high-fidelity scene reconstruction and rendering, while vehicle states are fed to an LLM with chained <Zone>and<Trajectory>agents to synthesize risk-aware scenarios. The LLM outputs only target trajectories, and low-level control is handled in CARLA via a PID controller. Finally, simulated vehicle poses are re-projected into the Gaussian scene to render geometrically consistent and physically realistic corner-case videos. By replacing raw objects with priors generated by 3D foundation models, rendering artifacts under novel viewpoints can be further mitigated. the simulated vehicle states are re-injected into the geometryconsistent 3DGS scene, refined with a 3D foundation model, to render ego-centric photorealistic observations. The overall framework is shown in Fig. 1. This design leverages the complementary strengths of each module: Gaussian Splatting provides spatiotemporal consistency and high-fidelity visual representation, LLMs enable high-level semantic reasoning and flexible control, and CARLA ensures reliable vehicle physics, resulting in a controllable and scalable framework for corner-case generation. Our main contributions are summarized as follows: •We present CARLA-GS, a modular framework for driving corner-case synthesis that decouples visual representation, semantic reasoning, and physics simulation, enabling spatiotemporally consistent video generation. •We design a multi-agent LLM reasoning module for semantic scene understanding and intent-level trajectory",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 6026,
+      "char_end": 7578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74968d06e8716566f2ed8cb9256c6f96",
+      "kind": "paragraph",
+      "text": "planning, enabling automatic discovery of risky interactions and flexible prompt-driven adversarial control. •We develop a plug-and-play CARLA-Gaussian integration through state re-projection, allowing physically simulated vehicle motions to be reflected in photorealistic renderings.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-"
+      ],
+      "char_start": 7580,
+      "char_end": 7864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8347dadfc41809c6897beb75cde9c32e",
+      "kind": "heading",
+      "text": "RELATED WORK",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Department of Civil and Environmental Engineering, Rensselaer Poly-",
+        "RELATED WORK"
+      ],
+      "char_start": 7866,
+      "char_end": 7878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03c83cfd9380d0281c449834a910b4c5",
+      "kind": "heading",
+      "text": "A. Autonomous Driving Scene Reconstruction and Corner-",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Autonomous Driving Scene Reconstruction and Corner-"
+      ],
+      "char_start": 7880,
+      "char_end": 7934,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31c0212656787b991cfc48a3168c4486",
+      "kind": "heading",
+      "text": "Case Generation",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Case Generation"
+      ],
+      "char_start": 7936,
+      "char_end": 7951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1db60d619e9c26f850dfe549ec4b7aba",
+      "kind": "paragraph",
+      "text": "A practical autonomous driving simulator should provide realistic perception inputs and support spatio-temporal reasoning [23]. Neural scene representations enable photorealistic rendering from captured data, where NeRF models scenes as implicit radiance fields [24], [3] and can be enhanced with structured depth or scene priors for improved novel-view synthesis [25], [26], [27]. Recently, diffusion-based world models have also been explored for scalable and controllable driving-scene generation [4], [5]. However, NeRF-based pipelines are often computationally expensive for large-scale simulation, while diffusion models may hallucinate structures and struggle to maintain strict geometric consistency and deterministic control. More recently, 3D Gaussian Splatting (3DGS) has emerged as an efficient alternative by representing scenes with explicit Gaussian primitives and enabling highthroughput rendering [28]. It has been extended to drivingscene synthesis, editing, dynamic modeling, real-time SLAM, and model alignment [8], [29], [10], [30], [7], [31]. Nevertheless, for safety-oriented corner-case synthesis, vanilla 3DGS remains insufficient because it lacks guarantees on geometric stability, actionable semantics, and physically consistent interactions [11], [12]. Corner cases expose safety-critical behaviors that rarely appear in naturalistic driving data. Existing generation methods can be broadly divided into data-driven, knowledgebased, and LLM-based approaches. Data-driven methods synthesize realistic safety-critical scenarios from large-",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Case Generation"
+      ],
+      "char_start": 7953,
+      "char_end": 9518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4f94dfb3257343ef0ffd77ca93b63ff",
+      "kind": "paragraph",
+      "text": "scale driving datasets [32], [33], [13], but often lack explicit control over failure modes and interaction intent. Knowledge-based methods transform common scenarios into corner cases using structured representations such as scene graphs [14], while their diversity and realism are limited by the coverage and correctness of symbolic rules. Recent LLM-based methods introduce high-level reasoning and mul-",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Case Generation"
+      ],
+      "char_start": 9520,
+      "char_end": 9926,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d15d9abef35d18ef0cb51dabeb4d7898",
+      "kind": "heading",
+      "text": "Depth Anything V2",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Depth Anything V2"
+      ],
+      "char_start": 9928,
+      "char_end": 9945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efb6996dc88219a0edf89b0483fe5ac1",
+      "kind": "heading",
+      "text": "Referenced Depth Map",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Referenced Depth Map"
+      ],
+      "char_start": 9947,
+      "char_end": 9967,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcaa9898ec257a7910c3e93a8aa26cb3",
+      "kind": "heading",
+      "text": "Ground Mask",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Ground Mask"
+      ],
+      "char_start": 9969,
+      "char_end": 9980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a525a9891b69d6e8d03bd7012d395c6",
+      "kind": "heading",
+      "text": "Object Mask",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Object Mask"
+      ],
+      "char_start": 9982,
+      "char_end": 9993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2deb3aab7b5cfe51e9e2bf4ad4f86331",
+      "kind": "heading",
+      "text": "Supervision Mask",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Supervision Mask"
+      ],
+      "char_start": 9995,
+      "char_end": 10011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f07d40f0da38b50a37500b871c049d62",
+      "kind": "heading",
+      "text": "Referenced Normal Map",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Referenced Normal Map"
+      ],
+      "char_start": 10013,
+      "char_end": 10034,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d72c30e6bea62b0bfd9fc8972e78703",
+      "kind": "heading",
+      "text": "RANSAC",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "RANSAC"
+      ],
+      "char_start": 10036,
+      "char_end": 10042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:050e254f97cd31adfdacb1c508e9c220",
+      "kind": "heading",
+      "text": "Raw Image",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Image"
+      ],
+      "char_start": 10044,
+      "char_end": 10053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:933daa9b8497878c7f6f3a0d46c800ee",
+      "kind": "caption",
+      "text": "Fig. 2. Construction of the supervision mask for geometry-consistent",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Image"
+      ],
+      "char_start": 10055,
+      "char_end": 10123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:691b52b3760b14cf01aedade7dd85b61",
+      "kind": "paragraph",
+      "text": "reconstruction. The raw image is processed by a depth foundation model to produce a reference depth map, from which a normal map is computed. The RANSAC-derived ground mask is fused with the preprocessed object mask to obtain the final supervision mask. timodal understanding for generating risky scenarios or adversarial behaviors [15], [16]. However, translating semantic intent into dynamically feasible vehicle behaviors remains challenging. Our work addresses these limitations by grounding LLM-driven reasoning in CARLA’s physics-executable backend and integrating 3DGS-based visual reconstruction into a modular yet integrated pipeline for controllable and scalable corner-case generation.",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Image"
+      ],
+      "char_start": 10125,
+      "char_end": 10821,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0ad643928a5b8a3e372844060570612",
+      "kind": "heading",
+      "text": "METHODOLOGY",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Image",
+        "METHODOLOGY"
+      ],
+      "char_start": 10823,
+      "char_end": 10834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:221b2a9e889313647a77dd362959ce8e",
+      "kind": "heading",
+      "text": "A. Geometry-Consistent Driving Scenario Reconstruction",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 10836,
+      "char_end": 10890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:911ed87d1dce51de6d01f096235ee253",
+      "kind": "paragraph",
+      "text": "Due to the limited viewpoints of onboard driving cameras (typically 3-6 poses), vanilla 3DGS often produces geometrically inconsistent and bumpy surfaces [20], [34]. We therefore introduce geometry-consistent regularization to enforce surface continuity and smoothness. Flattening Constraints.Following prior 2DGS and surface reconstruction works [11], [12], [21], we introduce a flattening regularization by constraining the anisotropic scaling of each Gaussian. The covariance of thei-th Gaussian is parameterized by a diagonal scaling matrix Si = diag(s i1, si2, si3), wheres i1, si2, si3 >0denote the principal-axis scales andNis the total number of Gaussians. The flattening loss is defined as Lflat = 1 N NX i=1 min (si1, si2, si3)(1) which encourages each Gaussian to collapse along its least significant axis and thus promotes locally smooth surface structures. Normal and Geometry Constraints.To stabilize optimization in physically meaningful regions, we construct a supervision maskMby combining foreground objects and planar ground regions. Detailed construction is illustrated in",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 10892,
+      "char_end": 11984,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2829152f5c04882a1c153075fe426c6a",
+      "kind": "caption",
+      "text": "Fig. 2. Given the rendered normalsN∈R 3×H×W and the",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 11986,
+      "char_end": 12037,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d11484ccd77bb3a3a771b138c04c5dce",
+      "kind": "paragraph",
+      "text": "depth-derived reference normalsN ∗, the normal constraint is defined via an angular loss Lnormal = 1",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 12039,
+      "char_end": 12139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaee1859a9a99904bf1f03a9768c8c59",
+      "kind": "table",
+      "text": "|M|",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 12141,
+      "char_end": 12144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07afac571be9d061f96dbbc8f101ade9",
+      "kind": "paragraph",
+      "text": "X x M(x) (1− ⟨N(x),N∗(x)⟩)(2) whereN(x)denotes the normal at pixelx, and⟨·,·⟩represents the cosine similarity. This term enforces orientation consistency between rendered and geometry-induced normals. To further encourage local surface coherence, we introduce a geometry consistency loss inspired by [20]. LetD∈ RH×W be the rendered depth map. We compute its Sobel gradient magnitude and normalize it to obtain a smoothness weightW g ∈[0,1] H×W . We then compare each predicted normal with the locally averaged normal ¯N∗ obtained via a 3×3mean filter: Lgeo = P",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Geometry-Consistent Driving Scenario Reconstruction"
+      ],
+      "char_start": 12146,
+      "char_end": 12707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6bb6dcca9d0cb21f35a1fa70c09fa97",
+      "kind": "heading",
+      "text": "Wg(x)",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12709,
+      "char_end": 12714,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22fc9316a6d963b491a4c0ec44d6c08e",
+      "kind": "paragraph",
+      "text": "1−",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12716,
+      "char_end": 12718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7af95f293345bc725091e6104d52258",
+      "kind": "paragraph",
+      "text": "N(x), ¯N∗(x)",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12720,
+      "char_end": 12732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b10cf469600b1847f99c2e9d29ffe7a",
+      "kind": "paragraph",
+      "text": "P",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12734,
+      "char_end": 12735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94e09ddea353314aedd0c6ee1a977cb5",
+      "kind": "heading",
+      "text": "Wg(x)",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12737,
+      "char_end": 12742,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1cef58ae67c30e1ec37ff9328851f01",
+      "kind": "paragraph",
+      "text": "By restricting supervision to maskMand jointly enforcing normal alignment and local geometric smoothness, the proposed constraints significantly improve surface quality on vehicles and road regions.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Wg(x)"
+      ],
+      "char_start": 12744,
+      "char_end": 12942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e05fcdd43c421660d5567184f616213c",
+      "kind": "heading",
+      "text": "B. LLM-Driven Corner Case Analysis and Synthesis",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "B. LLM-Driven Corner Case Analysis and Synthesis"
+      ],
+      "char_start": 12944,
+      "char_end": 12992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c15e2a4ff19e660f5fa26422af484aa",
+      "kind": "paragraph",
+      "text": "To automatically construct safety-critical scenarios beyond simple trajectory perturbation, we develop a multi-agent LLM-driven corner case generation framework (as shown in Fig. 3) that explicitly targets collision-prone regions around the ego vehicle, enabling more controllable and spatially grounded safety-critical scenario synthesis. Given multivehicle tracking data and ego poses, we follow a chainof-thought prompting paradigm [35] and design a pipeline consisting of the following stages: Collision Zone Modeling.We first define four rectangular collision zones tightly surrounding the ego vehicle in the egocentric coordinate frame:",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "B. LLM-Driven Corner Case Analysis and Synthesis"
+      ],
+      "char_start": 12994,
+      "char_end": 13636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e82304f3c66664dbb4478fc666064de",
+      "kind": "heading",
+      "text": "Z={front,back,left,right}(3)",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Z={front,back,left,right}(3)"
+      ],
+      "char_start": 13638,
+      "char_end": 13666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe5ebb51cfd6d1a754bdd66d1fb46343",
+      "kind": "paragraph",
+      "text": "Each zone is parameterized by spatial bounds determined by the ego vehicle lengthL e and widthW e. These zones serve as explicit spatial targets for risk maximization and provide structured guidance to the language model.",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Z={front,back,left,right}(3)"
+      ],
+      "char_start": 13668,
+      "char_end": 13889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e99d7605ffbd8d29d81f9e0ff0e7db31",
+      "kind": "heading",
+      "text": "Risk Analysis and Collision Zone Selection.Given",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Risk Analysis and Collision Zone Selection.Given"
+      ],
+      "char_start": 13891,
+      "char_end": 13939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c970a02e8fc8088e9871aa35097b1a8b",
+      "kind": "paragraph",
+      "text": "a user-specified dangerous behaviorb ∗ selected from a predefined behavior library, we employ a language model to perform scene-aware reasoning and identify both the most plausible adversarial vehicle and the most threatening collision region. Let the ego vehicle be located at the origin of the egocentric coordinate frame, and letV={1, . . . , N}denote the set of observed background vehicles in the scene. For each vehiclei∈ V, we construct its recent motion state si ={(x t, yt, vt, θt)}T t=1 (4) where(x t, yt)denotes the position in the ego-centric frame, vt is the speed, andθ t is the heading over the pastTframes. The ego vehicle state is constructed in the same form and denoted bys ego. The LLM agent then performs behavior-conditioned risk reasoning over all candidate vehicles. Formally, the decision",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Risk Analysis and Collision Zone Selection.Given"
+      ],
+      "char_start": 13941,
+      "char_end": 14754,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:339c231ceec9abbe9e05c2077351fefc",
+      "kind": "heading",
+      "text": "LLM-Driven Corner Case Analysis and Synthesis",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "LLM-Driven Corner Case Analysis and Synthesis"
+      ],
+      "char_start": 14756,
+      "char_end": 14801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e753983161a5e175b4262741dac2802",
+      "kind": "heading",
+      "text": "Scene Information",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Scene Information"
+      ],
+      "char_start": 14803,
+      "char_end": 14820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa6bacecbb3bfa1c6a010da089df804a",
+      "kind": "heading",
+      "text": "Behavior Library",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Behavior Library"
+      ],
+      "char_start": 14822,
+      "char_end": 14838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49a8fa70863efa72b66c0242666e8909",
+      "kind": "paragraph",
+      "text": "<-sudden braking-> … <-sudden cut-in->",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Behavior Library"
+      ],
+      "char_start": 14840,
+      "char_end": 14878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:486c02edb6c5b59bd4341f87bf19fbe8",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Agent"
+      ],
+      "char_start": 14880,
+      "char_end": 14885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:475f77c77afce5019caef4172687a8ca",
+      "kind": "paragraph",
+      "text": "<Zone> front back left right",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Agent"
+      ],
+      "char_start": 14887,
+      "char_end": 14915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5dc0f232e23ba4765efedb4ccedaf303",
+      "kind": "heading",
+      "text": "Selected Collision Vehicle",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Selected Collision Vehicle"
+      ],
+      "char_start": 14917,
+      "char_end": 14943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70d536adacdd4e5e019c51515d8cf53e",
+      "kind": "heading",
+      "text": "Target Collision Zone",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Target Collision Zone"
+      ],
+      "char_start": 14945,
+      "char_end": 14966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa88590f037008535de8419e66cc5657",
+      "kind": "heading",
+      "text": "Estimated TTC",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Estimated TTC"
+      ],
+      "char_start": 14968,
+      "char_end": 14981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce53723fff117fc43ccc70b380c37cf1",
+      "kind": "heading",
+      "text": "Predicted Risk Level",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Predicted Risk Level"
+      ],
+      "char_start": 14983,
+      "char_end": 15003,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f56979fbc1da1b001cb5f5ab4ab4c5f2",
+      "kind": "heading",
+      "text": "Candidate Filtering",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Predicted Risk Level",
+        "Candidate Filtering"
+      ],
+      "char_start": 15005,
+      "char_end": 15024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ee2da144531f3ffa757fd7654140f3e",
+      "kind": "heading",
+      "text": "Feasibility & Kinematic",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Predicted Risk Level",
+        "Feasibility & Kinematic"
+      ],
+      "char_start": 15026,
+      "char_end": 15049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42eaa6599c6f017331daaea86eb347f4",
+      "kind": "heading",
+      "text": "Collision Zone Selection",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Predicted Risk Level",
+        "Collision Zone Selection"
+      ],
+      "char_start": 15051,
+      "char_end": 15075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e048e2049337452e65aaef2aace51fd",
+      "kind": "heading",
+      "text": "Risk Assessment",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Predicted Risk Level",
+        "Risk Assessment"
+      ],
+      "char_start": 15077,
+      "char_end": 15092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a9a4843ecae9a94fca2d8bc4b22dba1",
+      "kind": "heading",
+      "text": "Structured Decision Tuple",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Structured Decision Tuple"
+      ],
+      "char_start": 15094,
+      "char_end": 15119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a5c17cec4ab89c5541df14a94544d1a",
+      "kind": "heading",
+      "text": "Synthesis Information",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information"
+      ],
+      "char_start": 15121,
+      "char_end": 15142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d37f7cb243b19af339ffb350c9b85f12",
+      "kind": "paragraph",
+      "text": "Agent <Trajectory>",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information"
+      ],
+      "char_start": 15144,
+      "char_end": 15162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb3ed08cd31ef11419531275ada188d3",
+      "kind": "heading",
+      "text": "Gradually Transitions",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Gradually Transitions"
+      ],
+      "char_start": 15164,
+      "char_end": 15185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1cd3451b7b6974f823fe3a4443b3b79",
+      "kind": "heading",
+      "text": "Maintain Continuity",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Maintain Continuity"
+      ],
+      "char_start": 15187,
+      "char_end": 15206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9d0651649d962ec14dd10e79f6df45c",
+      "kind": "heading",
+      "text": "Enforce Behavior Consistency with",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Enforce Behavior Consistency with"
+      ],
+      "char_start": 15208,
+      "char_end": 15241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af9ed5c1ad65cefd4b1df8a5ef219f18",
+      "kind": "heading",
+      "text": "Avoid Premature Collision",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Avoid Premature Collision"
+      ],
+      "char_start": 15243,
+      "char_end": 15268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9436b4fc08a2a6a3f4c5ef513111b933",
+      "kind": "heading",
+      "text": "Final waypoint sampled in",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Final waypoint sampled in"
+      ],
+      "char_start": 15270,
+      "char_end": 15295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05b54973c275adb71213306ba7226737",
+      "kind": "paragraph",
+      "text": "LLM outputs time-stamped sequence of waypoints",
+      "order": 69,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Synthesis Information",
+        "Final waypoint sampled in"
+      ],
+      "char_start": 15297,
+      "char_end": 15343,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c7366cabdbefcbc493b8eedf249e3a1",
+      "kind": "heading",
+      "text": "Behavior Risk Analysis Collision Trajectory Synthesis",
+      "order": 70,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Behavior Risk Analysis Collision Trajectory Synthesis"
+      ],
+      "char_start": 15345,
+      "char_end": 15398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:379815ff41a9393087975d270b174e79",
+      "kind": "heading",
+      "text": "REFERENCE WAYPOINTS",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "REFERENCE WAYPOINTS"
+      ],
+      "char_start": 15400,
+      "char_end": 15419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e28d68ecf7c52493c601da6de1ccfd7",
+      "kind": "heading",
+      "text": "Downstream Controller",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Downstream Controller"
+      ],
+      "char_start": 15421,
+      "char_end": 15442,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44d8582054ed6857a8900dd9a3d40355",
+      "kind": "heading",
+      "text": "CARLA Vehicle",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA Vehicle"
+      ],
+      "char_start": 15444,
+      "char_end": 15457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ea8c7c5e43725c4dc73e0485cb41f17",
+      "kind": "heading",
+      "text": "Kinematic Simulation",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Kinematic Simulation"
+      ],
+      "char_start": 15459,
+      "char_end": 15479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:813d68ef65a843057f19e53c3cbecc90",
+      "kind": "caption",
+      "text": "Fig. 3. Overview of the LLM-driven corner-case generation pipeline. The",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Kinematic Simulation"
+      ],
+      "char_start": 15481,
+      "char_end": 15552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67d3ca0730cc23877226d76e2295ba47",
+      "kind": "paragraph",
+      "text": "system models ego-centric collision zones, performs risk analysis to select an adversarial vehicle and target zone, and synthesizes a waypoint-based collision-oriented trajectory that is later executed by CARLA for physically feasible simulation. process can be written as (i∗, z∗,TTC, r) = Agent zone(sego,{s i}i∈V , b∗)(5) wherei ∗ ∈ Vis the selected adversarial vehicle,z ∗ ∈ Zis the predicted target collision zone chosen from the predefined zone setZaround the ego vehicle,TTCdenotes the estimated time-to-collision in seconds assuming the dangerous behavior occurs, andr∈ {Low,Medium,High,Critical} represents the risk level. In addition, the behaviorb ∗ can be either user-specified or automatically inferred by the LLM agent. Conditioning on a given behavior hypothesis narrows the reasoning space and improves generation controllability.",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Kinematic Simulation"
+      ],
+      "char_start": 15554,
+      "char_end": 16400,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6be8e6bdf52864a384e40e382ed5ac43",
+      "kind": "heading",
+      "text": "Collision-Oriented Trajectory Synthesis.Conditioned",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Collision-Oriented Trajectory Synthesis.Conditioned"
+      ],
+      "char_start": 16402,
+      "char_end": 16453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e6eb22315d38d0ad583b8d75b8bce30",
+      "kind": "paragraph",
+      "text": "on the selected adversarial vehicle and target zone(i ∗, z∗), we generate a reference trajectory using the LLM. Instead of predicting dynamically feasible control signals, which lies outside the core competency of language models, we delegate low-level feasibility to a downstream controller and allow the LLM to focus on high-level waypoint generation. Let(x 0, y0)denote the current position of vehiclei ∗ in the ego-centric frame, and lets i∗ ands future ego denote the historical trajectory of the adversarial vehicle and the predicted future ego trajectory, respectively. A collision target point(x †, y†)is sampled within the selected zonez ∗. The waypoint generation process is formulated as T= Agent traj",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Collision-Oriented Trajectory Synthesis.Conditioned"
+      ],
+      "char_start": 16455,
+      "char_end": 17167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fe8863d4dce4862b98e84fb9cfa29eb",
+      "kind": "paragraph",
+      "text": "si∗ ,s future ego ,(x 0, y0),(x †, y†), b∗,TTC",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Collision-Oriented Trajectory Synthesis.Conditioned"
+      ],
+      "char_start": 17169,
+      "char_end": 17215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6cd9125336817176ead06588cd017ef2",
+      "kind": "paragraph",
+      "text": "(6) where T={(t k, xk, yk)}K k=1 (7) is the generated time-stamped waypoint sequence over the prediction horizon. The final waypoint is constrained to coincide with the sampled collision target. The resulting waypoint sequence can be directly interfaced with CARLA for vehicle kinematic simulation. SAM 3D  3D Gaussian Model",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Collision-Oriented Trajectory Synthesis.Conditioned"
+      ],
+      "char_start": 17217,
+      "char_end": 17541,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf5035fbeb3452f3679d6962ffcd3020",
+      "kind": "heading",
+      "text": "Align",
+      "order": 81,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Align"
+      ],
+      "char_start": 17543,
+      "char_end": 17548,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:429b27a717da2adfd48a6e091e7df977",
+      "kind": "heading",
+      "text": "Raw Gaussian",
+      "order": 82,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Gaussian"
+      ],
+      "char_start": 17550,
+      "char_end": 17562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7afc8a14aa13bbd20cab60bbb909cfa2",
+      "kind": "heading",
+      "text": "Model",
+      "order": 83,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Model"
+      ],
+      "char_start": 17564,
+      "char_end": 17569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:099170452a85f872d5b559521659dec7",
+      "kind": "heading",
+      "text": "Replace",
+      "order": 84,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Replace"
+      ],
+      "char_start": 17571,
+      "char_end": 17578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c6a79c5d8e2b4b64f74e6473583f5ea",
+      "kind": "caption",
+      "text": "Fig. 4. Vehicle replacement pipeline. We first select frames where the",
+      "order": 85,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Replace"
+      ],
+      "char_start": 17580,
+      "char_end": 17650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4594ad673f8f07cb9a94128587fa2fa0",
+      "kind": "paragraph",
+      "text": "target vehicle is close to the camera, and reconstruct a 3D Gaussian model using SAM 3D. The reconstructed asset is aligned with the original vehicle geometry and replaces it.",
+      "order": 86,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Replace"
+      ],
+      "char_start": 17652,
+      "char_end": 17827,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a40831a5d5ecdf3b908e939ac2ffc41",
+      "kind": "heading",
+      "text": "Real-Sim-Real: Bridging CARLA and Gaussian Splatting",
+      "order": 87,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Replace",
+        "Real-Sim-Real: Bridging CARLA and Gaussian Splatting"
+      ],
+      "char_start": 17829,
+      "char_end": 17881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f6b1b09156cb48a1f6f03eda7d2367c",
+      "kind": "paragraph",
+      "text": "To obtain physically consistent corner-case visualizations, we adopt a Real-Sim-Real pipeline that bridges the LLM-generated trajectory, CARLA vehicle dynamics, and Gaussian-based rendering.",
+      "order": 88,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Replace",
+        "Real-Sim-Real: Bridging CARLA and Gaussian Splatting"
+      ],
+      "char_start": 17883,
+      "char_end": 18073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dae43e50eacd75a0f56922e4fd5f1a44",
+      "kind": "heading",
+      "text": "CARLA-based Kinematic Simulation.Given the LLM-",
+      "order": 89,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA-based Kinematic Simulation.Given the LLM-"
+      ],
+      "char_start": 18075,
+      "char_end": 18122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2402018348037a975d3f41a93b60c0e0",
+      "kind": "paragraph",
+      "text": "generated waypoint sequenceTfrom the last step, we first import the trajectory into CARLA as a reference path. Then we design a PID controller that tracks the reference waypoints in continuous time for the selected vehiclei ∗. Specifically, the control command at timetis computed as ut = PID",
+      "order": 90,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA-based Kinematic Simulation.Given the LLM-"
+      ],
+      "char_start": 18124,
+      "char_end": 18416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39a4367c4280d10f59480e8254ec30c8",
+      "kind": "paragraph",
+      "text": "pt,p ref t",
+      "order": 91,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA-based Kinematic Simulation.Given the LLM-"
+      ],
+      "char_start": 18418,
+      "char_end": 18428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba1e41b984f0b8145cedc9727d320398",
+      "kind": "paragraph",
+      "text": "(8) wherep t andp ref t denote the current and reference vehicle poses, respectively. The simulator then evolves the vehicle state according to its internal kinematic model xt+1 =f CARLA(xt,u t)(9) producing a physically feasible trajectory ˜T={(t k,˜xk,˜yk, ˜θk)}K k=1 (10) This step ensures dynamic realism and smooth vehicle motion. In practice, we employ the built-in VehiclePIDControllerto track the reference path. Back-Projection to Gaussian Space.After simulation, the CARLA-generated trajectory ˜Tis mapped back to the Gaussian scene representation. For each timestamp, we update the pose of the corresponding Gaussian actor using the simulated position(˜x k,˜yk)and heading ˜θk. The modified Gaussian scene is finally rendered using the differentiable Gaussian renderer. Vehicle Replacement with 3D Foundation Models. Since the Gaussian model is trained from limited camera views, rendering unseen viewpoints may introduce tearing artifacts, especially for near-field vehicles with insufficient observations (see Fig. 9). To mitigate this, we replace such vehicles with high-quality assets reconstructed by SAM- 3D [36], as shown in Fig. 4. Specifically, we use SAM-3D [36] to reconstruct a 3D Gaussian representation from close-range frames containing the target vehicle. To align the reconstructed asset with the original object, we denote the original and replacement point sets asP o andP r. Both point clouds are first centered. Their yaw orientationsθ o andθ r are estimated from the minimumarea bounding boxes of their XY projections, producing",
+      "order": 92,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA-based Kinematic Simulation.Given the LLM-"
+      ],
+      "char_start": 18430,
+      "char_end": 19991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07e8304edf6c36d8d7fcd6d3da5b390b",
+      "kind": "paragraph",
+      "text": "a relative yaw difference∆θ=θ o −θ r. To account for",
+      "order": 93,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CARLA-based Kinematic Simulation.Given the LLM-"
+      ],
+      "char_start": 19993,
+      "char_end": 20045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0109c72f3cc5b90ccbb8269344ee357",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE I"
+      ],
+      "char_start": 20047,
+      "char_end": 20054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93f6550dcad4876fb47c6629f5102104",
+      "kind": "paragraph",
+      "text": "ABLATION STUDY ON RENDERING QUALITY AND GEOMETRY CONSISTENCY.",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE I"
+      ],
+      "char_start": 20056,
+      "char_end": 20117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9893ae2e445b194dddf87bcf8c9d7f29",
+      "kind": "heading",
+      "text": "Components PSNR↑SSIM↑LPIPS↓Normal L1 MAE↓Normal Cos MAE↓",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Components PSNR↑SSIM↑LPIPS↓Normal L1 MAE↓Normal Cos MAE↓"
+      ],
+      "char_start": 20119,
+      "char_end": 20175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a44f6799cf605b30042574e306214ade",
+      "kind": "paragraph",
+      "text": "Baseline 29.703 0.907 0.219 0.682 0.984 +Lflat 29.828 0.908 0.2150.677 0.957 +Lflat +L normal 29.521 0.906 0.217 0.361 0.482 +Lflat +L normal +L geo 29.027 0.900 0.2230.350 0.480 Raw Image GT Normal Baseline Normal Ours Normal Raw Image GT Normal Baseline Normal Ours Normal",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Components PSNR↑SSIM↑LPIPS↓Normal L1 MAE↓Normal Cos MAE↓"
+      ],
+      "char_start": 20177,
+      "char_end": 20451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c18d846e5b69b870f1e8b4facccdbc43",
+      "kind": "caption",
+      "text": "Fig. 5. Surface normal renderings. Our geometry-consistency constraints produce finer surface details and fewer artifacts than the baseline.",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Components PSNR↑SSIM↑LPIPS↓Normal L1 MAE↓Normal Cos MAE↓"
+      ],
+      "char_start": 20453,
+      "char_end": 20593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb9ca53b2fceee170bcf0c7d1a891de3",
+      "kind": "paragraph",
+      "text": "symmetry ambiguity, we evaluate a small set of candidate rotationsΘ ={∆θ,∆θ+π,∆θ+ π",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Components PSNR↑SSIM↑LPIPS↓Normal L1 MAE↓Normal Cos MAE↓"
+      ],
+      "char_start": 20595,
+      "char_end": 20678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37a9c4834059e8b36d6e8dba1686155f",
+      "kind": "heading",
+      "text": ",∆θ− π",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        ",∆θ− π"
+      ],
+      "char_start": 20680,
+      "char_end": 20686,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:180405a5976c809b9239382cc0c8529b",
+      "kind": "heading",
+      "text": "}. The object",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "}. The object"
+      ],
+      "char_start": 20688,
+      "char_end": 20701,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52cbd9f3e9b2d80ebe8878c072022a57",
+      "kind": "paragraph",
+      "text": "scale is matched by comparing the bounding-box extentse o ande r and computing the scale factors=e o/er. The final alignment is selected by minimizing E(θ) =∥e( ˆPr)−e(P o)∥2 +λ dChamfer( ˆPr,P o), θ∈Θ(11) where ˆPr is the transformed replacement point set and dChamfer(·)denotes the bidirectional nearest-neighbor distance between the two point clouds. This procedure enables the reconstructed vehicle to replace the original object while preserving geometric consistency and visual realism.",
+      "order": 102,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "}. The object"
+      ],
+      "char_start": 20703,
+      "char_end": 21195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3fff127ab15b47f3ad485009b810d33",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 103,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "}. The object",
+        "EXPERIMENTS"
+      ],
+      "char_start": 21197,
+      "char_end": 21208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa229de341e9e19b14c583bd617f5a41",
+      "kind": "heading",
+      "text": "A. Experimental Setup",
+      "order": 104,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Experimental Setup"
+      ],
+      "char_start": 21210,
+      "char_end": 21231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fba41449f93ca81ecc20638773d85e38",
+      "kind": "paragraph",
+      "text": "We adopt Street Gaussians [9] as our baseline, whose object-background modeling strategy provides a strong foundation for instance-level vehicle editing in our setting. We conduct experiments on the Waymo Open Dataset [34], selecting 8 sequences to synthesize 85 corner-case scenarios. For Gaussian training, we follow the training protocol of [9] for most settings, with a total of 50,000 iterations. To reduce training time, we only use three cameras, [front, front left, front right], and incorporate the three proposed geometric consistency loss terms, each weighted by 0.1. For LLM-based corner-case reference trajectory generation, we use the ChatGPT-5.2 API. Both Gaussian rendering and LLM trajectory planning are executed at 24 FPS. For vehicle physical simulation, we use CARLA 0.9.16, with the longitudinal and lateral PID gains set tok p = 2.0,k d = 0.2, ki = 0.0, and a simulation step size of∆t= 0.2s.",
+      "order": 105,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "A. Experimental Setup"
+      ],
+      "char_start": 21233,
+      "char_end": 22148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22ab7c4ce65e113737eeb731a9595006",
+      "kind": "heading",
+      "text": "B. Quantitative Evaluation",
+      "order": 106,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "B. Quantitative Evaluation"
+      ],
+      "char_start": 22150,
+      "char_end": 22176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a43d63e3aeeccc6b31531f0c454162d",
+      "kind": "paragraph",
+      "text": "Corner-case Controllability and Success.We evaluate the controllability and effectiveness of generated corner cases against rule-based and random trajectory baselines. The rule-based policy triggers predefined maneuvers from the initial relative vehicle positions, while the random policy uses stochastic perturbations without semantic reasoning. All methods use identical initial conditions and horizons. Since",
+      "order": 107,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "B. Quantitative Evaluation"
+      ],
+      "char_start": 22178,
+      "char_end": 22589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b52834c16f8078b1a027022970e2213",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 108,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE II"
+      ],
+      "char_start": 22591,
+      "char_end": 22599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67cfaa13c162d5ebab647aa1b9875d3b",
+      "kind": "heading",
+      "text": "CORNER-CASE CONTROLLABILITY AND SUCCESS STATISTICS. RESULTS",
+      "order": 109,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CORNER-CASE CONTROLLABILITY AND SUCCESS STATISTICS. RESULTS"
+      ],
+      "char_start": 22601,
+      "char_end": 22660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec18744a2333ffbe8a67fe45286a1e57",
+      "kind": "paragraph",
+      "text": "ARE REPORTED AS MEAN±STD. Method Zone Hit↑Success↑MinTTC (s)↓ Rule-based0.138±0.347 0.613±0.490 1.483±1.794 Random0.063±0.244 0.738±0.443 1.095±1.560 Ours (Multi-agent LLM)0.438±0.499 0.925±0.265 0.472±1.215",
+      "order": 110,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "CORNER-CASE CONTROLLABILITY AND SUCCESS STATISTICS. RESULTS"
+      ],
+      "char_start": 22662,
+      "char_end": 22869,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:213e86f8974f483f266e7f6c7939b81f",
+      "kind": "heading",
+      "text": "TABLE III",
+      "order": 111,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE III"
+      ],
+      "char_start": 22871,
+      "char_end": 22880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f1d9a463a465b701ca51b8bc2781ff6",
+      "kind": "paragraph",
+      "text": "FEASIBILITY AND RIDE-COMFORT METRICS.",
+      "order": 112,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE III"
+      ],
+      "char_start": 22882,
+      "char_end": 22919,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:accfe58a59345c3cfe222e42df55f528",
+      "kind": "table",
+      "text": "Method|a lat|95(m/s2)↓|˙κ| 95(1/(m·s))↓ComfortViol (%)↓",
+      "order": 113,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE III"
+      ],
+      "char_start": 22921,
+      "char_end": 22976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7df73ff5b43cfc6f60fb16d26128d1e0",
+      "kind": "paragraph",
+      "text": "LLM-only2.66±5.17 1.02±4.05 9.62±19.15 Ours (LLM+CARLA)2.02±3.35 0.43±0.97 9.39±21.45 few existing methods closely match our task design and inscene corner-case generation is inherently stochastic, direct comparison with other state-of-the-art methods is difficult. Table II reports three metrics:Zone Hit(whether the trajectory reaches the target collision zone),Success(whether a safety-critical interaction occurs with TTC<1s), and MinTTC(the minimum time-to-collision in the scenario). Our method achieves the best controllability, with a Zone Hit rate of0.438, exceeding the rule-based (0.138) and random (0.063) baselines. It also produces the most critical interactions, achieving the highest Success rate (0.925) and lowest MinTTC (0.472s), demonstrating the effectiveness of the proposed multi-agent LLM framework. However, LLM instability can still limit planning reliability. As indicated by the zone hit rate and variance, the LLM may fail to reach the target zone under multiple constraints, even with explicit prompts, as shown in Case",
+      "order": 114,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TABLE III"
+      ],
+      "char_start": 22978,
+      "char_end": 24027,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad55124a9193221052e7fb4d721d3cd9",
+      "kind": "heading",
+      "text": "of Fig. 6. Manual inspection shows that 29.4% of LLM-",
+      "order": 115,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "of Fig. 6. Manual inspection shows that 29.4% of LLM-"
+      ],
+      "char_start": 24029,
+      "char_end": 24082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf63f8fe50b767905182d1a7a3f5629a",
+      "kind": "paragraph",
+      "text": "generated outputs are valid. Trajectory Feasibility and Ride Comfort.We further evaluate the physical feasibility and ride comfort of generated trajectories. Three commonly used kinematic indicators are computed from time-resampled trajectories: the95-percentile",
+      "order": 116,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "of Fig. 6. Manual inspection shows that 29.4% of LLM-"
+      ],
+      "char_start": 24084,
+      "char_end": 24346,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd07ba86591fd73d0368a02e2912a002",
+      "kind": "table",
+      "text": "lateral acceleration|a lat|95, the95-percentile curvature-rate",
+      "order": 117,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "of Fig. 6. Manual inspection shows that 29.4% of LLM-"
+      ],
+      "char_start": 24348,
+      "char_end": 24410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f30bb3fbde2f8a299aa3eab19e9592a",
+      "kind": "table",
+      "text": "|˙κ|95 measuring steering smoothness, and the percentage of",
+      "order": 118,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "of Fig. 6. Manual inspection shows that 29.4% of LLM-"
+      ],
+      "char_start": 24412,
+      "char_end": 24471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c3cb9b1cd7f8025349502ed7a9e4217",
+      "kind": "paragraph",
+      "text": "Raw",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "of Fig. 6. Manual inspection shows that 29.4% of LLM-"
+      ],
+      "char_start": 24473,
+      "char_end": 24476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b217e9d4aa4d226d94c98f663fbb8d3d",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 120,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24478,
+      "char_end": 24488,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10726d18b0e7ef30280e6c82fbee6eab",
+      "kind": "heading",
+      "text": "Generated",
+      "order": 121,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Generated"
+      ],
+      "char_start": 24490,
+      "char_end": 24499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93c34a30768a764dc52ecc081bb182d0",
+      "kind": "heading",
+      "text": "TrajectoryRaw",
+      "order": 122,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "TrajectoryRaw"
+      ],
+      "char_start": 24501,
+      "char_end": 24514,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d4f94437c2aa66e78197a6eb4269bff",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 123,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24516,
+      "char_end": 24526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bd45bbc1024781a336df68f0ab7f657",
+      "kind": "heading",
+      "text": "Generated",
+      "order": 124,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Generated"
+      ],
+      "char_start": 24528,
+      "char_end": 24537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc08ec3bda685a6bd79ef767e9e4851c",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 125,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24539,
+      "char_end": 24549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6c9b509b84c0e7f368d45a23d28ea34",
+      "kind": "paragraph",
+      "text": "Raw",
+      "order": 126,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24551,
+      "char_end": 24554,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14230b5e1952940b85cbf34ea7a1fa2c",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 127,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24556,
+      "char_end": 24566,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:925990c9e4aeccac41e3bc61bd744098",
+      "kind": "heading",
+      "text": "Generated",
+      "order": 128,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Generated"
+      ],
+      "char_start": 24568,
+      "char_end": 24577,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b96163fb008a8f67e98f45ebd20ea97",
+      "kind": "heading",
+      "text": "Trajectory",
+      "order": 129,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24579,
+      "char_end": 24589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1f7844ea7935220d1619bbaf1b8e15c",
+      "kind": "paragraph",
+      "text": "Case 1: Sudden braking of the lead vehicle Case 2: Sudden cut-in from adjacent lane Case 3: Opposing vehicle drifting over lane Frame 110 Frame 115 Frame 120 Frame 125 Frame 130 Frame 135 Frame 120 Frame 125 Frame 130 Frame 135 Frame 140 Frame 145 Frame 125 Frame 130 Frame 135 Frame 140 Frame 145 Frame 150",
+      "order": 130,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24591,
+      "char_end": 24898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4dac18e3f9f065ea183db90b118338b5",
+      "kind": "caption",
+      "text": "Fig. 6. Visualization of LLM-driven corner-case trajectory generation.",
+      "order": 131,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24900,
+      "char_end": 24970,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49b39f4e4ba41a4fc0ea3ecc94259974",
+      "kind": "paragraph",
+      "text": "Left: historical and predicted trajectories of the ego vehicle and the selected vehicle. Green and light-green points denote the ego vehicle’s past and future trajectories, while blue and color-gradient points denote the selected vehicle’s past and LLM-generated future trajectories. The green cross indicates the collision target point. Right: corresponding 3D scene snapshots over time, where the red box highlights the selected vehicle. The generated trajectories exhibit representative corner-case behaviors (sudden brake, cutin, and lane drift), providing reference motion cues for downstream CARLAbased kinematic simulation.",
+      "order": 132,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 24972,
+      "char_end": 25602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cd023aca0447a2da63c1c352785c395",
+      "kind": "table",
+      "text": "comfort violations (ComfortViol) where|a lat|>3m/s 2.",
+      "order": 133,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 25604,
+      "char_end": 25657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:604489f382812dccada9778735ee4165",
+      "kind": "paragraph",
+      "text": "Table III compares trajectories generated directly by the LLM and those executed through CARLA. By delegating motion execution to CARLA, the proposed pipeline improves",
+      "order": 134,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 25659,
+      "char_end": 25826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b05d767e2994d8e42af90afa499a984c",
+      "kind": "table",
+      "text": "all metrics, reducing|a lat|95 (2.66→2.02) and|˙κ| 95",
+      "order": 135,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 25828,
+      "char_end": 25881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5d9258c17c5098979e7128bbd92b082",
+      "kind": "paragraph",
+      "text": "(1.02→0.43), and slightly decreasing comfort violations. This indicates that physics-based control effectively regularizes LLM-generated trajectories and yields smoother and more feasible vehicle behaviors.",
+      "order": 136,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory"
+      ],
+      "char_start": 25883,
+      "char_end": 26089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21be012c4d0e277345a99028d492e81c",
+      "kind": "heading",
+      "text": "Qualitative Results",
+      "order": 137,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory",
+        "Qualitative Results"
+      ],
+      "char_start": 26091,
+      "char_end": 26110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a980df914c504d833e27bbea8309be68",
+      "kind": "paragraph",
+      "text": "Reconstruction Evaluation.Fig. 5 shows that the geometric consistency constraint produces smoother surfaces and normals closer to the ground truth. Table I further reports",
+      "order": 138,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Trajectory",
+        "Qualitative Results"
+      ],
+      "char_start": 26112,
+      "char_end": 26283,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08d92e30db9f82eef64a9678db706a7a",
+      "kind": "heading",
+      "text": "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos",
+      "order": 139,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 26285,
+      "char_end": 26333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8edba108062447da0412e95d8affc9ec",
+      "kind": "paragraph",
+      "text": "MAE under different constraints. Compared with the baseline, the proposed constraints substantially reduce normal errors while causing only negligible changes in rendering quality, demonstrating improved geometric consistency without sacrificing photometric fidelity. LLM Corner Case Generation.We manually define three corner-case types, sudden brake, cut-in, and lane drift, and provide them to the LLM to analyze the scene and Case 1Case 2Case 3",
+      "order": 140,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 26335,
+      "char_end": 26783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74eaadc7bfbd99b5498fd9d3fd832405",
+      "kind": "caption",
+      "text": "Fig. 7. CARLA-based realization of LLM-generated trajectories. Left: PID",
+      "order": 141,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 26785,
+      "char_end": 26857,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93bc68583f1364f7515229d87359ae71",
+      "kind": "paragraph",
+      "text": "tracking performance along x (front) and y (left). Right: CARLA simulation. The ego trajectory is shown in green, and the selected vehicle follows the red reference points under continuous PID control. ================================= Analyzing Frame 60 (Case 1) ================================= User-selected behavior: Sudden braking of the lead vehicle",
+      "order": 142,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 26859,
+      "char_end": 27215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5dd9b38f525e4003cd2e2232fe3545e8",
+      "kind": "list_item",
+      "text": "- Selected Vehicle: 6",
+      "order": 143,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27217,
+      "char_end": 27238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44b082168b84e130edc6619cff017a06",
+      "kind": "list_item",
+      "text": "- Target Collision Zone: front",
+      "order": 144,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27240,
+      "char_end": 27270,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8f07d78d494fd7d869ec6787b7f99ad",
+      "kind": "list_item",
+      "text": "- Risk Level: Critical",
+      "order": 145,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27272,
+      "char_end": 27294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13efcf7d50236417cd5cc12b12f7b905",
+      "kind": "list_item",
+      "text": "- Time to Collision: 1.0 seconds",
+      "order": 146,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27296,
+      "char_end": 27328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdf6df2cf2d59ee7094dfab0be123a97",
+      "kind": "equation",
+      "text": "================================= Analyzing Frame 60 (Case 2) ================================= User-selected behavior: Sudden cut-in from adjacent lane",
+      "order": 147,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27330,
+      "char_end": 27482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2aa265b66d6d1070f475f2adf47dfc4",
+      "kind": "list_item",
+      "text": "- Selected Vehicle: 4",
+      "order": 148,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27484,
+      "char_end": 27505,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c7289aa93ff04f6c473a4ebe387efc2",
+      "kind": "list_item",
+      "text": "- Target Collision Zone: front",
+      "order": 149,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27507,
+      "char_end": 27537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ff1a53b89d947ffb8be20af4cb9d510",
+      "kind": "list_item",
+      "text": "- Risk Level: High",
+      "order": 150,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27539,
+      "char_end": 27557,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb99b7250de13a5b45e2c1186e7c91b3",
+      "kind": "list_item",
+      "text": "- Time to Collision: 1.2 seconds",
+      "order": 151,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27559,
+      "char_end": 27591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecf5a750cc42049bcb7659708d6d64e4",
+      "kind": "equation",
+      "text": "================================= Analyzing Frame 115 (Case 3) ================================= User-selected behavior: Opposing vehicle drifting over lane",
+      "order": 152,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27593,
+      "char_end": 27749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:305050d9fe658116cbaccc15a4e74291",
+      "kind": "list_item",
+      "text": "- Selected Vehicle: 84",
+      "order": 153,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27751,
+      "char_end": 27773,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23979bc26e82475275152ac31340b665",
+      "kind": "list_item",
+      "text": "- Target Collision Zone: front",
+      "order": 154,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27775,
+      "char_end": 27805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:650fc77d7709dc022e96d566022be2ab",
+      "kind": "list_item",
+      "text": "- Risk Level: Critical",
+      "order": 155,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27807,
+      "char_end": 27829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b0f394a877f19c82e7e4418e36be02d",
+      "kind": "list_item",
+      "text": "- Time to Collision: 1.99 seconds",
+      "order": 156,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27831,
+      "char_end": 27864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd9082fcee5a702ef959b51e284964e7",
+      "kind": "caption",
+      "text": "Fig. 8. Behavior risk analysis results produced by the LLM agent. Given",
+      "order": 157,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27866,
+      "char_end": 27937,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37e47fafec2d54ac75671a142f54a486",
+      "kind": "paragraph",
+      "text": "the starting analysis frame and scene context, the Agent<Zone>outputs the target vehicle, collision zone, risk level, and TTC. generate reference trajectories. Fig. 8 shows the outputs of Agent<Zone>, while Fig. 6 visualizes the past and predicted trajectories of the ego vehicle and the selected vehicle produced by Agent<Trajectory>. Case 1.Starting from frame 60, Agent<Zone>identifies vehicle 6 ahead of the ego vehicle, selects the collision zone as “front”, and estimates TTC as 1.0 s. Agent<Trajectory> then generates a braking trajectory toward the collision target point, producing a near rear-end interaction compared with the safe headway observed in the original trajectory.Case 2 and Case 3.The remaining cases illustrate cut-in and lanedrift behaviors: vehicle 4 performs a rapid lane change under short headway, and oncoming vehicle 84 crosses the lane toward the ego vehicle. These examples show that the LLM agents can identify risky participants and generate behaviorconsistent trajectories for subsequent simulation in CARLA. CARLA Simulation.We feed the LLM-generated reference waypoints into CARLA and enforce physically plausible vehicle motion using a PID controller. Specifically, we implement a frame-by-frame tracking controller that drives the selected vehicle to follow the reference trajectory. Fig. 7 illustrates this process. The left plot shows PID tracking performance, while the right panel presents the corresponding CARLA snapshots. The results demonstrate that CARLA can reproduce the LLM-generated trajectory while providing",
+      "order": 158,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 27939,
+      "char_end": 29501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8711eb553fbb1cd8d058043dadae85b",
+      "kind": "paragraph",
+      "text": "physically realistic motion through its physics engine. Due to the inherent limitations of PID control, a small tracking gap exists between the executed and reference trajectories. This discrepancy does not affect the validity of the simulation, since the goal of our framework is to synthesize previously unseen corner cases from real-world data. To",
+      "order": 159,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 29503,
+      "char_end": 29853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b9dd3c9f8546527eecbba6d9e325399",
+      "kind": "paragraph",
+      "text": "Case 1Case 1 Revised",
+      "order": 160,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "PSNR, SSIM, LPIPS, Normal L1 MAE, and Normal Cos"
+      ],
+      "char_start": 29855,
+      "char_end": 29875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9f2f7d0c273249c668008cad9f51fe5",
+      "kind": "heading",
+      "text": "Raw Images",
+      "order": 161,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 29877,
+      "char_end": 29887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74bbb7251615afe3dafa3b68c5ed2035",
+      "kind": "paragraph",
+      "text": "of Case 1&2",
+      "order": 162,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 29889,
+      "char_end": 29900,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50d2e11823878f0fcf71d242d4c101e3",
+      "kind": "heading",
+      "text": "Raw Images",
+      "order": 163,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 29902,
+      "char_end": 29912,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e84c9e40915e1aef2251ea852e7d8c97",
+      "kind": "paragraph",
+      "text": "of Case 3 Synthetic image Case 2Case 2 RevisedCase 3Case 3 Revised",
+      "order": 164,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 29914,
+      "char_end": 29980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e137ee08effe745d902f80e3ef6eaead",
+      "kind": "caption",
+      "text": "Fig. 9. Final Gaussian renderings of the three synthesized corner cases. Left: raw input frames. Right: edited renderings after LLM-driven reasoning and",
+      "order": 165,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 29982,
+      "char_end": 30134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5cbd0f773ecbcca3fdd8fc9575a4d72",
+      "kind": "paragraph",
+      "text": "CARLA-based physical simulation. For one case, we show both the vanilla version and the result after replacing the vehicle with a 3D asset reconstructed by SAM-3D. The results demonstrate that the proposed pipeline can generate realistic and semantically consistent corner-case scenarios, while model replacement further improves the geometric and visual consistency of the rendered vehicles. further reduce tracking error, PID tracking is initialized from frame 0 rather than the LLM input start frame, allowing the controller to stabilize before the corner-case generation interval. Sim-to-Real: From CARLA to Gaussian Splatting. After obtaining the simulated trajectories and poses from CARLA, we re-project them into the Gaussian representation. Owing to the independent vehicle modeling, the simulated states can be seamlessly injected by replacing the selected vehicle’s data. Fig. 9 shows the final Gaussian renderings for all three cases, demonstrating faithful alignment with both the LLM reasoning outcomes and the CARLAbased physically consistent motions, resulting in high-fidelity and semantically consistent corner-case scenarios. The replacement of vehicles with SAM-3D reconstructed models further improves the geometric and visual consistency of the rendered vehicles.",
+      "order": 166,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images"
+      ],
+      "char_start": 30136,
+      "char_end": 31421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6859a09238c1b0a9548f6576f6372db4",
+      "kind": "heading",
+      "text": "COMPUTATIONALCOSTANALYSIS",
+      "order": 167,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images",
+        "COMPUTATIONALCOSTANALYSIS"
+      ],
+      "char_start": 31423,
+      "char_end": 31448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d86ed70775987bdf8f4a99c24b52a84e",
+      "kind": "paragraph",
+      "text": "The CARLA-GS pipeline consists of several stages. To evaluate its practical feasibility, we summarize the computational cost of each component here. Prior information, such as depth, normal, and mask maps, is prepared in advance and excluded from the online deployment time. The main bottleneck is 3DGS reconstruction, which takes about 2 hours for a 100-frame, 3-camera scene on a single RTX 4090 GPU. LLM calls require about 40–50 seconds for scene reasoning and 10 seconds for trajectory generation. CARLA simulation time depends on the synthesized trajectory length and vehicle kinematic settings, but a single PID-controlled rollout usually takes less than 60 seconds. Backprojection and SAM-3D replacement are excluded since 3DGS rendering is fast and the 3D asset library is pre-built. Overall, 3DGS training dominates the cost but can be accelerated by recent fast 3DGS pipelines. Other stages are lightweight, and multiple corner cases can be synthesized per scene, making CARLA-GS safer and more time-efficient than real-world data collection.",
+      "order": 168,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images",
+        "COMPUTATIONALCOSTANALYSIS"
+      ],
+      "char_start": 31450,
+      "char_end": 32503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:163532245007f20cd7be57493689cefb",
+      "kind": "heading",
+      "text": "CONCLUSIONS",
+      "order": 169,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images",
+        "CONCLUSIONS"
+      ],
+      "char_start": 32505,
+      "char_end": 32516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a7db3f91b933469fda09dc5ea602e2e",
+      "kind": "paragraph",
+      "text": "This paper presented CARLA-GS, a modular framework for safety-critical corner-case synthesis that tightly integrates Gaussian-based visual reconstruction, LLM-driven semantic reasoning, and physics-consistent execution in CARLA. By explicitly decoupling representation, reasoning, and dynamics while preserving cross-module consistency, the proposed pipeline enables controllable and physically valid generation of rare but safety-critical traffic interactions from real-world data. Experiments on the Waymo Open Dataset demonstrate that CARLA-GS can reliably synthesize diverse corner cases, while maintaining photorealistic rendering quality and kinematic feasibility. The results highlight the effectiveness of leveraging complementary strengths of neural rendering,",
+      "order": 170,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images",
+        "CONCLUSIONS"
+      ],
+      "char_start": 32518,
+      "char_end": 33287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e25aa6eddea06706097fbcdfe94d4e1",
+      "kind": "paragraph",
+      "text": "large language models, and mature vehicle simulators within a unified framework. Future work will explore stronger view-consistency constraints under sparse camera settings, closed-loop verification of LLM reasoning, large-scale automatic mining of high-risk scenarios from long-horizon traffic data, and evaluation on downstream tasks.",
+      "order": 171,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "Raw Images",
+        "CONCLUSIONS"
+      ],
+      "char_start": 33289,
+      "char_end": 33625,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bab1c4833e575b61446ad42abaa89529",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 172,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "REFERENCES"
+      ],
+      "char_start": 33627,
+      "char_end": 33637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99603eef1c57cbd9e54cb794d34d6ea2",
+      "kind": "reference",
+      "text": "[1] H. X. Liu and S. Feng, “Curse of rarity for autonomous vehicles,” nature communications, vol. 15, no. 1, p. 4808, 2024. [2] S. Wang, Z. Yu, X. Jiang, S. Lan, M. Shi, N. Chang, J. Kautz, Y . Li, and J. M. Alvarez, “Omnidrive: A holistic vision-language dataset for autonomous driving with counterfactual reasoning,” inProceedings of the computer vision and pattern recognition conference, 2025, pp.",
+      "order": 173,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "REFERENCES"
+      ],
+      "char_start": 33639,
+      "char_end": 34040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:947fa1510157c380220868f4b9a375ee",
+      "kind": "heading",
+      "text": "442–22 452.",
+      "order": 174,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "442–22 452."
+      ],
+      "char_start": 34042,
+      "char_end": 34053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c000b1d3561a5940b5289c0537644e92",
+      "kind": "paragraph",
+      "text": "[3] K. Gao, Y . Gao, H. He, D. Lu, L. Xu, and J. Li, “Nerf: Neural radiance field in 3d vision, a comprehensive review,”arXiv preprint arXiv:2210.00379, 2022. [4] X. Wang, Z. Zhu, G. Huang, X. Chen, J. Zhu, and J. Lu, “Drivedreamer: Towards real-world-drive world models for autonomous driving,” inEuropean conference on computer vision. Springer, 2024, pp. 55–72. [5] L. Russell, A. Hu, L. Bertoni, G. Fedoseev, J. Shotton, E. Arani, and G. Corrado, “Gaia-2: A controllable multi-view generative world model for autonomous driving,”arXiv preprint arXiv:2503.20523, 2025. [6] B. Kerbl, G. Kopanas, T. Leimk ¨uhler, G. Drettakiset al., “3d gaussian splatting for real-time radiance field rendering.”ACM Trans. Graph., vol. 42, no. 4, pp. 139–1, 2023. [7] G. Wu, T. Yi, J. Fang, L. Xie, X. Zhang, W. Wei, W. Liu, Q. Tian, and X. Wang, “4d gaussian splatting for real-time dynamic scene rendering,” inProceedings of the IEEE/CVF conference on computer vision and pattern recognition, 2024, pp. 20 310–20 320. [8] X. Zhou, Z. Lin, X. Shan, Y . Wang, D. Sun, and M.-H. Yang, “Drivinggaussian: Composite gaussian splatting for surrounding dynamic autonomous driving scenes,” inProceedings of the IEEE/CVF conference on computer vision and pattern recognition, 2024, pp.",
+      "order": 175,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "442–22 452."
+      ],
+      "char_start": 34055,
+      "char_end": 35318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aeb3b28ace37b8b4c72be7d25793b944",
+      "kind": "heading",
+      "text": "634–21 643.",
+      "order": 176,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "634–21 643."
+      ],
+      "char_start": 35320,
+      "char_end": 35331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff7838addef3137029fd0a0441c82fdb",
+      "kind": "paragraph",
+      "text": "[9] Y . Yan, H. Lin, C. Zhou, W. Wang, H. Sun, K. Zhan, X. Lang,",
+      "order": 177,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "634–21 643."
+      ],
+      "char_start": 35333,
+      "char_end": 35397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01c804275ae41efad15594c56715ce3d",
+      "kind": "heading",
+      "text": "Zhou, and S. Peng, “Street gaussians: Modeling dynamic urban",
+      "order": 178,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "634–21 643.",
+        "Zhou, and S. Peng, “Street gaussians: Modeling dynamic urban"
+      ],
+      "char_start": 35399,
+      "char_end": 35459,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6c753ad2dc4afdd6bb7dc7f6bef7f47",
+      "kind": "paragraph",
+      "text": "scenes with gaussian splatting,” inEuropean Conference on Computer Vision. Springer, 2024, pp. 156–173. [10] H. Xu, S. Zhang, P. Li, B. Ye, X. Chen, H.-a. Gao, J. Zheng, X. Song, Z. Peng, R. Miaoet al., “Cruise: Cooperative reconstruction and editing in v2x scenarios using gaussian splatting,” in2025 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2025, pp. 12 518–12 525. [11] B. Huang, Z. Yu, A. Chen, A. Geiger, and S. Gao, “2d gaussian splatting for geometrically accurate radiance fields,” inACM SIGGRAPH",
+      "order": 179,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "634–21 643.",
+        "Zhou, and S. Peng, “Street gaussians: Modeling dynamic urban"
+      ],
+      "char_start": 35461,
+      "char_end": 36006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6b7ef19658488ebba09699b2acbde8e",
+      "kind": "heading",
+      "text": "conference papers, 2024, pp. 1–11.",
+      "order": 180,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "conference papers, 2024, pp. 1–11."
+      ],
+      "char_start": 36008,
+      "char_end": 36042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73d0221d0cdb74b6138311393a4dca85",
+      "kind": "paragraph",
+      "text": "[12] D. Chen, H. Li, W. Ye, Y . Wang, W. Xie, S. Zhai, N. Wang, H. Liu, H. Bao, and G. Zhang, “Pgsr: Planar-based gaussian splatting for efficient and high-fidelity surface reconstruction,”IEEE Transactions on Visualization and Computer Graphics, vol. 31, no. 9, pp. 6100– 6111, 2024. [13] S. Zhang, J. Tian, Z. Zhu, S. Huang, J. Yang, and W. Zhang, “Drivegen: Towards infinite diverse traffic scenarios with large models,” in",
+      "order": 181,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "conference papers, 2024, pp. 1–11."
+      ],
+      "char_start": 36044,
+      "char_end": 36470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0711828329490bc25b3334f236402b03",
+      "kind": "heading",
+      "text": "IEEE/RSJ International Conference on Intelligent Robots and",
+      "order": 182,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "IEEE/RSJ International Conference on Intelligent Robots and"
+      ],
+      "char_start": 36472,
+      "char_end": 36531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d973ce198118e878dfeea7fefccda0e2",
+      "kind": "paragraph",
+      "text": "Systems (IROS). IEEE, 2025, pp. 10 100–10 107. [14] G. Drayson, E. Panagiotaki, D. Omeiza, and L. Kunze, “Cc-sgg: Corner case scenario generation using learned scene graphs,”arXiv preprint arXiv:2309.09844, 2023. [15] Q. Lu, M. Ma, X. Dai, X. Wang, and S. Feng, “Realistic corner case generation for autonomous vehicles with multimodal large language model,”arXiv preprint arXiv:2412.00243, 2024. [16] Y . Mei, T. Nie, J. Sun, and Y . Tian, “Seeking to collide: Online safetycritical scenario generation for autonomous driving with retrieval augmented large language models,”arXiv preprint arXiv:2505.00972, 2025. [17] T. Xie, Z. Zong, Y . Qiu, X. Li, Y . Feng, Y . Yang, and C. Jiang, “Physgaussian: Physics-integrated 3d gaussians for generative dynamics,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2024, pp. 4389–4398. [18] K. Huang, T. Azfar, W. Shi, and R. Ke, “Real2sim: A physics-driven and editable gaussian splatting framework for autonomous driving scenes,”arXiv preprint arXiv:2605.13591, 2026. [19] Y . Jiang, C. Yu, T. Xie, X. Li, Y . Feng, H. Wang, M. Li, H. Lau, F. Gao, Y . Yanget al., “Vr-gs: A physical dynamics-aware interactive gaussian splatting system in virtual reality,” inACM SIGGRAPH 2024 conference papers, 2024, pp. 1–1. [20] Z. Xie, Z. Liu, Z. Peng, W. Wu, and B. Zhou, “Vid2sim: Realistic and interactive simulation from video for urban navigation,” inProceedings of the Computer Vision and Pattern Recognition Conference, 2025, pp. 1581–1591. [21] S. Zhu, L. Mou, D. Li, B. Ye, R. Huang, and H. Zhao, “Vr-",
+      "order": 183,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "IEEE/RSJ International Conference on Intelligent Robots and"
+      ],
+      "char_start": 36533,
+      "char_end": 38113,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0c723ce2328a819fa20a93c1cfe571c",
+      "kind": "paragraph",
+      "text": "robo: A real-to-sim-to-real framework for visual robot navigation and locomotion,”IEEE Robotics and Automation Letters, 2025. [22] A. Dosovitskiy, G. Ros, F. Codevilla, A. Lopez, and V . Koltun, “Carla: An open urban driving simulator,” inConference on robot learning. PMLR, 2017, pp. 1–16. [23] C. Fruhwirth-Reisinger, D. Mali ´c, W. Lin, D. Schinagl, S. Schulter, and H. Possegger, “Stsbench: A spatio-temporal scenario benchmark for multi-modal large language models in autonomous driving,”arXiv preprint arXiv:2506.06218, 2025. [24] B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron, R. Ramamoorthi, and R. Ng, “Nerf: Representing scenes as neural radiance fields for view synthesis,”Communications of the ACM, vol. 65, no. 1, pp. 99–106, 2021. [25] J. Li, Z. Feng, Q. She, H. Ding, C. Wang, and G. H. Lee, “Mine: Towards continuous depth mpi with nerf for novel view synthesis,” in Proceedings of the IEEE/CVF International Conference on Computer Vision, 2021, pp. 12 578–12 588. [26] C. Wu, J. Sun, Z. Shen, and L. Zhang, “Mapnerf: Incorporating map priors into neural radiance fields for driving view simulation,” in2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2023, pp. 7082–7088. [27] T. Li, P. Jia, B. Wang, L. Chen, K. Jiang, J. Yan, and H. Li, “Lanesegnet: Map learning with lane segment perception for autonomous driving,”arXiv preprint arXiv:2312.16108, 2023. [28] S. Zhu, G. Wang, X. Kong, D. Kong, and H. Wang, “3d gaussian splatting in robotics: A survey,”arXiv preprint arXiv:2410.12262,",
+      "order": 184,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "IEEE/RSJ International Conference on Intelligent Robots and"
+      ],
+      "char_start": 38115,
+      "char_end": 39669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bfaa41d615ceff534b16daa4830f2cb",
+      "kind": "paragraph",
+      "text": "2024. [29] C. Peng, C. Zhang, Y . Wang, C. Xu, Y . Xie, W. Zheng, K. Keutzer, M. Tomizuka, and W. Zhan, “Desire-gs: 4d street gaussians for static-dynamic decomposition and surface reconstruction for urban driving scenes,” inProceedings of the Computer Vision and Pattern Recognition Conference, 2025, pp. 6782–6791. [30] J. Kulhanek, M.-J. Rakotosaona, F. Manhardt, C. Tsalicoglou,",
+      "order": 185,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "IEEE/RSJ International Conference on Intelligent Robots and"
+      ],
+      "char_start": 39671,
+      "char_end": 40053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6378ad1101cfe5d0dd656a81884eb6c",
+      "kind": "heading",
+      "text": "M. Niemeyer, T. Sattler, S. Peng, and F. Tombari, “Lodge: Level-",
+      "order": 186,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "M. Niemeyer, T. Sattler, S. Peng, and F. Tombari, “Lodge: Level-"
+      ],
+      "char_start": 40055,
+      "char_end": 40119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71bfef6c963e20a3e18b3e3a667d8460",
+      "kind": "paragraph",
+      "text": "of-detail large-scale gaussian splatting with efficient rendering,”arXiv preprint arXiv:2505.23158, 2025. [31] L. Bai, C. Tian, J. Yang, S. Zhang, M. Suganuma, and T. Okatani, “Rpslam: Real-time photorealistic slam with efficient 3d gaussian splatting,”IEEE Transactions on Visualization and Computer Graphics, 2025. [32] T. Wang, S. Kim, J. Wenxuan, E. Xie, C. Ge, J. Chen, Z. Li, and P. Luo, “Deepaccident: A motion and accident prediction benchmark for v2x autonomous driving,” inProceedings of the AAAI Conference on Artificial Intelligence, vol. 38, no. 6, 2024, pp. 5599–5606. [33] J. Wang, H. Sun, X. Yan, S. Feng, J. Gao, and H. X. Liu, “Terasimworld: Worldwide safety-critical data synthesis for end-to-end autonomous driving,”arXiv preprint arXiv:2509.13164, 2025. [34] P. Sun, H. Kretzschmar, X. Dotiwalla, A. Chouard, V . Patnaik, P. Tsui, J. Guo, Y . Zhou, Y . Chai, B. Caineet al., “Scalability in perception for autonomous driving: Waymo open dataset,” inProceedings of the IEEE/CVF conference on computer vision and pattern recognition, 2020, pp. 2446–2454. [35] J. Wei, X. Wang, D. Schuurmans, M. Bosma, F. Xia, E. Chi, Q. V . Le, D. Zhouet al., “Chain-of-thought prompting elicits reasoning in large language models,”Advances in neural information processing systems, vol. 35, pp. 24 824–24 837, 2022. [36] X. Chen, F.-J. Chu, P. Gleize, K. J. Liang, A. Sax, H. Tang, W. Wang, M. Guo, T. Hardin, X. Liet al., “Sam 3d: 3dfy anything in images,” arXiv preprint arXiv:2511.16624, 2025.",
+      "order": 187,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "CARLA-GS: Decoupling Representation, Reasoning, and Physics",
+        "M. Niemeyer, T. Sattler, S. Peng, and F. Tombari, “Lodge: Level-"
+      ],
+      "char_start": 40121,
+      "char_end": 41621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 8,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 8
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.07601",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 8,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

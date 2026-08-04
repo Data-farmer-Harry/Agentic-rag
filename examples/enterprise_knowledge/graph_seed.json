@@ -1,0 +1,41 @@
+{
+  "revision": "2026-08-03-v1",
+  "reviewed_by": "northstar-fixture-curation",
+  "reviewed_at": "2026-08-03T00:00:00Z",
+  "nodes": [
+    {"node_id":"service:gatehouse","name":"Gatehouse","entity_type":"Service","evidence_source_id":"northstar:service:gatehouse"},
+    {"node_id":"service:relay","name":"Relay","entity_type":"Service","evidence_source_id":"northstar:service:relay"},
+    {"node_id":"service:polaris","name":"Polaris","entity_type":"Service","evidence_source_id":"northstar:service:polaris"},
+    {"node_id":"service:constellation","name":"Constellation","entity_type":"Service","evidence_source_id":"northstar:service:constellation"},
+    {"node_id":"service:sentinel","name":"Sentinel","entity_type":"Service","evidence_source_id":"northstar:service:sentinel"},
+    {"node_id":"service:foundry","name":"Foundry","entity_type":"Service","evidence_source_id":"northstar:service:foundry"},
+    {"node_id":"service:prism","name":"Prism","entity_type":"Service","evidence_source_id":"northstar:service:prism"},
+    {"node_id":"database:neo4j","name":"Neo4j","entity_type":"Database","evidence_source_id":"northstar:service:constellation"},
+    {"node_id":"database:qdrant","name":"Qdrant","entity_type":"Database","evidence_source_id":"northstar:service:polaris"},
+    {"node_id":"database:postgres","name":"PostgreSQL","entity_type":"Database","evidence_source_id":"northstar:service:polaris","aliases":["Postgres"]},
+    {"node_id":"team:knowledge-systems","name":"Knowledge Systems","entity_type":"Team","evidence_source_id":"northstar:teams:ownership"},
+    {"node_id":"decision:adr-012","name":"ADR-012","entity_type":"Decision","evidence_source_id":"northstar:adr:012"},
+    {"node_id":"decision:adr-009","name":"ADR-009","entity_type":"Decision","evidence_source_id":"northstar:adr:012"},
+    {"node_id":"incident:2026-0527","name":"INC-2026-0527","entity_type":"Incident","evidence_source_id":"northstar:incident:2026-0527"},
+    {"node_id":"runbook:jwks-rotation","name":"JWKS Rotation Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:jwks-rotation"},
+    {"node_id":"runbook:retrieval-degradation","name":"Polaris Retrieval Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:retrieval-degradation"}
+  ],
+  "relations": [
+    {"relation_id":"gatehouse-routes-relay","source":"service:gatehouse","target":"service:relay","relation_type":"routes_to","evidence_source_id":"northstar:architecture:request-data-flow"},
+    {"relation_id":"relay-calls-polaris","source":"service:relay","target":"service:polaris","relation_type":"calls","evidence_source_id":"northstar:architecture:request-data-flow"},
+    {"relation_id":"relay-calls-constellation","source":"service:relay","target":"service:constellation","relation_type":"calls","evidence_source_id":"northstar:architecture:request-data-flow"},
+    {"relation_id":"constellation-reads-neo4j","source":"service:constellation","target":"database:neo4j","relation_type":"reads_from","evidence_source_id":"northstar:service:constellation"},
+    {"relation_id":"polaris-owned-by-knowledge-systems","source":"service:polaris","target":"team:knowledge-systems","relation_type":"owned_by","evidence_source_id":"northstar:teams:ownership"},
+    {"relation_id":"polaris-reads-qdrant","source":"service:polaris","target":"database:qdrant","relation_type":"reads_from","evidence_source_id":"northstar:service:polaris"},
+    {"relation_id":"polaris-reads-postgres","source":"service:polaris","target":"database:postgres","relation_type":"reads_from","evidence_source_id":"northstar:service:polaris"},
+    {"relation_id":"adr-012-supersedes-adr-009","source":"decision:adr-012","target":"decision:adr-009","relation_type":"supersedes","evidence_source_id":"northstar:adr:012"},
+    {"relation_id":"gatehouse-depends-sentinel","source":"service:gatehouse","target":"service:sentinel","relation_type":"depends_on","evidence_source_id":"northstar:incident:2026-0527"},
+    {"relation_id":"relay-depends-sentinel","source":"service:relay","target":"service:sentinel","relation_type":"depends_on","evidence_source_id":"northstar:incident:2026-0527"},
+    {"relation_id":"relay-calls-prism","source":"service:relay","target":"service:prism","relation_type":"calls","evidence_source_id":"northstar:service:relay"},
+    {"relation_id":"foundry-stores-qdrant","source":"service:foundry","target":"database:qdrant","relation_type":"stores_in","evidence_source_id":"northstar:service:foundry"},
+    {"relation_id":"incident-affects-gatehouse","source":"incident:2026-0527","target":"service:gatehouse","relation_type":"affected","evidence_source_id":"northstar:incident:2026-0527"},
+    {"relation_id":"incident-affects-relay","source":"incident:2026-0527","target":"service:relay","relation_type":"affected","evidence_source_id":"northstar:incident:2026-0527"},
+    {"relation_id":"incident-mitigated-runbook","source":"incident:2026-0527","target":"runbook:jwks-rotation","relation_type":"mitigated_by","evidence_source_id":"northstar:runbook:jwks-rotation"},
+    {"relation_id":"polaris-documented-runbook","source":"service:polaris","target":"runbook:retrieval-degradation","relation_type":"documented_by","evidence_source_id":"northstar:runbook:retrieval-degradation"}
+  ]
+}

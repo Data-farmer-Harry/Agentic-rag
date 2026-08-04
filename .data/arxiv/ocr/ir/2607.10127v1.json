@@ -1,0 +1,4208 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "ae21125816f651e7974761828fe9f35d25eb036fd35aa8d6f9e19ad22d248262",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:2d9de34febae1d422ff9ed5d03e08e80",
+      "kind": "heading",
+      "text": "GAE: Graph-Augmented Evolution for Scientific Discovery",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery"
+      ],
+      "char_start": 0,
+      "char_end": 55,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:409f9dc55f66f91ed2c057dc051359a9",
+      "kind": "paragraph",
+      "text": "via Reinforcement Optimization Xuanzhou Chen 1 2 Taoli Cheng1",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery"
+      ],
+      "char_start": 57,
+      "char_end": 118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f5bb30daee430e825211f5279ceac0c",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Abstract"
+      ],
+      "char_start": 120,
+      "char_end": 128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b36039b768888df80314ac6809bfe0c2",
+      "kind": "paragraph",
+      "text": "Evolutionary program search guided by Large Language Models (LLMs) has emerged as a powerful paradigm for automated scientific discovery. However, current approaches are fundamentally constrained by three bottlenecks: structurally blind parent selection, sparse whole-program evaluation rewards, and static mutation operators that fail to adapt during search. We present GAE(Graph-AugmentedEvolution), a framework that resolves these limitations through a tightly coupled, three-pillar architecture. First, a relational graph neural network (GNN)parses programs into typed computation graphs, producing structure-aware embeddings. Second, anRLoptimized meta-controllerleverages these embeddings to replace blind evolutionary sampling with a directed policy, dynamically selecting optimal parents and mutation directions based on reward history. Third, anonline GRPO finetuning loopcontinuously updates the LLM mutation operator at test-time using group-normalized evaluation rewards, directly aligning the model’s generation distribution with high-fitness structural edits. We evaluate GAE on a challenging scientific discovery task: symbolic regression for complex nonlinear oscillator systems. By transforming stochastic search into a directed, self-improving trajectory, GAE efficiently discovers closed-form physical equations, consistently matching or outperforming static LLM-driven baselines and achieving state-of-the-art out-ofdistribution performance. 1Shanghai Academy of AI for Science, Shanghai, China",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Abstract"
+      ],
+      "char_start": 130,
+      "char_end": 1644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56ea3de10a75f06ffe8d31b499f09360",
+      "kind": "paragraph",
+      "text": "2School of Electrical and Computer Engineering, Georgia Institute of Technology, Georgia, Unites States. Correspondence to: Taoli Cheng<chengtaoli.1990@gmail.com>. Accepted at ICML 2026 AI for Science Workshop. Copyright",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Abstract"
+      ],
+      "char_start": 1646,
+      "char_end": 1866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0875feb25d6df6f356a7331c72fc2327",
+      "kind": "heading",
+      "text": "by the author(s).",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s)."
+      ],
+      "char_start": 1868,
+      "char_end": 1885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78c16e3663a4c9b36b11e2d1b322268f",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 1887,
+      "char_end": 1899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aca480f1cd44175f3113e9d630c00ff0",
+      "kind": "paragraph",
+      "text": "The discovery of new algorithms and programs is a central frontier in AI-assisted science. Recent work follows a simple but powerful recipe: combine a large language model with programmatic evaluation and iterative search. FunSearch (Romera-Paredes et al., 2024) first demonstrated that this loop can discover genuinely new mathematical objects, outperforming decades of hand-crafted combinatorial search. AlphaEvolve (Novikov et al., 2025) generalized the principle to complete codebases, achieving state-of-the-art results on hardware scheduling, matrix multiplication, and open problems in math and engineering. Following this line of work, the overall procedure can be viewed as an iterative search framework in which an LLM serves as a program mutation operator that generates candidate code modifications, a task-specific evaluator assigns fitness based on predefined scoring criteria, and a selection mechanism iteratively preserves and refines high-performing programs within the search space. Despite these successes, three interrelated bottlenecks hinder effective evolutionary search, especially in reliably steering program mutations toward high-quality regions of a large and complex program space.(1) Reward sparsity. Each fitness evaluation requires a complete program execution as a full training run in the case of program search, or a numerical integration in symbolic regression. The archive is updated only when a child outperforms the current occupant of its MAP-Elites cell, so the search process receives",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 1901,
+      "char_end": 3428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5846ba7216e039d8e24b02a368f2fa23",
+      "kind": "paragraph",
+      "text": "a single scalar signal indicating whether the candidate improves upon the incumbent in terms of the defined fitness score. Programs that nearly beat an incumbent, for example achieving performance very close to the current best, or that contain partially correct or structurally meaningful sub-expressions, are still discarded if they do not strictly improve the cell. As a result, a large population of evaluated programs is reduced to a sparse sequence of binary improvement events, discarding fine-grained relational information about proximity to improvement and the contribution of intermediate structural modifications.(2) Uninformed parent selection.AlphaEvolve samples parents by fitness rank with random diversity, treating the population as an unstructured bag of programs. However, the program population may 1",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 3430,
+      "char_end": 4251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f0b9634bf1b71834a7bf992e2d1f06f",
+      "kind": "table",
+      "text": "arXiv:2607.10127v1  [cs.LG]  11 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 4253,
+      "char_end": 4293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3798c0f17cdce848d80f9abf861f3db",
+      "kind": "paragraph",
+      "text": "carry substantial structural information. Effective program evolution depends on the existence of local structural similarity in the program space. rather than merely high-level fitness comparison. Without such locality, small mutations induce unpredictable changes in program behavior, turning the search process into a largely stochastic exploration. In contrast, when programs exhibit meaningful local similarity, neighboring programs tend to induce more consistent and gradual changes in functionality, allowing iterative mutations to progressively refine performance.(3) Static mutation operator.In AlphaEvolve, the LLM for mutation is fixed throughout the entire search process, which constrains the space of program edits to a static and pre-trained distribution. As a result, the system continues to sample from the same set of structural transformations regardless of the accumulated search experience. Our contribution.We presentGraph-Augmeted Evolution, a framework that simultaneously resolves all three limitations within the OpenEvolve backbone. A relational GNNparses each program into a typed computation graph and is trained online to predict fitness (§3.3). ADiscrete SAC meta-controllertakes each program’s GNN embedding and learns which structural edit to apply next, balancing task-score improvement against population novelty and complexity via automatic entropy regularization (§3.4). AGRPO fine-tuning loopuses group-normalized evaluation rewards and the parent’s GNN embedding as a variance-reduction baseline to update the",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 4295,
+      "char_end": 5843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2e9ad02c5f45072e697e526b71345fc",
+      "kind": "paragraph",
+      "text": "LLM mutation operator online, progressively sharpening mutation quality throughout search (§3.5). We evaluate GAE on an important scientific task—symbolic regression for nonlinear oscillator systems. We utilize the benchmark datasets from LLM-SR (Shojaee et al., 2024) for our experiments. In LLM-SR (§4) experiment, GAE discovers novel programs that consistently match or surpass prior baselines on the benchmarks, achieving competitive or state-of-the-art performance. The remainder of the paper is organized as follows: §2 surveys related work, §3 describes the GAE framework in full, §4 presents experimental results, §5 discusses limitations and future directions.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Introduction"
+      ],
+      "char_start": 5845,
+      "char_end": 6514,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48ce3f86d8b2a4cfb92ae4b331f62622",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Related Work"
+      ],
+      "char_start": 6516,
+      "char_end": 6528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c7edcebc1c21ef665a5a8a2fc6b41c2",
+      "kind": "paragraph",
+      "text": "Prior work addresses at most one of the above-mentioned bottlenecks in isolation. EvoTune (Surina et al., 2025) finetune the LLM via DPO and GRPO respectively, yet leave parent sampling uninformed. Surrogate-based optimization (White et al., 2021; Falkner et al., 2018) improves evaluation efficiency but typically operates over fixed, handencoded representations and does not support open-ended code evolution. Quality-Diversity RL methods (Nilsson and Cully, 2021; Faldor et al., 2023; Batra et al., 2023) replace random selection with policy-gradient updates, but require dense per-step rewards unavailable when fitness arrives only at program termination. No existing method closes all three gaps simultaneously. GAE builds on LLM-driven evolutionary search but departs from its static operator assumption. FunSearch (Romera- Paredes et al., 2024), AlphaEvolve (Novikov et al., 2025), and OpenEvolve (Sharma, 2025b) all freeze model weights throughout search, relying on prompt diversity alone for exploration. EvoPrompting (Chen et al., 2023) extends this idea through few-shot prompting, yet still fixes the selection policy. PACEvolve (Yan et al., 2026) addresses scaffoldlevel failure modes, such as context pollution, mode collapse, and weak collaboration, through hand-crafted rules, but leaves the mutation model and selection policy frozen. ThetaEvolve (Wang et al., 2025) introduces test-time RL fine-tuning to improve mutation quality, yet ties the weight update to a single task-specific objective rather than a gen-",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Related Work"
+      ],
+      "char_start": 6530,
+      "char_end": 8061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c13769a13ac192b786704facc619e8bc",
+      "kind": "paragraph",
+      "text": "eral reusable selector. ShinkaEvolve (Lange et al., 2025) improves sample efficiency via a bandit-based LLM ensemble and novelty-based rejection filtering, yet the selection policy remains static and prompt-driven with no learned component. Our work adds a learned selector and fine-tuning loop on top of this backbone, so both thewhich-to-mutateand how-to-mutatedecisions improve over time. Maintaining population diversity while improving selection is precisely the goal of quality-diversity RL, yet existing methods expose a fundamental mismatch with program evolution. MAP-Elites (Mouret and Clune, 2015) archives diverse elites but samples parents uniformly. Policy gradient extensions PGA-MAP-Elites (Nilsson and Cully,",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "by the author(s).",
+        "Related Work"
+      ],
+      "char_start": 8063,
+      "char_end": 8788,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:094b439651128975cf93c0917ddf2342",
+      "kind": "heading",
+      "text": ", DCG-MAP-Elites (Faldor et al., 2023), DCRL-MAP-",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        ", DCG-MAP-Elites (Faldor et al., 2023), DCRL-MAP-"
+      ],
+      "char_start": 8790,
+      "char_end": 8839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cf72d4b4074cb2965e7f6885c4ae6f4",
+      "kind": "paragraph",
+      "text": "Elites (Faldor et al., 2025), and PPGA (Batra et al., 2023) improve this but all require dense per-step rewards absent in whole-program evaluation. AURORA (Grillotti and Cully,",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        ", DCG-MAP-Elites (Faldor et al., 2023), DCRL-MAP-"
+      ],
+      "char_start": 8841,
+      "char_end": 9017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df836f496b5aab6ba4c8a3bef7c46f73",
+      "kind": "heading",
+      "text": "relaxes hand-specified feature axes by learning be-",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-"
+      ],
+      "char_start": 9019,
+      "char_end": 9070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83bdfb7ca436577ed4a4e1232ec07352",
+      "kind": "paragraph",
+      "text": "havioural descriptors unsupervisedly. GAE adopts this spirit for archive indexing while bridging the dense-reward gap through graph-structured signals propagated across the population.",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-"
+      ],
+      "char_start": 9072,
+      "char_end": 9256,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44d7fc0e3df6f4c082b8cf440aa5f38d",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology"
+      ],
+      "char_start": 9258,
+      "char_end": 9269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f08a66468aba26334b2d165ec16b764",
+      "kind": "heading",
+      "text": "Background: MAP-Elites and OpenEvolve",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Background: MAP-Elites and OpenEvolve"
+      ],
+      "char_start": 9271,
+      "char_end": 9308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60437a9f25cd15276eee7336f5f7a5d0",
+      "kind": "paragraph",
+      "text": "MAP-Elites.Let X be a program space and B a kdimensional behaviour descriptor space binned into cells C. MAP-Elites maintains an archive A:C → X ∪ {∅}mapping each cell to its current elite program. The QD-score aggregates quality and coverage: QD(A) = X c∈C f(A[c])·1[A[c]̸=∅]. The deterministic update rule inserts a new program β into A only if it strictly improves its cell’s incumbent, guaran- 2",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Background: MAP-Elites and OpenEvolve"
+      ],
+      "char_start": 9310,
+      "char_end": 9709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:157f5ea213e79c535d92b75d5c58c3cd",
+      "kind": "paragraph",
+      "text": "teeingQDis non-decreasing. OpenEvolve.OpenEvolve maintains a program archive A as a quality–diversity population, using a MAP-Elites scheme in which programs are mapped onto a multidimensional feature grid and the best performer is retained per cell (Sharma, 2025a). At each generation, it samples a parent from A, assembles an LLM prompt from the parent code and top- k elites (drawn separately from the parent, so inspiration programs differ from those shown to the LLM), and queries the LLM for a mutated child via SEARCH/REPLACE diffs or full rewrites. The child is scored by a user-supplied evaluator under a cascade pattern of multi-stage validation and admitted into A only if it dominates its cell’s occupant. For diversity at scale, A is partitioned into multiple islands that evolve independently with periodic migration to prevent premature convergence, all orchestrated in parallel by a central controller.",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Background: MAP-Elites and OpenEvolve"
+      ],
+      "char_start": 9711,
+      "char_end": 10629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:67a9eb7e5dad738849440b330dc4f7c1",
+      "kind": "heading",
+      "text": "Graph-Augmented Evolution",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Graph-Augmented Evolution"
+      ],
+      "char_start": 10631,
+      "char_end": 10656,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:833dbbe649fec3c34a407a1400daf5bc",
+      "kind": "paragraph",
+      "text": "Graph-Augmented Evolution extends the OpenEvolve loop with three co-adaptive components, all underpinned by a shared relational GNN encoder (§3.3) that parses each program’s abstract syntax tree into a typed computation graph and produces a structural embedding z∈R d. Parents are drawn uniformly from a fixed-size elite archive; the shared embedding then conditions a discrete Soft Actor– Critic meta-controller (§3.4) that maps the parent state z to a mutation-type hint, steering the LLM toward a structurally promising class of edit rather than an undirected one. Its policy is trained on a three-component reward (task score, embedding-space novelty, and a complexity penalty) computed on the best child of each generation. Whenever the LLM proposes a group of G children, online GRPO fine-tuning (§3.5) converts their group-relative advantages ˆAi ∝R βi −R α (child reward minus parent reward) into an in-place PPO-clip update of the LLM weights, adapting the mutation policy without interrupting evolution while leaving the archive and the GNN unchanged. The GNN encoder itself is updated separately every K generations via an MSE surrogate loss that regresses its embeddings onto observed rewards, after which all archive embeddings are refreshed. The three components do not share gradients and operate at different timescales, keeping each module independently replaceable. Figure 1 illustrates the complete architecture, and Algorithm 1 summarizes one generation of the GAE loop.",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Graph-Augmented Evolution"
+      ],
+      "char_start": 10658,
+      "char_end": 12148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b27c57e5fda4ffa81c76ccced0161338",
+      "kind": "heading",
+      "text": "Program Graphs and GNN Encoder",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Program Graphs and GNN Encoder"
+      ],
+      "char_start": 12150,
+      "char_end": 12180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:067d7d21adabb8ab4339e00c9dc3d592",
+      "kind": "paragraph",
+      "text": "Graph representation.We parse each candidate program into a typed computation graph G= (V,E) using static Abstract Syntax Tree (AST) analysis. Any parse failure produces a single unknown node, guaranteeing a valid graph is Algorithm 1GAE — One Generation Require: archive P (fixed size N); GNN encoder Φ : code→R d (d=128); SAC policy πϕ over action space A with twin critics Qθ1 , Qθ2; LLM operator πθLLM with reference πref; replay buffer B; GNN window L; group size G; GNN interval K; warm-up W ; generation index s. // Parent selection and mutation hint",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "relaxes hand-specified feature axes by learning be-",
+        "Methodology",
+        "Program Graphs and GNN Encoder"
+      ],
+      "char_start": 12182,
+      "char_end": 12739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef7a9f88a30df5179f4a2d1dce769c8",
+      "kind": "heading",
+      "text": "α∼Uniform(P);z α ←Φ(α)",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "α∼Uniform(P);z α ←Φ(α)"
+      ],
+      "char_start": 12741,
+      "char_end": 12763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e78d774755937013fe08aa39963dcef",
+      "kind": "heading",
+      "text": "a←Uniform(A)ifs < W, elsea∼π ϕ(· |zα)",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "a←Uniform(A)ifs < W, elsea∼π ϕ(· |zα)"
+      ],
+      "char_start": 12765,
+      "char_end": 12802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3896d3abdf19951fa911bad195ec081e",
+      "kind": "paragraph",
+      "text": "// Generate and evaluate a group ofGchildren",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "a←Uniform(A)ifs < W, elsea∼π ϕ(· |zα)"
+      ],
+      "char_start": 12804,
+      "char_end": 12848,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c14bc98eb389b621f41e2b567da251d7",
+      "kind": "heading",
+      "text": "{β 1, . . . , βG} ∼πθLLM (· |α, a)",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "{β 1, . . . , βG} ∼πθLLM (· |α, a)"
+      ],
+      "char_start": 12850,
+      "char_end": 12884,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d916cdbbc8ed27211a906a536a575bd",
+      "kind": "heading",
+      "text": "R βi ←EVAL(β i) =−log 10 NMSE(βi), i=",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "R βi ←EVAL(β i) =−log 10 NMSE(βi), i="
+      ],
+      "char_start": 12886,
+      "char_end": 12923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f60d36729976578c5e81719808afb50",
+      "kind": "paragraph",
+      "text": "1, . . . , G // GRPO update of the LLM operator (§3.5)",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "R βi ←EVAL(β i) =−log 10 NMSE(βi), i="
+      ],
+      "char_start": 12925,
+      "char_end": 12979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4c0cb92523283e35717a4036e301287",
+      "kind": "heading",
+      "text": "ˆAi ←",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "ˆAi ←"
+      ],
+      "char_start": 12981,
+      "char_end": 12986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8027fbb9893bfc953f315df5a3072d7",
+      "kind": "heading",
+      "text": "Rgrp",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Rgrp"
+      ],
+      "char_start": 12988,
+      "char_end": 12992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ceeee0a23d69fef20968436b7b2fa47a",
+      "kind": "heading",
+      "text": "−Rgrp",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "−Rgrp"
+      ],
+      "char_start": 12994,
+      "char_end": 12999,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2914fe49c255fd70b73719a17e1ce161",
+      "kind": "paragraph",
+      "text": "/(std(Rgrp)+ε), Rgrp",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "−Rgrp"
+      ],
+      "char_start": 13001,
+      "char_end": 13021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffab187b16a3691c35cc6a31ccdd02dc",
+      "kind": "heading",
+      "text": "=R βi −",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "=R βi −"
+      ],
+      "char_start": 13023,
+      "char_end": 13030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a355cb27d4e00d96e52b2c4c74d3c431",
+      "kind": "paragraph",
+      "text": "Rα",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "=R βi −"
+      ],
+      "char_start": 13032,
+      "char_end": 13034,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2aa80e6c29e32913b3292509fd78d91f",
+      "kind": "heading",
+      "text": "Update θLLM via the PPO-clip surrogateLGRPO (Eq. 8)",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Update θLLM via the PPO-clip surrogateLGRPO (Eq. 8)"
+      ],
+      "char_start": 13036,
+      "char_end": 13087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a88dd8b80103f6090b6c891a3b8f105",
+      "kind": "paragraph",
+      "text": "// SAC meta-controller update, best child only (§3.4)",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Update θLLM via the PPO-clip surrogateLGRPO (Eq. 8)"
+      ],
+      "char_start": 13089,
+      "char_end": 13142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7835c0d0603a4407e6571eb8a464632e",
+      "kind": "heading",
+      "text": "β ⋆ ←arg max i Rβi ;z ′ ←Φ(β ⋆)",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "β ⋆ ←arg max i Rβi ;z ′ ←Φ(β ⋆)"
+      ],
+      "char_start": 13144,
+      "char_end": 13175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0112fbe3f5d0815551996e49ff22d86",
+      "kind": "heading",
+      "text": "r←clip(R β⋆ , rmin, rmax) +λ 1rnov(z′,P)−",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "r←clip(R β⋆ , rmin, rmax) +λ 1rnov(z′,P)−"
+      ],
+      "char_start": 13177,
+      "char_end": 13218,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8de2b84f3c01bd42177cd3afa8993073",
+      "kind": "paragraph",
+      "text": "λ2rcx(β⋆)(Eq. 6)",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "r←clip(R β⋆ , rmin, rmax) +λ 1rnov(z′,P)−"
+      ],
+      "char_start": 13220,
+      "char_end": 13236,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bd103eb66dec8d79356a22dc57f7cf5",
+      "kind": "heading",
+      "text": "B.push(z α, a, r, z′); update πϕ, Qθ1 , Qθ2 (Eq. 7) if",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "B.push(z α, a, r, z′); update πϕ, Qθ1 , Qθ2 (Eq. 7) if"
+      ],
+      "char_start": 13238,
+      "char_end": 13292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8ceafadba2a124e0ed9a698da262c6e",
+      "kind": "table",
+      "text": "|B| ≥32",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "B.push(z α, a, r, z′); update πϕ, Qθ1 , Qθ2 (Eq. 7) if"
+      ],
+      "char_start": 13294,
+      "char_end": 13301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26b69a53d07b42c0fa8a5f4553e88da2",
+      "kind": "paragraph",
+      "text": "// Archive and GNN-buffer update (all children)",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "B.push(z α, a, r, z′); update πϕ, Qθ1 , Qθ2 (Eq. 7) if"
+      ],
+      "char_start": 13303,
+      "char_end": 13350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4887b6055c0e5f2e3618d32806394e2",
+      "kind": "heading",
+      "text": "fori= 1, . . . , Gdo",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "fori= 1, . . . , Gdo"
+      ],
+      "char_start": 13352,
+      "char_end": 13372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bcba56c7a398df51c0f813cd0e612c3",
+      "kind": "heading",
+      "text": "P.Insert(β i, Rβi ,Φ(β i)), keep top-Nby score",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "P.Insert(β i, Rβi ,Φ(β i)), keep top-Nby score"
+      ],
+      "char_start": 13374,
+      "char_end": 13420,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8dcf7aeadce2c844b25c68594df16144",
+      "kind": "heading",
+      "text": "append(graph(β i), Rβi )toLifR βi >−10",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "append(graph(β i), Rβi )toLifR βi >−10"
+      ],
+      "char_start": 13422,
+      "char_end": 13460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f13b9d4176305b6636a607733642c473",
+      "kind": "heading",
+      "text": "end for",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "end for"
+      ],
+      "char_start": 13462,
+      "char_end": 13469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd7d248a18ffc2d9214227df7e4aacef",
+      "kind": "paragraph",
+      "text": "// Periodic GNN fine-tuning (§3.3)",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "end for"
+      ],
+      "char_start": 13471,
+      "char_end": 13505,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1631805c6e904342b7138fe0b7aa1417",
+      "kind": "heading",
+      "text": "if smodK= 0 and |L| ≥10: fine-tune Φ (Eq. 5);",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "if smodK= 0 and |L| ≥10: fine-tune Φ (Eq. 5);"
+      ],
+      "char_start": 13507,
+      "char_end": 13552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40e54d70ee76354c2b50e3ec5cb9a762",
+      "kind": "paragraph",
+      "text": "refreshz p ∀p∈ P always returned. Specifically for symbolic regression, nodes are mathematical operations and edges encode data-flow. Relational GNN encoder.Each node carries an F dimensional one-hot encoding its node type. We embed each program graph into z∈R d via a relational graph neural network. Suppose we denote the archive size as N, the input projection is h(0) = GELU(XW in+bin), X∈R N×F , Win ∈R F×h . (1) with hidden width h (the output dimension is produced only by the final pooling projection, where2h=d). Relational message passing.We apply L layers of edgetype-conditioned convolution. For each relation r∈ E, a dedicated weight matrix Wr ∈R h×h transforms the features of the source node. Messages are mean-aggregated at 3",
+      "order": 53,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "if smodK= 0 and |L| ≥10: fine-tune Φ (Eq. 5);"
+      ],
+      "char_start": 13554,
+      "char_end": 14295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69e3b72d92c938d7cb04a86a83d5dd1e",
+      "kind": "caption",
+      "text": "Figure 1.GAE framework overview.A relational GNN encoder parses each program’s abstract syntax tree into a typed computation",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "if smodK= 0 and |L| ≥10: fine-tune Φ (Eq. 5);"
+      ],
+      "char_start": 14297,
+      "char_end": 14421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02bcbee1f996de3adff461dd7d21e140",
+      "kind": "paragraph",
+      "text": "graph and produces a structural embedding z, fine-tuned online against observed rewards to track the evolving program distribution. Parents are sampled from a fixed-size elite archive; the parent embedding zα then serves as the state of a Discrete Soft Actor–Critic meta-controller (policy πϕ with twin critics Qθ1 , Qθ2), which samples a mutation-type hint a∼π ϕ(· |zα) that steers the mutation. Each parent is mutated by a local LLM generating G= 8 candidates, which are scored by a numerical evaluator. The SAC policy is trained on the best child of each generation with reward r= clip(R(β)) +λ 1 ·novelty−λ 2 ·complexity , while the children’s group-relative rewards adapt the LLM generation policy via GRPO. each destination and combined with a self-loop: h(ℓ+1)",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "if smodK= 0 and |L| ≥10: fine-tune Φ (Eq. 5);"
+      ],
+      "char_start": 14423,
+      "char_end": 15190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82e4c96b3e46ef11e26f6190d6a5f585",
+      "kind": "heading",
+      "text": "= LayerNorm",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "= LayerNorm"
+      ],
+      "char_start": 15192,
+      "char_end": 15203,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fea56884c487f946acb28ef3c3d0860e",
+      "kind": "heading",
+      "text": "GELU",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15205,
+      "char_end": 15209,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54a8669e97582b4f23121e121bfbbed6",
+      "kind": "paragraph",
+      "text": "Wself h(ℓ) i +",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15211,
+      "char_end": 15225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c369e654b16ef022db9c3ca8ad18408",
+      "kind": "table",
+      "text": "|E|X",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15227,
+      "char_end": 15231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d90c2e8840d0b59b5a0e257849141570",
+      "kind": "paragraph",
+      "text": "r=1 1",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15233,
+      "char_end": 15238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:777fb670a4f81c7b85a380814b520ea9",
+      "kind": "table",
+      "text": "|Nr(i)|",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15240,
+      "char_end": 15247,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e15cc2f96d9c0150f15434a3a3262ca3",
+      "kind": "paragraph",
+      "text": "X j∈Nr(i) Wr h(ℓ) j     ,(2) where Nr(i) ={j: (j, i)∈ Er } denotes the set of neighbors of node i connected by an edge of relation type r, and",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15249,
+      "char_end": 15395,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2057189dbb283fcf83df2d6ea02ac0da",
+      "kind": "table",
+      "text": "|Nr(i)|is its cardinality.",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15397,
+      "char_end": 15423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:011776bb75630e739860faa1d50872c3",
+      "kind": "paragraph",
+      "text": "Global pooling.Mean and max pooling are concatenated and projected to the output representationzas: z= GELU",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "GELU"
+      ],
+      "char_start": 15425,
+      "char_end": 15532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:106382b1a890f409d628212dd412a10b",
+      "kind": "heading",
+      "text": "LayerNorm",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LayerNorm"
+      ],
+      "char_start": 15534,
+      "char_end": 15543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83e15a6bafc8cc2db45d118f2990d306",
+      "kind": "paragraph",
+      "text": "[¯h; ˆh]W out",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LayerNorm"
+      ],
+      "char_start": 15545,
+      "char_end": 15558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f234656653fc7ba4ad058ce60bfd5f1",
+      "kind": "paragraph",
+      "text": ",(3) ¯h= 1 N P",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LayerNorm"
+      ],
+      "char_start": 15560,
+      "char_end": 15574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e73b21be39c6d70a17f89a04fb02468",
+      "kind": "heading",
+      "text": "h(L)",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "h(L)"
+      ],
+      "char_start": 15576,
+      "char_end": 15580,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99ecbe146363e7bf0e24b265f2845dbc",
+      "kind": "heading",
+      "text": ", ˆh= max i h(L)",
+      "order": 69,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        ", ˆh= max i h(L)"
+      ],
+      "char_start": 15582,
+      "char_end": 15598,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bc0acf788c3f70ab9bb8848c7086c0b",
+      "kind": "heading",
+      "text": "(4)",
+      "order": 70,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        ", ˆh= max i h(L)",
+        "(4)"
+      ],
+      "char_start": 15600,
+      "char_end": 15603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:079799116f0e67303434036ec156e74f",
+      "kind": "paragraph",
+      "text": "Pretraining and online fine-tuning.Before evolution begins, the encoder is pretrained on synthetic programs with structural proxy scores (feature coverage, operator diversity, complexity), using a linear score-prediction head trained jointly with the encoder. During evolution, every 3 steps (once ≥10 samples exist), the encoder is fine-tuned for 300 gradient steps on a sliding window of the 300 most recent (zα, R(α))pairs, where zα ∈R d is the GNN embedding of program α and R(α)∈R is its evaluator score. Targets are standardized to zero mean and unit variance. All population embeddings are then refreshed. The training objective is:",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        ", ˆh= max i h(L)",
+        "(4)"
+      ],
+      "char_start": 15605,
+      "char_end": 16244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f27f5b459771903c23b111973029987a",
+      "kind": "heading",
+      "text": "LGNN = 1",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1"
+      ],
+      "char_start": 16246,
+      "char_end": 16254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74d207b604b0be76f3aa7ba56ee5e9a8",
+      "kind": "table",
+      "text": "|L|",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1"
+      ],
+      "char_start": 16256,
+      "char_end": 16259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3481238200f3827eef3870d14c897943",
+      "kind": "paragraph",
+      "text": "X α∈L (µα −R(α)) 2 ,(5) where µα = MLP(zα) is a scalar score prediction from a temporary head trained jointly with the encoder.",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1"
+      ],
+      "char_start": 16261,
+      "char_end": 16388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:872adc4178cd2fceb8df4ef8f7e03c10",
+      "kind": "heading",
+      "text": "RL-Guided Mutation Selection",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 16390,
+      "char_end": 16418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:befdc5041efaadf8f6dc794a92cfe7d6",
+      "kind": "paragraph",
+      "text": "At each evolution step a parent α is drawnuniformly at randomfrom the current island; the reinforcement-learning agent does not select parents. Instead, a Discrete Soft Actor- Critic (SAC) agent chooses whichmutationto apply to α, conditioned on the parent’s graph embedding. State and action space.The state is the GNN embedding zα ∈R d of the parent program. The action space is flat",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 16420,
+      "char_end": 16805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31c57363ede01569a52a44a40bc617e4",
+      "kind": "table",
+      "text": "and fixed, with |A| discrete actions, each encoding a tuple",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 16807,
+      "char_end": 16866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45b9857a72c4c28846df04e6011ed3aa",
+      "kind": "paragraph",
+      "text": "(mutation type, target node id, argument index). Networks.The policy πϕ(a|z) and the twin critics",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 16868,
+      "char_end": 16965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:759083e530e0b9ecee916841615c62ec",
+      "kind": "table",
+      "text": "Qθ1 , Qθ2 :R d →R |A| are three-layer MLPs with Lay-",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 16967,
+      "char_end": 17019,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5611f6a960a2d510dd7e98bf6f8fdb4",
+      "kind": "paragraph",
+      "text": "erNorm and GELU activations that score every action from 4",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17021,
+      "char_end": 17079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60022a0dcfa36ae67566d4d98603fbd7",
+      "kind": "paragraph",
+      "text": "the state: z 256 − − − →LayerNorm→GELU 256",
+      "order": 81,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17081,
+      "char_end": 17123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1547c498ea69c49b6d58fbb84046dfdb",
+      "kind": "table",
+      "text": "− − − →GELU→R|A|.",
+      "order": 82,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17125,
+      "char_end": 17142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:286e1589dc1e8cfb95c7d6ab5e25e455",
+      "kind": "paragraph",
+      "text": "Each critic is paired with a target network updated by Polyak averaging (coefficientτ). Action selection.During a warm-up of W steps, actions are sampled uniformly at random to seed the replay buffer with diverse transitions. Thereafter, the agent samples an action stochastically from the softmax policy πϕ(a|z α) and no policy update is performed until the buffer holds at least32transitions. Reward.The mutation producing the best child β receives a three-component reward: r= clip",
+      "order": 83,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17144,
+      "char_end": 17628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82074c50828060d321c31dd4c12546d1",
+      "kind": "paragraph",
+      "text": "R(β), rmin, rmax",
+      "order": 84,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17630,
+      "char_end": 17646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13492d0f811f66371747f4e0646b5a16",
+      "kind": "paragraph",
+      "text": "| {z } rtask +λ 1",
+      "order": 85,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17648,
+      "char_end": 17665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e3b156e338168be125ffa2da4fae757",
+      "kind": "paragraph",
+      "text": "1−min p∈P cos(zβ, zp)",
+      "order": 86,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17667,
+      "char_end": 17688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54b4d0804ffb6f3bb8725f9a1e4a3134",
+      "kind": "paragraph",
+      "text": "| {z } rnovelty −λ 2 max",
+      "order": 87,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17690,
+      "char_end": 17714,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ae014749dba383d2664dc4b63dcafea",
+      "kind": "paragraph",
+      "text": "0, N(β)−20 20",
+      "order": 88,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17716,
+      "char_end": 17729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f42bf60f36e855d23c0fe202e036661f",
+      "kind": "paragraph",
+      "text": "| {z } rcomplexity ,(6) where R(β) is the evaluator score of the best child, P is the current population, N(β) is the AST node count of β’s return expression. The task term uses the child’s absolute (clipped) score rather than a parent-relative improvement. Online SAC training.Each transition (zα, a, r, zβ) is stored in a prioritized replay buffer of capacity. Every generation we take K gradient steps (equal to the number of children per generation) on priority-sampled mini-batches, updating the twin critics, the policy, and the entropy temperature α (automatically tuned toward a target entropy of − 1",
+      "order": 89,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LGNN = 1",
+        "RL-Guided Mutation Selection"
+      ],
+      "char_start": 17731,
+      "char_end": 18339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4de0ccd7d1d6803313a1aaab5db26298",
+      "kind": "heading",
+      "text": "log|A| ). The critics minimize an importance-weighted",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18341,
+      "char_end": 18394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d0456726d74b0db4a7b015c6d391aaa",
+      "kind": "paragraph",
+      "text": "TD loss L(θi) =E (z,a,r,z′)∼B h w",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18396,
+      "char_end": 18429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7cdd5e49c92e8dea2e2d7759a3c81bb",
+      "kind": "paragraph",
+      "text": "Qθi (z, a)−y 2i , y=r+γ V(z ′), with bootstrapped value V(z ′) = X a πϕ(a|z ′)",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18431,
+      "char_end": 18509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a46814b0d2f141c9f31c442c7f20226",
+      "kind": "paragraph",
+      "text": "min i Q¯θi (z′, a)−αlogπ ϕ(a|z ′)",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18511,
+      "char_end": 18544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:069991e35f61ae8d7d876bb2762ef97b",
+      "kind": "paragraph",
+      "text": "(7) and importance weight w. The policy maximizes the standard entropy-regularized objective J(π) =E z∼B X a πϕ(a|z)",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18546,
+      "char_end": 18662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83f0cc3993c741cfa0edc3f5639f367a",
+      "kind": "paragraph",
+      "text": "min i Qθi (z, a) −αlogπ ϕ(a|z)",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18664,
+      "char_end": 18694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:049d46f8817ea0780e3b52880e767f92",
+      "kind": "paragraph",
+      "text": ".",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted"
+      ],
+      "char_start": 18696,
+      "char_end": 18697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff91d10f1d5a47394be21fc79be73b88",
+      "kind": "heading",
+      "text": "GRPO LLM Fine-Tuning",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 18699,
+      "char_end": 18719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42eb58cc79f01dabaf16e3fed9fdf7c0",
+      "kind": "paragraph",
+      "text": "On every evolution, we construct a group ofG children from the sampled parent α, βg ∼π θLLM (· |α, a), g= 1, . . . , G, with a denoting the action selected by the SAC metacontrollor. A GRPO update is performed immediately after the group is evaluated. Every valid child is truly evaluated, yielding rewards Rg and malformed completions are discarded before evaluation. The group reward is baseline-corrected by the parent’s own (true) evaluated scoreRα: Rgrp g =R g−Rα, i.e. each child’s reward is measured as its improvement over the parent. If std(Rgrp)<10 −8 (all rewards identical), the update is skipped. The GRPO objective fine-tunes θLLM with a PPOclip surrogate and KL penalty βkl = 0.1 to the reference model: LGRPO(θLLM) =− 1 G X g min",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 18721,
+      "char_end": 19466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91a11e11cf6a577c6b7f49275b08287d",
+      "kind": "paragraph",
+      "text": "ρg ˆAg,clip(ρ g,1±ϵ clip) ˆAg",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19468,
+      "char_end": 19497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63c52534b9282c61e7b9e35ef10c18c4",
+      "kind": "paragraph",
+      "text": "+β kl",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19499,
+      "char_end": 19504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96a8f339fd40cbccfccf6a75c90439be",
+      "kind": "paragraph",
+      "text": "DKL(πθLLM ∥π ref θLLM )",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19506,
+      "char_end": 19529,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a16dae47a7b109c6f6986bd1c46465be",
+      "kind": "paragraph",
+      "text": ", (8) where ρg = exp",
+      "order": 102,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19531,
+      "char_end": 19551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:344080c6ddd50e0e166fca4a03d61973",
+      "kind": "table",
+      "text": "logπ θLLM (βg|α)−logπ ref θLLM (βg|α)",
+      "order": 103,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19553,
+      "char_end": 19590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d0439276af13979530f5aa329d59855",
+      "kind": "paragraph",
+      "text": ", ϵclip is PPO clipping range, and the group-normalized advantage of childg ˆAg = Rgrp g − ¯Rgrp std(Rgrp) +ϵ .(9) The KL term is therefore evaluated for monitoring only and contributes no gradient. The update of θLLM comes solely from the PPO-clip surrogate, with clipping to the trust region [1−ϵ clip,1 +ϵ clip] providing the effective regularization andβ kl reported for diagnostics. Completions with reward below −10 (evaluator crash sentinels) are dropped before computing advantages. After each group, all evaluated children are inserted into the fixedsize elite population (a top-K list sorted by score, with the best child inserted first for elitism), and the population is truncated to its maximum size.",
+      "order": 104,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "GRPO LLM Fine-Tuning"
+      ],
+      "char_start": 19592,
+      "char_end": 20305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9faf6eecef944211c851d69424ce9a05",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 105,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "Experiments"
+      ],
+      "char_start": 20307,
+      "char_end": 20318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd5eb36481b00c9be6512d8981b79c21",
+      "kind": "paragraph",
+      "text": "To evaluate GAEvolve’s capability of scientific discovery, we test its performance on the Nonlinear Oscillators task from LLM-SR. Nonlinear damped oscillators are described by differential equations that capture the complex interaction among an oscillator’s position, velocity, and the acting forces. The goal is to discover a closed-form expression ˆf(x, t, v;θ)that predicts the acceleration ¨x=dv/dt of a nonlinear harmonic oscillator, where x is position, t is time,",
+      "order": 106,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A| ). The critics minimize an importance-weighted",
+        "Experiments"
+      ],
+      "char_start": 20320,
+      "char_end": 20790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2fc93768e1a196fc1bb8ca665c7ba70",
+      "kind": "heading",
+      "text": "is velocity. We evaluate GAEvolve on discovering the",
+      "order": 107,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "is velocity. We evaluate GAEvolve on discovering the"
+      ],
+      "char_start": 20792,
+      "char_end": 20844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4c3be7702dd21bb7bfc0b2e258ae604",
+      "kind": "paragraph",
+      "text": "governing equation of a synthetically generated variant by minimizing the Normalized Mean Squared Error (NMSE) between predicted and observed trajectories. The actual 5",
+      "order": 108,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "is velocity. We evaluate GAEvolve on discovering the"
+      ],
+      "char_start": 20846,
+      "char_end": 21014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16ccff58be54984df7fe693afe78c3d0",
+      "kind": "paragraph",
+      "text": "evolved program expresses a candidate symbolic equation as executable code. The initial program is a naive linear model ˆ˙v=p 0x+p 1t+p 2v+p 3, parsed into an symbolic regression expression tree via the graph builder, producing a 4-node graph with add, mul, input var and param nodes. Dataset.We use the phys osc (nonlinear harmonic oscillator) domain of the LSR-Synth subset of LLM- SRBench (Shojaee et al., 2025), predicting the acceleration ˙vfrom (x, t, v). Each task supplies three disjoint sets: a training set, an in-distribution (ID) test set, and an out-ofdistribution (OOD) test set sampled from a different input time region. For every candidate equation, the numeric constants are optimized by BFGS to minimize the mean squared error (MSE) on the training set. The candidate is then scored by −log 10(NMSE) on the held-out ID test set, which serves as the evolutionary fitness. We report the median NMSE on the ID and OOD test sets, and the latter quantifying extrapolation. Experimental Setup.GAE maintains a fixed-size elite population of 50 programs sorted by fitness. Parents are sampled uniformly from this population, and a discrete Soft Actor-Critic meta-controller (with 32 random warm-up steps) selects the mutation-type hint passed to the LLM. Each generation samples eight LLM-generated candidates in parallel. Before committing any LLM-generated candidate to the expensive numerical optimization pipeline, we apply a lightweight four-stage validation chain that filters out malformed programs early. We (i) extract valid Python",
+      "order": 109,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "is velocity. We evaluate GAEvolve on discovering the"
+      ],
+      "char_start": 21016,
+      "char_end": 22567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7476c9129fb833098b08832893f95a5f",
+      "kind": "paragraph",
+      "text": "code from the raw LLM output, (ii) verify syntactic correctness, (iii) sandbox the candidate by stripping unsafe statements, and (iv) execute a fast smoke test on randomly generated dummy inputs to catch runtime errors. Candidates failing any stage are discarded immediately, preventing invalid programs from entering the evaluator or corrupting the reinforcement learning replay buffer. For the OpenEvolve baseline, the MAP-Elites archive is two-dimensional (expression tree depth, number of distinct AST node types as structural diversity), with a population of 200 programs across 4 isolated islands and periodic migration every 15 generations. Parent sampling uses fixed elite/exploration/exploitation, each at the ratio of 0.3/0.4/0.3. For the PACEvolve baseline, We use the official implementation with a single island. The program database maintains a score-sorted queue of at most 100 programs, and each parent is drawn by tournament selection of size 2 from the top-4 programs. Each iteration generates one candidate with the frozen LLM backbone with temperature at 0.7 and top-p at 0.95). Before code generation, a scratch-pad step proposes a hypothesis, a repository capped at 5 ideas with periodic merging, and backtracking which restores an earlier",
+      "order": 110,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "is velocity. We evaluate GAEvolve on discovering the"
+      ],
+      "char_start": 22569,
+      "char_end": 23830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:933e1ae46f1ae68630b85c76762ad484",
+      "kind": "heading",
+      "text": "Method Mean NMSE Best NMSE",
+      "order": 111,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method Mean NMSE Best NMSE"
+      ],
+      "char_start": 23832,
+      "char_end": 23858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ef346cc8f367c958c44515d0d091177",
+      "kind": "paragraph",
+      "text": "Non-LLM baseline uDSR (Landajuela et al., 2022)−3.95−4.06 LLM-guided evolution",
+      "order": 112,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method Mean NMSE Best NMSE"
+      ],
+      "char_start": 23860,
+      "char_end": 23938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0cfc92db581fdb0d35f025690317db5",
+      "kind": "heading",
+      "text": "LLM-SR−4.06−4.80",
+      "order": 113,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "LLM-SR−4.06−4.80"
+      ],
+      "char_start": 23940,
+      "char_end": 23956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ce26c91d263ed580ddadbd629206bc1",
+      "kind": "heading",
+      "text": "OpenEvolve−5.40−7.11",
+      "order": 114,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "OpenEvolve−5.40−7.11"
+      ],
+      "char_start": 23958,
+      "char_end": 23978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0246b3a3b8dc25203e7781b49b71263a",
+      "kind": "heading",
+      "text": "CodeEvolve−4.97−7.26",
+      "order": 115,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "CodeEvolve−4.97−7.26"
+      ],
+      "char_start": 23980,
+      "char_end": 24000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73c3f586e38db424279ff28a243139f6",
+      "kind": "heading",
+      "text": "ShinkaEvolve−5.35−6.35",
+      "order": 116,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "ShinkaEvolve−5.35−6.35"
+      ],
+      "char_start": 24002,
+      "char_end": 24024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b89a9418aa23e0b4edbb24b440230cbe",
+      "kind": "heading",
+      "text": "PACEvolve-Sigle−5.87−8.23",
+      "order": 117,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve-Sigle−5.87−8.23"
+      ],
+      "char_start": 24026,
+      "char_end": 24051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90d8f7aa237d63a213c6a38c78023a03",
+      "kind": "heading",
+      "text": "PACEvolve-Multi−6.11−8.24",
+      "order": 118,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve-Multi−6.11−8.24"
+      ],
+      "char_start": 24053,
+      "char_end": 24078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06a30d04a290919854c1a1a8bc47ec33",
+      "kind": "caption",
+      "text": "Table 1.Benchmark results on the LLM-SR Nonlinear Oscillators",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve-Multi−6.11−8.24"
+      ],
+      "char_start": 24080,
+      "char_end": 24141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:725fffc187fb067a6f0f7691148f250f",
+      "kind": "paragraph",
+      "text": "task (Yan et al., 2026), reported as log10 NMSE (↓). All LLMguided baselines run for 1000 iterations over 10 independent runs. Both the mean and the best log10 NMSE across runs are reported.",
+      "order": 120,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve-Multi−6.11−8.24"
+      ],
+      "char_start": 24143,
+      "char_end": 24333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20260cd4fc3eb674fcba500486929a82",
+      "kind": "heading",
+      "text": "Method ID NMSE↓OOD NMSE↓",
+      "order": 121,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 24335,
+      "char_end": 24359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e93b8844c23490242ee06f4fc29a0552",
+      "kind": "paragraph",
+      "text": "PACEvolve-Single (Gemini)−5.80−6.10 OpenEvolve (Gemini)−3.14−3.26 OpenEvolve (Qwen)−3.88−3.94 GAE (ours) −6.87(Mean) −7.24(Best) −7.10(Mean) −7.45(Best)",
+      "order": 122,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 24361,
+      "char_end": 24513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9aad2530df0410fd942cffbfa9302e0",
+      "kind": "caption",
+      "text": "Table 2.Comparison among PACEvolve, OpenEvolve (both 1",
+      "order": 123,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 24515,
+      "char_end": 24569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b34e1e2cc884b0771e2a6b90192dc078",
+      "kind": "paragraph",
+      "text": "run) and our method GAE (3 runs; mean and best reported) on the Nonlinear Oscillators task under our evaluation setting (150 iterations), reported as log10 NMSE (↓) on in-distribution (ID) and out-of-distribution (OOD) test sets. repository state sampled from a power-law distribution. We use Qwen3.5-35B-A3B (Team, 2026) as the LLM backbone of GAE. We fix the LLM weights for PACEvolve- Single and OpenEvolve and update it in full weights in GAE during the GRPO reinforcement learning period. The GRPO has a group size of G= 8 , and uses a KL regularization coefficient of β= 0.1 together with a clipping range of ε= 0.2 to stabilize policy updates. Optimization is carried out using AdamW with a learning rate of 1×10 −6. Fine-tuning is performed in an online manner, with updates triggered at every generation after candidate evaluation. Main Results.First, we present results from PACEvolve (Yan et al., 2026) under their standard high-budget evaluation protocol (1000 iterations, 10 runs), which compares against uDSR (Landajuela et al., 2022), LLM-SR, AlphaEvolve, ShinkaEvolve (Lange et al., 2025). Table 1 reflects the performance of existing methods under their originally reported compute regime and provides a reference for overall competitiveness in the Non-linear harmonic oscillator task. Second, we conduct a controlled, low-budget comparison under a fixed backbone setting, using either Qwen or Gemini 2.5 Flash as the shared base model. In this regime, we compare the OpenEvolve baseline, the strong",
+      "order": 124,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 24571,
+      "char_end": 26087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56b0f9e87f3c0a954ac91ac34c410bd3",
+      "kind": "paragraph",
+      "text": "prior method PaceEvolve, and our proposed method GAE, all run for 150 iterations to ensure identical com- 6",
+      "order": 125,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 26089,
+      "char_end": 26196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef521d5864d6b310b076b6d955e1305b",
+      "kind": "caption",
+      "text": "Figure 2.Performance trajectory of the GAE method on the Non-",
+      "order": 126,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 26198,
+      "char_end": 26259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49704b307355a7102dac2cb48f66cef4",
+      "kind": "paragraph",
+      "text": "linear Harmonic Oscillator symbolic regression problem. The curve shows the running-best log10(NMSE) as a function of the number of evolution iterations. Grey dots mark iterations at which a new best solution was discovered. Lower values oflog10(NMSE) indicate better fit. putational budget. As shown in Table 2,GAEachieves bestperformance compared to both baselines, with its ID NMSE at -7.24 and OOD NMSE at -7.45 across all methods. Figure 2 shows the evolution trajectory of GAE over",
+      "order": 127,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Method ID NMSE↓OOD NMSE↓"
+      ],
+      "char_start": 26261,
+      "char_end": 26748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0c7c2a504485b035e4a8bcd620fa499",
+      "kind": "heading",
+      "text": "iteration. The method starts from an initial solution",
+      "order": 128,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 26750,
+      "char_end": 26803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d20bf3bf6569eb906b7cf25de55f50b5",
+      "kind": "paragraph",
+      "text": "with log10(NMSE) =−1.26 and improves rapidly during the first 20 iterations, reaching log10(NMSE)≈ −4.64 by iteration 17. Steady further gains accumulate through iterations 57–88, where three consecutive breakthroughs push the score to log10(NMSE) =−7.19 . A final improvement at iteration 119 yields the best solution of the run, with log10(NMSE) =−7.24 (NMSE ≈5.7×10 −8), after which the trajectory plateaus for the remaining 30 iterations. Across all 150 iterations, 13 distinct improvements were recorded, demonstrating that GAE efficiently discovers a near-exact symbolic form of the target equation through graph-structured evolutionary search. Next, we demonstrate the best program discovered by each of all four pipelines (Table 2) and provide physical interpretations of each component in the resulting equation. GAE best program f(x, t, v;θ) =θ0 x+θ 1 x2 sgn(x) +θ 2 x3 +θ 3 x4 sgn(x) +θ 4 v+θ 5 v2 sgn(v) +θ 6 v3 +θ 7 sin(t) +θ 8 cos(t) +θ 9",
+      "order": 129,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 26805,
+      "char_end": 27757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bf23b35684d9fab23794252f1130366",
+      "kind": "table",
+      "text": "|x||v|+x 2|v|+|t||v|+t 2v+xv 2",
+      "order": 130,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 27759,
+      "char_end": 27789,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9ae6b95b738fe1a60b14eff0b731e12",
+      "kind": "paragraph",
+      "text": "(10) The terms θ0x, θ1x2 sgn(x), θ2x3, and θ3x4 sgn(x) correspond to the linear restoring force, quadratic and cubic nonlinearity, and quartic nonlinearity respectively. The terms θ4v, θ5v2 sgn(v), and θ6v3 represent velocity-dependent damping. External time-dependent forcing is captured by",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 27791,
+      "char_end": 28082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:784936a50b70b655ee525d941672ae11",
+      "kind": "table",
+      "text": "θ7 sin(t) and θ8 cos(t). The five remaining terms |x||v|,",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 28084,
+      "char_end": 28141,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e84083755873bb70111b7eccf213060a",
+      "kind": "table",
+      "text": "x2|v|, |t||v|, t2v, and xv2, all scaled by the shared parame-",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 28143,
+      "char_end": 28204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30978d2c8a2d5cdd21908ad0688acd37",
+      "kind": "paragraph",
+      "text": "terθ 9, are interaction terms. OpenEvolve best program (Qwen) f(x, t, v) =θ1x+θ 2x3 +θ 3x5 +θ 4v+θ 5v3 +θ 6xv+θ 7x2v+θ 8xv2 +θ 9 sint+θ 10 sin(2t) +θ 11 cost +θ 12xsint+θ 13vsint +θ 14t+θ 15t2 +θ 16t3 +θ 17 1",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "iteration. The method starts from an initial solution"
+      ],
+      "char_start": 28206,
+      "char_end": 28414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71ee037dbf0cdb0f28ceac1f1d4db1ce",
+      "kind": "heading",
+      "text": "+x 2 +θ 18",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+x 2 +θ 18"
+      ],
+      "char_start": 28416,
+      "char_end": 28426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1faa7476b61d35f0157ad933fda7a68",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+x 2 +θ 18"
+      ],
+      "char_start": 28428,
+      "char_end": 28429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7f5695081b5fac01bf2768145bde0fb",
+      "kind": "heading",
+      "text": "+v 2",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 28431,
+      "char_end": 28435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1596cea09092a4a5e127dd136fe021f",
+      "kind": "paragraph",
+      "text": "+θ 19e−x2 +θ 20e−v2 +θ 21 sinh(x) +θ 22 cosh(x) +θ 23x2t+θ 24v2t+θ 25xvt. The first three terms ( θ0x, θ1x3, θ2x5) represent a linear, cubic (Duffing-like), and quintic restoring force. The next two ( θ3v, θ4v3) capture linear and cubic damping. The mixed terms θ5xv, θ6x2v, and θ7xv2 are mixed linear damping with position, mixed cubic damping (x2v), and mixed cubic damping ( xv2). Harmonic, higher harmonic, and cosine driving are handled by θ8 sin(t), θ9 sin(2t), and θ10 cos(t), while θ11xsin(t) and θ12vsin(t) introduce combined time-position and time-velocity interactions. The terms θ13t, θ14t2, θ15t3 are polynomial time terms. The terms θ16/(1 +x 2) and θ17/(1 +v 2) are inverse terms for potential singularities. The terms θ18e−x2 and θ19e−v2 model exponential decay or growth in position and velocity, and θ20 sinh(x) and θ21 cosh(x) provide smooth hyperbolic transitions. Finally, θ22x2t, θ23v2t, and θ24xvt are crossterms. OpenEvolve best program (Gemini) f(x, t, v;θ) =θ0 x+θ 1 sin(t) +θ 2 v+θ 3 x2v",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 28437,
+      "char_end": 29451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ad19984453e8d29f6d5bbe8445b661c",
+      "kind": "table",
+      "text": "+θ 4 x2 +θ 5 v|v|+θ 6 xv2 +θ 7 x3",
+      "order": 139,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 29453,
+      "char_end": 29486,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bf0a3b88b13b8cfd06780805fdb8a50",
+      "kind": "paragraph",
+      "text": "+θ 8 cos(t) +θ 9 v3 (11) The linear term θ0x represents a linear restoring force, while θ1 sin(t) and θ8 cos(t) together capture periodic driving or intrinsic oscillation via sine and cosine components. The term θ2v encodes linear damping. The term θ3x2v is a higher-order interaction combining velocity-dependent nonlinear stiffness with position-dependent nonlinear damping. The quadratic term θ4x2 introduces an asymmetric potential or nonlinear restoring force. Rather than v2, the term",
+      "order": 140,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 29488,
+      "char_end": 29978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b079511e51ae2a1162692b318352458",
+      "kind": "table",
+      "text": "θ5v|v| is used to model quadratic drag, where the damping",
+      "order": 141,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 29980,
+      "char_end": 30037,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daa938be1a3e9ecb4ae7dc1a5761e6a6",
+      "kind": "paragraph",
+      "text": "magnitude scales with v2 but the sign always opposes the direction of motion—a physically accurate form of turbulent 7",
+      "order": 142,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 30039,
+      "char_end": 30157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d49c82ceb66629bd380179e542ba5a8",
+      "kind": "paragraph",
+      "text": "or aerodynamic damping. The term θ6xv2 is a higher-order nonlinear interaction between position and velocity. The cubic termθ 7x3 introduces a Duffing-oscillator-like strong nonlinear restoring force, and θ9v3 adds cubic nonlinear damping.",
+      "order": 143,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "+v 2"
+      ],
+      "char_start": 30159,
+      "char_end": 30398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaf72f6d7f4a4c2fc8275eb35833d3a4",
+      "kind": "heading",
+      "text": "PACEvolve Best Program",
+      "order": 144,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 30400,
+      "char_end": 30422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b83dcf8232470d6b11c82cfcbd63663",
+      "kind": "equation",
+      "text": "f(x, t, v;θ) =θ0 x+θ 1 v3 +θ 2 v+θ 3 x e−v2 +θ 4 x3 +θ 5 v e−v2 +θ 6 xv2 +θ 7 sin(t)",
+      "order": 145,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 30424,
+      "char_end": 30508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54bc888e1ee2c43ad3bd21395ce87758",
+      "kind": "table",
+      "text": "+θ 8 cos(t) +θ 9 x|x|",
+      "order": 146,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 30510,
+      "char_end": 30531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82080e9fed34e349d4088e5a9f633007",
+      "kind": "paragraph",
+      "text": "(12) The linear term θ0x represents a linear restoring force, θ2v encodes linear damping, and θ1v3 introduces cubic nonlinear damping. The cross-term θ3x e−v2 is a nonlinear coupling between position and velocity, where the Gaussian envelope e−v2 localizes the interaction to low-velocity regimes. The term θ4x3 adds a nonlinear restoring force of the Duffing-oscillator type. The termθ5v e−v2 is a nonlinear damping contribution similarly localized by the Gaussian factor, attenuating its effect at large velocities. The higherorder cross-term θ6xv2 captures nonlinear coupling between position and the square of velocity. The terms θ7 sin(t) and θ8 cos(t) represent external periodic driving forces via sine",
+      "order": 147,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 30533,
+      "char_end": 31242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66673bed5bcdd2466e2ba360fc0e32ea",
+      "kind": "table",
+      "text": "and cosine components. Finally, θ9x|x| provides an ad-",
+      "order": 148,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 31244,
+      "char_end": 31298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f7b2a7b8c2fa1056ddbc24de0569f8e",
+      "kind": "paragraph",
+      "text": "ditional nonlinear restoring force whose magnitude scales with x2 but whose sign tracks the direction of displacement, analogous to quadratic drag in the position domain.",
+      "order": 149,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program"
+      ],
+      "char_start": 31300,
+      "char_end": 31470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aba39afde122fa7a0cfbd436f8bb5fde",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 150,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program",
+        "Conclusion"
+      ],
+      "char_start": 31472,
+      "char_end": 31482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb87ed46e84b331ed4467b51519d1eb0",
+      "kind": "paragraph",
+      "text": "We presentedGAE, a framework that augments LLMguided evolutionary search with three tightly coupled components: a relational GNN encoder that maps typed program graphs into structural embeddings, a contextual bandit selector that learns which program structures yield productive mutations, and a GRPO fine-tuning loop that adapts the mutation LLM online. Together, these components close three bottlenecks: reward sparsity, uninformed parent selection, and a static mutation operator. Experiments on symbolic regression show that GAE achieves the lowest NMSE both in-distribution and out-of-distribution among all baselines, attaining state-of-the-art performance. Limitations.Our method relies on a graph representation derived from Python ASTs, which encodes domain-specific inductive biases. Extending to other languages or domains requires redesigning node types and relations, limiting outof-the-box generalization and introducing non-trivial adaptation overhead. The benefit of graph-guided policy learning depends on a sufficiently expensive evaluation regime, as the GNN and reinforcement optimization introduce additional overhead.",
+      "order": 151,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "PACEvolve Best Program",
+        "Conclusion"
+      ],
+      "char_start": 31484,
+      "char_end": 32624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:027ab8e2447f3b4ed4206fc1f74c9b63",
+      "kind": "heading",
+      "text": "Impact Statement",
+      "order": 152,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Impact Statement"
+      ],
+      "char_start": 32626,
+      "char_end": 32642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b259d611b92bc17ae3173981ee13f1f",
+      "kind": "paragraph",
+      "text": "This work provides a fundamental methodological advancement in LLM-driven evolutionary algorithms. By introducing a dynamic, structure-aware paradigm—driven by relational graph encoders and online reinforcement optimization—our framework transforms evolutionary search from a largely stochastic process into a directed, self-improving trajectory. This algorithmic evolution is vital for scaling AI to tackle highly complex scientific problems, where the search spaces for viable mathematical or programmatic hypotheses are exceedingly vast and their evaluations computationally expensive. The immediate impact of this framework is demonstrated in its ability to automate the discovery of interpretable, closedform mathematical models from complex observational data. This methodology lays the technical groundwork for more comprehensive scientific agent systems designed to solve multifaceted scientific problems across theoretical physics, fluid dynamics, and complex systems engineering. We foresee no significant harmful social consequences specific to this work. The broader social consequences of our work are those that are well established when advancing the fields of Machine Learning and AI for Science, and we do not feel any must be specifically highlighted here.",
+      "order": 153,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Impact Statement"
+      ],
+      "char_start": 32644,
+      "char_end": 33918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d6d6a2dc78c3ff9a94bd356cbbcd895",
+      "kind": "heading",
+      "text": "References",
+      "order": 154,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "References"
+      ],
+      "char_start": 33920,
+      "char_end": 33930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7aa5995d61a9824b97035c2f9c9fa15",
+      "kind": "heading",
+      "text": "S. Batra, B. Tjanaka, M. C. Fontaine, A. Petrenko, S. Niko-",
+      "order": 155,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Batra, B. Tjanaka, M. C. Fontaine, A. Petrenko, S. Niko-"
+      ],
+      "char_start": 33932,
+      "char_end": 33991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51ac14745551d94218aa068b980f26c9",
+      "kind": "paragraph",
+      "text": "laidis, and G. Sukhatme. Proximal policy gradient arborescence for quality diversity reinforcement learning. arXiv preprint arXiv:2305.13795, 2023.",
+      "order": 156,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Batra, B. Tjanaka, M. C. Fontaine, A. Petrenko, S. Niko-"
+      ],
+      "char_start": 33993,
+      "char_end": 34140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b193469c7751c09654d3cf40f5b7bd22",
+      "kind": "heading",
+      "text": "A. Chen, D. M. Dohan, and D. R. So. Evoprompt-",
+      "order": 157,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. Chen, D. M. Dohan, and D. R. So. Evoprompt-"
+      ],
+      "char_start": 34142,
+      "char_end": 34188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7316390e46aced355b62b7dfe70992e2",
+      "kind": "paragraph",
+      "text": "ing: Language models for code-level neural architecture search, 2023. URL https://arxiv.org/abs/",
+      "order": 158,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. Chen, D. M. Dohan, and D. R. So. Evoprompt-"
+      ],
+      "char_start": 34190,
+      "char_end": 34286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0c6506900a83efb56e774e9ecb01920",
+      "kind": "heading",
+      "text": "14838.",
+      "order": 159,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. Chen, D. M. Dohan, and D. R. So. Evoprompt-",
+        "14838."
+      ],
+      "char_start": 34288,
+      "char_end": 34294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cf3b87860e887f24539c4af02dd8029",
+      "kind": "heading",
+      "text": "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Map-",
+      "order": 160,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Map-"
+      ],
+      "char_start": 34296,
+      "char_end": 34351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b971eff8ea1892a63c7d8554118cb183",
+      "kind": "paragraph",
+      "text": "elites with descriptor-conditioned gradients and archive distillation into a single policy. InProceedings of the Genetic and Evolutionary Computation Conference, pages 138–146, 2023.",
+      "order": 161,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Map-"
+      ],
+      "char_start": 34353,
+      "char_end": 34535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6239dd3edb1e57969588bf19bf27b060",
+      "kind": "heading",
+      "text": "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Syner-",
+      "order": 162,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Syner-"
+      ],
+      "char_start": 34537,
+      "char_end": 34594,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06fb4acbda1837fbc0dad4b794e35dd9",
+      "kind": "paragraph",
+      "text": "gizing quality-diversity with descriptor-conditioned reinforcement learning.ACM Transactions on Evolutionary Learning, 5(1):1–35, 2025.",
+      "order": 163,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "M. Faldor, F. Chalumeau, M. Flageat, and A. Cully. Syner-"
+      ],
+      "char_start": 34596,
+      "char_end": 34731,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a7568295c69dbc7e8e9c4b4bcf58c5a",
+      "kind": "heading",
+      "text": "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+      "order": 164,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and"
+      ],
+      "char_start": 34733,
+      "char_end": 34786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65e8f15e242befec8d5b68a4edb86363",
+      "kind": "paragraph",
+      "text": "efficient hyperparameter optimization at scale. InInternational conference on machine learning, pages 1437–1446. PMLR, 2018.",
+      "order": 165,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and"
+      ],
+      "char_start": 34788,
+      "char_end": 34912,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a3c840b269412f01512ca7ee2c3dee2",
+      "kind": "heading",
+      "text": "Grillotti and A. Cully. Unsupervised behavior discovery",
+      "order": 166,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+        "Grillotti and A. Cully. Unsupervised behavior discovery"
+      ],
+      "char_start": 34914,
+      "char_end": 34969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e579da9b12f58cb0af5755715616ef54",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 167,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+        "Grillotti and A. Cully. Unsupervised behavior discovery"
+      ],
+      "char_start": 34971,
+      "char_end": 34972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:135660c19b03a5d79ab23ec24a951ccf",
+      "kind": "paragraph",
+      "text": "with quality-diversity optimization.IEEE Transactions on Evolutionary Computation, 26(6):1539–1552, 2022. M. Landajuela, C. S. Lee, J. Yang, R. Glatt, C. P. Santiago,",
+      "order": 168,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+        "Grillotti and A. Cully. Unsupervised behavior discovery"
+      ],
+      "char_start": 34974,
+      "char_end": 35140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83612da5db5cb803e7a57e9d81d1307c",
+      "kind": "heading",
+      "text": "Aravena, T. Mundhenk, G. Mulcahy, and B. K. Petersen.",
+      "order": 169,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+        "Aravena, T. Mundhenk, G. Mulcahy, and B. K. Petersen."
+      ],
+      "char_start": 35142,
+      "char_end": 35195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c0711d839a5b0da6ffdb14c9d762266",
+      "kind": "paragraph",
+      "text": "A unified framework for deep symbolic regression.Advances in Neural Information Processing Systems, 35: 33985–33998, 2022.",
+      "order": 170,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "S. Falkner, A. Klein, and F. Hutter. Bohb: Robust and",
+        "Aravena, T. Mundhenk, G. Mulcahy, and B. K. Petersen."
+      ],
+      "char_start": 35197,
+      "char_end": 35319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d65c26b6076a0d35cf0ea9f6b1ecdc38",
+      "kind": "heading",
+      "text": "R. T. Lange, Y . Imajuku, and E. Cetin. Shinkaevolve: To-",
+      "order": 171,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "R. T. Lange, Y . Imajuku, and E. Cetin. Shinkaevolve: To-"
+      ],
+      "char_start": 35321,
+      "char_end": 35378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3283bedeae6a3393bc86f714c791c7ae",
+      "kind": "paragraph",
+      "text": "wards open-ended and sample-efficient program evolution.arXiv preprint arXiv:2509.19349, 2025. J.-B. Mouret and J. Clune. Illuminating search spaces by mapping elites.arXiv preprint arXiv:1504.04909, 2015. O. Nilsson and A. Cully. Policy gradient assisted mapelites. InProceedings of the Genetic and Evolutionary Computation Conference, pages 866–875, 2021. A. Novikov, N. V˜u, M. Eisenberger, E. Dupont, P.-S. Huang, A. Z. Wagner, S. Shirobokov, B. Kozlovskii, F. J. Ruiz, A. Mehrabian, et al. Alphaevolve: A coding agent for scientific and algorithmic discovery.arXiv preprint arXiv:2506.13131, 2025.",
+      "order": 172,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "R. T. Lange, Y . Imajuku, and E. Cetin. Shinkaevolve: To-"
+      ],
+      "char_start": 35380,
+      "char_end": 35982,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a59b2b252d01cfeb1a332615ae9ffde",
+      "kind": "heading",
+      "text": "B. Romera-Paredes, M. Barekatain, A. Novikov, M. Ba-",
+      "order": 173,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "B. Romera-Paredes, M. Barekatain, A. Novikov, M. Ba-"
+      ],
+      "char_start": 35984,
+      "char_end": 36036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c039e2fe5bd76e754b038d63942a4448",
+      "kind": "paragraph",
+      "text": "log, M. P. Kumar, E. Dupont, F. J. Ruiz, J. S. Ellenberg, P. Wang, O. Fawzi, et al. Mathematical discoveries from program search with large language models.Nature, 625 (7995):468–475, 2024. A. Sharma. Openevolve: an open-source evolutionary coding agent, 2025a. URL https://github. com/algorithmicsuperintelligence/ openevolve. A. Sharma. Openevolve: Open-source evolutionary code optimization with real-world gpu kernel discovery.Hugging Face Blog, 2025b. URL https://huggingface. co/blog/codelion/openevolve. P. Shojaee, K. Meidani, S. Gupta, A. B. Farimani, and C. K. Reddy. Llm-sr: Scientific equation discovery via programming with large language models.arXiv preprint arXiv:2404.18400, 2024. P. Shojaee, N.-H. Nguyen, K. Meidani, A. B. Farimani, K. D. Doan, and C. K. Reddy. Llm-srbench: A new benchmark for scientific equation discovery with large language models.arXiv preprint arXiv:2504.10415, 2025.",
+      "order": 174,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "B. Romera-Paredes, M. Barekatain, A. Novikov, M. Ba-"
+      ],
+      "char_start": 36038,
+      "char_end": 36947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:294bc736200f65db66daa93fc856a161",
+      "kind": "heading",
+      "text": "A. Surina, A. Mansouri, L. Quaedvlieg, A. Seddas, M. Via-",
+      "order": 175,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. Surina, A. Mansouri, L. Quaedvlieg, A. Seddas, M. Via-"
+      ],
+      "char_start": 36949,
+      "char_end": 37006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:703efbf05f9d331085b3d3abddc61058",
+      "kind": "paragraph",
+      "text": "zovska, E. Abbe, and C. Gulcehre. Algorithm discovery with llms: Evolutionary search meets reinforcement learning.arXiv preprint arXiv:2504.05108, 2025. Q. Team. Qwen3.5 technical report. https://github. com/QwenLM/Qwen3.5, 2026. Accessed: 2026-05- 08. Y . Wang, S.-R. Su, Z. Zeng, E. Xu, L. Ren, X. Yang,",
+      "order": 176,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. Surina, A. Mansouri, L. Quaedvlieg, A. Seddas, M. Via-"
+      ],
+      "char_start": 37008,
+      "char_end": 37313,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8ec0cca246bafc8331aaf777cdcb872",
+      "kind": "heading",
+      "text": "Z. Huang, X. He, L. Ma, B. Peng, et al. Thetaevolve",
+      "order": 177,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. Huang, X. He, L. Ma, B. Peng, et al. Thetaevolve"
+      ],
+      "char_start": 37315,
+      "char_end": 37366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0811c314f0a415d457736e675e3dc8a1",
+      "kind": "paragraph",
+      "text": "Test-time learning on open problems.arXiv preprint arXiv:2511.23473, 2025.",
+      "order": 178,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. Huang, X. He, L. Ma, B. Peng, et al. Thetaevolve"
+      ],
+      "char_start": 37368,
+      "char_end": 37442,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f4b61544452d9ddadfeba9e2113220b",
+      "kind": "heading",
+      "text": "White, W. Neiswanger, and Y . Savani. Bananas: Bayesian",
+      "order": 179,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. Huang, X. He, L. Ma, B. Peng, et al. Thetaevolve",
+        "White, W. Neiswanger, and Y . Savani. Bananas: Bayesian"
+      ],
+      "char_start": 37444,
+      "char_end": 37499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8184ac413511b73aef862aba7bba0bc5",
+      "kind": "paragraph",
+      "text": "optimization with neural architectures for neural architecture search. InProceedings of the AAAI conference on artificial intelligence, volume 35, pages 10293–10301, 2021. M. Yan, B. Peng, B. Coleman, Z. Chen, Z. Xie, S. Chen,",
+      "order": 180,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. Huang, X. He, L. Ma, B. Peng, et al. Thetaevolve",
+        "White, W. Neiswanger, and Y . Savani. Bananas: Bayesian"
+      ],
+      "char_start": 37501,
+      "char_end": 37727,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ff462860389a68297d58747f37e11c4",
+      "kind": "heading",
+      "text": "Z. He, N. Sachdeva, I. Ye, W. Wang, et al. Pacevolve: En-",
+      "order": 181,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. He, N. Sachdeva, I. Ye, W. Wang, et al. Pacevolve: En-"
+      ],
+      "char_start": 37729,
+      "char_end": 37786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:600084316c8825d88dd4bec833073463",
+      "kind": "paragraph",
+      "text": "abling long-horizon progress-aware consistent evolution. arXiv preprint arXiv:2601.10657, 2026. 9",
+      "order": 182,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Z. He, N. Sachdeva, I. Ye, W. Wang, et al. Pacevolve: En-"
+      ],
+      "char_start": 37788,
+      "char_end": 37885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fd962dacb426ef7f7876a81ed95524f",
+      "kind": "heading",
+      "text": "A. GNN Architecture Details",
+      "order": 183,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details"
+      ],
+      "char_start": 37887,
+      "char_end": 37914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:727e5938cd119cdfa2f6d60f7fc96309",
+      "kind": "table",
+      "text": "Input projection.For task τ, the one-hot matrix X∈ {0,1} N×|V τ | is projected to hidden dimension h: h(0) =",
+      "order": 184,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details"
+      ],
+      "char_start": 37916,
+      "char_end": 38024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f3556bbb8c249a26e4d32b5a785a170",
+      "kind": "paragraph",
+      "text": "GELU(XW in).",
+      "order": 185,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details"
+      ],
+      "char_start": 38026,
+      "char_end": 38038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74153e98923622f48ef657ded9a23b43",
+      "kind": "table",
+      "text": "Relational convolution.For each relation r∈ {1, . . . ,|E|}, a dedicated Wr ∈R h×h transforms source features; messages",
+      "order": 186,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details"
+      ],
+      "char_start": 38040,
+      "char_end": 38159,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba3e3a89595b0390d2b3ebaa9cf0dc5c",
+      "kind": "paragraph",
+      "text": "are mean-aggregated and summed with a self-loop Wself. Each layer applies LayerNorm and GELU (Eq. 2). This is a relational GCN, and no attention weights are computed. Fallback.Any program failing AST parsing produces a single unknown/unknown layer node; the encoder still produces a validz∈R 128. B. Decomposability of SAC, GRPO, and the GNN Encoder The SAC meta-controller, the GRPO fine-tuning loop, and the GNN encoder optimize disjoint parameter sets ({ϕ, θ1, θ2}, θLLM, and θGNN respectively). No gradients flow between them, and each operates on its own timescale (per generation, per group, and everyKgenerations). Disabling any one component degrades gracefully to a simpler baseline: Component Parameters Training signal Without it SAC meta-controllerϕ, θ 1, θ2 r= clip(R(β ⋆)) +λ 1rnov −λ 2rcx (Eq. 6) Uniform mutation hint GRPOθ LLM ˆAg fromR grp g =R g −R α (Eqs. 8–9) Frozen LLM GNN encoderθ GNN LGNN: MSE onL(Eq. 5) Stale embeddings Parent selection is uniform over the elite archive in all configurations and is unaffected by any of the three components.",
+      "order": 187,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details"
+      ],
+      "char_start": 38161,
+      "char_end": 39230,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b157e3b6f30770b72e169dd56a96e60",
+      "kind": "heading",
+      "text": "Discrete Action Space — Mutation Operators",
+      "order": 188,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details",
+        "Discrete Action Space — Mutation Operators"
+      ],
+      "char_start": 39232,
+      "char_end": 39274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a61e89b42eb91de0f0eaa269b6e443c9",
+      "kind": "table",
+      "text": "The Discrete SAC meta-controller operates over a flat, fixed action space of |A|= 5×30×18 = 2700 discrete actions,",
+      "order": 189,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details",
+        "Discrete Action Space — Mutation Operators"
+      ],
+      "char_start": 39276,
+      "char_end": 39390,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78a7be1d3031410bcd5e6daf6fc4292c",
+      "kind": "paragraph",
+      "text": "each encoding a tuple (mutation type,target node id,argument index). The target node id indexes the parent’s expression tree in BFS order (capped at 30 nodes), and the argument index selects an operator or constant from the vocabularies below. The mutation-type component of the selected action is additionally injected into the LLM prompt as a structural hint (“prefer <type> changes”), steering generation toward the chosen edit class. The full tuple is used when the mutation is applied directly at the AST level (the fallback path when no valid LLM completion is produced).",
+      "order": 190,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details",
+        "Discrete Action Space — Mutation Operators"
+      ],
+      "char_start": 39392,
+      "char_end": 39969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b1323504464920132610f51555c6c09",
+      "kind": "caption",
+      "text": "Table 3.Discrete mutation-type vocabulary for the SAC meta-controller (symbolic regression).",
+      "order": 191,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "A. GNN Architecture Details",
+        "Discrete Action Space — Mutation Operators"
+      ],
+      "char_start": 39971,
+      "char_end": 40063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56d39ea4d9840d6129060e899cbe996d",
+      "kind": "heading",
+      "text": "Action Label Description",
+      "order": 192,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Action Label Description"
+      ],
+      "char_start": 40065,
+      "char_end": 40089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22cba10a0e7f336aebab75b4382454f3",
+      "kind": "paragraph",
+      "text": "0add operatorWrap a node with a unary op, or insert a binary op above it 1replace operatorReplace an existing operator node (arity-preserving) 2delete nodeRemove a unary wrapper, promoting its child 3insert constantMultiply a sub-expression by a constant 4subtree rewriteReplace the node’s subtree with a fresh random tree The operator vocabulary comprises 5 binary operators (add, sub, mul, div, pow) and 13 unary functions (sin, cos, tan, exp, log, sqrt, abs, tanh, arcsin, arccos, arctan, sinh, cosh); the constant vocabulary contains 9 values {−2,−1,−0.5,0.5,1,2,3, π, e}, giving an argument-index space of size max(18,9) = 18 . All expressions are built from the three observable inputs: position x, velocity v, and time t. Numeric constants introduced as params[j] remain free parameters optimized by BFGS during evaluation. Generated code applies numerical guards (clipped exponents, ϵ-protected division and logarithms) so that every mutated program remains evaluable. 10",
+      "order": 193,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Action Label Description"
+      ],
+      "char_start": 40091,
+      "char_end": 41070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37a73827ae1be3e970076eaf9d9a8046",
+      "kind": "heading",
+      "text": "D. Algorithm",
+      "order": 194,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "D. Algorithm"
+      ],
+      "char_start": 41072,
+      "char_end": 41084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bcb6cd15f8add74870a26de38b6ed6f",
+      "kind": "paragraph",
+      "text": "Algorithm 2Discrete SAC for Program Mutation Require:GNN encoderΦ, evaluatorE, elite populationP, prioritized replay bufferB, warm-upW, total stepsS",
+      "order": 195,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "D. Algorithm"
+      ],
+      "char_start": 41086,
+      "char_end": 41234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e65659dd05fbfe27cae5781d906643a",
+      "kind": "heading",
+      "text": "Initialise policyπ ϕ, twin criticsQ θ1 , Qθ2, targetsQ ¯θ1 , Q¯θ2, temperaturelogα",
+      "order": 196,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Initialise policyπ ϕ, twin criticsQ θ1 , Qθ2, targetsQ ¯θ1 , Q¯θ2, temperaturelogα"
+      ],
+      "char_start": 41236,
+      "char_end": 41318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf65bc889bc5fc74bbbf1248d40cc41b",
+      "kind": "heading",
+      "text": "fors= 1, . . . , Sdo",
+      "order": 197,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "fors= 1, . . . , Sdo"
+      ],
+      "char_start": 41320,
+      "char_end": 41340,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1548f615fac5e25467c38bf13bf76aa",
+      "kind": "heading",
+      "text": "α prog ∼Uniform(P)▷parent program, sampled uniformly",
+      "order": 198,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "α prog ∼Uniform(P)▷parent program, sampled uniformly"
+      ],
+      "char_start": 41342,
+      "char_end": 41394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5642eb5bc0b5b1ee1461ef6c5b8d9cc2",
+      "kind": "heading",
+      "text": "z←Φ(build graph(αprog))",
+      "order": 199,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "z←Φ(build graph(αprog))"
+      ],
+      "char_start": 41396,
+      "char_end": 41419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:109b901f045eaaf18f4f3871c2a46680",
+      "kind": "heading",
+      "text": "a∼",
+      "order": 200,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "a∼"
+      ],
+      "char_start": 41421,
+      "char_end": 41423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4496e8168eda8c7a1766b97ce49309e8",
+      "kind": "paragraph",
+      "text": "( Uniform(A)ifs < W πϕ(· |z)otherwise",
+      "order": 201,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "a∼"
+      ],
+      "char_start": 41425,
+      "char_end": 41462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad3cf19037c518b16e7236dae2e1ed97",
+      "kind": "heading",
+      "text": "β←mutate(α prog,decode(a))▷AST edit viaMutableSRTree",
+      "order": 202,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "β←mutate(α prog,decode(a))▷AST edit viaMutableSRTree"
+      ],
+      "char_start": 41464,
+      "char_end": 41516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23372b880979f6979786fd2186c9bc59",
+      "kind": "heading",
+      "text": "R(β)← E(β)▷BFGS constant fit+NMSE",
+      "order": 203,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "R(β)← E(β)▷BFGS constant fit+NMSE"
+      ],
+      "char_start": 41518,
+      "char_end": 41551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c93792848a87179b6d98e975d6b595f",
+      "kind": "heading",
+      "text": "z ′ ←Φ(build graph(β))",
+      "order": 204,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "z ′ ←Φ(build graph(β))"
+      ],
+      "char_start": 41553,
+      "char_end": 41575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66d150450e306ead117e6e31e148139f",
+      "kind": "heading",
+      "text": "r←clip",
+      "order": 205,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "r←clip"
+      ],
+      "char_start": 41577,
+      "char_end": 41583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91087416ee53c14edbba5bb5588b8c7f",
+      "kind": "paragraph",
+      "text": "R(β), rmin, rmax",
+      "order": 206,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "r←clip"
+      ],
+      "char_start": 41585,
+      "char_end": 41601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58dc9d51174e8f8abb61806673a07d5f",
+      "kind": "paragraph",
+      "text": "+λ 1 rnov(z′,P)−λ 2 rcx(β)",
+      "order": 207,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "r←clip"
+      ],
+      "char_start": 41603,
+      "char_end": 41629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f2ad4a3ec3fecefee9f3fcb97da20c9",
+      "kind": "heading",
+      "text": "Store(z, a, r, z ′)inB",
+      "order": 208,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Store(z, a, r, z ′)inB"
+      ],
+      "char_start": 41631,
+      "char_end": 41653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c9d7874a816d0e4e99a69ab59c88659",
+      "kind": "heading",
+      "text": "if|B| ≥32ands≥Wthen",
+      "order": 209,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "if|B| ≥32ands≥Wthen"
+      ],
+      "char_start": 41655,
+      "char_end": 41674,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b49f9f439ab3d87af4b550b44cac44a",
+      "kind": "heading",
+      "text": "Sample prioritized minibatch; updateQ θ1 , Qθ2,π ϕ, andα",
+      "order": 210,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Sample prioritized minibatch; updateQ θ1 , Qθ2,π ϕ, andα"
+      ],
+      "char_start": 41676,
+      "char_end": 41732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:beae899229030b1e4148274bc227c027",
+      "kind": "heading",
+      "text": "Soft-update targetsQ ¯θ1 , Q¯θ2 with Polyak coefficientτ",
+      "order": 211,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Soft-update targetsQ ¯θ1 , Q¯θ2 with Polyak coefficientτ"
+      ],
+      "char_start": 41734,
+      "char_end": 41790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2bd56c099fddfb0006a41b9b3076ecc",
+      "kind": "heading",
+      "text": "end if",
+      "order": 212,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "end if"
+      ],
+      "char_start": 41792,
+      "char_end": 41798,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34b34c263dfbb59b30ec5eda15f1f38c",
+      "kind": "heading",
+      "text": "P.Insert(β, R(β), z ′)▷keep top-Nby score",
+      "order": 213,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "P.Insert(β, R(β), z ′)▷keep top-Nby score"
+      ],
+      "char_start": 41800,
+      "char_end": 41841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94b49dd76ff95ead61986a6d45114e79",
+      "kind": "heading",
+      "text": "end for",
+      "order": 214,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "end for"
+      ],
+      "char_start": 41843,
+      "char_end": 41850,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41cf3fa9ed9aef648a1918bec52f63cc",
+      "kind": "heading",
+      "text": "E. Hyperparameters",
+      "order": 215,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "E. Hyperparameters"
+      ],
+      "char_start": 41852,
+      "char_end": 41870,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df40502d3b91500feb51dfa62af8509d",
+      "kind": "caption",
+      "text": "Table 4 collects all parameters introduced in the methodology (§3.2–§3.5), grouped by component. Values marked † are set",
+      "order": 216,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "E. Hyperparameters"
+      ],
+      "char_start": 41872,
+      "char_end": 41992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d365dbb13941955ca6ed791885e997eb",
+      "kind": "paragraph",
+      "text": "in the implementation but not stated explicitly in the main text. 11",
+      "order": 217,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "E. Hyperparameters"
+      ],
+      "char_start": 41994,
+      "char_end": 42062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d310400dc7fd40dbb5ecc77a472a1d8",
+      "kind": "caption",
+      "text": "Table 4.Hyperparameters of GAE, grouped by component.",
+      "order": 218,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "E. Hyperparameters"
+      ],
+      "char_start": 42064,
+      "char_end": 42117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d23301cd1500d324b39a0ec97ce6b1e3",
+      "kind": "heading",
+      "text": "Parameter Meaning Value",
+      "order": 219,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42119,
+      "char_end": 42142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee83eb4de53f5dc87f5499d0a67b9241",
+      "kind": "paragraph",
+      "text": "Elite archive and evolution loop (§3.2, Alg. 1) NArchive size (top-Nelite population)50 GChildren generated per generation (group size)8 KGNN fine-tuning interval (generations)3 dStructural embedding dimension128 GNN encoder (§3.3) FNode-type vocabulary size (one-hot input)17",
+      "order": 220,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42144,
+      "char_end": 42420,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:280ce6e09d12a4f57e470c3195900471",
+      "kind": "table",
+      "text": "|E|Number of typed edge relations6",
+      "order": 221,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42422,
+      "char_end": 42456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85d8f6b96a15b98991af12b91480c61a",
+      "kind": "paragraph",
+      "text": "LRelational message-passing layers2 hHidden width (pooled projection gives2h=d)64 — Gradient steps per fine-tuning round300 — Sliding-window size ofL(recent pairs)300",
+      "order": 222,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42458,
+      "char_end": 42624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4315f8eb5d8843f84d390b8cced0a58c",
+      "kind": "table",
+      "text": "— Minimum samples before fine-tuning (|L|)10",
+      "order": 223,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42626,
+      "char_end": 42670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff24dca76d2c5dd94d9c0fe2a57d0383",
+      "kind": "paragraph",
+      "text": "Discrete SAC meta-controller (§3.4)",
+      "order": 224,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42672,
+      "char_end": 42707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52874589f37b8acde87404734c410cfb",
+      "kind": "table",
+      "text": "|A|Action-space size(5×30×18) 2700",
+      "order": 225,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42709,
+      "char_end": 42743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6231a563ac619d842fad11daa2db398",
+      "kind": "paragraph",
+      "text": "— Policy/critic MLP hidden width256 τPolyak target-update coefficient0.005 WWarm-up steps (uniform actions)32 — Minimum buffer size before updates32 — Replay buffer capacity (prioritized)10,000 — Mini-batch size64 γDiscount factor in the TD target0.99 † — SAC learning rate (Adam, all networks)3×10 −4† ¯HTarget entropy (auto-tunedα)− 1",
+      "order": 226,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "Parameter Meaning Value"
+      ],
+      "char_start": 42745,
+      "char_end": 43081,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca18eed3d273a078be36fdf934a4b5b0",
+      "kind": "heading",
+      "text": "log|A|",
+      "order": 227,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A|"
+      ],
+      "char_start": 43083,
+      "char_end": 43089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d96d00465f359d4ab89f028fd5df56d9",
+      "kind": "paragraph",
+      "text": "rmin, rmax Task-score clipping bounds (Eq. 6)−5,15 λ1 Novelty bonus weight (Eq. 6)0.1 λ2 Complexity penalty weight (Eq. 6)0.05 — Complexity penalty onset (AST nodes, Eq. 6)20 GRPO LLM fine-tuning (§3.5) ϵclip PPO clipping range (Eq. 8)0.2 βkl KL coefficient (monitoring only, Eq. 8)0.1 — Crash-sentinel reward threshold (dropped)−10 — Advantage-std skip threshold10 −8 12",
+      "order": 228,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "GAE: Graph-Augmented Evolution for Scientific Discovery",
+        "log|A|"
+      ],
+      "char_start": 43091,
+      "char_end": 43462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 12,
+    "removed_repeated_edge_lines": 11,
+    "extraction_method_counts": {
+      "native_text": 12
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.10127",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 12,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

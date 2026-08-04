@@ -1,0 +1,1855 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "5cd3b4d0e8d967c1a9ca592cd6c4638aab57e2b8030b5097b55426cbb3df3c87",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:94b74374bfefb63f1e8902063847e1bb",
+      "kind": "heading",
+      "text": "BatteryLake: Agentic, Physics-Grounded",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded"
+      ],
+      "char_start": 0,
+      "char_end": 38,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec932132cc83fdcbce18a65a6a158689",
+      "kind": "heading",
+      "text": "Curation of Heterogeneous Battery Aging Data",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Curation of Heterogeneous Battery Aging Data"
+      ],
+      "char_start": 40,
+      "char_end": 84,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66a0715ce2b437cb60ebe28b237a88d5",
+      "kind": "paragraph",
+      "text": "and Benchmarking Tianwen Zhu, Hao Wang, and Y onggang Wen,Fellow, IEEE Abstract—Public battery aging datasets are a critical asset for advanced health management. However, their practical use is often limited by inconsistent file formats, unclear data schemas, and metadata that are dispersed across repositories an publications. Current curation practices remain largely manual and dataset-specific, making them difficult to reproduce. Meanwhile, general-purpose data integration tools often fail to capture the domain-specific semantics of electrochemical time-series data. In this paper, we presents BatteryLake, a governed data lakehouse that turns raw public battery data into benchmark-ready assets through anagentic, evidence-groundedcuration framework. We make three main contributions to the automated curation of public battery datasets. The first capability combines evidence-grounded metadata extraction with explicit abstention, and schema mapping with program synthesis for dataset-specific converters. Both tasks are handled by large language model (LLM) agents. Each agent output must be grounded in verbatim source evidence. If such evidence is unavailable, the agent abstains rather than producing an unsupported result. Second, we design a human-in-the-loop verification mechanism that frames field extraction as a selective prediction problem, deferring low-confidence extractions to human review. Low-confidence fields are routed to domain experts, while high-confidence fields are accepted only when the residual error rate is bounded below a prescribed threshold. The admitted data must then pass a 26-rule",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Curation of Heterogeneous Battery Aging Data"
+      ],
+      "char_start": 86,
+      "char_end": 1715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc1e5e6f5d747a1d109713565a6494db",
+      "kind": "paragraph",
+      "text": "validation gate covering schema consistency, statistical validity, and physical plausibility. Third, on top of the curated data lake we release an open benchmark spanning 41 curated datasets from over 25 institutions, covering various chemistries across cylindrical, pouch, and prismatic formats and spanning cycle-aging, drive-cycle, impedance, calendar-aging, and thermal-abuse regimes, with standardized state of health (SOH) and remaining useful life (RUL) tasks, three split protocols, and eight baseline model families. The platform, benchmark, and curation protocol are publicly available at https://tianwen1209.github.io/batterylake/. Index Terms—Data curation, data lakes, large language models, human-in-the-loop, benchmarks, battery health management. ✦",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Curation of Heterogeneous Battery Aging Data"
+      ],
+      "char_start": 1717,
+      "char_end": 2481,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe6b8e7c67da03045452de71780e1f7f",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 2483,
+      "char_end": 2495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d25edcd3263ac2b51e14d6d3080df76f",
+      "kind": "paragraph",
+      "text": "L ITHIUM-IONbatteries are now widely deployed in electric vehicles, grid-scale storage, and portable electronics, and in all of these settings their capacity and safety margins decline as the cells age. How quickly a cell loses capacity, and how close it is to end of life, determines when it must be retired, how much range or backup it can still deliver, and whether it can be reused or must be replaced. These quantities are hard to obtain from first principles, because degradation couples chemistry, temperature, load, and usage history, and no compact physical model captures all of these effects across cell types and operating conditions. As a result, degradation behavior is increasingly learned from data, using machine learning over large-scale cycling experiments [1], [2]. Over the past two decades, laboratories worldwide have released dozens of aging datasets, from the NASA Prognostics Center of Excellence [3] and CALCE [4] to the 124-cell fast-charging study of Severson et al. [1], which together contain millions of charge–discharge cycles. In principle, this is ample data for state of health (SOH) estimation, remaining useful life (RUL) prediction, and crosscondition generalization research. In practice, however, its •T. Zhu, H. Wang, and Y. Wen are with the College of Computing and Data Science, Nanyang Technological University, Singapore. E-mail: {tianwen001, hao-wang, ygwen}@ntu.edu.sg large-scale use is still limited by poor curation: surveys of open battery data report fragmented repositories, inconsis-",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 2497,
+      "char_end": 4035,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:497c8b93d79a2cf848fca6bd4f3c843f",
+      "kind": "paragraph",
+      "text": "tent file formats, and incomplete documentation [6]. The obstacle is not datavolumebut dataengineering. Three structural problems recur. (i)Format and schema heterogeneity.Raw releases arrive in many file formats: CSV , Excel, MATLAB.mat, HDF5, JSON, Parquet, and proprietary cycler exports (Arbin, MACCOR, Neware). Within them, the same physical measurement appears under dozens of aliases (Voltage,Ecell/V,V), in inconsistent units (Current_mAvs. amperes; Kelvin vs. Celsius), and with conflicting sign conventions for charge and discharge current. (ii)Metadata dispersion.Experimentdefining facts such as cell chemistry, nominal capacity, cycling protocol, temperature, cutoff voltages, and software license are rarely stored in the data files themselves. This information is usually scattered across repository landing pages, README files, and the prose of companion papers, and should be recovered by hand. (iii)Benchmark nonreproducibility.Different studies use different parsing routines, cycle segmentation methods, label definitions, and train/test splits. As a result, published model comparisons are hard to reproduce and rarely directly comparable, as documented in the battery machine learning literature [7]. Classical battery data integration offers only partial relief. Schema matchers such as Cupid [10] operate on relational metadata and cannot exploit the physical se-",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 4037,
+      "char_end": 5424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e205f8adbd10756ae9a41ed8e78e11b2",
+      "kind": "table",
+      "text": "arXiv:2607.09762v1  [cs.AI]  6 Jul 2026",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 5426,
+      "char_end": 5465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19cfbb8f72fd4a953afdcae58b698783",
+      "kind": "paragraph",
+      "text": "mantics (value ranges, units, monotonic degradation) that disambiguate battery signals; data validation systems [19] check constraints but do not author the mappings; and data lake management [17] presumes ingested data whose provenance is already understood. Recent work shows that large language models can perform data wrangling and extraction tasks with little supervision [13], [14], but large language models (LLMs) used naively for scientific curation introduce a failure mode worse than missing data:plausible fabricationof metadata (e.g., guessing a chemistry from a dataset name), which silently corrupts every downstream analysis. We argue that trustworthy curation of scientific data at scale requires coupling LLM agents’ flexibility with three safeguards that are largely absent from prior LLM data wrangling work: (1)evidence grounding with explicit abstention: every extracted data must be justified by verbatim source text, and fields without support are marked “not stated” rather than imputed; (2)human verification: Perfield confidence scores route uncertain decisions to human experts and allow the review process to move beyond allor-nothing manual inspection. By adjusting the confidence threshold, the system can trade automatic coverage against the residual error risk of admitted fields; and (3)executable validation: agent-synthesized converters are accepted only if their outputs pass a machine-checkable gate combining schema, statistical, and battery-specific physical-plausibility constraints.",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 5467,
+      "char_end": 6991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4e350c60db04aed00dc301f54336594",
+      "kind": "paragraph",
+      "text": "We instantiate these principles in BatteryLake, a governed lakehouse and public benchmark for battery aging data. This paper makes the following contributions: •Problem formalization.We formalize battery dataset onboarding as (a) evidence-grounded structured extraction with abstention over multi-source documents, and (b) schema mapping with converter program synthesis, and we cast human review as selective prediction with an explicit risk–coverage objective. •Agentic curation framework.We design a two-stage, provenance-ranked extraction algorithm over dataset landing pages and companion papers, a file-role classifier and generate–validate–repair loop for converter synthesis, and a 26-rule validation gate spanning four quality dimensions including physical plausibility. •Governed lakehouse and open benchmark.We define a four-layer canonical data model with typed units and integrity constraints, and release a benchmark of 41 curated datasets from 25 institutions with standardized SOH/RUL tasks, three split protocols, eight baseline families, and versioned reproducibility manifests. While BatteryLake is instantiated for batteries, the framework includes evidence-grounded extraction, selective verification, and physically validated program synthesis. We design BatteryLake to address a general pattern in scientific data engineering: converting long tails of small, heterogeneous, under-documented datasets into governed, analysisready collections.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "INTRODUCTION"
+      ],
+      "char_start": 6993,
+      "char_end": 8457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57f3116ffaf6525bf0e8c3373659604f",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "RELATEDWORK"
+      ],
+      "char_start": 8459,
+      "char_end": 8470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9b04aac96c060927a16ec81f98c7bc0",
+      "kind": "paragraph",
+      "text": "LLMs for data integration and extraction.Foundation models have recently been explored for data integration and preparation tasks. Prior work has shown their ability to perform entity matching, error detection, and imputation with few or no labeled examples [13]. Other studies have used them to synthesize extraction code for semi-structured corpora [14] and to unify diverse data preparation tasks under instruction tuning [15]. Pre-LLM neural matchers such as Ditto [11] and unified matching models such as Unicorn [12] established that pretrained language models transfer across integration tasks. First, we targetscientific metadata, whose ground truth is sparse and scattered across web pages and papers. For such data, we make abstention and verbatim evidence first-class outputs, rather than the calibration afterthought they are in prior data wrangling systems. Our converter synthesis relates to agentic tooluse [16], but adds a domain-specific executable validator as the acceptance test. Data lakes, validation, and governance.Data lake management research addresses ingestion, discovery, and versioning over schema- on-read collections [17]; lakehouse systems such as Delta Lake add ACID guarantees over open formats [18]; and declarative validation systems verify data quality constraints at scale [19]. Constraint-driven repair engines such as HoloClean [20] clean data already inside the warehouse. BatteryLake complements this line: it governs theboundaryof the lake, using agents to author the mappings and metadata that validation systems presuppose,",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "RELATEDWORK"
+      ],
+      "char_start": 8472,
+      "char_end": 10041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b73d73fc34a6a67cf98b2a3fa26418c",
+      "kind": "paragraph",
+      "text": "and extends generic constraints with electrochemical plausibility rules (voltage bounds, coulombic-efficiency ranges, capacity monotonicity). Battery data infrastructure and benchmarks.The battery community has produced open datasets [3], [4], [1], [5], surveys of their fragmentation [6], processing toolkits such as BEEP for cycler-file featurization [8], ontologies for semantic interoperability [9], and benchmark libraries such as BatteryML [7]. These efforts either hand-curate a fixed set of datasets or standardize formats prospectively for new data. BatteryLake is, to the best of our knowledge, the first system to automateretrospectiveonboarding of the long tail of already-published battery datasets with auditable provenance, and the first battery benchmark whose every admitted dataset carries machine-checkable curation evidence, aligning the collection with FAIR principles [24].",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "RELATEDWORK"
+      ],
+      "char_start": 10043,
+      "char_end": 10938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ddf3fc878c1ccd56998e2ed23bd8e4d",
+      "kind": "heading",
+      "text": "PROBLEMFORMULATION",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION"
+      ],
+      "char_start": 10940,
+      "char_end": 10958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:012d355ffb1ddaa385a42ff2d730ba8d",
+      "kind": "paragraph",
+      "text": "We first define the canonical target of curation (§3.1), then the two onboarding problems (§3.2, §3.3), and the selective verification objective (§3.4).",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION"
+      ],
+      "char_start": 10960,
+      "char_end": 11112,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b03e536e978de3ed4e350317ff6a147",
+      "kind": "heading",
+      "text": "Canonical Data Model",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION",
+        "Canonical Data Model"
+      ],
+      "char_start": 11114,
+      "char_end": 11134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1e0e5cd82363c4f8f46c1b2350977da",
+      "kind": "paragraph",
+      "text": "BatteryLake organizes each curated dataset as a four-layer relational objectD= (M d, Mc, S, T): •Dataset metadataM d: one tuple per dataset over attribute setF d = {chemistry, cathode_material, anode_material, nominal_capacity_Ah, nominal_voltage_V , temperature_C, charge_protocol, discharge_protocol, C_rate, cutoff_voltage_upper, cutoff_voltage_lower, form_factor, brand_or_manufacturer, source_url, paper_url, license, . . . }; •Cell metadataM c: one tuple per cell, keyed by (dataset_id,cell_id);",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION",
+        "Canonical Data Model"
+      ],
+      "char_start": 11136,
+      "char_end": 11637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c605d6000cc117356823650f4616809",
+      "kind": "paragraph",
+      "text": "•Cycle summaryS: one tuple per (cell, cycle) with capacities, coulombic and energy efficiency, SOH, RUL, durations, voltage/temperature statistics, and quality flags; •Time seriesT: one tuple per sample with canonical signals time_s,voltage_V,current_A,temperature_C, charge/discharge_capacity_Ah,step_type, under fixed units and the sign conventionI >0on charge. Each attributeacarries a typeτ(a), a unitu(a), and a domaindom(a)(e.g.,dom(voltage_V)⊆[0,6]V for single cells). Layers are linked by foreign keysT→S→M c →M d, and a constraint",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION",
+        "Canonical Data Model"
+      ],
+      "char_start": 11639,
+      "char_end": 12178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af2a9bca2fc35c30fbd889f04bcc9edf",
+      "kind": "table",
+      "text": "setΣof|Σ|= 26rules governs admission",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION",
+        "Canonical Data Model"
+      ],
+      "char_start": 12180,
+      "char_end": 12216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6205bfa399343b317d1f54006da955d5",
+      "kind": "paragraph",
+      "text": "(Section 4.3). Every dataset additionally receives a machine-readable reference nameref_name=",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "PROBLEMFORMULATION",
+        "Canonical Data Model"
+      ],
+      "char_start": 12218,
+      "char_end": 12311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ad06cc1df5ef372ad94e8aa49816bf3",
+      "kind": "heading",
+      "text": "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat"
+      ],
+      "char_start": 12313,
+      "char_end": 12356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddde9775c4738f3e736c91b21f22b7ff",
+      "kind": "paragraph",
+      "text": "encodes its identity for cross-dataset filtering.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat"
+      ],
+      "char_start": 12358,
+      "char_end": 12407,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e2b2c29c5499033567c21a79830ed65",
+      "kind": "heading",
+      "text": "Evidence-Grounded Extraction with Abstention",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Evidence-Grounded Extraction with Abstention"
+      ],
+      "char_start": 12409,
+      "char_end": 12453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5767d30555979399d47c37948011275",
+      "kind": "paragraph",
+      "text": "LetF⊆F d be the target metadata fields and letE= {E1, . . . , Ek}be an ordered set of evidence documents with provenance ranks (e.g.,E 1 the dataset landing page,E 2 the companion paper). Anevidence-grounded extractoris a function Φ(F,E) ={(f, v f , ef , sf , cf )}f∈F ,(1) wherev f ∈dom(f)∪ {⊥}is the extracted value or the abstention symbol⊥(rendered as “source page not stated”), ef is a verbatim evidence span from someE i,s f =irecords the provenance, andc f ∈[0,1]is a confidence score. The output must satisfy thegrounding constraint: ifv f ̸=⊥ thene f must occur inE sf and entailv f . Given a gold annotationv ∗ f (which may itself be⊥when no source states the field), we distinguish four outcomes: correct extraction (vf =v ∗ f ̸=⊥), incorrect extraction, correct abstention (vf =v ∗ f =⊥), andhallucination(v f ̸=⊥whilev ∗ f =⊥), which is the failure mode our design explicitly targets. The extractor should maximize coverageP[v f ̸=⊥]subject to a bound on the conditional errorP[v f ̸=v ∗ f |v f ̸=⊥].",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Evidence-Grounded Extraction with Abstention"
+      ],
+      "char_start": 12455,
+      "char_end": 13468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5680f9d53fbfc548ac2e2cab5b9a91c4",
+      "kind": "heading",
+      "text": "Schema Mapping and Converter Synthesis",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Schema Mapping and Converter Synthesis"
+      ],
+      "char_start": 13470,
+      "char_end": 13508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae6238b3a132864df5ad0533d834b63d",
+      "kind": "paragraph",
+      "text": "A raw source is a file collectionR={r 1, . . . , rm}with unknown roles and layouts. OnboardingRrequires: (i) arole labelingρ:R→ {measurement,metadata_only} separating files that can yieldTandSfrom documentation usable only as extraction evidence; (ii) anattribute mapping h:A R →A D ∪ {⊥}from raw columns, MAT keys, or nested fields to canonical attributes, together with unit conversionsg a and sign normalization; and (iii) aconverter programπsuch thatπ(R) = ( ˆT ,ˆS, ˆMc)andπ(R)|= Σ. Because raw layouts are open-ended, we do not fix a parser family; instead an LLM agentsynthesizesπper dataset, and correctness is enforced extrinsically by an executable validator forΣ(Section 4.2). The mappinghmust likewise be grounded: the agent may only bind a raw label to a canonical signal if header text, embedded units, or value statistics (range, polarity, monotonicity) support the binding, and must abstain otherwise.",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Schema Mapping and Converter Synthesis"
+      ],
+      "char_start": 13510,
+      "char_end": 14427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:624210ae3de3ea1dfc74817293a1f3ce",
+      "kind": "heading",
+      "text": "Selective Human Verification",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Selective Human Verification"
+      ],
+      "char_start": 14429,
+      "char_end": 14457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03324ee44aa06111616cc74378aa4e19",
+      "kind": "paragraph",
+      "text": "Extraction and mapping decisions carry confidencesc. A verification policywith thresholdτauto-accepts decisions withc≥τand routes the rest to a human reviewer, who edits or confirms them through the platform interface; no row enters the lake unconfirmed. Letcov(τ)be the fraction autoaccepted andrisk(τ)the error rate among auto-accepted decisions. Assuming reviewer decisions are correct, the residual error of admitted metadata isrisk(τ)·cov(τ), and the expected human effort is proportional to1−cov(τ). The curation operating point is chosen on the empirical risk– coverage curve [21], [22] to meet a target residual riskαwith minimal review budget; we report the full curve rather than a single point. This formulation turns the ubiquitous but ad hoc “human checks the AI” practice into a measurable, tunable component with an explicit quality guarantee.",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "YYYY_SOURCE_CHEM_FORM_CHRGC_DCHRGC_TEMPthat",
+        "Selective Human Verification"
+      ],
+      "char_start": 14459,
+      "char_end": 15317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d3e2b3cd1eab5b23535c75d610af4b1",
+      "kind": "heading",
+      "text": "THEBATTERYLAKECURATIONFRAMEWORK",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK"
+      ],
+      "char_start": 15319,
+      "char_end": 15350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea0e3d94fedad06c5b0e5d6a7851192a",
+      "kind": "caption",
+      "text": "Fig. 1 shows the architecture of our BatteryLake. Raw",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK"
+      ],
+      "char_start": 15352,
+      "char_end": 15405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d45b989bdb7819a96eb080b11d309712",
+      "kind": "paragraph",
+      "text": "sources enter through two coupled agentic workflows, including metadata extraction (§4.1) and data conversion (§4.2), whose outputs pass the selective human gate (§4.4) and the validation gate (§4.3) before admission into the governed lake that feeds the benchmark (Section 5).",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK"
+      ],
+      "char_start": 15407,
+      "char_end": 15684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab0004f342eb63281fc4f39231802ec2",
+      "kind": "heading",
+      "text": "Two-Stage Provenance-Ranked Metadata Extrac-",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK",
+        "Two-Stage Provenance-Ranked Metadata Extrac-"
+      ],
+      "char_start": 15686,
+      "char_end": 15730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4efc1d3523bbbfa148c631f2e8ca750d",
+      "kind": "paragraph",
+      "text": "tion Metadata for a published dataset is dispersed across sources of unequal authority: the repository landing page describes the released artifact itself, while the companion paper describes the experiment and may cover conditions or cells not included in the release. We therefore extract in provenance order (Algorithm 1). Stage A parses the dataset source page (OSF, Zenodo, Mendeley, GitHub, or institutional pages) and attempts all fields inF. Stage B consults the paper only to fill fields that Stage A left as⊥or supported with low confidence; a paper-derived value may overwrite a source-derived one only if its confidence is strictly higher, and each retained tuple keeps its provenance labels f so that downstream users can distinguish artifact-level from experiment-level facts. Conflicts between sources are not silently resolved: both candidates are surfaced to the reviewer with their evidence spans. Two design rules are introduced to ensure reliable extraction. First, prompts require a verbatim quotation for every non-⊥value, and a post-hoc string check rejects any tuple whose quotation does not occur in the source text, converting most hallucinations into detectable failures. Second, the agent is explicitly forbidden from world-knowledge imputation: it must not infer chemistry from a dataset name, form factor from a familiar cell model, or protocol parameters from community convention. This abstention strategy first prioritizes evidence fidelity over coverage. Stage B then recovers part of the missing coverage. When permitted by",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK",
+        "Two-Stage Provenance-Ranked Metadata Extrac-"
+      ],
+      "char_start": 15732,
+      "char_end": 17290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e33d19b9365929e64e577c4e36d5fca2",
+      "kind": "paragraph",
+      "text": "the data license, supplementary files are also used to fill missing fields. No unsupported values are inferred.",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK",
+        "Two-Stage Provenance-Ranked Metadata Extrac-"
+      ],
+      "char_start": 17292,
+      "char_end": 17403,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:504182ebdead87ccaf4ca223b89bbc85",
+      "kind": "caption",
+      "text": "Fig. 1: The BatteryLake curation pipeline, from heterogeneous raw sources to research-ready assets. Datasets are onboarded",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK",
+        "Two-Stage Provenance-Ranked Metadata Extrac-"
+      ],
+      "char_start": 17405,
+      "char_end": 17527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aaafe022ab0a5137112a28f1c9057e49",
+      "kind": "paragraph",
+      "text": "and harmonized by LLM agents (Stages 1–2), screened by a validation gate covering completeness, consistency, accuracy, and validity (Stage 3)with physical-plausibility checks that generic validators lack, and served through data, benchmark, feature, and interpretation APIs (Stage 4); the resulting governed lake underpins reproducible SOH/RUL benchmarking and open battery research. Algorithm 1Two-stage evidence-grounded metadata extraction Require:fieldsF; source pageE 1; paperE 2; thresholdτ Ensure:tuples{(f, v f , ef , sf , cf )}, review queueQ",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "THEBATTERYLAKECURATIONFRAMEWORK",
+        "Two-Stage Provenance-Ranked Metadata Extrac-"
+      ],
+      "char_start": 17529,
+      "char_end": 18080,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92d159e6efee60ddf9a7f8b37ece4c93",
+      "kind": "heading",
+      "text": "Φ 1 ←EXTRACTGROUNDED(F, E 1)▷quote-or-abstain",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Φ 1 ←EXTRACTGROUNDED(F, E 1)▷quote-or-abstain"
+      ],
+      "char_start": 18082,
+      "char_end": 18127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1da622e1757a3ac5ac0b78b3eb987e52",
+      "kind": "paragraph",
+      "text": "prompting",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Φ 1 ←EXTRACTGROUNDED(F, E 1)▷quote-or-abstain"
+      ],
+      "char_start": 18129,
+      "char_end": 18138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d26fd3cb43abde6e8f68e2ed7f7285a",
+      "kind": "heading",
+      "text": "for allf∈Fwithv f ̸=⊥inΦ 1 do",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "for allf∈Fwithv f ̸=⊥inΦ 1 do"
+      ],
+      "char_start": 18140,
+      "char_end": 18169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:862bcae5329e38c7ee896e9bdd14bce7",
+      "kind": "heading",
+      "text": "ife f ̸⊑E 1 thensetv f ← ⊥▷reject unverifiable",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ife f ̸⊑E 1 thensetv f ← ⊥▷reject unverifiable"
+      ],
+      "char_start": 18171,
+      "char_end": 18217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:537d0dba56cad41ef3a065db0f9020b1",
+      "kind": "paragraph",
+      "text": "evidence",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ife f ̸⊑E 1 thensetv f ← ⊥▷reject unverifiable"
+      ],
+      "char_start": 18219,
+      "char_end": 18227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:478b9d6ec457b4c88e9898db0f7c937d",
+      "kind": "heading",
+      "text": "F ′ ← {f:vf =⊥orc f < τ}",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "F ′ ← {f:vf =⊥orc f < τ}"
+      ],
+      "char_start": 18229,
+      "char_end": 18253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40fcd2728a3197c953f870576c313179",
+      "kind": "heading",
+      "text": "Φ 2 ←EXTRACTGROUNDED(F ′, E2); verify quotes",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Φ 2 ←EXTRACTGROUNDED(F ′, E2); verify quotes"
+      ],
+      "char_start": 18255,
+      "char_end": 18299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00fbb7674bae9dad8417b78b13f55cec",
+      "kind": "paragraph",
+      "text": "againstE 2",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Φ 2 ←EXTRACTGROUNDED(F ′, E2); verify quotes"
+      ],
+      "char_start": 18301,
+      "char_end": 18311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:691259acbfc633f947cd42a174167183",
+      "kind": "heading",
+      "text": "for allf∈F ′ do",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "for allf∈F ′ do"
+      ],
+      "char_start": 18313,
+      "char_end": 18328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:090b04c34b17ba7d5aa18b27e88a7d44",
+      "kind": "heading",
+      "text": "ifc (2)",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ifc (2)"
+      ],
+      "char_start": 18330,
+      "char_end": 18337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c3afde559e666eac136bd2c228c4c15",
+      "kind": "paragraph",
+      "text": "f > c(1) f thenadoptΦ 2[f]withs f = 2",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ifc (2)"
+      ],
+      "char_start": 18339,
+      "char_end": 18376,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:449e6e98aa16ea40731b3b6edee29daf",
+      "kind": "heading",
+      "text": "else ifboth̸=⊥and values disagreethenflag",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "else ifboth̸=⊥and values disagreethenflag"
+      ],
+      "char_start": 18378,
+      "char_end": 18419,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e70c6d432d64178781abf92bfa244f2",
+      "kind": "paragraph",
+      "text": "conflict for review",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "else ifboth̸=⊥and values disagreethenflag"
+      ],
+      "char_start": 18421,
+      "char_end": 18440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e7a2b71b036542f315f3252b619fae1",
+      "kind": "heading",
+      "text": "Q← {f:c f < τor flagged}; auto-accept the rest",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Q← {f:c f < τor flagged}; auto-accept the rest"
+      ],
+      "char_start": 18442,
+      "char_end": 18488,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:977097ad8607e914ef2339267970c3ed",
+      "kind": "heading",
+      "text": "returntuples,Q",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returntuples,Q"
+      ],
+      "char_start": 18490,
+      "char_end": 18504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7a85436ccb72675fea46b1ef19addb4",
+      "kind": "heading",
+      "text": "Agentic Conversion: Classify, Synthesize, Validate,",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returntuples,Q",
+        "Agentic Conversion: Classify, Synthesize, Validate,"
+      ],
+      "char_start": 18506,
+      "char_end": 18557,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95e838228307a3dd2df48e6e83faf8b3",
+      "kind": "heading",
+      "text": "Repair",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Repair"
+      ],
+      "char_start": 18559,
+      "char_end": 18565,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b5e0db7a017d579ed5756e7ea944ad5",
+      "kind": "paragraph",
+      "text": "Raw measurement files cannot be handled by a fixed parser bank. Across our catalog we observe 18 distinct layout families in CSV alone, besides MAT structures with nested cycle records, Excel workbooks with per-cell sheets, and vendor exports. BatteryLake instead packages the canonical schema, the dataset name provided by the contributor, and the executable validator into a self-containedcuration skill that an LLM agent executes locally against the raw folder (Algorithm 2); raw data never leaves the contributor’s machine, which also sidesteps licensing and volume constraints Algorithm 2Converter synthesis with validation-guided repair Require:raw filesR; schema and constraintsΣ; budgetk Ensure:( ˆT ,ˆS, ˆMc)or failure report",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "Repair"
+      ],
+      "char_start": 18567,
+      "char_end": 19301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61bc365c210a43ee37d5fbb059c40cbb",
+      "kind": "heading",
+      "text": "ρ←CLASSIFYROLES(R); routemetadata_onlyfiles to",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ρ←CLASSIFYROLES(R); routemetadata_onlyfiles to"
+      ],
+      "char_start": 19303,
+      "char_end": 19349,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b938697a1687c45a3ab6c96a8269478",
+      "kind": "paragraph",
+      "text": "Algorithm 1",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ρ←CLASSIFYROLES(R); routemetadata_onlyfiles to"
+      ],
+      "char_start": 19351,
+      "char_end": 19362,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:508afb986142994ec3688443759385b0",
+      "kind": "heading",
+      "text": "h←GROUNDEDMAPPING(R meas)▷bind columns by",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "h←GROUNDEDMAPPING(R meas)▷bind columns by"
+      ],
+      "char_start": 19364,
+      "char_end": 19405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24ff1846001996be2c878133f2b510e4",
+      "kind": "paragraph",
+      "text": "header, unit, statistics; else abstain",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "h←GROUNDEDMAPPING(R meas)▷bind columns by"
+      ],
+      "char_start": 19407,
+      "char_end": 19445,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a72b5cfcaab1e4346cd046430d36a53",
+      "kind": "heading",
+      "text": "human confirms/editsρ, h ▷selective gate, §4.4",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "human confirms/editsρ, h ▷selective gate, §4.4"
+      ],
+      "char_start": 19447,
+      "char_end": 19493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a7e5a712853ad704f18fc61e7ebbf6b",
+      "kind": "heading",
+      "text": "fort= 1. . . kdo",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "fort= 1. . . kdo"
+      ],
+      "char_start": 19495,
+      "char_end": 19511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:002e17860b8a89e1feb8454b280f9480",
+      "kind": "heading",
+      "text": "π t ←SYNTHESIZECONVERTER(R meas, h,Σ)",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "π t ←SYNTHESIZECONVERTER(R meas, h,Σ)"
+      ],
+      "char_start": 19513,
+      "char_end": 19550,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:238c126c1a38095ab5db8e5775854f32",
+      "kind": "heading",
+      "text": "( ˆT ,ˆS, ˆMc)←π t(Rmeas);rep←",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "( ˆT ,ˆS, ˆMc)←π t(Rmeas);rep←"
+      ],
+      "char_start": 19552,
+      "char_end": 19582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73f1a123e6bafb5045629c0f302a34ca",
+      "kind": "paragraph",
+      "text": "VALIDATE( ˆT ,ˆS, ˆMc,Σ)",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "( ˆT ,ˆS, ˆMc)←π t(Rmeas);rep←"
+      ],
+      "char_start": 19584,
+      "char_end": 19608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d70c5ca6b63d6b5a90275ffc169b5de",
+      "kind": "heading",
+      "text": "ifrep.passthen returnoutputs withrep",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "ifrep.passthen returnoutputs withrep"
+      ],
+      "char_start": 19610,
+      "char_end": 19646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c23f3053f2bbdd35fb066e6eb3c5566a",
+      "kind": "heading",
+      "text": "feedrepback to the agent for repair",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "feedrepback to the agent for repair"
+      ],
+      "char_start": 19648,
+      "char_end": 19683,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5dcc118c7f6a3139b06c591ac4ef6085",
+      "kind": "heading",
+      "text": "returnfailure with lastrep",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep"
+      ],
+      "char_start": 19685,
+      "char_end": 19711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c2b6f1f4d010862d2b148945405691b",
+      "kind": "paragraph",
+      "text": "of server-side ingestion. The agent firstinspectsthe source, including file listings, headers, MAT keys, sample rows, and classifies each file’s roleρ; DataCite JSONs, READMEs, and PDFs are diverted to the extraction workflow as evidence. It then proposes the grounded attribute mappinghwith unit conversions, synthesizes a dataset-specific converterπ, and executes it. The validator replaysΣon the outputs and emits a machinereadable report; on failure, the error report is fed back and the agent repairsπ, up tokrounds. This generate–validate– repair loop replaces trust in the agent with trust in the acceptance test: an incorrect converter can waste attempts but cannot silently admit malformed data.",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep"
+      ],
+      "char_start": 19713,
+      "char_end": 20417,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a124160412b1ba4c524017a91579df1",
+      "kind": "caption",
+      "text": "Fig. 2: Capability overview of the BatteryLake platform. Eight functional pillars span curated data access, data reliability,",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep"
+      ],
+      "char_start": 20419,
+      "char_end": 20544,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d119002218be3e3d667d616940de1459",
+      "kind": "paragraph",
+      "text": "and AI-enabled applications, and together deliver reproducible, reliable, and openly shareable battery data for downstream research.",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep"
+      ],
+      "char_start": 20546,
+      "char_end": 20678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f8d4d520f651a18cfe88d9f26fcd859",
+      "kind": "heading",
+      "text": "The Validation Gate",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep",
+        "The Validation Gate"
+      ],
+      "char_start": 20680,
+      "char_end": 20699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6417c895a5bc2a1b373755f6abe8c18",
+      "kind": "table",
+      "text": "The gate evaluates|Σ|= 26rules grouped into four scored",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep",
+        "The Validation Gate"
+      ],
+      "char_start": 20701,
+      "char_end": 20756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a77b89dca10347984b91719649805978",
+      "kind": "paragraph",
+      "text": "dimensions, producing a per-dataset diagnostic report that can block or admit downstream use: •Validity: schema compliance, which requireds columns, types, unit-encoded names, key integrity across the four layers; •Completeness: coverage of required channels and cycles, missingness rates per signal; •Consistency: monotonic timestamps, contiguous cycle numbering, a single current sign convention, step-type coherence; •Accuracy (physical plausibility): voltage within chemistryconsistent bounds, per-cycle coulombic efficiency within [95%,105%], capacity-fade trajectories non-increasing up to bounded recovery windows, cell temperature within a tolerance of the stated condition, charge/discharge energy balance. Generic validation systems [19] cover the first three dimensions. The fourth encodes electrochemical domain knowledge, and in practice it is the dimension that catches unit errors and sign-convention bugs: values that pass schema validation but are physically impossible. Each dataset’s gate score and rule-level outcomes are stored alongside the data, so benchmark users can filter on curation quality rather than taking it on faith.",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep",
+        "The Validation Gate"
+      ],
+      "char_start": 20758,
+      "char_end": 21908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7710a2b99d7a5e5416aadac1a99cce69",
+      "kind": "heading",
+      "text": "Selective Human Verification in Practice",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep",
+        "Selective Human Verification in Practice"
+      ],
+      "char_start": 21910,
+      "char_end": 21950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dede088f9b5f2df0229532819357620",
+      "kind": "paragraph",
+      "text": "The reviewer interface presents each pending decision as a row (field, value, verbatim evidence, provenance, confidence); the reviewer edits or confirms rows and must tick a final attestation before export, so provenance ofhuman decisions is recorded just like machine ones. Confidence thresholds are set per field group: identity-critical fields (chemistry, nominal capacity) use a conservativeτso they are almost always reviewed, while low-stakes descriptive fields tolerate higher auto-acceptance. The same gate covers conversion: role labelsρand mappingshare confirmed before any converter runs, because a wrong mapping is far cheaper to fix before synthesis than after.",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "returnfailure with lastrep",
+        "Selective Human Verification in Practice"
+      ],
+      "char_start": 21952,
+      "char_end": 22626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7430fe554d669d9c1a05143ef667354",
+      "kind": "heading",
+      "text": "GOVERNEDLAKEHOUSE ANDOPENBENCH-",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "GOVERNEDLAKEHOUSE ANDOPENBENCH-"
+      ],
+      "char_start": 22628,
+      "char_end": 22659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1030fd4071448cc96d202916108a3f3",
+      "kind": "heading",
+      "text": "MARK",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK"
+      ],
+      "char_start": 22661,
+      "char_end": 22665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eabbb74ee8dc6f80bd3d5cb53bf6049",
+      "kind": "paragraph",
+      "text": "The curated pipeline of Section 4 materializes as a governed lakehouse whose capabilities are summarized in Fig. 2: curated access (catalog, community contribution, domainaware discovery), reliability (standardized data objects, automated preprocessing, quality diagnostics), and AI-enabled applications (open APIs and benchmarks, interpretability). These capabilities operationalize the four design goals of reproducibility, reliability, efficiency, and open science.",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK"
+      ],
+      "char_start": 22667,
+      "char_end": 23135,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65419c6d5647a0756f581f8da5540039",
+      "kind": "heading",
+      "text": "Curated Collection",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 23137,
+      "char_end": 23155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c787c4cdda15e82544bf9254e96beb33",
+      "kind": "caption",
+      "text": "Table 1 summarizes the collection, which spans cycle aging,",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 23157,
+      "char_end": 23216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fd8fa08fb95b639fdcb91a616f22b95",
+      "kind": "paragraph",
+      "text": "safety/abuse, impedance, and EV field categories, and includes the canonical corpora (NASA PCoE [3], CALCE [4], Severson et al. [1], Oxford [5]) alongside long-tail releases spanning 12 laboratories worldwide. Every curated dataset ships the four-layer object of §3.1 plus aprocessing manifest recording raw-file inventory, mapping rules, unit conversions, cycle segmentation logic, label definitions, and validator version, making each dataset a versioned research artifact whose benchmark numbers can be traced back to",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 23218,
+      "char_end": 23738,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91df1b2e38c4cd58de244dcc43e95224",
+      "kind": "caption",
+      "text": "TABLE 1: BatteryLake catalog snapshot at submission. “Cu-",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 23740,
+      "char_end": 23797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce165b9053e625aff3e30f61f8e586a2",
+      "kind": "paragraph",
+      "text": "rated” datasets have passed all four ETL stages (metadata, time series, cycle summary, QC); the registry additionally tracks datasets queued for onboarding. Registered datasets 41 Fully curated datasets 12 Source institutions (curated) 12 Cells (curated subset)∼720 Charge–discharge cycles (curated)∼323K Data volume (curated)∼9.5 GB Chemistries LFP , NMC, LCO, NCA, multi Form factors 18650, 21700, pouch, prismatic Publication span 2007–2026",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 23799,
+      "char_end": 24242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aec550c6ee8ea499ae526469d2460f15",
+      "kind": "caption",
+      "text": "Fig. 3: The BatteryLake landing page. A left-hand navi-",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 24244,
+      "char_end": 24299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3ce7eaf82d3820bc30ecd071be1c0f8",
+      "kind": "paragraph",
+      "text": "gation exposes dataset browsing, benchmarks, the model library, and the data-platform services (quality assessment, preprocessing, APIs), while headline cards report the aggregate scope of the curated collection, including number of datasets, contributing institutions, cells, charge–discharge cycles, data volume, and publication span. raw bytes. Fig. 3 shows the platform landing page, which exposes the aggregate scope of the collection and provides entry points to browse, filter, and contribute datasets.",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Curated Collection"
+      ],
+      "char_start": 24301,
+      "char_end": 24810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f49d6e0116b8d74c8cf20dab25834c1",
+      "kind": "heading",
+      "text": "Benchmark Design",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Benchmark Design"
+      ],
+      "char_start": 24812,
+      "char_end": 24828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56ac25e9faac926723db7d90251bccaa",
+      "kind": "paragraph",
+      "text": "On the curated lake, BatteryLake defines two primary tasks with standardized labels:SOH estimation(predict capacity retention at a cycle from partial-cycle signals or cycle-level features) andRUL prediction(predict cycles remaining to a manifest-recorded end-of-life threshold). Because split design dominates apparent performance in battery ML, every experiment declares one of three protocols:random(cycles shuffled; optimistic),temporal(early cycles train, late cycles test; forecasting under distribution shift), andcross-cell (whole cells held out; generalization to unseen units). Eight baseline families are provided, which are linear regression, random forest, XGBoost, MLP , CNN, LSTM, Transformer, and physics-informed neural networks (PINN) with fixed configurations, seeds, and RMSE/MAE/MAPE/R2 metrics. Rather than executing training server-side, the platform",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Benchmark Design"
+      ],
+      "char_start": 24830,
+      "char_end": 25702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63f537f2c4ec45dee6c3239ec45e1a7f",
+      "kind": "caption",
+      "text": "Fig. 4: The BatteryLake model library. Each base-",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Benchmark Design"
+      ],
+      "char_start": 25704,
+      "char_end": 25753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6126b934598c9c8036078363bbc88dc",
+      "kind": "paragraph",
+      "text": "line family—spanning statistical (linear regression), ensemble (random forest, XGBoost), deep-learning (MLP , CNN, LSTM, Transformer), and physics-informed (PINN) models—ships a downloadable reference implementation with documented supported tasks, input requirements, and modeling assumptions, so that benchmark comparisons use shared model code. exports a reproducibletraining package(config, split assignment, feature schema, dataloader, model code, run script) that users run locally and whose outputs the platform’s evaluation viewer ingests for leaderboard comparison; the package pins every choice that normally varies silently between papers. Fig. 4 shows the model library from which these baselines are drawn, and Fig. 5 shows the guided workflow that assembles a benchmark run from dataset and cell selection, feature configuration, and split assignment through to exported metrics.",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "MARK",
+        "Benchmark Design"
+      ],
+      "char_start": 25755,
+      "char_end": 26648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1719ccdd6e1945a939347002894ddb3",
+      "kind": "heading",
+      "text": "DISCUSSION ANDLIMITATIONS",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "DISCUSSION ANDLIMITATIONS"
+      ],
+      "char_start": 26650,
+      "char_end": 26675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4210f93b18f98a365e9a8294dc2beff9",
+      "kind": "paragraph",
+      "text": "Scope of guarantees.The residual-risk bound of §3.4 conditions on correct reviewer decisions and calibrated confidences; we report calibration error and inter-annotator agreement so users can judge both assumptions. The grounding constraint prevents unsupported values but cannot detect a source page that is itself wrong; provenance labels at least make such errors attributable.Evidence access. Some companion papers are paywalled and some metadata exists only in supplementary archives; our abstention-first design degrades gracefully (coverage drops, fidelity does not), but coverage numbers should be read with this in mind.Local agent execution.Running converters on the contributor’s machine preserves privacy and licenses but means the platform verifiesreportsof validation rather than re-executing it; hash-pinned validators and replayable manifests mitigate, and server-side re-validation for redistributable datasets is future work.Generality.The fourlayer model and the 26-rule gate are battery-specific, but the framework’s contract of quote-or-abstain extraction, selective verification, validator-guided synthesis, which transfers to other instrument-generated scientific data; adapting the constraint set is the only domain-specific step.",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "DISCUSSION ANDLIMITATIONS"
+      ],
+      "char_start": 26677,
+      "char_end": 27931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:054680674ce5a11d0c5aaf33dffe73fe",
+      "kind": "paragraph",
+      "text": "(a) Select Task (b) Select Data (c) Split Data (d) Select Models (e) Local Run (f) View Results",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "DISCUSSION ANDLIMITATIONS"
+      ],
+      "char_start": 27933,
+      "char_end": 28028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdcebd607223a2e57d30ab15fc773e5f",
+      "kind": "caption",
+      "text": "Fig. 5: The BatteryLake benchmark configuration workflow, shown as a six-step wizard. (a)Select Task: choose SOH",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "DISCUSSION ANDLIMITATIONS"
+      ],
+      "char_start": 28030,
+      "char_end": 28142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cffa017a1cd15915afc2efb44903dd0",
+      "kind": "paragraph",
+      "text": "estimation or RUL prediction. (b)Select Data: pick curated datasets, each shown with chemistry, cell count, and cycle count. (c)Split Data: partition cells into train, validation, and test, at random or by hand. (d)Select Models: choose baseline families to run. (e)Local Run: export a self-contained training package and run it locally with the printed commands. (f) View Results: inspect per-model metrics and compare performance across the selected models. Every choice is recorded, so the reported metrics are traceable and reproducible.",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "DISCUSSION ANDLIMITATIONS"
+      ],
+      "char_start": 28144,
+      "char_end": 28685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb60899a6605de9e6a604bf15617c0e6",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "CONCLUSION"
+      ],
+      "char_start": 28687,
+      "char_end": 28697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2f4ed63c674c5c00359edfae57465ba",
+      "kind": "paragraph",
+      "text": "We presented BatteryLake, a governed lakehouse and open benchmark that converts fragmented public battery aging data into reproducible research assets through agentic, evidence-grounded curation. By formalizing onboarding as grounded extraction with abstention plus validator-checked converter synthesis, and by casting human review as selective prediction, BatteryLake replaces trust in either humans or models with an auditable pipeline whose residual risk is measured and tunable. The released benchmark with41 datasets, standardized SOH/RUL tasks, split protocols, and manifest-pinned baselines offers the battery ML community a common, provenance-complete substrate, and the curation framework offers the data engineering community a template for governing the long tail of scientific data.",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "CONCLUSION"
+      ],
+      "char_start": 28699,
+      "char_end": 29494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:540ecc964ab46a36068b947b5f36135b",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "REFERENCES"
+      ],
+      "char_start": 29496,
+      "char_end": 29506,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d35c1e1e0d9c7b210c0a6213ddfaa35",
+      "kind": "reference",
+      "text": "[1] K. A. Seversonet al., “Data-driven prediction of battery cycle life before capacity degradation,”Nature Energy, vol. 4, no. 5, pp. 383– 391, 2019. [2] P . M. Attiaet al., “Closed-loop optimization of fast-charging protocols for batteries with machine learning,”Nature, vol. 578, no. 7795, pp. 397–402, 2020. [3] B. Saha and K. Goebel, “Battery data set,” NASA Ames Prognostics Data Repository, NASA Ames Research Center, Moffett Field, CA, 2007. [4] Y. Xing, E. W. M. Ma, K.-L. Tsui, and M. Pecht, “An ensemble model for predicting the remaining useful performance of lithiumion batteries,”Microelectronics Reliability, vol. 53, no. 6, pp. 811–820, 2013. [5] C. R. Birkl, “Oxford battery degradation dataset 1,” University of Oxford, 2017. [6] G. dos Reis, C. Strange, M. Yadav, and S. Li, “Lithium-ion battery data and where to find it,”Energy and AI, vol. 5, p. 100081, 2021. [7] X. Zhanget al., “BatteryML: An open-source platform for machine learning on battery degradation,” inProc. Int. Conf. Learning Representations (ICLR), 2024. [8] P . Herringet al., “BEEP: A python library for battery evaluation and early prediction,”SoftwareX, vol. 11, p. 100506, 2020. [9] S. Clarket al., “Toward a unified description of battery data,” Advanced Energy Materials, vol. 12, no. 17, p. 2102702, 2022. [10] J. Madhavan, P . A. Bernstein, and E. Rahm, “Generic schema matching with Cupid,” inProc. 27th Int. Conf. Very Large Data Bases (VLDB), 2001, pp. 49–58. [11] Y. Li, J. Li, Y. Suhara, A. Doan, and W.-C. Tan, “Deep entity",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "REFERENCES"
+      ],
+      "char_start": 29508,
+      "char_end": 31033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:faab2ff5cdcc6077252801b5a51277c0",
+      "kind": "paragraph",
+      "text": "matching with pre-trained language models,”Proc. VLDB Endow., vol. 14, no. 1, pp. 50–60, 2020. [12] J. Tuet al., “Unicorn: A unified multi-tasking model for supporting matching tasks in data integration,”Proc. ACM Manag. Data (SIGMOD), vol. 1, no. 1, pp. 84:1–84:26, 2023. [13] A. Narayan, I. Chami, L. Orr, and C. Ré, “Can foundation models wrangle your data?”Proc. VLDB Endow., vol. 16, no. 4, pp. 738– 746, 2022. [14] S. Aroraet al., “Language models enable simple systems for generating structured views of heterogeneous data lakes,”Proc. VLDB Endow., vol. 17, no. 2, pp. 92–105, 2023. [15] H. Zhang, Y. Dong, C. Xiao, and M. Oyamada, “Jellyfish: Instruction- tuning local large language models for data preprocessing,” inProc. Conf. Empirical Methods in Natural Language Processing (EMNLP), 2024, pp. 8754–8782. [16] S. Yaoet al., “ReAct: Synergizing reasoning and acting in language models,” inProc. Int. Conf. Learning Representations (ICLR), 2023. [17] F. Nargesian, E. Zhu, R. J. Miller, K. Q. Pu, and P . C. Arocena, “Data lake management: Challenges and opportunities,”Proc. VLDB Endow., vol. 12, no. 12, pp. 1986–1989, 2019. [18] M. Armbrustet al., “Delta lake: High-performance ACID table storage over cloud object stores,”Proc. VLDB Endow., vol. 13, no. 12, pp. 3411–3424, 2020. [19] S. Schelter, D. Lange, P . Schmidt, M. Celikel, F. Biessmann, and A. Grafberger, “Automating large-scale data quality verification,” Proc. VLDB Endow., vol. 11, no. 12, pp. 1781–1794, 2018. [20] T. Rekatsinas, X. Chu, I. F. Ilyas, and C. Ré, “HoloClean: Holistic",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "REFERENCES"
+      ],
+      "char_start": 31035,
+      "char_end": 32595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc8d7cd82a149a1026c7d0b7ba6de11a",
+      "kind": "paragraph",
+      "text": "data repairs with probabilistic inference,”Proc. VLDB Endow., vol. 10, no. 11, pp. 1190–1201, 2017. [21] R. El-Yaniv and Y. Wiener, “On the foundations of noise-free selective classification,”J. Mach. Learn. Res., vol. 11, pp. 1605–1641, 2010. [22] Y. Geifman and R. El-Yaniv, “Selective classification for deep neural networks,” inAdvances in Neural Information Processing Systems (NeurIPS), 2017, pp. 4878–4887.",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "REFERENCES"
+      ],
+      "char_start": 32597,
+      "char_end": 33010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab3c838bf5a0d079ba2899af1babc29e",
+      "kind": "reference",
+      "text": "[23] C. Guo, G. Pleiss, Y. Sun, and K. Q. Weinberger, “On calibration of modern neural networks,” inProc. 34th Int. Conf. Machine Learning (ICML), 2017, pp. 1321–1330. [24] M. D. Wilkinsonet al., “The FAIR guiding principles for scientific data management and stewardship,”Scientific Data, vol. 3, p. 160018, 2016.",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "BatteryLake: Agentic, Physics-Grounded",
+        "REFERENCES"
+      ],
+      "char_start": 33012,
+      "char_end": 33326,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 8,
+    "removed_repeated_edge_lines": 8,
+    "extraction_method_counts": {
+      "native_text": 8
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.09762",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 8,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,3085 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "579155e2e3f12f55d578f184c326205da7890ceb2b1cc90517dc7e5a96f81ba4",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:8c630ec1c6e4b0f11671ed8f5c737c64",
+      "kind": "paragraph",
+      "text": "AgentDebugX: An Open-Source Toolkit for Failure Observability, Attribution, and Recovery in LLM Agents",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 102,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3587d59d42e3160508f3f771db0befe3",
+      "kind": "heading",
+      "text": "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1"
+      ],
+      "char_start": 104,
+      "char_end": 182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9741da7bcec39d4c6f5cb03bd0985408",
+      "kind": "heading",
+      "text": "Muxin Tian2 Xiangru Tang3 Pan Lu4 James Zou4 Jiaxuan You1 Heng Ji1",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Muxin Tian2 Xiangru Tang3 Pan Lu4 James Zou4 Jiaxuan You1 Heng Ji1"
+      ],
+      "char_start": 184,
+      "char_end": 250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61b5a1af8032b467ce00b4248514d8b1",
+      "kind": "paragraph",
+      "text": "1University of Illinois Urbana-Champaign 2University of Toronto 3Google 4Stanford University kunlunz2@illinois.edu ∗Equal contribution.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Muxin Tian2 Xiangru Tang3 Pan Lu4 James Zou4 Jiaxuan You1 Heng Ji1"
+      ],
+      "char_start": 252,
+      "char_end": 387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05b7023dded9c2d851e1e65c79324b17",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Abstract"
+      ],
+      "char_start": 389,
+      "char_end": 397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:127a22c483f264003c9776bc58d21299",
+      "kind": "paragraph",
+      "text": "LLM agent failures are difficult to debug because the step where an error surfaces is often not the one that caused it. Existing observability tools replay execution traces but provide little support for identifying the root cause or translating diagnosis into recovery. We presentAgentDebugX, an open-source debugging framework that organizes debugging as a closed loop ofDetect,Attribute,Recover, andRerun. At its core,DeepDebugperforms multi-turn root-cause diagnosis through global trajectory understanding, structure-guided investigation, and cross-examination. On the Who&When benchmark, DeepDebug achieves the best strict attribution accuracy among the evaluated methods on both tested open-weight backbones, reaching 28.8% exact agent-andstep accuracy on qwen3.5-9b versus 21.7% for the strongest single-pass baseline. On GAIA, DeepDebug repairs 13 of 73 failed tasks in a single rerun, compared with 4–6 for three decoupled self-correction baselines, improving overall accuracy from 55.8% to 63.6%. AgentDebugX exposes this workflow through a Python library, CLI, web console, and installable agentic skill, and provides an opt-in Error Hub for sharing scrubbed failure–diagnosis– repair bundles and reusing them as debugging memory.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Abstract"
+      ],
+      "char_start": 399,
+      "char_end": 1641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54cd363a4658640c4e3bce24b92c037e",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Introduction"
+      ],
+      "char_start": 1643,
+      "char_end": 1655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbf31e6ccdd10badde3f4f11d98989e9",
+      "kind": "paragraph",
+      "text": "Large language model (LLM) agents are increasingly deployed in settings that require long-horizon reasoning, external tool use, memory, and coordination across components. They support requests through live APIs, modify software repositories, operate graphical interfaces, and collaborate through planner–executor and multi-agent workflows (Aghzal et al., 2025; Liu et al., 2025; Li et al., 2025; Yang et al., 2025). This flexibility also makes their failures difficult to diagnose. As these systems",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Introduction"
+      ],
+      "char_start": 1657,
+      "char_end": 2156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9f995ae4affcc7913158f7e314cbe7b",
+      "kind": "heading",
+      "text": "Port. Tax- Attr- Recov- Error",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 2158,
+      "char_end": 2187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c47ec6a396e8d3cb71a580464169f7d",
+      "kind": "paragraph",
+      "text": "System schema onomy ibution ery hub AgentDebug (Zhu et al., 2025)◦ • •– – MAST (Cemri et al., 2026) –• ◦– – Who&When (Zhang et al., 2025) –◦ •– – AgentDiagnose (Ou et al., 2025)◦ ◦ ◦– – AgentRx (Barke et al., 2026) –• • ◦– Langfuse (Langfuse, 2023)◦– – – – AgentDebugX (Ours)• • • • •",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 2189,
+      "char_end": 2473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f34ab748c5264c1f6b02c8adcf1cd9c5",
+      "kind": "caption",
+      "text": "Table 1: Capability coverage versus prior work. • =",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 2475,
+      "char_end": 2526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de217896c50f92f66262ae03c563ae2f",
+      "kind": "paragraph",
+      "text": "first-class, ◦ = partial, – = absent.Port. schema: a portable, framework-agnostic trace format enabling reanalysis, comparison, and sharing (not a vendor span format).Taxonomy: a labelled failure-mode vocabulary.Attribution: localizing the responsible step/agent, not just the crash.Recovery: turning a diagnosis into a rerun-able fix.Error hub: a shareable cross-team corpus of diagnosed failures. become more capable, however, their failures become substantially harder to debug.1 The central difficulty is that the step where a failure becomes visible is often not the step that caused it. An agent may return an incorrect final answer because of a planning constraint omitted much earlier, a stale memory retrieval, an invalid intermediate assumption, or an incorrect handoff between agents. The resulting symptom may surface only after many apparently reasonable actions, such as a failed tool call, an inconsistent downstream decision, or an unsupported final response. Consequently, replaying an execution trace is rarely sufficient: developers must determine which earlier decision rendered the run unsuccessful, explain why it was decisive, and translate that diagnosis into a correction that can be tested. Existing tools address only parts of this challenge. General-purpose observability platforms provide detailed execution traces, but largely leave 1Project page: https://www.agentdebugx.com. Code: https://github.com/AgentDebugX/AgentDebugX. Package: https://pypi.org/project/agentdebugx/ (pip install agentdebugx ). Screencast: https://youtu.be/",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 2528,
+      "char_end": 4089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06669c3c8e0dfddb1bdb2e99d1a678eb",
+      "kind": "paragraph",
+      "text": "ztni6w0o_l8. The project is released under the MIT license.",
+      "order": 12,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 4091,
+      "char_end": 4150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38f16c6a44c6f8d63ac76f9cdf3329cd",
+      "kind": "table",
+      "text": "arXiv:2607.18754v1  [cs.AI]  21 Jul 2026",
+      "order": 13,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 4152,
+      "char_end": 4192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb4335f63aa0eca1c9c1dac382ac7d87",
+      "kind": "paragraph",
+      "text": "root-cause analysis and repair to the developer. Failure taxonomies and attribution benchmarks formalize common error modes and evaluate whether a method can identify the responsible agent or step, but are typically presented as standalone analyses rather than deployable debugging infrastructure. Self-correction methods can revise unsuccessful behavior, yet correction is considerably more reliable when the location of the underlying error is already known (Tyen et al., 2024). As summarized in Table 1, current systems therefore leave a gap between observing a failed execution, attributing its root cause, proposing an actionable repair, and verifying that repair through rerunning. To address the gap, we introduce AgentDebugX, an open-source toolkit that closes this gap by organizing agent debugging as the iterative loop shown in Figure 1:Detect,Attribute,Recover, and Rerun. Given either a live execution or an exported log, AgentDebugX first converts frameworkspecific events into a portable trajectory representation. Detection identifies observable failures and associates them with structured failure modes. Attribution then traces those symptoms backward to the agent and step whose correction would most likely have prevented the failure. Recovery converts the resulting diagnosis into a concrete retry directive, and rerunning applies the approved correction from an appropriate checkpoint while retaining both the original and repaired branches for comparison. When a rerun remains unsuccessful,",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 4194,
+      "char_end": 5707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0ee75d06237fac55b0ae68ab3b6fcec",
+      "kind": "paragraph",
+      "text": "its new trajectory re-enters the same loop. At the center of AgentDebugX isDeepDebug, a multi-turn root-cause diagnostic agent designed for failures that cannot be reliably localized through a single trace reading. DeepDebug combines a global trajectory read with a structure-guided probe—tracing handoffs in multi-agent runs or bisecting single-agent traces. It cross-examines conflicting candidates and outputs an auditable report with the responsible agent and step, supporting evidence, an explanation, and one concrete fix. A diagnosis becomes operationally useful only when it can improve the next execution. AgentDebugX therefore connects attribution directly to a policygated rerun loop. Its native recovery path uses DeepDebug’s localized, evidence-backed correction as the retry directive, while alternative recoverers can reformulate the same diagnosis. Beyond individual debugging sessions, Agent- DebugX provides an opt-inError Hubfor storing scrubbed trajectory–diagnosis–repair bundles. These bundles can serve as incident records, continuous-integration regression fixtures, and reusable debugging memory. Through a shared, framework-independent format, teams can compare diagnoses across methods and versions, retrieve similar historical failures, and accumulate reviewed examples of long-tail failure modes without modifying the original execution evidence. We evaluate the two capabilities of AgentDebugX: accurately localizing the cause of a failure and converting that diagnosis into a successful re-",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 5709,
+      "char_end": 7230,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f4dd54aca3cd7853cb775d0ff89912b",
+      "kind": "paragraph",
+      "text": "pair. On the Who&When benchmark, DeepDebug achieves the strongest attribution performance among the evaluated methods on both tested openweight backbones. With qwen3.5-9b, it reaches",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error"
+      ],
+      "char_start": 7232,
+      "char_end": 7414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e0b7ad544afab6fa8625b71623aea80",
+      "kind": "heading",
+      "text": "8% strict agent-and-exact-step accuracy, com-",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error",
+        "8% strict agent-and-exact-step accuracy, com-"
+      ],
+      "char_start": 7416,
+      "char_end": 7461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d8df12ffe94ec41730bffe48b1da0a9",
+      "kind": "paragraph",
+      "text": "pared with 21.7% for the strongest single-pass baseline. On GAIA, applying DeepDebug’s diagnosis in a single rerun repairs 13 of 73 trajectories initially failed by the underlying agent, compared with 4–6 repairs for three decoupled self-correction baselines, increasing overall accuracy from 55.8% to 63.6%.",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Port. Tax- Attr- Recov- Error",
+        "8% strict agent-and-exact-step accuracy, com-"
+      ],
+      "char_start": 7463,
+      "char_end": 7771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3557b626d9b0e0b1b76ee0c4e2ab21c",
+      "kind": "heading",
+      "text": "Related Works",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Related Works"
+      ],
+      "char_start": 7773,
+      "char_end": 7786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00435d6bc69f04da926962800cb8fc1b",
+      "kind": "paragraph",
+      "text": "Existing research provides strong components for observing, diagnosing, or correcting agent failures, but rarely connects them into a unified workflow from failure detection to verified recovery. Observability platforms such as LangSmith, Langfuse, and Phoenix capture and replay detailed agent traces (Dong et al., 2024), but leave developers to determine which step was responsible, why, and how to repair the run. A parallel line formalizes agent failures through taxonomies, attribution benchmarks, and trajectory diagnostics — Agent- Debug (Zhu et al., 2025), MAST (Cemri et al.,",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Related Works"
+      ],
+      "char_start": 7788,
+      "char_end": 8372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0d63612b1d1741e8d51f502845653b8",
+      "kind": "heading",
+      "text": ", Who&When (Zhang et al., 2025), TRAIL",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", Who&When (Zhang et al., 2025), TRAIL"
+      ],
+      "char_start": 8374,
+      "char_end": 8412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:928db47f463508571700cf280be22647",
+      "kind": "paragraph",
+      "text": "(Deshpande et al., 2025), and AgenTracer (Zhang et al., 2026). These show that even strong models struggle with root-cause localization, but are presented as standalone taxonomies, benchmarks, or attribution methods rather than deployable infrastructure for heterogeneous runtimes. The closest system, AgentDiagnose (Ou et al., 2025), provides an open toolkit for scoring trajectories along interpretable dimensions and curating training data, but does not connect step-level attribution to verified recovery or a shared incident corpus. Self-correction methods — Reflexion (Shinn et al., 2023), Self- Refine (Madaan et al., 2023), CRITIC (Gou et al.,",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", Who&When (Zhang et al., 2025), TRAIL"
+      ],
+      "char_start": 8414,
+      "char_end": 9065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dcdffad42df6597c9a43af985f8238d",
+      "kind": "paragraph",
+      "text": "Recover - Generate correction suggestions Attribute - Trace back to root cause Rerun -Regenerate with diagnostics Detect - Identify step-level errors Local & Web UI",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", Who&When (Zhang et al., 2025), TRAIL"
+      ],
+      "char_start": 9067,
+      "char_end": 9231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:231f0480f5935dc8c07538dad1d80aec",
+      "kind": "heading",
+      "text": "Baseline Suite",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Baseline Suite"
+      ],
+      "char_start": 9233,
+      "char_end": 9247,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d6a478159e73efa0e5610ab8b479d5f",
+      "kind": "heading",
+      "text": "Reusable Error Hub",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Reusable Error Hub"
+      ],
+      "char_start": 9249,
+      "char_end": 9267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7765743ac5c1dde287d5e06f394b0d3",
+      "kind": "heading",
+      "text": "Highly Extensible",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Highly Extensible"
+      ],
+      "char_start": 9269,
+      "char_end": 9286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4aeb7ca75eaa14017358f52f7fed94a0",
+      "kind": "heading",
+      "text": "Broad Compatibility",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Broad Compatibility"
+      ],
+      "char_start": 9288,
+      "char_end": 9307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39a1e02cea59adcbd1d37e60cf97ed8b",
+      "kind": "heading",
+      "text": "Key System Highlights",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Key System Highlights"
+      ],
+      "char_start": 9309,
+      "char_end": 9330,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ad1dd1eea15c43158b7144b26a38f6e",
+      "kind": "paragraph",
+      "text": "DeepDebug -Advanced Diagnostic Mode for Complex Failures If still incorrect, detect again.As auxiliary information for recovery. Detect errors for attribution. Prepare suggestions for rerun. Input/context sourcestrajectoryprior findingsdeep memoryerror hubenv assets Diagnosis Agent (multi-turn harness) contextmulti-turntool-usingmemory-assistedread-only env dive write back (learned findings)trace readerretrieval(search)files/logs/screenshotszoom(context)",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Key System Highlights"
+      ],
+      "char_start": 9332,
+      "char_end": 9790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d65ddf08535d3b3a04478d2a69bfa21",
+      "kind": "heading",
+      "text": "Global read (full-trace scan)2 Structure-guided probe(cascade/bisect)3 Cross-check(zoom/adjudicate)",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Global read (full-trace scan)2 Structure-guided probe(cascade/bisect)3 Cross-check(zoom/adjudicate)"
+      ],
+      "char_start": 9792,
+      "char_end": 9891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc62f35c5827b6537c45e691f736b99a",
+      "kind": "paragraph",
+      "text": "Candidate ACandidate Badjudicated step & evidenceagree?yes no",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Global read (full-trace scan)2 Structure-guided probe(cascade/bisect)3 Cross-check(zoom/adjudicate)"
+      ],
+      "char_start": 9893,
+      "char_end": 9954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9393e42b5fbe67468fca815392213e1",
+      "kind": "heading",
+      "text": "Diagnose & suggestroot causeevidenceone fix",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Diagnose & suggestroot causeevidenceone fix"
+      ],
+      "char_start": 9956,
+      "char_end": 9999,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb9b532815ab18fc90dc3768067cb76d",
+      "kind": "heading",
+      "text": "Diagnostic Report",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Diagnostic Report"
+      ],
+      "char_start": 10001,
+      "char_end": 10018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae7e0f07bf118462751e80bde8c23c8e",
+      "kind": "caption",
+      "text": "Figure 1:Overview of AgentDebugX.AgentDebugX forms a closed debugging loop:Detectidentifies step-level",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Diagnostic Report"
+      ],
+      "char_start": 10020,
+      "char_end": 10122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dae530cb8907ef7a07f1a00144220d02",
+      "kind": "paragraph",
+      "text": "errors,Attributelocates their root causes,Recoverproposes ranked fixes, andRerunregenerates the trajectory around the failure point. Hard cases are escalated toDeepDebug, a multi-round diagnosis agent that produces an auditable root-cause report with evidence and a recommended fix. AgentDebugX supports local and web UIs, reusable error sharing, baseline evaluation, and broad agent-framework compatibility.",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Diagnostic Report"
+      ],
+      "char_start": 10124,
+      "char_end": 10532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c22fb3692cffd5e62d348809b430984",
+      "kind": "heading",
+      "text": ", AutoManual (Chen et al., 2024) — study",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", AutoManual (Chen et al., 2024) — study"
+      ],
+      "char_start": 10534,
+      "char_end": 10574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eda056014aade53d3f800415d6251992",
+      "kind": "paragraph",
+      "text": "how models revise unsuccessful behavior, and are complementary to our setting: models correct errors far more reliably when the error’slocationis supplied (Tyen et al., 2024), which is exactly what AgentDebugX’s attribution provides.",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", AutoManual (Chen et al., 2024) — study"
+      ],
+      "char_start": 10576,
+      "char_end": 10809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffebb91be3e70334bbad11c5fec5b49c",
+      "kind": "heading",
+      "text": "System Overview",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview"
+      ],
+      "char_start": 10811,
+      "char_end": 10826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a4bd437da20de0bb95299d564b83d34",
+      "kind": "caption",
+      "text": "Figure 1 illustrates AgentDebugX, a closed-loop",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview"
+      ],
+      "char_start": 10828,
+      "char_end": 10875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be8560b889c5ea1208e18a0635166831",
+      "kind": "paragraph",
+      "text": "debugging framework consisting of four stages: Detect,Attribute,Recover, andRerun. These stages are coordinated through a portable debugging artifact, while difficult cases are escalated to the DeepDebug agent for diagnosis and recovery.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview"
+      ],
+      "char_start": 10877,
+      "char_end": 11114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:708c88fdaca73f9a4dd135eacd6180bc",
+      "kind": "heading",
+      "text": "Trace Capture and Representation",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview",
+        "Trace Capture and Representation"
+      ],
+      "char_start": 11116,
+      "char_end": 11148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:797779ec13761ac7664dc4dd0f7e1a1e",
+      "kind": "paragraph",
+      "text": "The input to the loop is an AgentTrajectory, a portable record of an agent execution. The runtime layer converts the events an agent framework emits — LLM calls, tool calls and results, memory operations, handoffs, UI actions — into an ordered sequence of AgentEvents. Each event records the acting agent, module, step index, parent event, inputs, outputs, metadata, and any error or artifact produced (including screenshots for GUI agents). A trajectory can be captured from a live runtime through adapters (LangGraph, CrewAI, the OpenAI Agents SDK, OpenTelemetry, raw ReAct) or reconstructed from an exported log through offline importers; all mechanisms produce the same representation, so diagnosis is independent of the original framework. Crucially, adiagnosis is layered on top of this record rather than written back into it: the same execution can be re-analyzed by any method, compared across versions, and shared as a regression case without altering the evidence.",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview",
+        "Trace Capture and Representation"
+      ],
+      "char_start": 11150,
+      "char_end": 12125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd803bdc4bbfebbc50b838b226b6268f",
+      "kind": "heading",
+      "text": "Closed-Loop Debugging Pipeline",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview",
+        "Closed-Loop Debugging Pipeline"
+      ],
+      "char_start": 12127,
+      "char_end": 12157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5a614567bd307ebcb1592c57cdc493e",
+      "kind": "paragraph",
+      "text": "Given a captured trajectory, AgentDebugX runs the four-stage loop of Figure 1. Each stage consumes structured outputs from the preceding one and produces inspectable artifacts. Detect.Deterministic rule packs first target mechanically verifiable failures — malformed tool calls, no-progress loops, invalid outputs, premature success — with no model call. When rules are insufficient, an LLM judge reads the goal and a bounded trace window and returns typed findings (affected event, failure mode, evidence, confidence), expressed in a shared taxonomy whose seed contains 19 modes spanning planning, memory, tool use, verification, and coordination (Ap-",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview",
+        "Closed-Loop Debugging Pipeline"
+      ],
+      "char_start": 12159,
+      "char_end": 12811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c915c49283a9dcc9a0073e86a09ddb9",
+      "kind": "paragraph",
+      "text": "pendix A). Detection locates where a failuremanifests; the detected event is not necessarily the one responsible, so its findings seed attribution rather than settle it. Attribute.The attribution stage traces a symptom to the step that rendered the task unsuccessful, using a family of strategies that trade cost for resolution: inexpensive heuristics and single-pass whole-trace reading, then binary search, per-step inspection, and budgeted ensembles. Each attributor returns ranked hypotheses with confidence and provenance, not one unqualified blame assignment, so a deployment dials accuracy against latency and token cost. Cases that remain ambiguous escalate to DeepDebug (Section 3.3). Recover.Once a responsible step is localized, recovery turns the finding into a concrete retry proposal grounded in the root-cause step, failure mode, evidence, and surrounding context. The native path uses DeepDebug’s own correction as the retry directive, requiring no extra model call after diagnosis; Reflexion(Shinn et al., 2023),CRITIC(Gou et al.,",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "System Overview",
+        "Closed-Loop Debugging Pipeline"
+      ],
+      "char_start": 12813,
+      "char_end": 13860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a94006ea48508a8f331b694c1185f7c5",
+      "kind": "heading",
+      "text": ", andAutoManual(Chen et al., 2024) ship as",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", andAutoManual(Chen et al., 2024) ship as"
+      ],
+      "char_start": 13862,
+      "char_end": 13904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5ad15bc1c94581d02a85bbe812bad13",
+      "kind": "paragraph",
+      "text": "alternative strategies and baselines. All aresuggestonly: because a repaired action can change the world, application stays behind an explicit human or policy gate. Rerun.AgentDebugX packages the diagnosis, selected checkpoint, and retry directive into a rerun request; runtime-specific executors consume that request to produce a new trajectory, and the console additionally supports model-generated continuation branches for interactive comparison. The branch is scored against the objective and kept beside the original, preserving both the failure and the attempted repair; a successful branch is saved as a resolved case, a failed one re-enters detection. AgentDebugX does not automatically replay arbitrary external tools from an imported log.",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", andAutoManual(Chen et al., 2024) ship as"
+      ],
+      "char_start": 13906,
+      "char_end": 14655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:848741ffe4ce3280a0dc5f397ca09d82",
+      "kind": "heading",
+      "text": "DeepDebug: Multi-Turn Root-Cause",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        ", andAutoManual(Chen et al., 2024) ship as",
+        "DeepDebug: Multi-Turn Root-Cause"
+      ],
+      "char_start": 14657,
+      "char_end": 14689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33c18bb06968b21919675b9d4004570c",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent"
+      ],
+      "char_start": 14691,
+      "char_end": 14696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f9518f89aaf4b7a7fa5a4268dab619d",
+      "kind": "paragraph",
+      "text": "Single-pass attribution has complementary blind spots: a global read preserves task context but anchors on the loudest downstream symptom, while a narrow step-wise scan loses sight of the objective. DeepDebug (lower panel of Figure 1) resolves this through a multi-turn, read-only process over the captured trace, in four stages. Stage 1 — global read.The agent reads the whole trajectory, reconstructs the objective and history, and names an initial candidate for the decisive step, keeping the context needed to tell a causal error from a locally unusual but valid action. Stage 2 — structure-guided investigation.A second pass uses the strategy matching the trace shape: for a multi-agent run it walks the handoff cascade upstream from the visible failure to the earliest step that doomed the run; for a singleagent run it bisects the step range and re-reads the surviving region, yielding an independent second candidate. Stage 3 — cross-examination.If the two passes agree, the step is accepted; if they disagree, Deep- Debug inspects both candidates side by side with their context, inputs, outputs, and downstream effects, and selects the stronger causal explanation — reducing root-cause selection from a search over the whole trace to a focused adjudication between two hypotheses. Stage 4 — diagnosis and suggestion.With the step fixed, DeepDebug emits a structured report: the responsible agent and step, a plain-language explanation, quoted evidence, and one concrete fix that recovery can use directly or reformulate. Every",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent"
+      ],
+      "char_start": 14698,
+      "char_end": 16234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6aeccd6707cca82a0e24fd7d01ce5e23",
+      "kind": "paragraph",
+      "text": "inspection is recorded, so the verdict ships with its audit trail. The agent inspects the trace but never re-executes the run’s tools.",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent"
+      ],
+      "char_start": 16236,
+      "char_end": 16370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96f1323085198593b27b3f27cf26848c",
+      "kind": "heading",
+      "text": "Extensible Failure Taxonomy",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "Extensible Failure Taxonomy"
+      ],
+      "char_start": 16372,
+      "char_end": 16399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fae99eb84a6b39623883b7d51aaca565",
+      "kind": "paragraph",
+      "text": "Detection and diagnosis share a structured vocabulary of failure modes. A fixed taxonomy cannot anticipate every long-tail error, so AgentDebugX proposes extensions for human review: when the judge meets a recurring failure outside the seed set it records a novel-mode candidate, and an inducer collects such residuals, clusters them (label, then lexical or embedding similarity, gated by a support threshold), proposes one candidate mode per cluster, and deduplicates against the seed. Proposalsneveroverwrite the curated taxonomy: when several runs show agents waiting on one another indefinitely, for example, the inducer proposes a newmulti-agent deadlockmode, notes its kinship to the existing lost-handoff category, and leaves the decision to a maintainer.",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "Extensible Failure Taxonomy"
+      ],
+      "char_start": 16401,
+      "char_end": 17163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d313ea4f121cb2cd96574122a15292c",
+      "kind": "caption",
+      "text": "Figure 2: The AgentDebugX console on a failed run,",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "Extensible Failure Taxonomy"
+      ],
+      "char_start": 17165,
+      "char_end": 17215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47ab7d9d1ceb6cc22f6d58b222366ea3",
+      "kind": "paragraph",
+      "text": "as a four-step workflow: (1) select a stored trace in the run navigator; (2) jump from the visible failure to the attributed responsible event; (3) read the failure mode, evidence, and proposed fix in the diagnosis panel; (4) create a policy-gated rerun branch and compare it with the original timeline. All artifacts stay in the local store unless a bundle is explicitly exported.",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "Extensible Failure Taxonomy"
+      ],
+      "char_start": 17217,
+      "char_end": 17598,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebf737a1658e73a8df1051752bd35f2c",
+      "kind": "heading",
+      "text": "System Surfaces and Integrations",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "System Surfaces and Integrations"
+      ],
+      "char_start": 17600,
+      "char_end": 17632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:399ff6ac20d8d0515290c0501dece229",
+      "kind": "paragraph",
+      "text": "The pipeline is exposed through surfaces that share the same trajectory, finding, report, and recovery types, so a case created in one can be continued in another. Theinteractive console(Figure 2) launches with agentdebug serve over the local store the library writes; as a no-build single-page app shipped in the wheel, it takes a developer from pip install to a live debugger. A typical session follows the four numbered steps of Figure 2: select a failed run, jump from the visible failure to the attributed responsible event, review evidence and the proposed fix, then fork arerun-from-step branch that is scored against the original. The same views serve computer-use agents: an OSWorld importer normalizes screenshot-and-action steps and a GUI root-cause mode reasons over the visual channel, while a Python-style traceback or JSON report serves CI when no browser is wanted. TheError Hubturns incidents into shared knowledge. A trajectory, its report, and artifacts are packed into a bundle whose scrubber, by default, strips event inputs wholesale — the fields carrying prompts and tool arguments — and applies known-pattern credential and PII redaction to every remaining string; because pattern redaction cannot guarantee removal of arbitrary sensitive content, sharing stays opt-in and bundles should be reviewed before publication. Bundles are written to a local directory, a private Git remote, or a public dataset, doing double duty as a CI fixture and an entry in a cross-team corpus. That corpus is also AgentDebugX’s long-termmemory: DeepDebug",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "System Surfaces and Integrations"
+      ],
+      "char_start": 17634,
+      "char_end": 19194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b350b98757da29b113d902cecba17ee8",
+      "kind": "paragraph",
+      "text": "can retrieve similar past cases to seed its hypotheses and writes each new case back; through the shared bundle format, accepted entries and reviewed taxonomy additions become available to future diagnosis (this effect is not yet evaluated). Finally, Deep- Debug is packaged as an installableagentic skill and CLI, so tool-using agents (Claude Code, Open- Claw, and Hermes, each installing the skill) can normalize their own failed run, diagnose it, and feed the fix back into their next attempt — one CLI contract through which supported host agents can diagnose their own runs and each other’s.",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agent",
+        "System Surfaces and Integrations"
+      ],
+      "char_start": 19196,
+      "char_end": 19792,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cb493db8d4b6f7d2017af8b5bc59cc3",
+      "kind": "heading",
+      "text": "Evaluation",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation"
+      ],
+      "char_start": 19794,
+      "char_end": 19804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e08c72545cc44ae064365477b076984c",
+      "kind": "paragraph",
+      "text": "We evaluate the two things a deployed debugger must do, in pipeline order: localize the cause accurately, then turn that diagnosis into afix. Setup.Unless noted, the debugged policy is qwen3.5-9b and all diagnosis (judge and DeepDebug) runs on gemini-2.5-flash, at temperature 0 with thinking disabled. Diagnostic memory and the Error Hub stayemptythroughout. Per-task outputs, configs, and a script regenerating Table 3 ship with the code; full protocol in Appendix C. Failure attribution.We evaluate on all 184 Who&When traces (Zhang et al., 2025). Each trace is labelled withwhoerred — theresponsible agent, whose decision doomed the run — andwhen— the exactmistake step. Following the benchmark’s reference-answer protocol, every method receives the task’s reference answer but neither gold label. With qwen3.5-9b (Table 2), DeepDebug’s two-reading adjudication outperforms the evaluated single-strategy localizers on all five reported metrics — responsible agent ( 56.0 vs 47.8), exact/near ( ±1) step ( 28.8/44.0 vs 22.3/38.6), and strict agent-and-step (28.8/32.1 vs 21.7/23.9). The joint gain carries to qwen3.6-27b (strict 38.0 vs",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation"
+      ],
+      "char_start": 19806,
+      "char_end": 20945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70370b7a4aabb57bb6c3b3faa88c8df8",
+      "kind": "heading",
+      "text": "The benefit is model-dependent: on the",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation",
+        "The benefit is model-dependent: on the"
+      ],
+      "char_start": 20947,
+      "char_end": 20985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a1d16381c58c637ecee13a9a56e026a",
+      "kind": "paragraph",
+      "text": "hosted backbones of Appendix C a single global reading is already stronger and adjudication does not improve it, motivating per-model routing rather than invoking the multi-call method unconditionally. Swapping the structure-aware reading for a second global searcher costs 4.8 strict points on gpt-5.4-mini(ablation, Appendix C). Where the multi-turn agent pays off.Figure 3 breaks the same run down by trace length: the margin concentrates on traces longer than 40 events, the regime the structure-guided turn and crossexamination target. Only 26 traces fall in this range,",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation",
+        "The benefit is model-dependent: on the"
+      ],
+      "char_start": 20987,
+      "char_end": 21562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb0a9e40dc2114dcea98ce2bd704da3d",
+      "kind": "paragraph",
+      "text": "10 (n=131)",
+      "order": 63,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation",
+        "The benefit is model-dependent: on the"
+      ],
+      "char_start": 21564,
+      "char_end": 21574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df386999f5514b1d2849e3207a6bf8c2",
+      "kind": "heading",
+      "text": "40",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "40"
+      ],
+      "char_start": 21576,
+      "char_end": 21578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7a0143ccdc91d372cc5d774fbb005c5",
+      "kind": "paragraph",
+      "text": "(n=27) >40 (n=26) 0 25 50 75 Accuracy (%) 46 74 31 54 74 46 Responsible agent 10 (n=131)",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "40"
+      ],
+      "char_start": 21580,
+      "char_end": 21668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65a6e6b960e5c54572837c4fbcb8fe6f",
+      "kind": "heading",
+      "text": "40",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "40"
+      ],
+      "char_start": 21670,
+      "char_end": 21672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99e31dbc4a38e6b5e2d131c206d1b5cd",
+      "kind": "equation",
+      "text": "(n=27) >40 (n=26)",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "40"
+      ],
+      "char_start": 21674,
+      "char_end": 21691,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:882ee7cdcdf91716bc30a5b5bb12996e",
+      "kind": "heading",
+      "text": "22",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "22"
+      ],
+      "char_start": 21693,
+      "char_end": 21695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4892a08fe4c406c2d97a0feb76912a41",
+      "kind": "paragraph",
+      "text": "0 34 22 8 Agent + exact step",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "22"
+      ],
+      "char_start": 21697,
+      "char_end": 21725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e33d153127c557721a42192e0151ea85",
+      "kind": "heading",
+      "text": "All-at-Once DeepDebug",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "All-at-Once DeepDebug"
+      ],
+      "char_start": 21727,
+      "char_end": 21748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bb44c69ae2c849fb01dcb20d9ca28eb",
+      "kind": "caption",
+      "text": "Figure 3: Who&When accuracy by trace length",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "All-at-Once DeepDebug"
+      ],
+      "char_start": 21750,
+      "char_end": 21793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d959e61df0e384e62a5b6b80bbfdbdd0",
+      "kind": "paragraph",
+      "text": "(n=184; qwen3.5-9b). Left: responsible-agent accuracy (who). Right: strict joint accuracy requiring both the responsible agent and the exact mistake step (who+when) to be correct.",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "All-at-Once DeepDebug"
+      ],
+      "char_start": 21795,
+      "char_end": 21974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90669fce2cad063f352c541f9c1c1907",
+      "kind": "heading",
+      "text": "Method Agent Step Step A+S A+S",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Agent Step Step A+S A+S"
+      ],
+      "char_start": 21976,
+      "char_end": 22006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05b559978ced94e6c63258c1641ba43d",
+      "kind": "paragraph",
+      "text": "(exact) (±1) (exact) (±1) Rule heuristic 14.1 1.6 6.5 1.6 2.7 All-at-Once 47.8 22.3 35.3 21.7 23.9 Step-by-Step 41.8 18.5 38.0 17.9 19.6 Binary-Search 41.8 17.4 38.6 17.4 20.1 DeepDebug 56.0 28.8 44.0 28.8 32.1",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Agent Step Step A+S A+S"
+      ],
+      "char_start": 22008,
+      "char_end": 22218,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20e67811ed2c72009e0af6febb2e906e",
+      "kind": "caption",
+      "text": "Table 2: Failure attribution on the full Who&When",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Agent Step Step A+S A+S"
+      ],
+      "char_start": 22220,
+      "char_end": 22269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:308565970a9953e52b827bc79ca8b981",
+      "kind": "paragraph",
+      "text": "benchmark (n=184; qwen3.5-9b). “Agent” measures responsible-agent accuracy (who); “Step” measures mistake-step localization (when) under exact and ±1 criteria; “A+S” requires both agent and step to be correct. so we treat it as descriptive evidence. End-to-end recovery on GAIA.Localization is only useful if itchanges an outcome, so we close the loop. A vanilla qwen3.5-9b Open-Deep- Research agent solves 55.8% of GAIA validation and fails 73 tasks; we diagnose each failure and rerun it once. AgentDebugX’snative pathphrases DeepDebug’s own localized fix directly into the retry; Reflexion, CRITIC, and AutoManual run asdecoupledbaselines: same failed-task context plus a generic judge-produced failure summary, but not DeepDebug’s localization, evidence, or authored fix. Under this shared subset, DeepDebug’s recovery produces more than double the onererun repairs of the decoupled baselines (Table 3), with the largest gain on Level-2 multi-hop tasks (48.8→61.6 ) — evidence its localized, evidencebacked fix is useful, though the experiment evaluates the full recipe rather than isolating attribution alone. Cost-aware selection.Every backend declares its inference cost (free rules; one call for All-at- Once and the judge;O(logN) /O(N) searches; ∼5 calls for DeepDebug), letting deployments trade model calls for localization accuracy. The escala-",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Agent Step Step A+S A+S"
+      ],
+      "char_start": 22271,
+      "char_end": 23627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54b9c76f343015fff315e7ca5e51b550",
+      "kind": "heading",
+      "text": "Method Rec. L1 L2 L3 All",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Rec. L1 L2 L3 All"
+      ],
+      "char_start": 23629,
+      "char_end": 23653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:815ee468ffde24f5fc366b001c12820b",
+      "kind": "paragraph",
+      "text": "Vanillaqwen3.5-9b— 77.4 48.8 34.6 55.8",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Method Rec. L1 L2 L3 All"
+      ],
+      "char_start": 23655,
+      "char_end": 23693,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddb651c636c0f6b8261e2dc5d10dcaac",
+      "kind": "heading",
+      "text": "+ CRITIC 4/7381.151.2 34.6 58.2",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23695,
+      "char_end": 23726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab29e917c7fe91c748497ded45d9e9c5",
+      "kind": "list_item",
+      "text": "+ AutoManual 5/73 79.2 53.5 34.6 58.8",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23728,
+      "char_end": 23765,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5596cd1b465d778d716a2eaa69789285",
+      "kind": "list_item",
+      "text": "+ Reflexion 6/73 77.4 55.8 34.6 59.4",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23767,
+      "char_end": 23803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7004bd28a761e60893720aa7ae5444b9",
+      "kind": "paragraph",
+      "text": "+DeepDebug (ours) 13/73 81.1 61.634.663.6",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23805,
+      "char_end": 23846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:553e821eaab3376f3e2114d7c365eea4",
+      "kind": "caption",
+      "text": "Table 3: End-to-end recovery on GAIA validation (165",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23848,
+      "char_end": 23900,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:139dcccc1d2120a4dced78cd635258b8",
+      "kind": "paragraph",
+      "text": "tasks; official scorer). “Rec.” denotes the number of repaired cases among the 73 vanilla-failed trajectories. Accuracy (%) is reported by difficulty level and overall after a single rerun. tion is cheaper than the call count suggests: on a",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "+ CRITIC 4/7381.151.2 34.6 58.2"
+      ],
+      "char_start": 23902,
+      "char_end": 24142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b57436d83b7fc03834ccdd712859b56",
+      "kind": "heading",
+      "text": "trace stratified Who&When sample, one whole-",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "trace stratified Who&When sample, one whole-"
+      ],
+      "char_start": 24144,
+      "char_end": 24188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9a174093b3ce1471ecc6f2a0e32bc0a",
+      "kind": "paragraph",
+      "text": "trace pass averages 8.1K tokens against DeepDebug’s 12.8K (1.6×; its later turns read focused windows), so escalating only ambiguous cases keeps expected cost near a single pass; every attributor returns ranked hypotheses with provenance rather than one authoritative blame claim. Takeaway.Across both experiments, DeepDebug’s multi-turn diagnosis delivers state-of-the-art attribution on Who&When (28.8% strict vs 21.7% for the best single strategy) and turns those diagnoses into 2–3× more repaired GAIA failures than decoupled self-correction (+7.9 points), at only1.6×the tokens of a single pass.",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "trace stratified Who&When sample, one whole-"
+      ],
+      "char_start": 24190,
+      "char_end": 24790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:235a93e3c55eccee30c6e490f841cc3c",
+      "kind": "heading",
+      "text": "Use Cases and Applications",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Use Cases and Applications"
+      ],
+      "char_start": 24792,
+      "char_end": 24818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b46b737505c370c523d69cd8ca51300",
+      "kind": "paragraph",
+      "text": "AgentDebugX supports a range of debugging workflows. A typical session begins by capturing or importing a failed execution. DeepDebug then localizes the responsible step, explains the root cause, and proposes a repair, which can be reviewed before a policy-controlled rerun. The resulting trajectory is retained alongside the original and can optionally be stored in the Error Hub as reusable debugging memory. This workflow supports interactive debugging, CI regression testing, incident response, and self-debugging agents.",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Use Cases and Applications"
+      ],
+      "char_start": 24820,
+      "char_end": 25345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48914671143d6775711f6f07613742fc",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Conclusion"
+      ],
+      "char_start": 25347,
+      "char_end": 25357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:530a282aa600f40e0e7f3ccb90b81860",
+      "kind": "paragraph",
+      "text": "In this work, we presented AgentDebugX, a closedloop debugging framework that connects failure detection, root-cause attribution, recovery, and rerun for LLM agents. Its core method, DeepDebug, demonstrates that improving fault attribution can translate into measurable gains in downstream recovery. We hope AgentDebugX provides a practical foundation for debugging increasingly capable LLM agents and facilitates future research on reliable agent development.",
+      "order": 90,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Conclusion"
+      ],
+      "char_start": 25359,
+      "char_end": 25819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbc5b73b53cb44f766971a1fe3308908",
+      "kind": "heading",
+      "text": "Ethical Considerations",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Ethical Considerations"
+      ],
+      "char_start": 25821,
+      "char_end": 25843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21177afe3783fd4ca25433022830e88f",
+      "kind": "paragraph",
+      "text": "AgentDebugX collects potentially sensitive agent traces, including prompts, tool arguments, user data, files, screenshots, and outputs. The default deployment is local-first, and shared corpus upload is opt-in. Any production deployment should configure redaction, retention, access control, and audit logging before collecting user data. Diagnostic labels and recovery suggestions can be wrong, so the UI and API should present confidence and evidence rather than framing attribution as ground truth. For high-impact domains, deployments should require human or policy approval rather than automatic recovery.",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Ethical Considerations"
+      ],
+      "char_start": 25845,
+      "char_end": 26455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0aaabce7666ac8b1c0ca9b5454caffc3",
+      "kind": "heading",
+      "text": "Broader Impact",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Broader Impact"
+      ],
+      "char_start": 26457,
+      "char_end": 26471,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a6524daacd9762072e1cc0654d308b9",
+      "kind": "paragraph",
+      "text": "AgentDebugX can help make agent reliability an inspectable and measurable engineering practice. Today, failures are often patched privately and then forgotten; systematic attribution and recovery evidence can instead inform audit trails, deployment gates, regression tests, and decisions about when an agent should not be trusted. This matters as agents enter software development, science, education, accessibility, and public-facing services, where silent or repeated errors can propagate beyond a single run. An open-source toolkit and common trace representation also lower the cost for researchers and smaller organizations to study robustness and compare systems on shared evidence. TheError Hubextends this impact from individual deployments to a community: one team’s failure can become another team’s regression case and, at scale, contribute to realistic benchmarks, evolving taxonomies, and better diagnostic or recovery methods. Together, AgentDebugX and the Hub create a path from isolated incidents to organizational learning and eventually shared robustness standards. Realizing this vision requires consent, provenance, effective redaction, moderation, takedown processes, and audits of whose systems and failures remain underrepresented. With these safeguards, AgentDebugX could make agent robustness more cumulative, collaborative, and broadly accessible rather than a proprietary advantage.",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Broader Impact"
+      ],
+      "char_start": 26473,
+      "char_end": 27882,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:700e53279de3b752a6771efd105d3f1d",
+      "kind": "heading",
+      "text": "References",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "References"
+      ],
+      "char_start": 27884,
+      "char_end": 27894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eea1f64ad60f78f00a14d2d57a2687a5",
+      "kind": "heading",
+      "text": "Mohamed Aghzal, Erion Plaku, Gregory J Stein, and",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Mohamed Aghzal, Erion Plaku, Gregory J Stein, and"
+      ],
+      "char_start": 27896,
+      "char_end": 27945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8e53ae76162d2ebfdea8dab8eae2838",
+      "kind": "paragraph",
+      "text": "Ziyu Yao. 2025. A survey on large language models for automated planning.arXiv preprint arXiv:2502.12435.",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Mohamed Aghzal, Erion Plaku, Gregory J Stein, and"
+      ],
+      "char_start": 27947,
+      "char_end": 28052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f2d531a4bd4df72fd1a74e9e12f5338",
+      "kind": "heading",
+      "text": "Shraddha Barke, Arnav Goyal, Alind Khare, Avaljot",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Shraddha Barke, Arnav Goyal, Alind Khare, Avaljot"
+      ],
+      "char_start": 28054,
+      "char_end": 28103,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1ecc4da6c8ee62b8d36854b4c107a78",
+      "kind": "paragraph",
+      "text": "Singh, Suman Nath, and Chetan Bansal. 2026. Agentrx: Diagnosing ai agent failures from execution trajectories.Preprint, arXiv:2602.02475.",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Shraddha Barke, Arnav Goyal, Alind Khare, Avaljot"
+      ],
+      "char_start": 28105,
+      "char_end": 28242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4056535f2f67ea51ec19a7a190b20305",
+      "kind": "heading",
+      "text": "Mert Cemri, Melissa Z Pan, Shuyi Yang, Lakshya A",
+      "order": 100,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Mert Cemri, Melissa Z Pan, Shuyi Yang, Lakshya A"
+      ],
+      "char_start": 28244,
+      "char_end": 28292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f4ec1d68150adaeaee0084728c3acb2",
+      "kind": "heading",
+      "text": "Agrawal, Bhavya Chopra, Rishabh Tiwari, Kurt",
+      "order": 101,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Agrawal, Bhavya Chopra, Rishabh Tiwari, Kurt"
+      ],
+      "char_start": 28294,
+      "char_end": 28338,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba9b4903248c5f4a3e3d436398eba512",
+      "kind": "heading",
+      "text": "Keutzer, Aditya Parameswaran, Dan Klein, Kannan",
+      "order": 102,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Keutzer, Aditya Parameswaran, Dan Klein, Kannan"
+      ],
+      "char_start": 28340,
+      "char_end": 28387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:788f6afdca4f230040d8c4f46ed9c0ff",
+      "kind": "paragraph",
+      "text": "Ramchandran, Matei Zaharia, Joseph E. Gonzalez, and Ion Stoica. 2026. Why do multi-agent LLM systems fail? InThe Thirty-ninth Annual Conference",
+      "order": 103,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Keutzer, Aditya Parameswaran, Dan Klein, Kannan"
+      ],
+      "char_start": 28389,
+      "char_end": 28532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5353f78e3a5b3d8a5945b3a6e9d31461",
+      "kind": "heading",
+      "text": "on Neural Information Processing Systems Datasets",
+      "order": 104,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "on Neural Information Processing Systems Datasets"
+      ],
+      "char_start": 28534,
+      "char_end": 28583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c42daf0573de3bb75207620ad7d949cd",
+      "kind": "paragraph",
+      "text": "and Benchmarks Track. Minghao Chen, Yihang Li, Yanting Yang, Shiyu Yu, Binbin Lin, and Xiaofei He. 2024. Automanual: Constructing instruction manuals by llm agents via interactive environmental learning.Preprint, arXiv:2405.16247.",
+      "order": 105,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "on Neural Information Processing Systems Datasets"
+      ],
+      "char_start": 28585,
+      "char_end": 28815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9d193239b25b924efad8864aa460db6",
+      "kind": "heading",
+      "text": "Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin",
+      "order": 106,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin"
+      ],
+      "char_start": 28817,
+      "char_end": 28868,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a328bb4293de4506d72f9cda0e28a05",
+      "kind": "paragraph",
+      "text": "Krishnan, Anand Kannappan, and Rebecca Qian.",
+      "order": 107,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin"
+      ],
+      "char_start": 28870,
+      "char_end": 28914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5b578b92829a61a416e1701b2d0fc5c",
+      "kind": "heading",
+      "text": "Trail: Trace reasoning and agentic issue local-",
+      "order": 108,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin",
+        "Trail: Trace reasoning and agentic issue local-"
+      ],
+      "char_start": 28916,
+      "char_end": 28963,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:173712a239d4ba72c5d8033f729f901f",
+      "kind": "paragraph",
+      "text": "ization.Preprint, arXiv:2505.08638. Liming Dong, Qinghua Lu, and Liming Zhu. 2024. Agentops: Enabling observability of llm agents. Preprint, arXiv:2411.05285. Zhibin Gou, Zhihong Shao, Yeyun Gong, yelong shen, Yujiu Yang, Nan Duan, and Weizhu Chen. 2024. CRITIC: Large language models can self-correct with tool-interactive critiquing. InThe Twelfth International Conference on Learning Representations. Langfuse. 2023. Langfuse: Open-source LLM engineering platform. https://github.com/langfuse/ langfuse. Open-source tracing and observability for LLM applications. Bingxuan Li, Yiwei Wang, Jiuxiang Gu, Kai-Wei Chang, and Nanyun Peng. 2025. METAL: A multi-agent framework for chart generation with test-time scaling. InProceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pages 30054–30069, Vienna, Austria. Association for Computational Linguistics.",
+      "order": 109,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Darshan Deshpande, Varun Gangal, Hersh Mehta, Jitin",
+        "Trail: Trace reasoning and agentic issue local-"
+      ],
+      "char_start": 28965,
+      "char_end": 29877,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfc9e9d8a8ce9654c5bcd8505523eed5",
+      "kind": "heading",
+      "text": "Jiaheng Liu, Dawei Zhu, Zhiqi Bai, Yancheng",
+      "order": 110,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Jiaheng Liu, Dawei Zhu, Zhiqi Bai, Yancheng"
+      ],
+      "char_start": 29879,
+      "char_end": 29922,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a0b61a17f60abbcda0b05d5b7bfa2ac",
+      "kind": "paragraph",
+      "text": "He, Huanxuan Liao, Haoran Que, Zekun Wang,",
+      "order": 111,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Jiaheng Liu, Dawei Zhu, Zhiqi Bai, Yancheng"
+      ],
+      "char_start": 29924,
+      "char_end": 29966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:606f5ac500e28baa010fd15eceb16e9d",
+      "kind": "heading",
+      "text": "Chenchen Zhang, Ge Zhang, Jiebin Zhang, and",
+      "order": 112,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Chenchen Zhang, Ge Zhang, Jiebin Zhang, and"
+      ],
+      "char_start": 29968,
+      "char_end": 30011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85ec134944a21f575d834fc86f4395b5",
+      "kind": "heading",
+      "text": "others. 2025. A comprehensive survey on",
+      "order": 113,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "others. 2025. A comprehensive survey on"
+      ],
+      "char_start": 30013,
+      "char_end": 30052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42c83bdabe87adb0c3167d27072e0830",
+      "kind": "paragraph",
+      "text": "long context language modeling.arXiv preprint arXiv:2503.17407.",
+      "order": 114,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "others. 2025. A comprehensive survey on"
+      ],
+      "char_start": 30054,
+      "char_end": 30117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5e624ad84dccd6d51f5525006cd38f6",
+      "kind": "heading",
+      "text": "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler",
+      "order": 115,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler"
+      ],
+      "char_start": 30119,
+      "char_end": 30167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c835fc5d7cf28b8b57e8c31e2e524620",
+      "kind": "paragraph",
+      "text": "Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, Shashank Gupta, Bodhisattwa Prasad Majumder,",
+      "order": 116,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler"
+      ],
+      "char_start": 30169,
+      "char_end": 30306,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9af16b79ad1d6f009957ab021818390b",
+      "kind": "heading",
+      "text": "Katherine Hermann, Sean Welleck, Amir Yazdan-",
+      "order": 117,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Katherine Hermann, Sean Welleck, Amir Yazdan-"
+      ],
+      "char_start": 30308,
+      "char_end": 30353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b99fad49d9b036aa8bb91ab789004fe6",
+      "kind": "paragraph",
+      "text": "bakhsh, and Peter Clark. 2023. Self-refine: Iterative refinement with self-feedback. InThirty-seventh",
+      "order": 118,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Katherine Hermann, Sean Welleck, Amir Yazdan-"
+      ],
+      "char_start": 30355,
+      "char_end": 30456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d79421c6ca451c56dfb97cb0cbcb096c",
+      "kind": "heading",
+      "text": "Conference on Neural Information Processing Sys-",
+      "order": 119,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Conference on Neural Information Processing Sys-"
+      ],
+      "char_start": 30458,
+      "char_end": 30506,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ae828e1d13f56626bfd411dc13099a5",
+      "kind": "paragraph",
+      "text": "tems.",
+      "order": 120,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Conference on Neural Information Processing Sys-"
+      ],
+      "char_start": 30508,
+      "char_end": 30513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1368c33ce1d7e2c2c9156f5eb606bc21",
+      "kind": "paragraph",
+      "text": "Grégoire Mialon, Clémentine Fourrier, Thomas Wolf, Yann LeCun, and Thomas Scialom. 2024. GAIA: a benchmark for general AI assistants. InThe Twelfth",
+      "order": 121,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Conference on Neural Information Processing Sys-"
+      ],
+      "char_start": 30515,
+      "char_end": 30662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:741d13bc6b8f66e4aae28372491c5b18",
+      "kind": "heading",
+      "text": "International Conference on Learning Representa-",
+      "order": 122,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "International Conference on Learning Representa-"
+      ],
+      "char_start": 30664,
+      "char_end": 30712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66cdcb712365b4215f391fe3b2f0b75e",
+      "kind": "paragraph",
+      "text": "tions. OpenTelemetry. 2026. Opentelemetry semantic conventions for generative AI. https://github.com/ open-telemetry/semantic-conventions-genai . Accessed 2026-07-09.",
+      "order": 123,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "International Conference on Learning Representa-"
+      ],
+      "char_start": 30714,
+      "char_end": 30880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82a202b9dc85ced111278d9fe6d39e43",
+      "kind": "heading",
+      "text": "Tianyue Ou, Wanyao Guo, Apurva Gandhi, Graham",
+      "order": 124,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Tianyue Ou, Wanyao Guo, Apurva Gandhi, Graham"
+      ],
+      "char_start": 30882,
+      "char_end": 30927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27817fc0a2b93e6f24116758526ff836",
+      "kind": "paragraph",
+      "text": "Neubig, and Xiang Yue. 2025. AgentDiagnose: An open toolkit for diagnosing LLM agent trajectories. InProceedings of the 2025 Conference on Empirical",
+      "order": 125,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Tianyue Ou, Wanyao Guo, Apurva Gandhi, Graham"
+      ],
+      "char_start": 30929,
+      "char_end": 31077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a0d0b3ba15a1545429f4e9b694462a9",
+      "kind": "heading",
+      "text": "Methods in Natural Language Processing: System",
+      "order": 126,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Methods in Natural Language Processing: System"
+      ],
+      "char_start": 31079,
+      "char_end": 31125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a825000fe2ccc410cdffbc50ad00fe68",
+      "kind": "paragraph",
+      "text": "Demonstrations, pages 207–215, Suzhou, China. Association for Computational Linguistics. Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik R Narasimhan, and Shunyu Yao. 2023. Reflexion: language agents with verbal reinforcement learning. InThirty-seventh Conference on Neural Information Processing Systems.",
+      "order": 127,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Methods in Natural Language Processing: System"
+      ],
+      "char_start": 31127,
+      "char_end": 31439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfe8ce444bbb99886365d5273a79a4f3",
+      "kind": "heading",
+      "text": "Gladys Tyen, Hassan Mansoor, Victor Carbune, Peter",
+      "order": 128,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Gladys Tyen, Hassan Mansoor, Victor Carbune, Peter"
+      ],
+      "char_start": 31441,
+      "char_end": 31491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11d01035c0e10d38bc6ff2783d5536ad",
+      "kind": "paragraph",
+      "text": "Chen, and Tony Mak. 2024. LLMs cannot find reasoning errors, but can correct them given the error location. InFindings of the Association for Computational Linguistics: ACL 2024, pages 13894–13908,",
+      "order": 129,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Gladys Tyen, Hassan Mansoor, Victor Carbune, Peter"
+      ],
+      "char_start": 31493,
+      "char_end": 31690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38676aa0eb9022766faf9e9ec66ca9af",
+      "kind": "heading",
+      "text": "Bangkok, Thailand. Association for Computational",
+      "order": 130,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Bangkok, Thailand. Association for Computational"
+      ],
+      "char_start": 31692,
+      "char_end": 31740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebaed355b482e71b7bfb37c555a5dab4",
+      "kind": "paragraph",
+      "text": "Linguistics. Jian Yang, Xianglong Liu, Weifeng Lv, Ken Deng,",
+      "order": 131,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Bangkok, Thailand. Association for Computational"
+      ],
+      "char_start": 31742,
+      "char_end": 31802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65418f02f7bda2c66f3211bffda8a907",
+      "kind": "heading",
+      "text": "Shawn Guo, Lin Jing, Yizhi Li, Shark Liu, Xianzhen",
+      "order": 132,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Shawn Guo, Lin Jing, Yizhi Li, Shark Liu, Xianzhen"
+      ],
+      "char_start": 31804,
+      "char_end": 31854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0f6b7f35eba48e271dd8e4e999bdf4c",
+      "kind": "paragraph",
+      "text": "Luo, Yuyu Luo, and 1 others. 2025. From code foundation models to agents and applications: A comprehensive survey and practical guide to code intelligence.arXiv preprint arXiv:2511.18538.",
+      "order": 133,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Shawn Guo, Lin Jing, Yizhi Li, Shark Liu, Xianzhen"
+      ],
+      "char_start": 31856,
+      "char_end": 32043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76ad58eac6ad00b77efdc45429b51329",
+      "kind": "heading",
+      "text": "Guibin Zhang, Junhao Wang, Junjie Chen, Wangchun-",
+      "order": 134,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Guibin Zhang, Junhao Wang, Junjie Chen, Wangchun-"
+      ],
+      "char_start": 32045,
+      "char_end": 32094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0474cb6fe19f1fa0ab2c94047a51da94",
+      "kind": "paragraph",
+      "text": "shu Zhou, Kun Wang, and Shuicheng YAN. 2026. Agentracer: Who is inducing failure in the LLM agentic systems? InThe Fourteenth International Conference on Learning Representations. Shaokun Zhang, Ming Yin, Jieyu Zhang, Jiale Liu,",
+      "order": 135,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Guibin Zhang, Junhao Wang, Junjie Chen, Wangchun-"
+      ],
+      "char_start": 32096,
+      "char_end": 32324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3322ca88fae518b54d8dd0b6f574dfbb",
+      "kind": "heading",
+      "text": "Zhiguang Han, Jingyang Zhang, Beibin Li, Chi",
+      "order": 136,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Zhiguang Han, Jingyang Zhang, Beibin Li, Chi"
+      ],
+      "char_start": 32326,
+      "char_end": 32370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81721d4cdfda0851ccd319cb3f9da8f0",
+      "kind": "heading",
+      "text": "Wang, Huazheng Wang, Yiran Chen, and Qingyun",
+      "order": 137,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Wang, Huazheng Wang, Yiran Chen, and Qingyun"
+      ],
+      "char_start": 32372,
+      "char_end": 32416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26ff81214c3581e3702afb7e2b54a992",
+      "kind": "paragraph",
+      "text": "Wu. 2025. Which agent causes task failures and when? on automated failure attribution of LLM multiagent systems. InForty-second International Conference on Machine Learning.",
+      "order": 138,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Wang, Huazheng Wang, Yiran Chen, and Qingyun"
+      ],
+      "char_start": 32418,
+      "char_end": 32591,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feb9f38e943dd3e3c7ee11676aafffd4",
+      "kind": "heading",
+      "text": "Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingx-",
+      "order": 139,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingx-"
+      ],
+      "char_start": 32593,
+      "char_end": 32647,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16574df337b5640496abb5d8c14eac58",
+      "kind": "paragraph",
+      "text": "uan Yang, Jiaxun Zhang, Pengrui Han, Qipeng Xie,",
+      "order": 140,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingx-"
+      ],
+      "char_start": 32649,
+      "char_end": 32697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b947d3e89c4e467e20191f5737f9d992",
+      "kind": "heading",
+      "text": "Fuyang Cui, Weijia Zhang, Xiaoteng Ma, Xiaodong",
+      "order": 141,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Fuyang Cui, Weijia Zhang, Xiaoteng Ma, Xiaodong"
+      ],
+      "char_start": 32699,
+      "char_end": 32746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:091364fbeabf2f12cfd83eddb0b8ac4e",
+      "kind": "heading",
+      "text": "Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan",
+      "order": 142,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan"
+      ],
+      "char_start": 32748,
+      "char_end": 32796,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4441285d1b9bf7bc45e3150204fb8d0",
+      "kind": "paragraph",
+      "text": "Lu, James Zou, and Jiaxuan You. 2025. Where llm agents fail and how they can learn from failures. Preprint, arXiv:2509.25370.",
+      "order": 143,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan"
+      ],
+      "char_start": 32798,
+      "char_end": 32923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b20b1f949e989cfb4c98552aa2efad8",
+      "kind": "heading",
+      "text": "A System and Prompt Details",
+      "order": 144,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "A System and Prompt Details"
+      ],
+      "char_start": 32925,
+      "char_end": 32952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c643b33043d4ad4712dae1f36e9a300",
+      "kind": "paragraph",
+      "text": "Trace schema.Each run is an AgentTrajectory of AgentEvents (type, agent, module, step index, parent, timestamp, inputs/outputs, error, duration, metadata, artifacts). Artifacts can hold text, images, audio, UI state, files, or environment snapshots, and the same events project to Open- Telemetry GenAI spans ( invoke_agent, chat, execute_tool, handoff). The diagnosis layers are driven by compact, JSON-constrained prompts; we reproduce the most load-bearing ones below (the full prompt library ships in the repository), followed by a complete diagnostic report produced during the GAIA experiment. LLM Judge — System Prompt (abridged) You are AgentDebugX-Judge. Given the goal, the ALLOWED failure-mode codes, and one run's events, label each failed step with ONE allowed code. Be conservative; return an empty list if no failure. Output ONLY JSON, no prose/fences; cap findings at {max_findings}; evidence < 120 chars; never emit newlines inside strings; close the JSON completely. Schema: {\"findings\":[{\"event_id\",\"step_index\", \"agent_name\",\"failure_mode_id\",\"confidence\", \"evidence\":[...]}], \"summary\":\"...\"}",
+      "order": 145,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "A System and Prompt Details"
+      ],
+      "char_start": 32954,
+      "char_end": 34067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8434108d9d8daed56df5ad1fc01318f0",
+      "kind": "heading",
+      "text": "Whole-Trace Localizer — System Prompt",
+      "order": 146,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Whole-Trace Localizer — System Prompt"
+      ],
+      "char_start": 34069,
+      "char_end": 34106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:795b450b6de0f33cc037243bb71b018c",
+      "kind": "paragraph",
+      "text": "(abridged) You are an AI assistant tasked with analyzing agent conversation history when solving a real world problem. Respond ONLY with a JSON object matching this schema (no prose, no markdown): { \"span_id\": \"<event_id or null>\", \"step_index\": <int or null>, \"agent_name\": \"<agent_name or null>\", \"confidence\": <float 0..1>, \"rationale\": \"<one or two sentences>\", \"evidence\": [\"<short quoted evidence>\", ...] } If the trajectory does not appear to have failed, return all fields as null. Cross-Examination (disagreement arbitration) System: A run FAILED. Two candidate error steps are shown with their context. Which ONE is the decisive critical error step (the one whose correction would most likely have averted the failure)? Respond ONLY with JSON: {\"step\": <int, one of the two>} User: Goal: <task goal> Correct answer: <reference, when available> CANDIDATE A = step <i>: <+-1-step context> CANDIDATE B = step <j>: <+-1-step context> Which is the critical error step, <i> or <j>?",
+      "order": 147,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Whole-Trace Localizer — System Prompt"
+      ],
+      "char_start": 34108,
+      "char_end": 35093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd0f7cfb4da02d20c9020429d8588845",
+      "kind": "heading",
+      "text": "DeepDebug Refine — System Prompt",
+      "order": 148,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt"
+      ],
+      "char_start": 35095,
+      "char_end": 35127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ab0e07907b09c78c54f40db17f6d85a",
+      "kind": "paragraph",
+      "text": "You are AgentDebugX-DeepDebug writing the final, human-readable diagnosis. The decisive ROOT-CAUSE step has ALREADY been localized for you -- do NOT second-guess or move it. Using the step and its surrounding context, write: a one-or-two sentence diagnosis of WHY that step caused the failure; the concrete evidence (short quoted snippets from the shown steps); and ONE concrete, actionable fix. Respond ONLY with JSON: {\"summary\": \"<1-2 sentences>\", \"evidence\": [\"<short quoted snippet>\", ...], \"suggestion\": \"<one fix>\"} Example diagnostic report.The abridged report below is DeepDebug’s actual output on a GAIA validation task the vanilla agent failed (a statistics question over 1,002 papers with average p-value",
+      "order": 149,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt"
+      ],
+      "char_start": 35129,
+      "char_end": 35845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7671b4b2f49b9ebb30fec2d24d673df4",
+      "kind": "heading",
+      "text": "; the agent had assumed p-values were uni-",
+      "order": 150,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt",
+        "; the agent had assumed p-values were uni-"
+      ],
+      "char_start": 35847,
+      "char_end": 35889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5e7d5b73a076495589c625ae12c3657",
+      "kind": "paragraph",
+      "text": "formly distributed to estimate the number of incorrect papers. Fed verbatim as the retry directive, this diagnosis led the rerun to the correct answer (41), one of the13/73recoveries in Table 3. DeepDebug report (GAIA task 04a04a9b, abridged) { \"trace_id\": \"04a04a9b-...\", \"root_cause_agent\": \"print\", \"root_cause_step_index\": 9, \"findings\": [{ \"failure_mode\": \"attribution.root_cause\", \"step_index\": 9, \"confidence\": 0.6, \"evidence\": [ \"# Assuming uniform distribution [0, 2*average_p_value]\", \"proportion_incorrect = (2*average_p_value",
+      "order": 151,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt",
+        "; the agent had assumed p-values were uni-"
+      ],
+      "char_start": 35891,
+      "char_end": 36428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a79eaeb0cc8b2a14fc1152159c213379",
+      "kind": "list_item",
+      "text": "- threshold) / (2*average_p_value)\"],",
+      "order": 152,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt",
+        "; the agent had assumed p-values were uni-"
+      ],
+      "char_start": 36430,
+      "char_end": 36467,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4c1042802fd17f70735e3fdd3b8d834",
+      "kind": "paragraph",
+      "text": "\"suggestion\": \"Calculate the number of incorrect papers using ... the direct definition of the p-value as the Type I error rate under the null hypothesis:",
+      "order": 153,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "DeepDebug Refine — System Prompt",
+        "; the agent had assumed p-values were uni-"
+      ],
+      "char_start": 36469,
+      "char_end": 36623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6ec24fd5f7bdbf07d3432de4cc4ac63",
+      "kind": "heading",
+      "text": "* 0.04 = 40.08, rounding up to 41.\"",
+      "order": 154,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "* 0.04 = 40.08, rounding up to 41.\""
+      ],
+      "char_start": 36625,
+      "char_end": 36660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4da11507d30c381cfcfccf9b826c5b93",
+      "kind": "paragraph",
+      "text": "}], \"summary\": \"The model incorrectly assumed a uniform distribution of p-values over [0, 0.08] to calculate the proportion of incorrect papers -- a mathematically arbitrary assumption not supported by the problem statement.\", \"metadata\": { \"analyzer\": \"DeepDebugAnalyzer\", \"backend\": \"aao_moe\", \"memory_used\": false }}",
+      "order": 155,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "* 0.04 = 40.08, rounding up to 41.\""
+      ],
+      "char_start": 36662,
+      "char_end": 36981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a64ea9e8c9c42f6c90630b06e0a4730",
+      "kind": "heading",
+      "text": "B Deployment Requirements",
+      "order": 156,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "B Deployment Requirements"
+      ],
+      "char_start": 36983,
+      "char_end": 37008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b92f5ab58faf56e2df6e666aa684169",
+      "kind": "paragraph",
+      "text": "The design follows five requirements from production agent operations:low-frictioncapture (a context manager, callbacks, or importers); aportable representation with an OpenTelemetry GenAI export path (OpenTelemetry, 2026);typeddiagnoses (root cause, evidence, confidence, fix);local-first storage with explicit scrubbing before sharing; and cost-awareanalysis, where deterministic triage is free and LLM depth is opt-in.",
+      "order": 157,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "B Deployment Requirements"
+      ],
+      "char_start": 37010,
+      "char_end": 37431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce04c36e54cc8dfd6475417c2962fab5",
+      "kind": "heading",
+      "text": "Evaluation Protocol",
+      "order": 158,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation Protocol"
+      ],
+      "char_start": 37433,
+      "char_end": 37452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a711aa0f35917d70b7763a405429bc6",
+      "kind": "paragraph",
+      "text": "Benchmarks.Who&When(Zhang et al., 2025) is used in full (n=184: 126 algorithm-generated, 58 hand-crafted), each trace annotated with the gold",
+      "order": 159,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation Protocol"
+      ],
+      "char_start": 37454,
+      "char_end": 37595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a069da07c8efdcf7db312d43f94e44ee",
+      "kind": "paragraph",
+      "text": "responsible agent and mistake step.GAIA(Mialon et al., 2024) validation (165 tasks across three difficulty levels) is used for end-to-end recovery, scored by the official question scorer. Attribution protocol.Following the Who&When “with ground truth” setting, every method receives the task’s reference answer as context; none sees the gold agent or step. Decoding is at temperature 0 with model-side thinking disabled; completions are capped at 4,096 tokens (512 for arbitration). Agent names are normalized before comparison, and step match is exact index equality. We report responsible-agent accuracy, exact and ±1 step-localization accuracy, and the joint agent-and-step (A+S) metrics. Backbones span open-weight ( qwen3.5-9b, qwen3.6-27b) and hosted ( gpt-5.4-mini, gemini-3.5-flash) models, all served through an OpenAI-compatible endpoint. GAIA recovery protocol.A vanilla Open-Deep- Research agent (qwen3.5-9b policy, Gemini-2.5flash search) is run once over all 165 validation tasks, yielding a 73-task failure subset. Each failed trajectory is converted to an AgentTrajectory, diagnosed by the LLM judge and, for the native path, DeepDebug. Recovery then rerunsonlythe",
+      "order": 160,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "Evaluation Protocol"
+      ],
+      "char_start": 37597,
+      "char_end": 38777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71442b584f15a62b50bd73012e0c30b5",
+      "kind": "heading",
+      "text": "failed tasks once, under one of four strategies",
+      "order": 161,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "failed tasks once, under one of four strategies"
+      ],
+      "char_start": 38779,
+      "char_end": 38826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:922b07db83b8649a53e9edebfe932662",
+      "kind": "paragraph",
+      "text": "AgentDebugX’s native DeepDebug directive, or the decoupled Reflexion / CRITIC / AutoManual baselines (which see a generic judge summary, not DeepDebug’s localized diagnosis). To keep the comparison clean, the diagnostic memory and Error Hub are empty during evaluation; both are optin for real deployments. Reruns use temperature 0, a fixed step budget, and the same search and tool stack as the baseline. “Rec.” counts repaired tasks over the 73; “All” projects corrected tasks over the full165. Localizer design ablation.DeepDebug’s turn design was chosen by measurement on a stratified 42-trace Who&When sample: replacing the structure-guided turn with a second global search drops strict accuracy from 0.310 to 0.262 on gpt-5.4-mini, while the shipped pairing lifts agent accuracy to 0.524 vs 0.429 for one reading; on gemini-3.5-flash a single reading is already strongest — adjudication pays on the evaluated open-weight backbones but not on the hosted ones — a model-dependent effect.",
+      "order": 162,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "failed tasks once, under one of four strategies"
+      ],
+      "char_start": 38828,
+      "char_end": 39819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31733c0d6a5a4042d671b26901596e5b",
+      "kind": "heading",
+      "text": "D Implementation",
+      "order": 163,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "D Implementation"
+      ],
+      "char_start": 39821,
+      "char_end": 39837,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a84fdfeeeae7b92091e276c8ba8d2e2",
+      "kind": "paragraph",
+      "text": "AgentDebugX is a dependency-light, MIT-licensed Python package: pip install agentdebugx , imported as agentdebug. The public API centers on AgentDebug, TraceSession, AgentTrajectory, FailureFinding, and DiagnosticReport; adoption is one context manager: from agentdebug import AgentDebug, EventType dbg = AgentDebug() with dbg.trace(goal=\"Book flight\", framework=\"my-agent\") as t: t.record(EventType.PLAN, agent_name= \"planner\", output=\"Search fares\") t.record(EventType.TOOL_RESULT, agent_name=\"browser\", step_index=3, error=\"Checkout timeout\") report = t.analyze() Traces persist to append-only JSONL or SQLite. Three capture surfaces emit the same schema: runtime adapters (raw ReAct, LangChain/LangGraph,",
+      "order": 164,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "D Implementation"
+      ],
+      "char_start": 39839,
+      "char_end": 40547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd6ac2ac0f707058a522aaa7c24588c7",
+      "kind": "heading",
+      "text": "CrewAI, OpenAI Agents SDK, OpenTelemetry",
+      "order": 165,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "CrewAI, OpenAI Agents SDK, OpenTelemetry"
+      ],
+      "char_start": 40549,
+      "char_end": 40589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28bfdef03b4c2427078c79a165c7cab8",
+      "kind": "paragraph",
+      "text": "GenAI), offline importers (message lists, conversations, event lists, WebShop pages, OpenAI Agents spans, CrewAI events, OpenClaw sessions), and host integrations (a Claude Code skill and a CLI skill contract for tool-using agents), so detection, attribution, and recovery are source-independent. The CLI exposes the workflow as ingest / diagnose / inspect / act , with serve for the console.",
+      "order": 166,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "CrewAI, OpenAI Agents SDK, OpenTelemetry"
+      ],
+      "char_start": 40591,
+      "char_end": 40983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:465e5458be1ce6680d1bc61a60f30518",
+      "kind": "heading",
+      "text": "E Limitations",
+      "order": 167,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "E Limitations"
+      ],
+      "char_start": 40985,
+      "char_end": 40998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6fa30d7cbd57e57e87b1be185cd20ed",
+      "kind": "paragraph",
+      "text": "Our evaluation covers automatic attribution and recovery, not developer debugging time or console usability. Who&When uses the benchmark’s reference-answer protocol, and DeepDebug’s gains vary by model, so its extra calls are not uniformly beneficial. The GAIA experiment evaluates one policy model on a fixed failed subset and compares complete retry recipes; it neither isolates attribution’s effect alone nor is a blind single-shot score. Error Hub retrieval and taxonomy induction are implemented but not yet evaluated, and induction requires human acceptance. The scrubber strips event inputs and redacts known credential/PII patterns but not arbitrary content; recovery execution stays gated on human approval.",
+      "order": 168,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Kunlun Zhu1∗ Xuyan Ye1∗ Zhiguang Han1∗ Yuchen Zhao1 Bingxuan Li1 Weijia Zhang1",
+        "E Limitations"
+      ],
+      "char_start": 41000,
+      "char_end": 41716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 10,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 10
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.18754",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 10,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

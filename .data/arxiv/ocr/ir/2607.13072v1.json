@@ -1,0 +1,2137 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "86252cd8e3ee51ec017f8b5cab364956d808bbfd19cc2d8a39fd68b962349aad",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:05b47a46f8336f285a2637789f6e73be",
+      "kind": "paragraph",
+      "text": "HRO: Hierarchical “Room-to-Object” Framework for Zero-Shot Object Goal Navigation with",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 86,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:063025f1aef38617abb97e3ea132980a",
+      "kind": "heading",
+      "text": "Large Language Models†",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†"
+      ],
+      "char_start": 88,
+      "char_end": 110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f05a2af0c1fb3c6bf58e2df586f65e1",
+      "kind": "paragraph",
+      "text": "Luyuan Jia 1,2,3, and Yinfeng Yu 1,2,3,B Abstract— Zero-shot object-goal navigation aims to enable an intelligent agent to explore and navigate to objects of unknown categories in an unfamiliar environment without specific target training. In zero-shot navigation tasks, pre-trained large models are usually employed to leverage their prior knowledge for guiding the agent’s navigation. However, existing zero-shot object-goal navigation methods based on large language models (LLMs) merely utilize LLMs as “flat” reasoning tools to directly associate objects or regions. They lack the hierarchical spatial cognition modeling of human-like room semantics to object localization, which leads to strong blindness in exploration, insufficient accuracy in semantic association, and failure to fully unleash the common-sense reasoning potential of LLMs. This paper proposes an LLM-driven hierarchical room-toobject (HRO) framework for zero-shot object-goal navigation, which guides the agent to explore and navigate to the target object in a coarse-to-fine manner. Experiments on Gibson and HM3D datasets verify that our HRO framework achieves superior success rate and generalization over existing LLMbased methods, underscoring LLMs’ strong potential for zeroshot object-goal navigation.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†"
+      ],
+      "char_start": 112,
+      "char_end": 1396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a233725836df7970169fde2cd300406a",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "INTRODUCTION"
+      ],
+      "char_start": 1398,
+      "char_end": 1410,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acd6ef7c544c5f2d3160f4529bb644ff",
+      "kind": "paragraph",
+      "text": "Different from other artificial intelligence tasks [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12], [13], [14], object goal navigation in unknown environments is critical for home service robots and autonomous exploration. Existing LLM-based zero-shot methods, such as ESC [15] and L3MVN [16], only perform flat reasoning to directly associate objects and regions. They lack human-like hierarchical spatial cognition: humans first judge room type from observed objects, then infer target locations based on room functionality. Without such modeling, exploration is blind, semantic association is imprecise, and LLM commonsense potential is underutilized. To address this, we propose HRO, a hierarchical LLMdriven zero-shot navigation framework. Following human cognition, HRO adopts a coarse-to-fine paradigm and decomposes navigation into three modules: (1) The high-level module uses an LLM to infer room type distributions from observed objects; (2) The mid-level module evaluates candidate frontiers via target-oriented semantic affinity scoring; †This research was financially supported by the National Natural Science Foundation of China (Grant No. 62463029). 1School of Computer Science and Technology, Xinjiang University, Urumqi 830017, China. 2Joint Research Laboratory for Embodied Intelligence, Xinjiang University. 3Joint International Research Laboratory of Silk Road Multilingual Cognitive Computing, Xinjiang University. BYinfeng Yu is the corresponding author (Email: yuyinfeng@xju.edu.cn).",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "INTRODUCTION"
+      ],
+      "char_start": 1412,
+      "char_end": 2933,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abaef1861cc15ffb5dfd331c5fb9d773",
+      "kind": "heading",
+      "text": "Plant？",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 2935,
+      "char_end": 2941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d44965d27edb243754c3589aae4888f",
+      "kind": "paragraph",
+      "text": "bedroom kitchen hallway dining room",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 2943,
+      "char_end": 2978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7654ca658acb098c5724d0976a0515b2",
+      "kind": "caption",
+      "text": "Fig. 1. The figure illustrates the HRO framework. Taking “finding plant”",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 2980,
+      "char_end": 3052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e0c79240043e9d3041481de6f3afbb1",
+      "kind": "paragraph",
+      "text": "as an example, the agent infers room semantics from observed objects and selects target regions using object-room commonsense, embodying the hierarchical “object to room to target” reasoning mechanism. (3) The low-level module plans the shortest path and executes actions. This framework uses “room type” as a core semantic bridge between LLM common sense and object localization. A concurrent work, LROGNav [17], also explores room–object relations but relies on supervised training, while HRO is training-free and hierarchical. It aligns agent exploration with the human logic of “first judging the scenario, then finding the object” and improves semantic guidance. As shown in Fig. 1, taking “finding plant” as an example, the agent first infers room semantics from observed objects, then searches regions with high object-room affinity, achieving hierarchical perception-to-target navigation. Our contributions are summarized as follows: •We propose HRO, a hierarchical “room-to-object” zeroshot framework with a three-tier structure (room reasoning, region decision, action execution), where “room type” serves as the core semantic bridge to enhance exploration pertinence. •Relying on the rich prior knowledge of LLMs, our framework can directly adapt to unseen objects and unknown scenes without additional annotation of object and scene training data or task-specific fine-tuning, providing a new solution for zero-shot object navigation. •Our method achieves the best success rate on two navigation benchmark datasets, and its performance",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 3054,
+      "char_end": 4601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45940fb52ea07929ddb7a8b7a5040393",
+      "kind": "paragraph",
+      "text": "outperforms baseline methods. This verifies the great potential of LLMs in the development of the zero-shot object-goal navigation field.",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 4603,
+      "char_end": 4740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45872a96ba0f6191c5d6b2202fac81c8",
+      "kind": "table",
+      "text": "arXiv:2607.13072v1  [cs.RO]  12 Jul 2026",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 4742,
+      "char_end": 4782,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c7a54e0ef22fee90794d65c79185152",
+      "kind": "paragraph",
+      "text": "There is a vase here, and this place might be the living room.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Plant？"
+      ],
+      "char_start": 4784,
+      "char_end": 4846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6b3fa132120a23482d86886d3fdcf04",
+      "kind": "heading",
+      "text": "Semantic",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Semantic"
+      ],
+      "char_start": 4848,
+      "char_end": 4856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29b33601ec969bc44b764c18fee46141",
+      "kind": "heading",
+      "text": "Mapping",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Mapping"
+      ],
+      "char_start": 4858,
+      "char_end": 4865,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b657731eef560784facfa2edd03dd84",
+      "kind": "paragraph",
+      "text": "A vase here, possibly the living room， bedroom. A toilet here, possibly the bathroom. GPT2",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Mapping"
+      ],
+      "char_start": 4867,
+      "char_end": 4957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b9c2acab37bb6bfcdb31b401da1f06f",
+      "kind": "heading",
+      "text": "LLM-Driven Room Type Inference",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "LLM-Driven Room Type Inference"
+      ],
+      "char_start": 4959,
+      "char_end": 4989,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45d296582f7da968aed921c0ef75ac0e",
+      "kind": "heading",
+      "text": "Path Planning",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Path Planning"
+      ],
+      "char_start": 4991,
+      "char_end": 5004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2450fe3e063b39d22d79bd1b4cfcff9",
+      "kind": "paragraph",
+      "text": "and Execution observations",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Path Planning"
+      ],
+      "char_start": 5006,
+      "char_end": 5032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fec26c761c0cb1c5550cadd589d8c81c",
+      "kind": "heading",
+      "text": "RGB-D",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "RGB-D"
+      ],
+      "char_start": 5034,
+      "char_end": 5039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20b64bb6e6090c5446add59ab9f09827",
+      "kind": "paragraph",
+      "text": "living room bedroom bathroom Goal : “ tv”",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "RGB-D"
+      ],
+      "char_start": 5041,
+      "char_end": 5082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2dcdb0746248f733cc257721bc03f0ec",
+      "kind": "heading",
+      "text": "Goal-Oriented Room Affinity Scoring",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Goal-Oriented Room Affinity Scoring"
+      ],
+      "char_start": 5084,
+      "char_end": 5119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:187683f16ae86921d9ab720633fc23e5",
+      "kind": "heading",
+      "text": "Affinity",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Affinity"
+      ],
+      "char_start": 5121,
+      "char_end": 5129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9ba587421e8a7562ff22a02f9093db9",
+      "kind": "heading",
+      "text": "Scoring",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring"
+      ],
+      "char_start": 5131,
+      "char_end": 5138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71030b03799f71665deefd0ca7fd95cb",
+      "kind": "paragraph",
+      "text": "Optimal frontier",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring"
+      ],
+      "char_start": 5140,
+      "char_end": 5156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:930db4cb8a82cc0e6f3fa648a0bdbc02",
+      "kind": "caption",
+      "text": "Fig. 2. The architecture of the HRO Framework. This framework demonstrates a hierarchical “room-to-object” navigation process.",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring"
+      ],
+      "char_start": 5158,
+      "char_end": 5284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f575030b181b84c62099470ce6a2569e",
+      "kind": "heading",
+      "text": "RELATEDWORKS",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring",
+        "RELATEDWORKS"
+      ],
+      "char_start": 5286,
+      "char_end": 5298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc6b6ef4e4454ac97ee6680374223c88",
+      "kind": "paragraph",
+      "text": "Traditional object navigation methods rely on extensive annotated data, but pre-trained large models now enable zero-shot learning with strong generalization [18], [19], [20]. Some VLM-based methods (e.g., VLFM [21], GAMap [22]) perform frontier selection for zero-shot navigation. We focus on LLM-based methods for semantic reasoning potential. Existing LLM-based methods including L3MVN [16], ESC [15], L-ZSON [23], and PixNav [24] adopt flat reasoning to directly associate objects and regions. They lack hierarchical modeling of room–object relations, which limits semantic reasoning accuracy and exploration efficiency. Our hierarchical mechanism fills this gap and provides a more human-like cognitive paradigm for navigation. Concurrently, LROGNav [17] utilizes LLM-based room–object relationships for navigation, but relies on supervised learning and labeled room segmentation maps. In contrast, our HRO is zero-shot, training-free, and hierarchical without any annotations or fine-tuning. It performs on-the-fly LLM reasoning via a three-stage pipeline that aligns with human spatial cognition.",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring",
+        "RELATEDWORKS"
+      ],
+      "char_start": 5300,
+      "char_end": 6403,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad42ee3de1af230ee96ef383c54cce0a",
+      "kind": "heading",
+      "text": "THEPROPOSEDMETHOD",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Scoring",
+        "THEPROPOSEDMETHOD"
+      ],
+      "char_start": 6405,
+      "char_end": 6422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36d8ea3074d10dfc9549dd731aac25b0",
+      "kind": "heading",
+      "text": "A. Problem Formulation",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "A. Problem Formulation"
+      ],
+      "char_start": 6424,
+      "char_end": 6446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b23464f67377a328710e9e72043d124",
+      "kind": "paragraph",
+      "text": "We focus on zero-shot object-goal navigation, where an agent explores an unknown indoor environmentS i to find a target categoryC i without task-specific training, fine-tuning, or prior exposure toS i andC i. An episode is defined asE i = {Si, Ci, P0}, whereP 0 denotes the agent’s initial pose. At each stept, the agent obtains RGB-D observations, position (xt, yt), and orientationθ t. The action space includes move forward, turn left/right, look up/down, and stop. The agent moves25 cmper step and rotates30 ◦ per action. The task succeeds if the agent stops within 1 meter of the target within Tmax = 500steps.",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "A. Problem Formulation"
+      ],
+      "char_start": 6448,
+      "char_end": 7063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10070d215228dbdbcd70ec32c615d915",
+      "kind": "heading",
+      "text": "B. Overview",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Overview"
+      ],
+      "char_start": 7065,
+      "char_end": 7076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f3183f561a2ed3d9e2ece1db4d9f5fb",
+      "kind": "paragraph",
+      "text": "This paper proposes HRO, a hierarchical framework based on LLMs for zero-shot object-goal navigation. The overall workflow is illustrated in Fig. 2, where the framework addresses challenges by decomposing the zero-shot object navigation problem into three hierarchical levels: The highlevel reasoning module infers room types based on an LLM; The mid-level decision module selects the optimal frontier through target-oriented room semantic affinity scoring; The low-level execution module plans the optimal path from the current position to the target region and executes motion commands. Through a coarse-to-fine hierarchical decisionmaking logic, the framework deeply integrates the highlevel semantic reasoning capability of LLMs with low-level geometric path planning. All modules collaborate to form a closed loop. This design enables the agent to “first judge scene semantics, then conduct targeted object exploration” like humans in zero-shot scenarios, significantly enhancing the purposefulness and efficiency of navigation.",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Overview"
+      ],
+      "char_start": 7078,
+      "char_end": 8111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb6ef762591a9c721d16c03318cb5ed9",
+      "kind": "heading",
+      "text": "Map Representation",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Overview",
+        "Map Representation"
+      ],
+      "char_start": 8113,
+      "char_end": 8131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:349b97f4919ed0be99c550c1d39feae2",
+      "kind": "paragraph",
+      "text": "We first construct the semantic map, drawing on the method proposed in SemExp [25]. Initially, we initialize a matrix of dimensionK×M×Mto store semantic map information, whereM×Mrepresents the size of the map, andKdenotes the total number of channels in the semantic map withK=C+ 2. The first two channels of the semantic map record obstacle distribution and explored region information, respectively, while the remainingCchannels each correspond to a semantic category, used to represent the distribution of different objects in the environment. In the agent initialization phase, we set its starting position at the center of the map, i.e., the coordinate(M/2, M/2,0.0). At each time step, the agent acquires current observation data via sensors, including RGB images and depth information. We first extract depth data from the observations and convert it into a 3D point cloud based on camera intrinsic parameters. Subsequently, we use the semantic segmentation model Mask R-CNN [26] to predict semantic labels for each point in the point cloud, thereby obtaining a semantic point cloud with category information. To construct a 2D map representation suitable for navigation, we project the semantic point cloud",
+      "order": 33,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Overview",
+        "Map Representation"
+      ],
+      "char_start": 8133,
+      "char_end": 9347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c68daa38288fd49211f27f2b3c24227e",
+      "kind": "paragraph",
+      "text": "into a 3D voxel space to form a voxelized representation. By performing vertical projection and fusion of voxels within different height ranges, a 2D semantic map is obtained. Finally, we generate an obstacle map, an explored region map, and semantic maps corresponding to different semantic channels, respectively.",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Overview",
+        "Map Representation"
+      ],
+      "char_start": 9349,
+      "char_end": 9664,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:615baef456fcb3794908f67e35b5bdc4",
+      "kind": "heading",
+      "text": "D. LLM-Driven Room Type Inference",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 9666,
+      "char_end": 9699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d37218b8f5c15816e79af236aad516ab",
+      "kind": "paragraph",
+      "text": "The high-level reasoning module helps the agent better understand its surrounding environment and infers the semantic categories of rooms that may be contained in the current candidate frontiers based on the types of observed objects. It leverages the common-sense knowledge embedded in LLMs as a zero-shot room classifier, eliminating the need to acquire room type annotation information during the training process and simulating humans’ ability to reason about environmental context. First, we extract the obstacle map and the explored map from the first two channels of the semantic map. To further prevent the agent from colliding with obstacles, we perform a dilation operation on the edges of the obstacle map. We then subtract the dilated obstacle map from the explored map to obtain initial frontier cells. For these frontier cells, we conduct connectivity analysis, perform clustering, and remove clusters of small sizes. Finally, we filter the frontiers using the Mixed Criteria Scoring method mentioned in [27]—a weighted scoring mechanism that incorporates distance cost and the area occupied by frontier points, defined as follows: SM C fi =α·A(f i) +β·D(f i), fi ∈F(i= 1,2, . . . , n).(1) Whereαandβare weights,A(f i)denotes the area occupied by the frontier, andD(f i)represents the shortest path distance from the center point of the frontier to the agent. Through this, we can obtain the candidate frontiers fi ∈Fat the agent’s current position, and the number of candidate frontiers is set ton= 4here. We predefine a candidate room type set containing seven",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 9701,
+      "char_end": 11277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9560f9186f93d537e0f871526106fe3a",
+      "kind": "paragraph",
+      "text": "common indoor categories: R={living room, bedroom, bathroom, kitchen, dining room, office, hallway}. This set of room types covers most functional spaces in indoor environments and supports room semantic reasoning in home settings. By basing our approach on commonsense spatial classification rather than data-driven clustering, we ensure that the zero-shot generalization capability can be extended to other indoor environments in the future. To enable the LLM to perform the room prediction task, for each candidate frontier, we aggregate known objects within the local window of the frontier and construct a prompt template as follows: Prompt(O, r) =“A room containing ”+ concat(O) +“ is likely a ”+r+“.”. (2) WhereO={o 1, o2, . . . , on}represents the types of objects within the local window of the frontier, andr∈R denotes a candidate room type. For each candidate room typer i, we use the LLM to calculate a compatibility score: score(ri |O) =−L LLM(Prompt(O, ri)).(3) Where−L LLM denotes the language modeling loss of the prompt sequence. Since a lower loss indicates a higher probability, we take its negative value as the frontier room type score. Finally, the room type probability distribution is obtained through softmax normalization:",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 11279,
+      "char_end": 12527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da92f0ff3ff56cd2e2e89b2a2ffe7d75",
+      "kind": "table",
+      "text": "P(r i |O) = exp(score(ri |O))",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 12529,
+      "char_end": 12558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24c83467fa7f67550198deb7730fcb0e",
+      "kind": "table",
+      "text": "|R|P",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 12560,
+      "char_end": 12564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b20e28b7352fb9978c05068c1ce2920",
+      "kind": "table",
+      "text": "j=1 exp(score(rj |O)) .(4) The local window mechanism for frontiers is as follows: Of ={o∈O|frontier(o)∈Window(f, w, h)}.(5) WhereO={o 1, o2, . . . , on}represents the set of all detected objects in the semantic map, and Window(f, w, h) defines a search region centered at the frontier pointfwith a size ofw×h.",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. LLM-Driven Room Type Inference"
+      ],
+      "char_start": 12566,
+      "char_end": 12876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c0ea1aaccd61b641abc7719db286745",
+      "kind": "heading",
+      "text": "E. Goal-Oriented Semantic Affinity Scoring",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "E. Goal-Oriented Semantic Affinity Scoring"
+      ],
+      "char_start": 12878,
+      "char_end": 12920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f34c52ac42bf17197a7c0f865b30a04",
+      "kind": "paragraph",
+      "text": "The mid-level decision module is responsible for evaluating the potential value of all candidate frontiers in achieving the current navigation goal. Guided by the semantic information from the high-level reasoning module and geometric data, the agent comprehensively assesses and identifies the optimal frontier for exploration. Based on the probability distribution of room types, the mid-level decision module models the affinity between the target object and room types, converting abstract spatial semantics into specific navigation utility. We constructed a commonsense knowledge base that encodes typical object-room co-occurrence patterns: M:G→2 R.(6) WhereGdenotes the set of target objects, and the mapping Massociates each targetgwith the set of room types where it is most likely to appear. For instanceM(bed) = {bedroom},M(tv) ={living room, bedroom}. If a frontier point leads to any room type where the target object typically appears, this point is considered promising. The affinity score quantifies the degree of matching between the observed objects in the frontier region and the room types that may contain the target object, ensuring that strong evidence for any relevant room type results in a high score. For a given target objectgand room probability distribution P(r|O), we calculate the affinity score of the candidate frontier as follows:",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "E. Goal-Oriented Semantic Affinity Scoring"
+      ],
+      "char_start": 12922,
+      "char_end": 14287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5049482389657d9d4f17583331ec1913",
+      "kind": "heading",
+      "text": "SAffinity",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14289,
+      "char_end": 14298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a514aa535e0b734e287f97c95a165f8",
+      "kind": "paragraph",
+      "text": "fi (g, O) = max r∈M(g) P(r|O).(7)",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14300,
+      "char_end": 14333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86fd039d10270428cd3dcc9432469874",
+      "kind": "paragraph",
+      "text": "(a) step 10 (b) step 40 (c) step 80 (d) step 99",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14335,
+      "char_end": 14382,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7f49663c184f202729a01ee3f285b40",
+      "kind": "caption",
+      "text": "Fig. 3. The object goal navigation experiment process for finding a chair on the Habitat platform.",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14384,
+      "char_end": 14482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f2753014b5815587ab14421cab8b64f",
+      "kind": "paragraph",
+      "text": "F . Path Planning and Execution The final priority of a candidate frontier is the weighted sum of its semantic affinity score and geometric score, with the formula given as follows: Sfi =α",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14484,
+      "char_end": 14672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecd2dd282a69fdb05190ca7835efa53f",
+      "kind": "heading",
+      "text": "SAffinity",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14674,
+      "char_end": 14683,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a727db4a2d9638a753e56156e30bbeb",
+      "kind": "paragraph",
+      "text": "fi (g, O) maxf SAffinity fi (g, O)",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14685,
+      "char_end": 14719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c25d7f737915fe013655a579b017f48",
+      "kind": "list_item",
+      "text": "+ (1−α)S M C",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14721,
+      "char_end": 14733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14198ad97b5996da2373c6daf2615653",
+      "kind": "paragraph",
+      "text": "fi .(8) Based on the reasoning resultS fi, the agent selects the frontierf i that is most likely to contain the target for exploration. After identifying the frontier with the highest score, the agent uses the Fast Marching Method [28] to plan the shortest and optimal path from its current position to the identified frontier. Subsequently, the agent generates the corresponding actiona∈Aand navigates along this path. The agent incrementally constructs the environmental map through continuous observations and executes lowlevel actions such as obstacle avoidance based on this map. This deterministic local strategy efficiently guides the agent to perform low-level actions for obstacle avoidance and movement. We repeat this process until the agent achieves the target or the task is terminated.",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity"
+      ],
+      "char_start": 14735,
+      "char_end": 15534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b11a59af4b0bb022e7781202e89fda4a",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "SAffinity",
+        "EXPERIMENTS"
+      ],
+      "char_start": 15536,
+      "char_end": 15547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f01da0cfa7dab86e62ec8a0eeb4fd709",
+      "kind": "heading",
+      "text": "A. Datasets",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "A. Datasets"
+      ],
+      "char_start": 15549,
+      "char_end": 15560,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00e02b78ad08c631cf0fcb329fdf8217",
+      "kind": "paragraph",
+      "text": "Our experiments are based on two 3D scanned datasets of real-world scenarios: HM3D [29] and Gibson [30]. For the Gibson dataset, we selected 1,000 episodes from 5 validation set scenes in the Gibson tiny split and adopted the semantic annotations provided by Armeni et al. [31]. The HM3D dataset has been adapted to the Habitat format, and its validation set includes 2,000 episodes across 20 scenes, covering 6 object categories, namely chair, sofa, potted plant, bed, toilet, and TV . These categories are consistent with those defined in SemExp [25].",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "A. Datasets"
+      ],
+      "char_start": 15562,
+      "char_end": 16115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eaeb4de81842ef7df37f3c2df1c8eeb8",
+      "kind": "heading",
+      "text": "B. Experiment Details",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Experiment Details"
+      ],
+      "char_start": 16117,
+      "char_end": 16138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff8d170f14a9e9f56bb68ec5bf2d3c8d",
+      "kind": "paragraph",
+      "text": "Our experiments are based on Habitat-Sim, a highperformance 3D simulator, and Habitat-API, a modular highlevel library, both of which belong to the Habitat [32] platform. The underlying architecture of our setup is built on L3MVN [16]. We use GPT-2 as the LLM for inferring spatial semantic information. This study is implemented based on the PyTorch framework, running on the Ubuntu",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Experiment Details"
+      ],
+      "char_start": 16140,
+      "char_end": 16523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ee1c2b7205518f7eafd84244e0f4fdf",
+      "kind": "heading",
+      "text": "operating system and equipped with one NVIDIA A40",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Experiment Details",
+        "operating system and equipped with one NVIDIA A40"
+      ],
+      "char_start": 16525,
+      "char_end": 16574,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70c9f115364905e518bbfba4baa779b1",
+      "kind": "paragraph",
+      "text": "graphics card.",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "B. Experiment Details",
+        "operating system and equipped with one NVIDIA A40"
+      ],
+      "char_start": 16576,
+      "char_end": 16590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c10569816de59ff4a69f1373fc607d7",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "TABLE I"
+      ],
+      "char_start": 16592,
+      "char_end": 16599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02b6055750113525e4b92eceefd4b81c",
+      "kind": "heading",
+      "text": "PERFORMANCE COMPARISON OF DIFFERENTLLM-BASEDZS-OGN",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "PERFORMANCE COMPARISON OF DIFFERENTLLM-BASEDZS-OGN"
+      ],
+      "char_start": 16601,
+      "char_end": 16651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e82ecf3575fb75dba96772777a748107",
+      "kind": "paragraph",
+      "text": "METHODS ONHM3DANDGIBSON DATASETS.",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "PERFORMANCE COMPARISON OF DIFFERENTLLM-BASEDZS-OGN"
+      ],
+      "char_start": 16653,
+      "char_end": 16686,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e89ae7e75c3479cec91533a8f23e3d6d",
+      "kind": "heading",
+      "text": "Method Zero-shot HM3D Gibson",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Method Zero-shot HM3D Gibson"
+      ],
+      "char_start": 16688,
+      "char_end": 16716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a61f536fa9950aaabad0ca82c05adc2c",
+      "kind": "heading",
+      "text": "SR↑SPL↑SR↑SPL↑",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "SR↑SPL↑SR↑SPL↑"
+      ],
+      "char_start": 16718,
+      "char_end": 16732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:258dc2be12d2f11b1029456ca89a7637",
+      "kind": "paragraph",
+      "text": "SemExp - 37.9 18.8 65.2 33.6",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "SR↑SPL↑SR↑SPL↑"
+      ],
+      "char_start": 16734,
+      "char_end": 16762,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fa69f7550852225241e5615f5837bc9",
+      "kind": "heading",
+      "text": "PONI - - - 73.6 41.0",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "PONI - - - 73.6 41.0"
+      ],
+      "char_start": 16764,
+      "char_end": 16784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:906d7478b865dea1c51809d1eff8fcf1",
+      "kind": "equation",
+      "text": "SemUtil BERT - - 69.3 40.5",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "PONI - - - 73.6 41.0"
+      ],
+      "char_start": 16786,
+      "char_end": 16812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dabef634064353a6b13233ec466c8b0c",
+      "kind": "heading",
+      "text": "ESC GPT-3.5 39.2 22.3 - -",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "ESC GPT-3.5 39.2 22.3 - -"
+      ],
+      "char_start": 16814,
+      "char_end": 16839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3bd9095d720af6b3f04e87f7a151a20",
+      "kind": "heading",
+      "text": "oroNav GPT-3.5 42.026.0- -",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "oroNav GPT-3.5 42.026.0- -"
+      ],
+      "char_start": 16841,
+      "char_end": 16867,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dde5b692557a8700e3e2ed910999942a",
+      "kind": "heading",
+      "text": "L3MVN GPT-2 50.4 23.1 76.1 37.7",
+      "order": 69,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "L3MVN GPT-2 50.4 23.1 76.1 37.7"
+      ],
+      "char_start": 16869,
+      "char_end": 16900,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0420d6fcfd98496ced8371c5487cf37",
+      "kind": "paragraph",
+      "text": "HRO (Ours) GPT-253.024.584.0 46.5",
+      "order": 70,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "L3MVN GPT-2 50.4 23.1 76.1 37.7"
+      ],
+      "char_start": 16902,
+      "char_end": 16935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08a8d191c7d4b83c5b1dfd38a6bfa7c0",
+      "kind": "heading",
+      "text": "Metrics",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "L3MVN GPT-2 50.4 23.1 76.1 37.7",
+        "Metrics"
+      ],
+      "char_start": 16937,
+      "char_end": 16944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73402cb062b8089e7b95a4400d411ded",
+      "kind": "paragraph",
+      "text": "We evaluate all methods using Success Rate (SR, %) and Success weighted by Path Length (SPL, %) [33].",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "L3MVN GPT-2 50.4 23.1 76.1 37.7",
+        "Metrics"
+      ],
+      "char_start": 16946,
+      "char_end": 17047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05a9ec13c252414d6fc28e808fe8a59a",
+      "kind": "heading",
+      "text": "D. Baselines",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "D. Baselines"
+      ],
+      "char_start": 17049,
+      "char_end": 17061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cffed61ba7435e75d91ffac56b2af58",
+      "kind": "paragraph",
+      "text": "•L3MVN [16]: Uses LLMs to infer semantic relevance and selects target-related frontier points as long-term goals. •SemUtil [34]: Integrates linguistic priors and scenestatistical semantics into geometric frontier exploration for optimal direction selection. •V oroNav [35]: Generates simplified paths via V oronoi diagrams and employs LLMs with hierarchical rewards for medium-term goal selection. •ESC [15]: Combines VLM-based scene detection with LLM commonsense reasoning, incorporating knowledge as soft constraints for navigation. •SemExp [25]: Constructs semantic maps and trains goal-oriented exploration strategies using reinforcement learning for long-term goal selection. •PONI [36]: Employs potential function networks to predict regional and object potentials for exploration direction, requiring no environment interaction. E. Result and Discussion As shown in Table I, HRO achieves a SR of 53.0% on HM3D and 84.0% on Gibson, significantly outperforming all baseline methods. Notably, HRO also maintains competitive SPL metrics: 24.5% on HM3D and 46.5% on Gibson. This indicates that our method achieves a higher SR without sacrificing path efficiency. The process of finding a chair is illustrated in Fig. 3. Compared with SemExp [25] and PONI [36], SemExp relies on reinforcement learning to train semantic exploration",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "D. Baselines"
+      ],
+      "char_start": 17063,
+      "char_end": 18396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60f4a56d84912e5d2917911ff3f34bee",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "TABLE II"
+      ],
+      "char_start": 18398,
+      "char_end": 18406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ea12e987b005ea06670cd7fbd8d051f",
+      "kind": "paragraph",
+      "text": "HROABLATION STUDY RESULTS ONHM3DDATASET. HRO ablation HM3D results",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "TABLE II"
+      ],
+      "char_start": 18408,
+      "char_end": 18474,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a188c51b11e0c21e72cc20474cb64b7",
+      "kind": "heading",
+      "text": "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑"
+      ],
+      "char_start": 18476,
+      "char_end": 18516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b80d818ae0ed4e5ca61b9567ecbab3ae",
+      "kind": "paragraph",
+      "text": "✓50.2 23.6 ✓51.5 23.7 ✓ ✓53.0 24.5 ✓ ✓ ✓64.9 35.8 0",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑"
+      ],
+      "char_start": 18518,
+      "char_end": 18569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f58040d5e7c08199af3b5d95e478d3a",
+      "kind": "heading",
+      "text": "1",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "1"
+      ],
+      "char_start": 18571,
+      "char_end": 18572,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f75ff04e4b1d7ae2682828c7eeff497b",
+      "kind": "heading",
+      "text": "2",
+      "order": 80,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "2"
+      ],
+      "char_start": 18574,
+      "char_end": 18575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93f9a649eb6155c918161ffaaff34646",
+      "kind": "heading",
+      "text": "3",
+      "order": 81,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "3"
+      ],
+      "char_start": 18577,
+      "char_end": 18578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25f66c06549353e2d4b5a7871c92bfc8",
+      "kind": "heading",
+      "text": "4",
+      "order": 82,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "4"
+      ],
+      "char_start": 18580,
+      "char_end": 18581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f7af6c2765cbd288dba2b9fefee8748",
+      "kind": "heading",
+      "text": "5",
+      "order": 83,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "5"
+      ],
+      "char_start": 18583,
+      "char_end": 18584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f041548a0db07a6008dcf6aceebb09f3",
+      "kind": "heading",
+      "text": "6",
+      "order": 84,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "6"
+      ],
+      "char_start": 18586,
+      "char_end": 18587,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d877e816bbdd6c706183a2c747537fc",
+      "kind": "heading",
+      "text": "7",
+      "order": 85,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "7"
+      ],
+      "char_start": 18589,
+      "char_end": 18590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5d182e7218c82f4e4f8f9cdbd08dbe2",
+      "kind": "paragraph",
+      "text": "plant toilet bed chair tv sofa",
+      "order": 86,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "Object RT Inf SA Sco GT Seg Success↑SPL↑",
+        "7"
+      ],
+      "char_start": 18592,
+      "char_end": 18622,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:854daed255629f173d506189bd520aa9",
+      "kind": "heading",
+      "text": "HRO（Ours） L3MVN",
+      "order": 87,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN"
+      ],
+      "char_start": 18624,
+      "char_end": 18639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7c22222136853fabbfbf51920c29485",
+      "kind": "caption",
+      "text": "Fig. 4. Comparison of the success rate of each goal category on HM3D",
+      "order": 88,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN"
+      ],
+      "char_start": 18641,
+      "char_end": 18709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7072510a8d2df15ad7545fc99343fe87",
+      "kind": "paragraph",
+      "text": "between HRO and L3MVN. strategies, while PONI predicts regional values through a potential function network. Both methods require specialized training in specific scenarios. In contrast, zero-shot methods have achieved performance close to or even exceeding the evaluation metrics of these two methods, demonstrating that zero-shot methods can maintain better generalization capabilities and possess significant advantages in task versatility. This confirms that the prior knowledge embedded in LLMs can play an effective guiding role in the navigation process. When comparing with SemUtil [34], V oroNav [35], and ESC [15]—methods that attempt to integrate semantic and geometric information—SemUtil relies on scene-statistical semantics, V oroNav simplifies paths based on V oronoi diagrams, and ESC depends on pre-trained VLMs. Despite SemUtil’s use of BERT embeddings, its performance remains low. On the Gibson dataset, HRO outperforms SemUtil by",
+      "order": 89,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN"
+      ],
+      "char_start": 18711,
+      "char_end": 19662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fede620cf1b39e9b9a60792e883c4f9",
+      "kind": "heading",
+      "text": "7% in SR and 6.0% in SPL, indicating that our targeted",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "7% in SR and 6.0% in SPL, indicating that our targeted"
+      ],
+      "char_start": 19664,
+      "char_end": 19718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbd2a8af4166716343930b766a44fbe7",
+      "kind": "paragraph",
+      "text": "modeling of room-object affinity is more effective than general semantic utility learning. While V oroNav and ESC, which are based on GPT-3.5, achieve decent performance, HRO—built on GPT-2—surpasses them in SR on the HM3D dataset by 11.0% and 13.8%, respectively. HRO’s advantages validate that directly leveraging the commonsense reasoning capabilities of LLMs, rather than relying on pre-trained models or scene statistics, enables more accurate capture of “object to room” semantic associations in zero-shot scenarios. This also suggests that a stronger language model alone is insufficient; an appropriate reasoning structure is needed to fully unleash the potential of language models.",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "7% in SR and 6.0% in SPL, indicating that our targeted"
+      ],
+      "char_start": 19720,
+      "char_end": 20411,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2f087594107f5f9104c718d04a1d8f2",
+      "kind": "caption",
+      "text": "Fig. 4 illustrates a category-wise comparison between",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "7% in SR and 6.0% in SPL, indicating that our targeted"
+      ],
+      "char_start": 20413,
+      "char_end": 20466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8166db76fa5c090e746aa59d733f04b",
+      "kind": "paragraph",
+      "text": "HRO and L3MVN on the HM3D dataset. In comparison with L3MVN [16], L3MVN only uses LLMs to infer semantic relevance for selecting frontier points, whereas HRO constructs a hierarchical “room-to-object” reasoning framework: first performing coarse-grained semantic modeling of room types via LLMs, then refining to region selection for the target object. Both methods use GPT-2 for semantic reasoning, but HRO’s hierarchical room-to-object approach provides more structured semantic reasoning than L3MVN’s direct objectobject associations. This layered decision-making enhances the structure of semantic reasoning, leading to significant improvements in both SR and SPL compared to L3MVN. F . Ablations As shown in Table II, we quantitatively analyzed the impact of each component on navigation performance by gradually introducing core modules. The object-object association adopts a strategy similar to L3MVN, namely “direct reasoning based on object semantic relevance”. It selects exploration targets directly through semantic associations between objects, serving as a baseline method without hierarchical semantic reasoning. Room Type Inference (RT Inf) is the high-level module of HRO, which performs semantic reasoning on room types via an LLM. Semantic Affinity Scoring (SA Sco) is the mid-level module of HRO, referring to the target-oriented room affinity scoring. Ground Truth Segmentation (GT Seg) uses the real semantic segmentation results. The object-object association achieved a SR of 50.2% and an SPL of 23.6% (Row 1, Table II), validating LLM",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "7% in SR and 6.0% in SPL, indicating that our targeted"
+      ],
+      "char_start": 20468,
+      "char_end": 22028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e13abe5bdad6f020b45e11d922ebc889",
+      "kind": "paragraph",
+      "text": "semantic reasoning as a baseline. When we replaced the direct object association with the core room type inference module proposed in this paper (Row 2, Table II), the performance improved significantly, with the SR increasing by 1.3%. This indicates that upgrading the “object with object” flat reasoning to the “object to room” hierarchical reasoning can more effectively utilize spatial semantic priors and guide the agent to move toward functional regions with greater potential. On the basis of room type inference, after introducing the semantic affinity scoring module (Row 3, Table II), our complete HRO model achieved the best performance, with a SR of 53.0% and an SPL of 24.5%. This module successfully realizes the key transformation from “generalized room semantic understanding” to “targetspecific navigation decision-making”, closing the loop of the reasoning chain. When ground truth segmentation was integrated into the complete model (Row 4, Table II), the performance experienced a substantial leap. This suggests that part of the performance bottleneck of the current method stems from the accuracy of upstream object detection. This is mainly because accurate semantic segmentation significantly improves the quality of semantic map construction, and the inaccuracy of semantic map construction is a key factor leading to task failure.",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "7% in SR and 6.0% in SPL, indicating that our targeted"
+      ],
+      "char_start": 22030,
+      "char_end": 23386,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ffbe4c171bbf488cd36601da28c73d7",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "CONCLUSION"
+      ],
+      "char_start": 23388,
+      "char_end": 23398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e69e254ee0a318aee51ad0b85ca89e33",
+      "kind": "paragraph",
+      "text": "This paper proposes HRO, a hierarchical “room-to-object” framework for zero-shot object navigation. With room type as the intermediate semantic representation, its coarse-tofine reasoning mimics human “scene-first, object-second” exploration and improves navigation efficiency. Future work",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "CONCLUSION"
+      ],
+      "char_start": 23400,
+      "char_end": 23689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be623da21da2f1c3efd996ee7f73c05d",
+      "kind": "paragraph",
+      "text": "will focus on deeper language-environment interaction mechanisms to further unleash LLMs’ potential in navigation.",
+      "order": 97,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "HRO（Ours） L3MVN",
+        "CONCLUSION"
+      ],
+      "char_start": 23691,
+      "char_end": 23805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94afb983b488d413c787ebddf1d9122d",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 98,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "REFERENCES"
+      ],
+      "char_start": 23807,
+      "char_end": 23817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1c187134f7148abf651a077ad4dc31f",
+      "kind": "reference",
+      "text": "[1] Y . Yu, W. Huang, F. Sun, C. Chen, Y . Wang, and X. Liu, “Sound adversarial audio-visual navigation,” inThe Tenth International Conference on Learning Representations, ICLR 2022, Virtual Event, April",
+      "order": 99,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "REFERENCES"
+      ],
+      "char_start": 23819,
+      "char_end": 24022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61ba1c3004657c30e5b4b63432e4b0e1",
+      "kind": "heading",
+      "text": "29, 2022, 2022.",
+      "order": 100,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "29, 2022, 2022."
+      ],
+      "char_start": 24024,
+      "char_end": 24039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e54b8155ab1a9a0506f1254cb1562edb",
+      "kind": "paragraph",
+      "text": "[2] Y . Yu, C. Chen, L. Cao, F. Yang, and F. Sun, “Measuring acoustics with collaborative multiple agents,” inProceedings of the Thirty-Second International Joint Conference on Artificial Intelligence, 2023, pp. 335–343. [3] D. Yang, Y . Yu, and L. Wang, “Beyond textual knowledge: Leveraging multimodal knowledge bases for enhancing vision-and-language navigation,”Information Processing & Management, vol. 63, no. 6, p. 104766, 2026. [4] Y . Yu and D. Yang, “Dope: Dual object perception-enhancement network for vision-and-language navigation,” inProceedings of the",
+      "order": 101,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "29, 2022, 2022."
+      ],
+      "char_start": 24041,
+      "char_end": 24608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3c9e38080ee158dce0b643421326dc5",
+      "kind": "heading",
+      "text": "International Conference on Multimedia Retrieval, 2025, pp.",
+      "order": 102,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "International Conference on Multimedia Retrieval, 2025, pp."
+      ],
+      "char_start": 24610,
+      "char_end": 24669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fa9703a878164505a904615dc534bdd",
+      "kind": "paragraph",
+      "text": "1739–1748. [5] Y . Yu and S. Sun, “Dgfnet: End-to-end audio-visual source separation based on dynamic gating fusion,” inProceedings of the 2025 International Conference on Multimedia Retrieval, 2025, pp. 1730–1738. [6] J. Fu, Y . Yu, and L. Wang, “Fsdenet: A frequency and spatial domains based detail enhancement network for remote sensing semantic segmentation,”IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 2025. [7] A. Mattursun, L. Wang, and Y . Yu, “Bss-cffma: cross-domain feature fusion and multi-attention speech enhancement network based on selfsupervised embedding,” in2024 IEEE International Conference on Systems, Man, and Cybernetics (SMC). IEEE, 2024, pp. 3589–3594. [8] J. Zhang, L. Wang, Y . Yu, and M. Xu, “Nonlinear regularization decoding method for speech recognition,”Sensors, vol. 24, no. 12, p. 3846, 2024. [9] J. Li, Y . Yu, L. Wang, F. Sun, and W. Zheng, “Audio-guided dynamic modality fusion with stereo-aware attention for audio-visual navigation,” inInternational Conference on Neural Information Processing. Springer, 2025, pp. 346–359. [10] H. Zhang, Y . Yu, L. Wang, F. Sun, and W. Zheng, “Advancing audiovisual navigation through multi-agent collaboration in 3d environments,” inInternational Conference on Neural Information Processing. Springer, 2025, pp. 502–516. [11] ——, “Iterative residual cross-attention mechanism: An integrated approach for audio-visual navigation tasks,”arXiv preprint arXiv:2509.25652, 2025. [12] Y . Yu, H. Zhang, and M. Zhu, “Dynamic multi-target fusion for",
+      "order": 103,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "International Conference on Multimedia Retrieval, 2025, pp."
+      ],
+      "char_start": 24671,
+      "char_end": 26227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84ce819fa0b1c9bb90b841d0df499155",
+      "kind": "paragraph",
+      "text": "efficient audio-visual navigation,”arXiv preprint arXiv:2509.21377, 2025. [13] X. Wang, L. Wang, Y . Yu, and X. Jiao, “Modality-invariant bidirectional temporal representation distillation network for missing multimodal sentiment analysis,” inICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2025, pp. 1–5. [14] Y . Cao, Y . Li, L. Wang, and Y . Yu, “Vnet: A gan-based multi-tier discriminator network for speech synthesis vocoders,” in2024 IEEE International Conference on Systems, Man, and Cybernetics (SMC). IEEE, 2024, pp. 4384–4389. [15] K. Zhou, K. Zheng, C. Pryor, Y . Shen, H. Jin, L. Getoor, and",
+      "order": 104,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "International Conference on Multimedia Retrieval, 2025, pp."
+      ],
+      "char_start": 26229,
+      "char_end": 26890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e2106dfb083c173fe5c58e0ad14d5bc",
+      "kind": "heading",
+      "text": "E. Wang, “Esc: Exploration with soft commonsense constraints for",
+      "order": 105,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "International Conference on Multimedia Retrieval, 2025, pp.",
+        "E. Wang, “Esc: Exploration with soft commonsense constraints for"
+      ],
+      "char_start": 26892,
+      "char_end": 26956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4b9eb8092ba6276eb8d0a10009f295a",
+      "kind": "paragraph",
+      "text": "zero-shot object navigation,” inInternational Conference on Machine Learning. PMLR, 2023, pp. 42 829–42 842. [16] B. Yu, H. Kasaei, and M. Cao, “L3mvn: Leveraging large language models for visual target navigation,” in2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2023, pp. 3554–3560. [17] L. Sun, A. Kanezaki, G. Caron, and Y . Yoshiyasu, “Enhancing multimodal-input object goal navigation by leveraging large language models for inferring room–object relationship knowledge,”Advanced Engineering Informatics, vol. 65, p. 103135, 2025. [Online]. Available: https://www.sciencedirect.com/science/article/pii/S147403462500028X [18] Y . Long, W. Cai, H. Wang, G. Zhan, and H. Dong, “Instructnav: Zero-shot system for generic instruction navigation in unexplored environment,”arXiv preprint arXiv:2406.04882, 2024. [19] K. Sakamoto, D. Azuma, T. Miyanishi, S. Kurita, and M. Kawanabe, “Map-based modular approach for zero-shot embodied question answering,” in2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2024, pp. 10 013–10 019. [20] A. Patel and S. Song, “Get-zero: Graph embodiment transformer for zero-shot embodiment generalization,” in2025 IEEE International Conference on Robotics and Automation (ICRA). IEEE, 2025, pp.",
+      "order": 106,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "International Conference on Multimedia Retrieval, 2025, pp.",
+        "E. Wang, “Esc: Exploration with soft commonsense constraints for"
+      ],
+      "char_start": 26958,
+      "char_end": 28263,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78200049515ac9c4124991554e6bdeec",
+      "kind": "heading",
+      "text": "262–14 269.",
+      "order": 107,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "262–14 269."
+      ],
+      "char_start": 28265,
+      "char_end": 28276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c881b9aa065716dd8ec5edfdd5a27d2d",
+      "kind": "paragraph",
+      "text": "[21] N. Yokoyama, S. Ha, D. Batra, J. Wang, and B. Bucher, “Vlfm: Visionlanguage frontier maps for zero-shot semantic navigation,” in2024 IEEE International Conference on Robotics and Automation (ICRA). IEEE, 2024, pp. 42–48. [22] S. Yuan, H. Huang, Y . Hao, C. Wen, A. Tzes, and Y . Fang, “GAMap: Zero-shot object goal navigation with multi-scale geometricaffordance guidance,” inThe Thirty-eighth Annual Conference on Neural Information Processing Systems, 2024. [Online]. Available: https://openreview.net/forum?id=IjHrALdQNP [23] V . S. Dorbala, J. F. Mullen, and D. Manocha, “Can an embodied agent find your “cat-shaped mug”? llm-based zero-shot object navigation,” IEEE Robotics and Automation Letters, vol. 9, no. 5, pp. 4083–4090, 2023. [24] W. Cai, S. Huang, G. Cheng, Y . Long, P. Gao, C. Sun, and H. Dong, “Bridging zero-shot object navigation and foundation models through pixel-guided navigation skill,” in2024 IEEE International Conference on Robotics and Automation (ICRA). IEEE, 2024, pp. 5228–5234. [25] D. S. Chaplot, D. P. Gandhi, A. Gupta, and R. R. Salakhutdinov, “Object goal navigation using goal-oriented semantic exploration,” Advances in Neural Information Processing Systems, vol. 33, pp. 4247–4258, 2020. [26] K. He, G. Gkioxari, P. Doll ´ar, and R. Girshick, “Mask r-cnn,” in Proceedings of the IEEE international conference on computer vision, 2017, pp. 2961–2969. [27] A. Mobarhani, S. Nazari, A. H. Tamjidi, and H. D. Taghirad, “Histogram based frontier exploration,” in2011 IEEE/RSJ International",
+      "order": 108,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "262–14 269."
+      ],
+      "char_start": 28278,
+      "char_end": 29807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db3aa798d47f4b8f9a6430a9d9a1cc12",
+      "kind": "paragraph",
+      "text": "Conference on Intelligent Robots and Systems, 2011, pp. 1128–1133. [28] J. A. Sethian, “A fast marching level set method for monotonically advancing fronts.”proceedings of the National Academy of Sciences, vol. 93, no. 4, pp. 1591–1595, 1996. [29] S. K. Ramakrishnan, A. Gokaslan, E. Wijmans, O. Maksymets, A. Clegg, J. M. Turner, E. Undersander, W. Galuba, A. Westbury, A. X. Chang, M. Savva, Y . Zhao, and D. Batra, “Habitat-matterport 3d dataset (HM3d): 1000 large-scale 3d environments for embodied AI,” inThirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track, 2021. [Online]. Available: https://arxiv.org/abs/2109.08238 [30] F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese, “Gibson env: Real-world perception for embodied agents,” inProceedings of the IEEE conference on computer vision and pattern recognition, 2018, pp. 9068–9079. [31] I. Armeni, Z.-Y . He, J. Gwak, A. R. Zamir, M. Fischer, J. Malik, and S. Savarese, “3d scene graph: A structure for unified semantics, 3d space, and camera,” inProceedings of the IEEE/CVF international conference on computer vision, 2019, pp. 5664–5673. [32] M. Savva, A. Kadian, O. Maksymets, Y . Zhao, E. Wijmans, B. Jain, J. Straub, J. Liu, V . Koltun, J. Maliket al., “Habitat: A platform for embodied ai research,” inProceedings of the IEEE/CVF international conference on computer vision, 2019, pp. 9339–9347. [33] P. Anderson, A. Chang, D. S. Chaplot, A. Dosovitskiy, S. Gupta,",
+      "order": 109,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "262–14 269."
+      ],
+      "char_start": 29809,
+      "char_end": 31291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25e42d52205213fbd790a95f90472a14",
+      "kind": "heading",
+      "text": "Koltun, J. Kosecka, J. Malik, R. Mottaghi, M. Savvaet al.,",
+      "order": 110,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Large Language Models†",
+        "262–14 269.",
+        "Koltun, J. Kosecka, J. Malik, R. Mottaghi, M. Savvaet al.,"
+      ],
+      "char_start": 31293,
+      "char_end": 31351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:670f90db9122779b52bbc6b6296b4434",
+      "kind": "paragraph",
+      "text": "“On evaluation of embodied navigation agents,”arXiv preprint arXiv:1807.06757, 2018. [34] J. Chen, G. Li, S. Kumar, B. Ghanem, and F. Yu, “How to not train your dragon: Training-free embodied object goal navigation with semantic frontiers,”arXiv preprint arXiv:2305.16925, 2023. [35] P. Wu, Y . Mu, B. Wu, Y . Hou, J. Ma, S. Zhang, and C. Liu, “V oronav:",
+      "order": 111,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "262–14 269.",
+        "Koltun, J. Kosecka, J. Malik, R. Mottaghi, M. Savvaet al.,"
+      ],
+      "char_start": 31353,
+      "char_end": 31707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3d367d7d1d552a41c450eadd2691b6c",
+      "kind": "heading",
+      "text": "oronoi-based zero-shot object navigation with large language model,”",
+      "order": 112,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "oronoi-based zero-shot object navigation with large language model,”"
+      ],
+      "char_start": 31709,
+      "char_end": 31777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:500c439f8d01f0259c7f98fe95223ef3",
+      "kind": "paragraph",
+      "text": "arXiv preprint arXiv:2401.02695, 2024.",
+      "order": 113,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "oronoi-based zero-shot object navigation with large language model,”"
+      ],
+      "char_start": 31779,
+      "char_end": 31817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bebf66c2647a2abeaa55d7536d26e026",
+      "kind": "heading",
+      "text": "[36] S. K. Ramakrishnan, D. S. Chaplot, Z. Al-Halah, J. Malik, and",
+      "order": 114,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Large Language Models†",
+        "[36] S. K. Ramakrishnan, D. S. Chaplot, Z. Al-Halah, J. Malik, and"
+      ],
+      "char_start": 31819,
+      "char_end": 31885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:295588f6119cab9c345e69137afca9bd",
+      "kind": "paragraph",
+      "text": "K. Grauman, “Poni: Potential functions for objectgoal navigation with interaction-free learning,” inProceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2022, pp. 18 890–18 900.",
+      "order": 115,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Large Language Models†",
+        "[36] S. K. Ramakrishnan, D. S. Chaplot, Z. Al-Halah, J. Malik, and"
+      ],
+      "char_start": 31887,
+      "char_end": 32094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.13072",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

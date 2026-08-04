@@ -1,0 +1,4863 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "0f8c9670662e274da83171acbb591ef55e7746cc185d7e99a3e0a86b39068417",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:3a95d3a30d2186817ca3fd0c68f89c4b",
+      "kind": "paragraph",
+      "text": "From Intent to Infrastructure: LLM-Driven Agent Compilers for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 61,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bee4d10de637a12986bcd1369522e192",
+      "kind": "heading",
+      "text": "ISAC Networks",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks"
+      ],
+      "char_start": 63,
+      "char_end": 76,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:073648581917022d814a5401fa5147c7",
+      "kind": "paragraph",
+      "text": "Lijie Zheng, Xudong Zhong, Baoquan Ren, Xiangwu Gong, Xinghui Zhu, Ji He,Member, IEEE, Abstract—Integrated sensing and communications (ISAC) is moving from proof-of-concept demonstrations to system-level deployment in sixth-generation (6G) networks. Because sensing and communication share hardware, spectrum, and waveform resources, ISAC design now involves many tightly coupled choices, including waveform selection, sensing algorithm setup, resource scheduling, and deployment planning. This design space is already too large to manage well through manual tuning or isolated optimizers. This article introduces theAgent Compiler, a large language model (LLM)-enabled compilation layer that translates high-level engineering intent into complete and executable ISAC system configurations. The Agent Compiler works in four stages: intent parsing, task decomposition, policy graph synthesis, and infrastructure mapping. It produces a verifiable intermediate representation called the ISAC Policy Graph (IPG). A runtime engine then deploys the compiled configuration and supports closed-loop adaptation at three levels: fast parameter updates, partial recompilation of affected subgraphs, and full workflow recompilation. The core design principle is strict timescale separation: the LLM handles slow-loop strategic decisions, while proven algorithms retain real-time control in the fast loop. A UA V-assisted disaster rescue example illustrates the full compilation process. We also discuss open issues, including compilation latency, output reliability, constraint verification, and",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks"
+      ],
+      "char_start": 78,
+      "char_end": 1661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:406e07cef9cb7999bc5c186859ee444e",
+      "kind": "paragraph",
+      "text": "pipeline security, to guide future research. Index Terms—Integrated sensing and communications (ISAC), large language model (LLM), agent compiler, intent-driven design, 6G networks.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks"
+      ],
+      "char_start": 1663,
+      "char_end": 1844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b19b79ee5b7104799a03f8bdd4c2e7a5",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION"
+      ],
+      "char_start": 1846,
+      "char_end": 1858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bad003f183bb35022f9a81d19ee600a",
+      "kind": "paragraph",
+      "text": "I NTEGRATED sensing and communications (ISAC) is becoming a key part of sixth-generation (6G) wireless networks because it combines data transmission and environmental sensing through shared hardware and spectrum resources [1]. As ISAC moves from laboratory prototypes to larger deployments, however, its design problem becomes much harder. Sensing and communication are now tightly coupled across waveform, antenna, and protocol layers, so designers can no longer treat each part in isolation. Instead, they must handle a joint design space that spans sensing, communication, computation, and control. The interactions across these dimensions are complex and difficult to model, let alone optimize, with conventional methods [2]. In practice, many ISAC systems are still designed through expert rules and repeated manual adjustment. Engineers must",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION"
+      ],
+      "char_start": 1860,
+      "char_end": 2708,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b76751119695d776fa7b71b2eebdcb9",
+      "kind": "heading",
+      "text": "Zheng, X. Zhu and J. He are with the School of Computer Sci-",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zheng, X. Zhu and J. He are with the School of Computer Sci-"
+      ],
+      "char_start": 2710,
+      "char_end": 2770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ea4c92c2a013128efba5c53647c8ce2",
+      "kind": "paragraph",
+      "text": "ence and Technology, Xidian University, Xi’an 710071, China (e-mail: lijzheng@stu.xidian.edu.cn;xhzhu@xidian.edu.cn;garyhej1991@gmail.com).",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zheng, X. Zhu and J. He are with the School of Computer Sci-"
+      ],
+      "char_start": 2772,
+      "char_end": 2911,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c96a026a1c38b06ebdcd4454628bebcc",
+      "kind": "heading",
+      "text": "Zhong, B. Ren and X. Gong are with the Institute of Sys-",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zhong, B. Ren and X. Gong are with the Institute of Sys-"
+      ],
+      "char_start": 2913,
+      "char_end": 2969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd383589972d7a3c93e469a6ed500431",
+      "kind": "paragraph",
+      "text": "tems General, Academy of Systems Engineering, Academy of Military Sciences, Beijing 100101, China (e-mail: zxd148367@outlook.com; renbq@126.com;314968641@qq.com). choose waveform types, tune sensing chains, allocate time– frequency resources, and decide how nodes should cooperate, all under strong cross-dependencies. For example, changing the waveform ambiguity function affects both target resolution and co-channel interference, while changing beam scheduling influences channel estimation accuracy and radar dwell time at the same time. As networks become denser, more heterogeneous, and more dynamic, such manual design becomes increasingly difficult to scale, especially in emerging applications such as low-altitude operations and urban air mobility [3]. Existing AI-based methods provide useful improvements, but most of them still solve only part of the full problem. Deep reinforcement learning (DRL) can optimize beamforming, mathematical solvers can handle resource allocation, and model-based methods can support waveform design [4]. Yet these methods usually focus on one subtask at a time and do not connect high-level task requirements to a complete system configuration. Recent studies have also explored large language models (LLMs) for wireless optimization, showing that they can help with decisions such as resource allocation and beam prediction [5], [6], [7]. Even so, in most of these studies the LLM acts as a helper for a local optimization problem rather than as a system-level planner. As a result, the",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zhong, B. Ren and X. Gong are with the Institute of Sys-"
+      ],
+      "char_start": 2971,
+      "char_end": 4502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22a945a86237d11b858ebaf7814ee8eb",
+      "kind": "paragraph",
+      "text": "broader problem of compiling task intent into an end-to-end ISAC solution is still open. In this article, we propose theAgent Compiler, an LLMenabled framework that converts high-level task intent into complete and executable ISAC system solutions. These solutions include waveforms, sensing algorithms, resource strategies, and deployment topologies, together with a closed-loop adaptation mechanism. The Agent Compiler is not intended to replace existing optimization algorithms. Instead, it acts as asystem architect: it parses intent, breaks a complex task into manageable parts, combines specialized solver modules into a coherent policy graph, and coordinates deployment and adaptation through a runtime loop. In this way, it extends ideas from classical compiler design and LLM-based reasoning agents [8], [9] to the real-time and physical constraints of wireless ISAC systems. The main contributions of this work are summarized as follows: •Conceptual Framework.We introduce theAgent Compilerparadigm for ISAC networks, define its role, and clarify how it differs from earlier LLM-based wireless optimization methods. •System Architecture.We present an end-to-end compilation framework that includes intent parsing, task",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zhong, B. Ren and X. Gong are with the Institute of Sys-"
+      ],
+      "char_start": 4504,
+      "char_end": 5732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cb9dc5d217adc48f6f699c903eda4d9",
+      "kind": "table",
+      "text": "arXiv:2607.16269v1  [eess.SP]  7 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "INTRODUCTION",
+        "Zhong, B. Ren and X. Gong are with the Institute of Sys-"
+      ],
+      "char_start": 5734,
+      "char_end": 5775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c57d56d6bf533fd1d35a92ddd2b9cff",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "TABLE I"
+      ],
+      "char_start": 5777,
+      "char_end": 5784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1829f0bcbb82111465d21c2b5bdcd6b",
+      "kind": "heading",
+      "text": "COMPARISON OFISAC DESIGNPARADIGMS",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "COMPARISON OFISAC DESIGNPARADIGMS"
+      ],
+      "char_start": 5786,
+      "char_end": 5819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc55a3d4af347c7e61c8f3d47f1f157c",
+      "kind": "heading",
+      "text": "Approach Key Capability Primary Limitation ISAC Fit",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Approach Key Capability Primary Limitation ISAC Fit"
+      ],
+      "char_start": 5821,
+      "char_end": 5872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e00147e7f73d32a72fbe27373ba2cd4",
+      "kind": "paragraph",
+      "text": "Manual rules / expert heuristics Reliable, interpretable, low runtime overhead Rigid; cannot handle dynamic multi-objective trade-offs or unexpected scenarios",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Approach Key Capability Primary Limitation ISAC Fit"
+      ],
+      "char_start": 5874,
+      "char_end": 6032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfaaf03e9fbc30c7cdff85227891f7bf",
+      "kind": "heading",
+      "text": "Weak",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Weak"
+      ],
+      "char_start": 6034,
+      "char_end": 6038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3407bb377e2a549a2bd9853121bcddf",
+      "kind": "paragraph",
+      "text": "Monolithic optimizer Provably optimal for well-defined instances Fixed model assumptions; limited generalization; weak cross-layer coordination",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Weak"
+      ],
+      "char_start": 6040,
+      "char_end": 6183,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:821fc8093576c349322d3adbdbd8d0a6",
+      "kind": "heading",
+      "text": "Partial",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Partial"
+      ],
+      "char_start": 6185,
+      "char_end": 6192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acedf58c6ce9065ccae92b5c42fde861",
+      "kind": "paragraph",
+      "text": "DRL / MARL Learns adaptive policies; handles non-convex dynamics High training cost; limited interpretability; weak transfer to new tasks",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Partial"
+      ],
+      "char_start": 6194,
+      "char_end": 6331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:674a9e1a0d7d35cbdb232997d25b4f6f",
+      "kind": "heading",
+      "text": "Moderate",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Moderate"
+      ],
+      "char_start": 6333,
+      "char_end": 6341,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81564d433f1a0ee4ca6e0e71ecd7a579",
+      "kind": "paragraph",
+      "text": "Direct LLM optimization Strong semantic understanding; can decompose tasks without task-specific retraining Too slow for real-time control; limited hardware awareness",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Moderate"
+      ],
+      "char_start": 6343,
+      "char_end": 6509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c551b0f17ecdee5931a7455dda491d3",
+      "kind": "heading",
+      "text": "Weak",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Weak"
+      ],
+      "char_start": 6511,
+      "char_end": 6515,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88b810eab41b505da5399912cfcd063a",
+      "kind": "paragraph",
+      "text": "Agent Compiler (proposed)Intent parsing, task decomposition, hardware planning, runtime adaptation Depends on the quality of the solver library; orchestration adds overhead",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Weak"
+      ],
+      "char_start": 6517,
+      "char_end": 6689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da8faa9584e1158cf1bceacec88551f4",
+      "kind": "heading",
+      "text": "Strong",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Strong"
+      ],
+      "char_start": 6691,
+      "char_end": 6697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ead54dc6c40d0f563ed54fbd518d36f1",
+      "kind": "paragraph",
+      "text": "decomposition, policy graph synthesis, physical resource mapping, and runtime adaptation in a closed-loop design. •Experimental Validation.We study a UA V-assisted disaster rescue scenario to show how the proposed framework can generate coherent ISAC configurations under dynamic conditions. •Critical Analysis.We discuss key challenges for LLMdriven compilation in wireless infrastructure, including latency, verification, robustness, and security, and outline directions for future work.",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Strong"
+      ],
+      "char_start": 6699,
+      "char_end": 7188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1896dff3124503c1f065b07eded7fe6",
+      "kind": "heading",
+      "text": "WHYISAC NEEDS ANEWDESIGNABSTRACTION",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "Strong",
+        "WHYISAC NEEDS ANEWDESIGNABSTRACTION"
+      ],
+      "char_start": 7190,
+      "char_end": 7225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db709ec56c8dc1a2d444217cc574710a",
+      "kind": "paragraph",
+      "text": "This section explains why ISAC needs an Agent Compiler. We first examine the structural complexity of joint sensing and communication design, then review the limits of current design paradigms, and finally identify the requirements of a new intent-to-infrastructure abstraction layer.",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Strong",
+        "WHYISAC NEEDS ANEWDESIGNABSTRACTION"
+      ],
+      "char_start": 7227,
+      "char_end": 7511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:699cf4d59b99df4c84c28955acadb1c1",
+      "kind": "heading",
+      "text": "A. The Complexity of ISAC System Design",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "A. The Complexity of ISAC System Design"
+      ],
+      "char_start": 7513,
+      "char_end": 7552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e958e1a55ad89df2ab9bdedec42a9ec1",
+      "kind": "paragraph",
+      "text": "ISAC requires radar and communication functions to share waveforms, antennas, spectrum, and computing resources while meeting strongly coupled objectives [1]. This joint operation creates five connected sources of complexity that make traditional design methods increasingly inadequate. Interacting Objectives.Sensing performance and communication throughput are tied together across protocol layers. A higher radar refresh rate leaves fewer time–frequency resources for data users, while wider beams improve sensing coverage but reduce downlink spatial gain. This coupling runs from waveform design and MAC scheduling to applicationlevel quality of service [2]. Different Time Scales.ISAC systems must react on several time scales at once: millisecond-level beam tracking and adaptive modulation, second-level user or target movement and handover, and minute-level task arrivals and topology changes. These scales are not independent. A new task at the minute scale can immediately create fresh tracking and scheduling requirements at the millisecond scale.",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. The Complexity of ISAC System Design"
+      ],
+      "char_start": 7554,
+      "char_end": 8612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7732e1e4632af91d64e94c806d226be7",
+      "kind": "heading",
+      "text": "Mixed Hardware Platforms.Modern ISAC deployments",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Mixed Hardware Platforms.Modern ISAC deployments"
+      ],
+      "char_start": 8614,
+      "char_end": 8662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5186d1be4bae922993b856950570047d",
+      "kind": "paragraph",
+      "text": "may include base stations, edge servers, reconfigurable intelligent surfaces (RIS), and UA Vs with very different capabilities [10]. A single sensing task may need a UA V for angle-ofarrival estimation, a ground station for bistatic cross-checking, and an edge server for data fusion. No single node sees the whole system. Two-Way Sensing–Communication Feedback.The sensing and communication functions affect each other continuously. Sensing outputs, such as target trajectories and blockage estimates, change beam management and scheduling decisions. In the other direction, channel quality and interference information from the communication side influence which sensing modes are practical [3]. Tight Timing Requirements.Unlike offline optimization, ISAC often operates under hard latency budgets from milliseconds to seconds. A resource allocation decision that arrives",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Mixed Hardware Platforms.Modern ISAC deployments"
+      ],
+      "char_start": 8664,
+      "char_end": 9537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60056bd3d2e1246e4dfcc62a2c4ca9a9",
+      "kind": "heading",
+      "text": "ms late is not merely suboptimal; in many cases, it is",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "ms late is not merely suboptimal; in many cases, it is"
+      ],
+      "char_start": 9539,
+      "char_end": 9593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2dd557ec5ec78175450776e69f46d75",
+      "kind": "paragraph",
+      "text": "unusable.",
+      "order": 33,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "ms late is not merely suboptimal; in many cases, it is"
+      ],
+      "char_start": 9595,
+      "char_end": 9604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fa40ba1b2934c5e68b3c61abf9528c7",
+      "kind": "heading",
+      "text": "B. Limitations of Existing Approaches",
+      "order": 34,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Limitations of Existing Approaches"
+      ],
+      "char_start": 9606,
+      "char_end": 9643,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ea621112ed9d3ee1fdb34a55c74f565",
+      "kind": "paragraph",
+      "text": "Table I compares five design paradigms against these complexity sources. Manual rule-based systems are reliable in well-understood settings, but they adapt poorly when new cross-layer trade-offs appear. Monolithic optimizers can be optimal for a specific problem instance, yet they depend on fixed models and often need to be redesigned when the topology or task changes. DRL and multi-agent RL methods can address dynamic scheduling [4], but they are expensive to train and often transfer poorly across scenarios. Direct LLMbased optimization adds semantic reasoning, but its latency is fundamentally misaligned with millisecond-level control loops [11].",
+      "order": 35,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Limitations of Existing Approaches"
+      ],
+      "char_start": 9645,
+      "char_end": 10300,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea5aa393903bf197a680cfe673433f73",
+      "kind": "heading",
+      "text": "The Case for an Agent Compiler",
+      "order": 36,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Limitations of Existing Approaches",
+        "The Case for an Agent Compiler"
+      ],
+      "char_start": 10302,
+      "char_end": 10332,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:009de2e4ce3024be5022a77dfc9d5c74",
+      "kind": "paragraph",
+      "text": "What ISAC needs is a new system layer between high-level task intent and low-level control. This layer should be able to read task intent, break it into subtasks, choose and configure algorithms, map those choices to heterogeneous hardware, and",
+      "order": 37,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Limitations of Existing Approaches",
+        "The Case for an Agent Compiler"
+      ],
+      "char_start": 10334,
+      "char_end": 10578,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae8a59d1942f555c3062d65d64a02ed6",
+      "kind": "heading",
+      "text": "Runtime Engine",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Engine"
+      ],
+      "char_start": 10580,
+      "char_end": 10594,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba9344024c9fd48af01f357b3ecf255d",
+      "kind": "paragraph",
+      "text": "Deploy UAV formulation For ground vehicle Detection in a 2kmx2km area. Sensing  refresh ≥ 5Hz comm latency ≤ 50ms.",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Engine"
+      ],
+      "char_start": 10596,
+      "char_end": 10710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ab04e28d0e45181a601f75deee6d2da",
+      "kind": "heading",
+      "text": "Structured DSL",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Structured DSL"
+      ],
+      "char_start": 10712,
+      "char_end": 10726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b7e79860d78dc231b65ba3f6ca4118c",
+      "kind": "heading",
+      "text": "LLM-Driven Agent Compiler LLM Core",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "LLM-Driven Agent Compiler LLM Core"
+      ],
+      "char_start": 10728,
+      "char_end": 10762,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ce8065d2973aa0450a72750a8afec53",
+      "kind": "paragraph",
+      "text": "Stage 1:",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "LLM-Driven Agent Compiler LLM Core"
+      ],
+      "char_start": 10764,
+      "char_end": 10772,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ff3deb5eaaed01df720819d11cc7a7c",
+      "kind": "heading",
+      "text": "Intent",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Intent"
+      ],
+      "char_start": 10774,
+      "char_end": 10780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:721b90984348976625c079e4a4c66056",
+      "kind": "heading",
+      "text": "Parsing",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Parsing"
+      ],
+      "char_start": 10782,
+      "char_end": 10789,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ee851d47b5de27cd107d276345c7da4",
+      "kind": "paragraph",
+      "text": "Stage 2: Task",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Parsing"
+      ],
+      "char_start": 10791,
+      "char_end": 10804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:638076c511108db96739894d116584d4",
+      "kind": "heading",
+      "text": "Decomposition",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Decomposition"
+      ],
+      "char_start": 10806,
+      "char_end": 10819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:995a10733826da66cba24c90142d30c3",
+      "kind": "paragraph",
+      "text": "& Parsing Stage 3: Policy",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Decomposition"
+      ],
+      "char_start": 10821,
+      "char_end": 10846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a0303019e242513f6c2209a2688aa4d",
+      "kind": "heading",
+      "text": "Graph Synthesis",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Graph Synthesis"
+      ],
+      "char_start": 10848,
+      "char_end": 10863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9ff25c25611e1f56d26673dbe339b26",
+      "kind": "list_item",
+      "text": "- IPG Generation",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Graph Synthesis"
+      ],
+      "char_start": 10865,
+      "char_end": 10881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c85d88b2867480ad3a66f2e8915d734b",
+      "kind": "paragraph",
+      "text": "Stage 4:",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Graph Synthesis"
+      ],
+      "char_start": 10883,
+      "char_end": 10891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e290e7b0741846fa697c202b6fdbd24",
+      "kind": "heading",
+      "text": "Infrastructure",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Infrastructure"
+      ],
+      "char_start": 10893,
+      "char_end": 10907,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a30d7b82486f6587c2229eb034b1c711",
+      "kind": "heading",
+      "text": "Mapping",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Mapping"
+      ],
+      "char_start": 10909,
+      "char_end": 10916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:380606debb8a3d821c6e7ad4de60b6f5",
+      "kind": "heading",
+      "text": "Task Objectives",
+      "order": 53,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Task Objectives"
+      ],
+      "char_start": 10918,
+      "char_end": 10933,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9469679fd47b9b9971a9b81f3939e361",
+      "kind": "heading",
+      "text": "Performance",
+      "order": 54,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Performance"
+      ],
+      "char_start": 10935,
+      "char_end": 10946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54af960566b369add15a6f0ca5a2395c",
+      "kind": "heading",
+      "text": "Constraints",
+      "order": 55,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Constraints"
+      ],
+      "char_start": 10948,
+      "char_end": 10959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1418d9a4ac040606f61ca074360b4abe",
+      "kind": "heading",
+      "text": "Environment",
+      "order": 56,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Environment"
+      ],
+      "char_start": 10961,
+      "char_end": 10972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7052a9888709c9a4d19dca3a4931cf2",
+      "kind": "heading",
+      "text": "Context",
+      "order": 57,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Context"
+      ],
+      "char_start": 10974,
+      "char_end": 10981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fce0b55b9ec844a0659abe686e902b99",
+      "kind": "heading",
+      "text": "Priority",
+      "order": 58,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Priority"
+      ],
+      "char_start": 10983,
+      "char_end": 10991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e92c4886496aca4d10e749a9c6f5eaa9",
+      "kind": "heading",
+      "text": "Natural Language",
+      "order": 59,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Natural Language"
+      ],
+      "char_start": 10993,
+      "char_end": 11009,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2938c74bc3627ad3d8da6d49ce3f475",
+      "kind": "heading",
+      "text": "Intent",
+      "order": 60,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Intent"
+      ],
+      "char_start": 11011,
+      "char_end": 11017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dacd7b169406133706ae3ae4b1cf561e",
+      "kind": "heading",
+      "text": "Structured Intent",
+      "order": 61,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Structured Intent"
+      ],
+      "char_start": 11019,
+      "char_end": 11036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5fbf0f6ef636b9fbf294abd02de12943",
+      "kind": "heading",
+      "text": "Specification",
+      "order": 62,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Specification"
+      ],
+      "char_start": 11038,
+      "char_end": 11051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31097c55a16b84448370444c756ac146",
+      "kind": "heading",
+      "text": "Intent",
+      "order": 63,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Intent"
+      ],
+      "char_start": 11053,
+      "char_end": 11059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05488554e09f3efa676aa49c5c2dd3fb",
+      "kind": "paragraph",
+      "text": "Sensing Commun. Comput.",
+      "order": 64,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Intent"
+      ],
+      "char_start": 11061,
+      "char_end": 11084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8dfaa4bff4bd246a4624fa1834f28a3",
+      "kind": "heading",
+      "text": "Subtasks",
+      "order": 65,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Subtasks"
+      ],
+      "char_start": 11086,
+      "char_end": 11094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94648ed9023be907324371beac9ac1cc",
+      "kind": "heading",
+      "text": "Tool-Use",
+      "order": 66,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Tool-Use"
+      ],
+      "char_start": 11096,
+      "char_end": 11104,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d0f8b61f67e3349715410df2d85d72f",
+      "kind": "paragraph",
+      "text": "Algo.",
+      "order": 67,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Tool-Use"
+      ],
+      "char_start": 11106,
+      "char_end": 11111,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02891e511b091d3b1bf9750e6e7ebb5b",
+      "kind": "heading",
+      "text": "Library Hardware",
+      "order": 68,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Library Hardware"
+      ],
+      "char_start": 11113,
+      "char_end": 11129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5610e90db06cdb8b80f5d96ded8c52d3",
+      "kind": "paragraph",
+      "text": "DB Env",
+      "order": 69,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Library Hardware"
+      ],
+      "char_start": 11131,
+      "char_end": 11137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e151db8c36736a9f4391d00678ec0575",
+      "kind": "heading",
+      "text": "Model",
+      "order": 70,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Model"
+      ],
+      "char_start": 11139,
+      "char_end": 11144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11b977f5cb8f8f5525a8e99b09b0dd43",
+      "kind": "heading",
+      "text": "ISAC Policy Graph",
+      "order": 71,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "ISAC Policy Graph"
+      ],
+      "char_start": 11146,
+      "char_end": 11163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35fb25d697b1252316c63631c5c396fe",
+      "kind": "heading",
+      "text": "Detection",
+      "order": 72,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Detection"
+      ],
+      "char_start": 11165,
+      "char_end": 11174,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08e9725d0d1399af10ce5aeefdf869fc",
+      "kind": "heading",
+      "text": "Tracking",
+      "order": 73,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Tracking"
+      ],
+      "char_start": 11176,
+      "char_end": 11184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4dc2d02d7a83ca5121e1b48170c4f380",
+      "kind": "heading",
+      "text": "Comm",
+      "order": 74,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Comm"
+      ],
+      "char_start": 11186,
+      "char_end": 11190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22edbbc1e030531f8c6edb5befdb04a8",
+      "kind": "heading",
+      "text": "Scheduling Data",
+      "order": 75,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Scheduling Data"
+      ],
+      "char_start": 11192,
+      "char_end": 11207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab395efd653cb0e98717aa78ca05449c",
+      "kind": "heading",
+      "text": "Fusion",
+      "order": 76,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Fusion"
+      ],
+      "char_start": 11209,
+      "char_end": 11215,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:272d0f770f41b1b316dde0e73a80b96d",
+      "kind": "heading",
+      "text": "Information Flow",
+      "order": 77,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Information Flow"
+      ],
+      "char_start": 11217,
+      "char_end": 11233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8af8348633ceba74baf4318051825e3a",
+      "kind": "heading",
+      "text": "Control Flow",
+      "order": 78,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Control Flow"
+      ],
+      "char_start": 11235,
+      "char_end": 11247,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:593b06f7de83335104ee3ae344bb6c55",
+      "kind": "heading",
+      "text": "Feedback Flow",
+      "order": 79,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Feedback Flow"
+      ],
+      "char_start": 11249,
+      "char_end": 11262,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97915852d7862b2c6ad442192361c04f",
+      "kind": "paragraph",
+      "text": "latency ≤ X ms latency ≤ X ms power ≤ Y dBm power ≤ Y dBm",
+      "order": 80,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Feedback Flow"
+      ],
+      "char_start": 11264,
+      "char_end": 11321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c431171fc643ee30c0601fa98eba36b1",
+      "kind": "heading",
+      "text": "Node",
+      "order": 81,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Node"
+      ],
+      "char_start": 11323,
+      "char_end": 11327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:353d4a3ef465b9779a7708e778f0598f",
+      "kind": "heading",
+      "text": "Binding",
+      "order": 82,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Binding"
+      ],
+      "char_start": 11329,
+      "char_end": 11336,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af6e37311c6a01c36eb11b7721d252b5",
+      "kind": "heading",
+      "text": "Resource",
+      "order": 83,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Resource"
+      ],
+      "char_start": 11338,
+      "char_end": 11346,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44abdc4722cc3e8c4971e3270de77575",
+      "kind": "heading",
+      "text": "Allocation",
+      "order": 84,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Allocation"
+      ],
+      "char_start": 11348,
+      "char_end": 11358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef958b1cbcf2ce3e53d658871abd4462",
+      "kind": "heading",
+      "text": "Interface",
+      "order": 85,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Interface"
+      ],
+      "char_start": 11360,
+      "char_end": 11369,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3bf3fd44b908b020e13de5c0cd66559",
+      "kind": "heading",
+      "text": "Adaptation",
+      "order": 86,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Adaptation"
+      ],
+      "char_start": 11371,
+      "char_end": 11381,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fef77043a2849b84cde32cd4eca258e0",
+      "kind": "heading",
+      "text": "Constraint Check Failed → IR Adjustment",
+      "order": 87,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Constraint Check Failed → IR Adjustment"
+      ],
+      "char_start": 11383,
+      "char_end": 11422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06c4ba0592d8d888a1cf5a8becd3aa42",
+      "kind": "heading",
+      "text": "Engineer Intent",
+      "order": 88,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Engineer Intent"
+      ],
+      "char_start": 11424,
+      "char_end": 11439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3640c6028c77c73d7f10169f24ef610d",
+      "kind": "heading",
+      "text": "Input Area",
+      "order": 89,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Input Area"
+      ],
+      "char_start": 11441,
+      "char_end": 11451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9ca7fb16b0858838a60918af08e36ad",
+      "kind": "heading",
+      "text": "ISAC Infrastructure",
+      "order": 90,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "ISAC Infrastructure"
+      ],
+      "char_start": 11453,
+      "char_end": 11472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:680985af59c25797fb553f39fb73c255",
+      "kind": "heading",
+      "text": "Deployment Area",
+      "order": 91,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Deployment Area"
+      ],
+      "char_start": 11474,
+      "char_end": 11489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0483b1ea182e2e8eaa7da2a9f332efa0",
+      "kind": "heading",
+      "text": "Runtime Feedback Loop",
+      "order": 92,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop"
+      ],
+      "char_start": 11491,
+      "char_end": 11512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76f12f9b9465ae182cbf6c5883addfba",
+      "kind": "paragraph",
+      "text": "Level 1: Hot-Patch parameter tuning ms-scale, no LLM Level 2: Partial Re-compile subgraph replacement s-scale, LLM on subgraph Level 3: Full Re-compile pipeline restart min-scale, full LLM",
+      "order": 93,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop"
+      ],
+      "char_start": 11514,
+      "char_end": 11702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de471b01e681e63544dac2599f87e448",
+      "kind": "caption",
+      "text": "Fig. 1. Overall architecture of the LLM-driven Agent Compiler for ISAC networks. Engineer intent is parsed, decomposed, and compiled into an ISAC Policy",
+      "order": 94,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop"
+      ],
+      "char_start": 11704,
+      "char_end": 11856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5fb914d1a0f793b5093129a47d256a4",
+      "kind": "paragraph",
+      "text": "Graph, which the Runtime Engine deploys and continuously monitors, triggering recompilation at three levels of granularity. adapt the system when conditions change. This is the role of theAgent Compiler. Importantly, the Agent Compiler does not replace waveform design methods or beamforming algorithms. Instead, it coordinates them by deciding which algorithm to run, with what parameters, on which node, and in what order. The analogy with software compilation is deliberate: a compiler translates a high-level program into executable machine instructions through structured intermediate steps [12]. In a similar way, the Agent Compiler identifies the waveform family that fits the current task, selects parameters that satisfy the sensing– communication trade-off, and sends the resulting configuration to the appropriate hardware within the required latency budget.",
+      "order": 95,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop"
+      ],
+      "char_start": 11858,
+      "char_end": 12727,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce12ea6f2e0be082c29da8604ebb2c79",
+      "kind": "heading",
+      "text": "THEAGENTCOMPILERARCHITECTURE",
+      "order": 96,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop",
+        "THEAGENTCOMPILERARCHITECTURE"
+      ],
+      "char_start": 12729,
+      "char_end": 12757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f820265aa95d9695ab2a0fb171a582c9",
+      "kind": "paragraph",
+      "text": "This section describes the proposed Agent Compiler in an end-to-end manner, showing how engineer intent is gradually transformed into executable ISAC configurations through four compilation stages and a runtime adaptation loop.",
+      "order": 97,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Feedback Loop",
+        "THEAGENTCOMPILERARCHITECTURE"
+      ],
+      "char_start": 12759,
+      "char_end": 12986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3d80a5736175de94f2de5d614fb310b",
+      "kind": "heading",
+      "text": "A. System Overview",
+      "order": 98,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "A. System Overview"
+      ],
+      "char_start": 12988,
+      "char_end": 13006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7a3ee2e6c07685e4517ea8c09cc0cf0",
+      "kind": "paragraph",
+      "text": "The Agent Compiler is the core of the proposed framework. As shown in Fig. 1, it translates high-level engineer intent into executable ISAC infrastructure configurations. The overall flow is as follows. An engineer first provides a naturallanguage or structured intent description. The Agent Compiler then processes this input through four internal stages—Intent",
+      "order": 99,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. System Overview"
+      ],
+      "char_start": 13008,
+      "char_end": 13370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e13079863bfa299fde31ef62e8c5bfb9",
+      "kind": "heading",
+      "text": "Parsing, Task Decomposition and Planning, Policy Graph",
+      "order": 100,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Parsing, Task Decomposition and Planning, Policy Graph"
+      ],
+      "char_start": 13372,
+      "char_end": 13426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c73f9ccfde1dd1379da5bc100d24092",
+      "kind": "paragraph",
+      "text": "Synthesis, and Infrastructure Mapping—to produce an ISAC Policy Graph (IPG) together with device-level control commands. Finally, the Runtime Engine deploys the configuration, monitors the live ISAC system, and feeds performance information back to the compiler when the system behavior starts to drift away from the original intent. This architecture is inspired by modern software compiler toolchains [12], in which source code passes through several intermediate forms before being lowered to machine instructions. Here, the “source language” is human intent, expressed in natural language or a structured command format; the “intermediate representation” is a policy graph that captures ISAC task logic; and the “machine instructions” are protocollevel control commands sent to heterogeneous radio nodes, UA Vs, and edge servers. The LLM serves as the intelligent front end of the compiler. It interprets ambiguous human requests, selects suitable algorithmic building blocks, and reasons about cross-domain dependencies. Deterministic backend modules then enforce constraints and support real-time execution.",
+      "order": 101,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Parsing, Task Decomposition and Planning, Policy Graph"
+      ],
+      "char_start": 13428,
+      "char_end": 14541,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b898b1189facd1d5886441899afdcae",
+      "kind": "heading",
+      "text": "B. Stage 1: Intent Parsing",
+      "order": 102,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Stage 1: Intent Parsing"
+      ],
+      "char_start": 14543,
+      "char_end": 14569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b58d6c97abcf5b5e4269ac6b85f2eb98",
+      "kind": "paragraph",
+      "text": "The first stage accepts raw input from a network engineer, which may be free-form natural language, a domain-specific language, or a hybrid of the two. Consider the following example:“Deploy a UAV formation in a 2 km×2 km area for ground vehicle detection, while providing video backhaul for rescue personnel. Sensing refresh rate≥5 Hz, communication latency≤50 ms. ”Working in a tool-augmented reasoning mode [8], the LLM extracts four types of information from this request:task objectives(detection, tracking, and video delivery),performance constraints(5 Hz refresh rate and 50 ms latency),environment context(coverage area, propagation conditions, and mobility), andpriority ordering(sensing-first, communication-first, or balanced). The result is a structured Intent Specificationthat contains a task list, a constraint dictionary, an environment description, and a priority order. This specification becomes the input to Stage 2.",
+      "order": 103,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Stage 1: Intent Parsing"
+      ],
+      "char_start": 14571,
+      "char_end": 15507,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e03ecd0a2dd8cbfaeb032822b937280a",
+      "kind": "heading",
+      "text": "Stage 2: Task Decomposition and Planning",
+      "order": 104,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Stage 1: Intent Parsing",
+        "Stage 2: Task Decomposition and Planning"
+      ],
+      "char_start": 15509,
+      "char_end": 15549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:739b9be2ddd6b64bc0937e192f66cc1b",
+      "kind": "paragraph",
+      "text": "Stage 2 converts the Intent Specification into executable subtasks across four domains: sensing (operating mode and waveform family), communication (link type and QoS target), computation (on-board, edge, or cloud placement), and control (trajectory and formation). At this stage, the LLM acts as a structured planner [13] and draws from a prepared library of ISAC building blocks exposed as callable tools [9]. A key function in this stage isdependency resolution. The planner determines the execution order and data flow among subtasks. For example, cooperative localization depends on detection outputs, and communication scheduling must respect spectrum already reserved for sensing. These dependencies are checked against ahardware capability database tool, which reports node-level capabilities, and anenvironment model tool, which provides channel statistics and terrain information.",
+      "order": 105,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Stage 1: Intent Parsing",
+        "Stage 2: Task Decomposition and Planning"
+      ],
+      "char_start": 15551,
+      "char_end": 16441,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:317c6f0637adf36c198445e025dfb122",
+      "kind": "heading",
+      "text": "D. Stage 3: Policy Graph Synthesis—IR Generation",
+      "order": 106,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Stage 3: Policy Graph Synthesis—IR Generation"
+      ],
+      "char_start": 16443,
+      "char_end": 16491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e10bca2fa32a3c581fe7764decab78d0",
+      "kind": "paragraph",
+      "text": "Stage 3 is the most distinctive structural part of the Agent Compiler. Instead of sending device configurations directly, the LLM generates anISAC Policy Graph(IPG), which is a domain-specific intermediate representation inspired by layered intermediate representations in modern compiler systems [12]. The IPG separates the logical organization of the ISAC task from the hardware details of the target platform, which makes verification, reuse, and incremental modification easier. As shown in Fig. 2, the IPG is a directed attributed graph with three main kinds of elements.Execution nodesrepresent individual subtasks. Each node includes annotations for the chosen algorithm type, parameter ranges (for example, beam dwell time, modulation order, and detection threshold), and execution period.Directed edgesrepresent three kinds of flow: information flow edges carry sensing outputs to communication scheduling modules, control flow edges carry decisions to execution nodes, and feedback flow edges return performance monitoring signals to evaluation nodes. In addition, every node and edge carriesconstraint annotations, such as latency budgets, power limits, bandwidth reservations, and minimum accuracy requirements, that can be checked before deployment. Finally, the IPG includestrigger conditions, namely logical predicates over monitored metrics that tell the Runtime Engine when recompilation should start. Using an intermediate representation brings three clear benefits over direct configuration generation. First, the IPG",
+      "order": 107,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Stage 3: Policy Graph Synthesis—IR Generation"
+      ],
+      "char_start": 16493,
+      "char_end": 18029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:158dd7bd4567f72dba1b7e1bb8fcfa76",
+      "kind": "paragraph",
+      "text": "isverifiable: its constraint annotations can be checked before any command is sent to hardware, which helps catch infeasible plans early. Second, the IPG ishardware-agnostic and reusable, so the same logical graph can be mapped to a fleet of rotary-wing UA Vs today and to a mixed fixed-wing and multirotor formation tomorrow without changing the task logic. Third, the IPG supportsincremental recompilation. If only part of the topology changes, the system can reprocess just the affected subgraph instead of recompiling the entire design.",
+      "order": 108,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Stage 3: Policy Graph Synthesis—IR Generation"
+      ],
+      "char_start": 18031,
+      "char_end": 18571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f29404bd769a6d9703cd42c350019953",
+      "kind": "heading",
+      "text": "Radar Detection",
+      "order": 109,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Radar Detection"
+      ],
+      "char_start": 18573,
+      "char_end": 18588,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4a69c2fc7ffc644be7d82e32ea3990c",
+      "kind": "paragraph",
+      "text": "OFDM waveform PRF = 5 Hz",
+      "order": 110,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Radar Detection"
+      ],
+      "char_start": 18590,
+      "char_end": 18614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87411e700fd0aeaa2cb109b7259948e3",
+      "kind": "heading",
+      "text": "Targe Tracking",
+      "order": 111,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Targe Tracking"
+      ],
+      "char_start": 18616,
+      "char_end": 18630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd688cd83314c448cb570e8862ce0b05",
+      "kind": "heading",
+      "text": "Extended Kalman Filter",
+      "order": 112,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Extended Kalman Filter"
+      ],
+      "char_start": 18632,
+      "char_end": 18654,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77e8ae2d853154488942bfff4d215eb7",
+      "kind": "paragraph",
+      "text": "5Hz Update",
+      "order": 113,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Extended Kalman Filter"
+      ],
+      "char_start": 18656,
+      "char_end": 18666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35353689e2416652ae329b74a87809de",
+      "kind": "heading",
+      "text": "Data Fusion",
+      "order": 114,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Data Fusion"
+      ],
+      "char_start": 18668,
+      "char_end": 18679,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2dd967d3a1da59b3c3087c84559a9692",
+      "kind": "paragraph",
+      "text": "Edge server, Multi-UAV detection fusion",
+      "order": 115,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Data Fusion"
+      ],
+      "char_start": 18681,
+      "char_end": 18720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9e2ca74412c76c4b72a150322f661d0",
+      "kind": "heading",
+      "text": "Command Downlink",
+      "order": 116,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Command Downlink"
+      ],
+      "char_start": 18722,
+      "char_end": 18738,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e2a1f589644eaa638e0137b41fdb998",
+      "kind": "paragraph",
+      "text": "Broadcast, Reliability ≥ 99.9%",
+      "order": 117,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Command Downlink"
+      ],
+      "char_start": 18740,
+      "char_end": 18770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54436e0e10e6ca97bf4fdfad603593df",
+      "kind": "heading",
+      "text": "Video Backhaul",
+      "order": 118,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Video Backhaul"
+      ],
+      "char_start": 18772,
+      "char_end": 18786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb0c937e77a6d331347d562f06505772",
+      "kind": "paragraph",
+      "text": "Relay-assisted uplink Latency ≤ 50 ms",
+      "order": 119,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Video Backhaul"
+      ],
+      "char_start": 18788,
+      "char_end": 18825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b346a46bcd4170bdb3047ad18a452652",
+      "kind": "heading",
+      "text": "UAV Trajectory",
+      "order": 120,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "UAV Trajectory"
+      ],
+      "char_start": 18827,
+      "char_end": 18841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:722eaab47ad9269add0a409dded22a2d",
+      "kind": "paragraph",
+      "text": "Formation control, Coverage optimization",
+      "order": 121,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "UAV Trajectory"
+      ],
+      "char_start": 18843,
+      "char_end": 18883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f2a277e6b355a77c5a643f5062a6aa8",
+      "kind": "heading",
+      "text": "Monitor",
+      "order": 122,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Monitor"
+      ],
+      "char_start": 18885,
+      "char_end": 18892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d289a71b301a3de747a57853d3071425",
+      "kind": "paragraph",
+      "text": "Runtime telemetry aggregation",
+      "order": 123,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Monitor"
+      ],
+      "char_start": 18894,
+      "char_end": 18923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85dd8f4afaacfd11f77d09129d01d126",
+      "kind": "heading",
+      "text": "Trigger Conditions",
+      "order": 124,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Conditions"
+      ],
+      "char_start": 18925,
+      "char_end": 18943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5ad1fd84477a4764cb891fd78327313",
+      "kind": "paragraph",
+      "text": "detection_prob < 0.8 → Partial Re-compile E2E_latency > 50 ms → Hot-patch UAV_count < 2 → Full Re-compile",
+      "order": 125,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Conditions"
+      ],
+      "char_start": 18945,
+      "char_end": 19050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa17fc1f3569062864167e5810b4e93a",
+      "kind": "heading",
+      "text": "Sensing",
+      "order": 126,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Sensing"
+      ],
+      "char_start": 19052,
+      "char_end": 19059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0782c24b251cae543b6c8d1616a2082",
+      "kind": "heading",
+      "text": "Communication",
+      "order": 127,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Communication"
+      ],
+      "char_start": 19061,
+      "char_end": 19074,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37cc35add6bb5aeb627c6679a604facf",
+      "kind": "heading",
+      "text": "Compution",
+      "order": 128,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Compution"
+      ],
+      "char_start": 19076,
+      "char_end": 19085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f60511fbdc12a0cf64581b442c376679",
+      "kind": "heading",
+      "text": "Control",
+      "order": 129,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Control"
+      ],
+      "char_start": 19087,
+      "char_end": 19094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be21d1eb112a69b3be6b33baf75fe42a",
+      "kind": "paragraph",
+      "text": "Information flow Control flow Feedback flow latency ≤ 10 mspower ≤ 30 dBm bandwidth ≥ 20 MHz",
+      "order": 130,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Control"
+      ],
+      "char_start": 19096,
+      "char_end": 19188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26879de48315e2e0bd2d50acee7c9ed5",
+      "kind": "caption",
+      "text": "Fig. 2. An example ISAC Policy Graph generated for a UA V formation",
+      "order": 131,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Control"
+      ],
+      "char_start": 19190,
+      "char_end": 19257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83c035ca94b0e9f7f8fb8544fd34a8c6",
+      "kind": "paragraph",
+      "text": "deployment task. Nodes represent sensing, communication, computation, and control subtasks; edges encode information, control, and feedback flows; annotations specify per-node and per-edge operational constraints.",
+      "order": 132,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Control"
+      ],
+      "char_start": 19259,
+      "char_end": 19472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66cea6322f219893b31275daa191d9ee",
+      "kind": "heading",
+      "text": "E. Stage 4: Infrastructure Mapping",
+      "order": 133,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "E. Stage 4: Infrastructure Mapping"
+      ],
+      "char_start": 19474,
+      "char_end": 19508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:137406203de49d530a1ca9588e2e3059",
+      "kind": "paragraph",
+      "text": "Stage 4 maps the hardware-agnostic IPG into deviceexecutable commands through three steps. First,node binding assigns each execution node to a physical device according to capability annotations. Second,resource allocationcomputes an initial spectrum, power, and time-division plan that satisfies edge constraints while keeping some conservative margin. Third,interface adaptationtranslates this plan into devicespecific protocol messages, such as waveform parameters, UA V waypoints, and edge offloading commands. Before dispatch, a lightweight constraint checker performs one final feasibility check. If it finds a violation, Stage 4 sends an internal compilation exception back to Stage 3 for targeted subgraph revision, rather than restarting the whole LLM workflow.",
+      "order": 134,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "E. Stage 4: Infrastructure Mapping"
+      ],
+      "char_start": 19510,
+      "char_end": 20280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1b6c6ca056212ab04221d6ea1f1de12",
+      "kind": "heading",
+      "text": "F . Runtime Engine: Closed-Loop Adaptation",
+      "order": 135,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "F . Runtime Engine: Closed-Loop Adaptation"
+      ],
+      "char_start": 20282,
+      "char_end": 20324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dab0ab3ddc48bb9fc15fdec89f98a538",
+      "kind": "paragraph",
+      "text": "After deployment, the Runtime Engine keeps the live system aligned with the engineer’s intent through a continuous monitor–evaluate–adapt cycle. Themonitormodule collects sensing metrics, such as detection probability, tracking accuracy, and false alarm rate, together with communication metrics, such as throughput, latency, and packet loss. The evaluatemodule then compares these measurements with the constraint annotations stored in the IPG. When a violation appears, the engine chooses one of three adaptation levels, as shown in Fig. 3.Fast parameter updates handle short-term deviations by adjusting continuous parameters, such as beam direction, transmit power, or detection",
+      "order": 136,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "F . Runtime Engine: Closed-Loop Adaptation"
+      ],
+      "char_start": 20326,
+      "char_end": 21008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:545e618a812aaadbbe726b2503825314",
+      "kind": "paragraph",
+      "text": "Level 2:",
+      "order": 137,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "F . Runtime Engine: Closed-Loop Adaptation"
+      ],
+      "char_start": 21010,
+      "char_end": 21018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f65c01c403f5b8361dbbcdc75db2bba5",
+      "kind": "heading",
+      "text": "Partial Re-compile",
+      "order": 138,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Partial Re-compile"
+      ],
+      "char_start": 21020,
+      "char_end": 21038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a62ca379777e1120c723b3bd71307720",
+      "kind": "heading",
+      "text": "Monitor",
+      "order": 139,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Monitor"
+      ],
+      "char_start": 21040,
+      "char_end": 21047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0e3709b2deb740ccdf9e0a9e5b70d28",
+      "kind": "paragraph",
+      "text": "Aggregate telemetry, compute KPIs",
+      "order": 140,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Monitor"
+      ],
+      "char_start": 21049,
+      "char_end": 21082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7adad3a39538c12bbe0d481684e2ed6",
+      "kind": "heading",
+      "text": "Runtime Engine",
+      "order": 141,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Runtime Engine"
+      ],
+      "char_start": 21084,
+      "char_end": 21098,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48481bf2aa6ef35e322447d7e270bbdb",
+      "kind": "heading",
+      "text": "Evaluate",
+      "order": 142,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Evaluate"
+      ],
+      "char_start": 21100,
+      "char_end": 21108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15e6a708d3519591e6e184079228232c",
+      "kind": "paragraph",
+      "text": "Compare against IPG constraints All constraints met Minor deviation Persistent degradation Fundamental change",
+      "order": 143,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Evaluate"
+      ],
+      "char_start": 21110,
+      "char_end": 21219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b742eb43788a817e8fc68483f85aa8b",
+      "kind": "heading",
+      "text": "Continue",
+      "order": 144,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Continue"
+      ],
+      "char_start": 21221,
+      "char_end": 21229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1e4e7a018dd7cb74eb305b7b9c53ae9",
+      "kind": "paragraph",
+      "text": "Level 1 Level 2 Level 3 Level 1:",
+      "order": 145,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Continue"
+      ],
+      "char_start": 21231,
+      "char_end": 21263,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd72ac3b9f7f5bb9ed202e731cd69c52",
+      "kind": "heading",
+      "text": "Hot-Patch",
+      "order": 146,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Hot-Patch"
+      ],
+      "char_start": 21265,
+      "char_end": 21274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fcb49056e51d511e1c256c466d25bfbc",
+      "kind": "paragraph",
+      "text": "Response Time: ms-scale Response Time: min-scaleResponse Time: s-scale Level 3:",
+      "order": 147,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Hot-Patch"
+      ],
+      "char_start": 21276,
+      "char_end": 21355,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:faeec9b324d7bdb304f5ed1c56a4c033",
+      "kind": "heading",
+      "text": "Full Re-compile",
+      "order": 148,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Full Re-compile"
+      ],
+      "char_start": 21357,
+      "char_end": 21372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81fe049fadbaf15693f85db0a7fdaf9e",
+      "kind": "paragraph",
+      "text": "No LLM LLM on affected subgraph",
+      "order": 149,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Full Re-compile"
+      ],
+      "char_start": 21374,
+      "char_end": 21405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:666aac7ca826ab00e34dd560bfc8fde1",
+      "kind": "heading",
+      "text": "Full LLM",
+      "order": 150,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Full LLM"
+      ],
+      "char_start": 21407,
+      "char_end": 21415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8471c4d5d269786905e943f960bad8f8",
+      "kind": "paragraph",
+      "text": "pipeline",
+      "order": 151,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Full LLM"
+      ],
+      "char_start": 21417,
+      "char_end": 21425,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c900b1adca052e527b52b94458b8589",
+      "kind": "heading",
+      "text": "Operation",
+      "order": 152,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21427,
+      "char_end": 21436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f18598f479baa39886c79a728888c4fb",
+      "kind": "paragraph",
+      "text": "◆ Beam steering direction adjustment ◆ Transmit power tuning ◆ Detection threshold update",
+      "order": 153,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21438,
+      "char_end": 21527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25fb12d5183d381edca400661dabeef1",
+      "kind": "heading",
+      "text": "Operation",
+      "order": 154,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21529,
+      "char_end": 21538,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1160038dda28e925df06cf32e95850d9",
+      "kind": "paragraph",
+      "text": "◆ Replace sensing algorithm ◆ Switch communication link type ◆ Re-optimize local resource allocation",
+      "order": 155,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21540,
+      "char_end": 21640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af27ee41cf208f427f9731eb9329d2a4",
+      "kind": "heading",
+      "text": "Operation",
+      "order": 156,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21642,
+      "char_end": 21651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92c077b919b1aca2c8bc4cbc531a547b",
+      "kind": "paragraph",
+      "text": "◆ Task objective changed by engineer ◆ Major topology event (multiple-UAV loss) ◆ IPG globally infeasible",
+      "order": 157,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Operation"
+      ],
+      "char_start": 21653,
+      "char_end": 21758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7724c7cec92ecb5959886780f89e4e26",
+      "kind": "heading",
+      "text": "Trigger Condition",
+      "order": 158,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21760,
+      "char_end": 21777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2582555009353421793c88d29f90ea15",
+      "kind": "paragraph",
+      "text": "Latency > 50 ms",
+      "order": 159,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21779,
+      "char_end": 21794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40ec3c705cef22a21b5969953f40ce12",
+      "kind": "heading",
+      "text": "Trigger Condition",
+      "order": 160,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21796,
+      "char_end": 21813,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc4d363a15f9d9a4e17d782977462a8c",
+      "kind": "paragraph",
+      "text": "Detection_prob < 0.8",
+      "order": 161,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21815,
+      "char_end": 21835,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0b234a00cce6ac0ac80f072e7387941",
+      "kind": "heading",
+      "text": "Trigger Condition",
+      "order": 162,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21837,
+      "char_end": 21854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:108ddb43372a734a27e090af864cfed5",
+      "kind": "paragraph",
+      "text": "UAV_count drops ISAC Infrastructure → Telemetry",
+      "order": 163,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Trigger Condition"
+      ],
+      "char_start": 21856,
+      "char_end": 21903,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:168829e2470a32127a5754757d30fdd8",
+      "kind": "heading",
+      "text": "Continuous Loop",
+      "order": 164,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Continuous Loop"
+      ],
+      "char_start": 21905,
+      "char_end": 21920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e1dbe20c384971ba5428ab1f40c8f7b",
+      "kind": "heading",
+      "text": "Performance",
+      "order": 165,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Performance"
+      ],
+      "char_start": 21922,
+      "char_end": 21933,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75d4cc40ffbc5538e8f8b6401cc79bc7",
+      "kind": "heading",
+      "text": "Telemetry",
+      "order": 166,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Telemetry"
+      ],
+      "char_start": 21935,
+      "char_end": 21944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b2395da3ab674a2a2aec0c19413bedc",
+      "kind": "heading",
+      "text": "Sensing Side",
+      "order": 167,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Sensing Side"
+      ],
+      "char_start": 21946,
+      "char_end": 21958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3359788704f2e7f032e5eaa1d6e0fda",
+      "kind": "paragraph",
+      "text": "◆ Detection probability ◆ Tracking Accuracy ◆ False Alarm Rate",
+      "order": 168,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Sensing Side"
+      ],
+      "char_start": 21960,
+      "char_end": 22022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b03690f5d5bf1de2132d2fad13c30686",
+      "kind": "heading",
+      "text": "Communication Side",
+      "order": 169,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Communication Side"
+      ],
+      "char_start": 22024,
+      "char_end": 22042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f50b1cb965292cefe3b5da03f77c291",
+      "kind": "paragraph",
+      "text": "◆ Throughput ◆ E2E Latency ◆ Packet Loss Rate UAV BS",
+      "order": 170,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Communication Side"
+      ],
+      "char_start": 22044,
+      "char_end": 22096,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cadc0d71e40820115a4dfedf5e65a56",
+      "kind": "heading",
+      "text": "Edge",
+      "order": 171,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Edge"
+      ],
+      "char_start": 22098,
+      "char_end": 22102,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a93e63cdedf509cd64517531a8eac1f",
+      "kind": "paragraph",
+      "text": "RIS",
+      "order": 172,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Edge"
+      ],
+      "char_start": 22104,
+      "char_end": 22107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d10d47bdfd876cfb63e793bb3f5777ff",
+      "kind": "heading",
+      "text": "Updated Configuration → ISAC Infrastructure",
+      "order": 173,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration → ISAC Infrastructure"
+      ],
+      "char_start": 22109,
+      "char_end": 22152,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1fb2238ac3bc84e264351bd303f1b75",
+      "kind": "heading",
+      "text": "Deploy Updated",
+      "order": 174,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Deploy Updated"
+      ],
+      "char_start": 22154,
+      "char_end": 22168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0048875dca5e090da0fe5023d0aa8b16",
+      "kind": "heading",
+      "text": "Commands",
+      "order": 175,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Commands"
+      ],
+      "char_start": 22170,
+      "char_end": 22178,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:514e342cbe4321886ef68831a9a952e2",
+      "kind": "paragraph",
+      "text": "UAV BS",
+      "order": 176,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Commands"
+      ],
+      "char_start": 22180,
+      "char_end": 22186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:019338aa0475d63fe4093947be3d7d50",
+      "kind": "heading",
+      "text": "Edge",
+      "order": 177,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Edge"
+      ],
+      "char_start": 22188,
+      "char_end": 22192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e530318196695b023c3584e9564afac",
+      "kind": "paragraph",
+      "text": "RIS",
+      "order": 178,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Edge"
+      ],
+      "char_start": 22194,
+      "char_end": 22197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:733397a61101b4ab95debd897e6de026",
+      "kind": "heading",
+      "text": "Updated Configuration",
+      "order": 179,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration"
+      ],
+      "char_start": 22199,
+      "char_end": 22220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3163533101e14778c2e44022dc5b41e8",
+      "kind": "caption",
+      "text": "Fig. 3. Three-level adaptation architecture of the Runtime Engine. Fast",
+      "order": 180,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration"
+      ],
+      "char_start": 22222,
+      "char_end": 22293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e64669a9883eff271f655a37bd04279",
+      "kind": "paragraph",
+      "text": "parameter updates operate at millisecond time scales without LLM involvement; partial recompilation engages the LLM for affected subgraphs; full recompilation restarts the workflow. threshold, within the ranges allowed by the IPG. This level uses deterministic controllers and does not involve the LLM, so it can operate on millisecond time scales.Partial recompilationaddresses persistent degradation, for example when a sensing algorithm performs poorly in heavy clutter, by calling the LLM only for the affected subgraph on a second-level time scale.Full recompilationis reserved for major changes, such as topology disruptions or new mission objectives, and restarts the workflow from Stage 1 or Stage 2 on a minute-level time scale. The main design principle is a clear separation between LLM-driven slow-loop decisionsandalgorithm-driven fastloop control. The LLM handles strategic decisions on secondto-minute time scales, including intent parsing, algorithm selection, and IPG restructuring. Low-level controllers, such as beamforming, power control, and trajectory tracking, remain on millisecond time scales and do not place the LLM in the critical path [11].",
+      "order": 181,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration"
+      ],
+      "char_start": 22295,
+      "char_end": 23464,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a92951d0a55bdb02255f9bcb5f0b5aa8",
+      "kind": "heading",
+      "text": "CASESTUDY",
+      "order": 182,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration",
+        "CASESTUDY"
+      ],
+      "char_start": 23466,
+      "char_end": 23475,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:759c72dc66ba9da867f0c1381f9c64c5",
+      "kind": "paragraph",
+      "text": "To show the Agent Compiler workflow end to end, we consider a UA V-assisted disaster rescue scenario in a postearthquake urban area. Six UA Vs are deployed over a",
+      "order": 183,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Updated Configuration",
+        "CASESTUDY"
+      ],
+      "char_start": 23477,
+      "char_end": 23639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2aa2713775d21bdced5f00c1dda88073",
+      "kind": "heading",
+      "text": "km×3 km zone. Four are ISAC-capable sensing UA Vs used",
+      "order": 184,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km zone. Four are ISAC-capable sensing UA Vs used"
+      ],
+      "char_start": 23641,
+      "char_end": 23695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57edd506c4da8ae138d9e3b32ca11cc9",
+      "kind": "paragraph",
+      "text": "for survivor detection, and two are relay UA Vs used for data forwarding and video backhaul to a remote command center. The engineer submits the following intent:“Deploy 4 sensing UAVs and 2 relay UAVs for survivor detection in a 3 km×3 km post-earthquake urban area. Maintain a sensing refresh rate ≥2 Hz and provide real-time video backhaul with end-toend latency≤100 ms. Sensing takes priority when resources conflict. ”",
+      "order": 185,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km zone. Four are ISAC-capable sensing UA Vs used"
+      ],
+      "char_start": 23697,
+      "char_end": 24120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:220b21fb33af3366d37458fc939b96ac",
+      "kind": "heading",
+      "text": "A. Compilation Walkthrough",
+      "order": 186,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Compilation Walkthrough"
+      ],
+      "char_start": 24122,
+      "char_end": 24148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ebd314692a6c9fd7b3e0e53948bc6b86",
+      "kind": "paragraph",
+      "text": "The Agent Compiler processes this request in four stages. In Stage 1, the LLM converts the input into a structured Intent Specification that contains two task goals (survivor detection and video backhaul), two performance constraints (2 Hz refresh and 100 ms latency), an environment description (a 3 km×3 km post-earthquake urban area), an available platform description (four sensing UA Vs and two relay UA Vs), and an explicit sensing-first priority. In Stage 2, the planner breaks the intent into subtasks across four domains: radar detection and multi-UA V cooperative localization on the sensing side; uplink data aggregation and video relay on the communication side; on-board lightweight inference and edge-based data fusion on the computation side; and UA V trajectory planning on the control side. Dependencies are then resolved. For example, the cooperative localization task requires detection outputs from all four sensing UA Vs before it can run. In Stage 3, these subtasks are assembled into an ISAC Policy Graph with explicit constraint annotations, including a sensing–communication time-division ratio ofτ= 0.7that reflects the sensing-first priority, and a trigger condition that starts partial recompilation if the detection probability remains below 0.8 for more than 10 consecutive seconds. In Stage 4, each IPG node is mapped to a physical device, an initial resource plan is computed, and protocol-level commands are dispatched.",
+      "order": 187,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Compilation Walkthrough"
+      ],
+      "char_start": 24150,
+      "char_end": 25602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3506d3339a4b5291d40158969c5f1650",
+      "kind": "caption",
+      "text": "Figure 4 shows the resulting deployment. The 3 km×3 km",
+      "order": 188,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Compilation Walkthrough"
+      ],
+      "char_start": 25604,
+      "char_end": 25658,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecada53eca2f650b917c6be07516eef7",
+      "kind": "paragraph",
+      "text": "area is divided into four quadrants, each served by one sensing UA V performing dual-function ISAC operations: millimeterwave radar scanning for survivor detection, shown by the dashed sensing footprints, and uplink data aggregation. Two relay UA Vs placed near the quadrant boundaries forward the aggregated sensing data and video streams from ground rescue teams to a mobile edge computing (MEC) vehicle at the edge of the area. The MEC vehicle fuses the data and forwards the results to the remote command center through satellite backhaul. The shaded regions in Q2 and Q4 represent clutter zones caused by metallic debris, where sensing quality is much worse.",
+      "order": 189,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Compilation Walkthrough"
+      ],
+      "char_start": 25660,
+      "char_end": 26323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a7bc2eb6efa4c61a21bd628c101a86e",
+      "kind": "heading",
+      "text": "B. Runtime Adaptation and Numerical Results",
+      "order": 190,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Runtime Adaptation and Numerical Results"
+      ],
+      "char_start": 26325,
+      "char_end": 26368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a9ded93860984b3e799eabd5633c5c8",
+      "kind": "paragraph",
+      "text": "We evaluate the compiled configuration in a system-level simulation over 300 seconds. The ISAC system uses 500 MHz bandwidth and a simplified air-to-ground line-of-sight probability channel model. Detection probability is computed from the radar equation as a function of sensing SNR, and communication throughput follows the Shannon capacity bound. Att= 80s, a strong clutter region caused by metallic debris appears in one quadrant and reduces the local sensing SNR by about 10 dB. Att= 200s, one UA V goes offline",
+      "order": 191,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Runtime Adaptation and Numerical Results"
+      ],
+      "char_start": 26370,
+      "char_end": 26886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38fdf53bec578dbc33e94514333e8d18",
+      "kind": "heading",
+      "text": "500 1000 1500 2000 2500 3000 3500",
+      "order": 192,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "500 1000 1500 2000 2500 3000 3500"
+      ],
+      "char_start": 26888,
+      "char_end": 26921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa147906c60c5e4138b8ec6de02f184d",
+      "kind": "paragraph",
+      "text": "Distance (m) 0 500 1000 1500 2000 2500 3000Distance (m) Q1 Q2 Q3 Q4",
+      "order": 193,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "500 1000 1500 2000 2500 3000 3500"
+      ],
+      "char_start": 26923,
+      "char_end": 26990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fff1e7f237d6c1831c29bf082521684",
+      "kind": "heading",
+      "text": "Clutter",
+      "order": 194,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Clutter"
+      ],
+      "char_start": 26992,
+      "char_end": 26999,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37d0383026efef5975421236f4f5efbc",
+      "kind": "heading",
+      "text": "Region",
+      "order": 195,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Region"
+      ],
+      "char_start": 27001,
+      "char_end": 27007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90986f6ba9cae443605f676eda0b9dcd",
+      "kind": "heading",
+      "text": "Clutter",
+      "order": 196,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Clutter"
+      ],
+      "char_start": 27009,
+      "char_end": 27016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9067000ae63726abf02d2c5d317afb4c",
+      "kind": "heading",
+      "text": "Region",
+      "order": 197,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Region"
+      ],
+      "char_start": 27018,
+      "char_end": 27024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:214736a8a99724ad41040bf204cc8908",
+      "kind": "heading",
+      "text": "UAV-1 UAV-2",
+      "order": 198,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "UAV-1 UAV-2"
+      ],
+      "char_start": 27026,
+      "char_end": 27037,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d23ce7b735a3961b72600da11c07c757",
+      "kind": "heading",
+      "text": "UAV-3 UAV-4",
+      "order": 199,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "UAV-3 UAV-4"
+      ],
+      "char_start": 27039,
+      "char_end": 27050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0544a122f26295f0895b7f7b5501548d",
+      "kind": "heading",
+      "text": "Relay-1 Relay-2",
+      "order": 200,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Relay-1 Relay-2"
+      ],
+      "char_start": 27052,
+      "char_end": 27067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:684fee5f600cf3c2ff4ba1150e96bc53",
+      "kind": "heading",
+      "text": "Rescue",
+      "order": 201,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Rescue"
+      ],
+      "char_start": 27069,
+      "char_end": 27075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efa5b6fa61b90c8e4d8fad5540ead0b2",
+      "kind": "paragraph",
+      "text": "T eam A",
+      "order": 202,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Rescue"
+      ],
+      "char_start": 27077,
+      "char_end": 27084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f2e49bec15908d3282d46618352c0fa",
+      "kind": "heading",
+      "text": "Rescue",
+      "order": 203,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Rescue"
+      ],
+      "char_start": 27086,
+      "char_end": 27092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8575734b7df88bfa01be47e290cf424",
+      "kind": "paragraph",
+      "text": "T eam B MEC",
+      "order": 204,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Rescue"
+      ],
+      "char_start": 27094,
+      "char_end": 27105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59d61333d6e029f23ee5123078f68e01",
+      "kind": "heading",
+      "text": "Vehicle Command",
+      "order": 205,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Vehicle Command"
+      ],
+      "char_start": 27107,
+      "char_end": 27122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0fc5054ca5296ffbc68cecd8207fb7c",
+      "kind": "heading",
+      "text": "Center",
+      "order": 206,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Center"
+      ],
+      "char_start": 27124,
+      "char_end": 27130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5a84bebcf00613445e40e22c1886c45",
+      "kind": "heading",
+      "text": "Satellite Backhaul",
+      "order": 207,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Satellite Backhaul"
+      ],
+      "char_start": 27132,
+      "char_end": 27150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75e6b8f4edd537f50c2b5ea02d03de6a",
+      "kind": "heading",
+      "text": "Debris/Buildings",
+      "order": 208,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Debris/Buildings"
+      ],
+      "char_start": 27152,
+      "char_end": 27168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c25d60bd7d179dda393b3d2a5edefc29",
+      "kind": "heading",
+      "text": "Survivors",
+      "order": 209,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Survivors"
+      ],
+      "char_start": 27170,
+      "char_end": 27179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:861cfe8a8988e97d137a965e69c8b5c6",
+      "kind": "heading",
+      "text": "Sensing UAV",
+      "order": 210,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Sensing UAV"
+      ],
+      "char_start": 27181,
+      "char_end": 27192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:009d32133aa21be013d7b0cee120d13a",
+      "kind": "heading",
+      "text": "Relay UAV",
+      "order": 211,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Relay UAV"
+      ],
+      "char_start": 27194,
+      "char_end": 27203,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da4e43e23155e369acc26d171b2f782d",
+      "kind": "paragraph",
+      "text": "Ground Rescue T eam",
+      "order": 212,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Relay UAV"
+      ],
+      "char_start": 27205,
+      "char_end": 27224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3de50f020a8945557fe8e279f6134d3",
+      "kind": "heading",
+      "text": "MEC Vehicle",
+      "order": 213,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "MEC Vehicle"
+      ],
+      "char_start": 27226,
+      "char_end": 27237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3a5387f9eb7b1b81cd1c1bd068ecd84",
+      "kind": "heading",
+      "text": "Command Center",
+      "order": 214,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Command Center"
+      ],
+      "char_start": 27239,
+      "char_end": 27253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d6ecd742b64eb598a544289e2042128",
+      "kind": "caption",
+      "text": "Fig. 4. UA V-assisted disaster rescue scenario. Four sensing UA Vs cover a",
+      "order": 215,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Command Center"
+      ],
+      "char_start": 27255,
+      "char_end": 27329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c36115482a0c2a3095f01eb53178d08",
+      "kind": "heading",
+      "text": "km×3 km post-earthquake area and perform ISAC operations together with",
+      "order": 216,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km post-earthquake area and perform ISAC operations together with"
+      ],
+      "char_start": 27331,
+      "char_end": 27401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4989b9ce352cddacef4df2a5b426b173",
+      "kind": "paragraph",
+      "text": "a mobile edge computing vehicle and a remote command center. because of battery depletion, and at the same time a new highpriority search instruction arrives from the command center. We compare five strategies corresponding to the paradigms listed in Table I: (i) aFixedbaseline with an equal sensing– communication resource split (τ= 0.5) and static UA V trajectories; (ii) aRule-basedbaseline with predefined if– then adaptation rules; (iii) aMADDPGbaseline in which a multi-agent deep reinforcement learning policy, trained under nominal channel conditions, outputs per-UA Vτvalues at each time step; (iv) aDirect LLMbaseline that queries an LLM to determineτat every decision epoch, with a realistic inference latency of about 3 seconds per call; and (v) the proposedAgent Compilerwith three-level runtime adaptation.",
+      "order": 217,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km post-earthquake area and perform ISAC operations together with"
+      ],
+      "char_start": 27403,
+      "char_end": 28224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2924ccda167e43de119a3e675c24d05",
+      "kind": "caption",
+      "text": "Figure 5 shows the joint ISAC utility, defined as a weighted",
+      "order": 218,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km post-earthquake area and perform ISAC operations together with"
+      ],
+      "char_start": 28226,
+      "char_end": 28286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f15e6a7a400a027ee4ddcb9fec044d1",
+      "kind": "paragraph",
+      "text": "combination of normalized detection probability and normalized communication throughput, over time. During the nominal phase (t <80s), the zoomed view shows that the five strategies settle at different operating points. The Agent Compiler and MADDPG achieve the highest utility because they adaptτto a value close to the optimum of about 0.75, whereas the Fixed baseline withτ= 0.5performs noticeably worse. After the clutter event att= 80s, the performance differences become clear. The Fixed baseline drops immediately and has no recovery mechanism. The Rule-based approach raises the CFAR detection threshold to compensate, but this further reduces detection probability, and its conservative shift ofτtoward sensing makes the problem worse because the degraded sensing channel offers little return. The MADDPG policy was trained under nominal conditions, so once it faces an out-of-distribution state it produces oscillatingτvalues and cannot settle near the new optimum. The Direct LLM baseline identifies the correct direction of change and lowersτto move more resources to communication, but its 3-second inference delay causes a clear lagged response. By contrast, the Agent",
+      "order": 219,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "km×3 km post-earthquake area and perform ISAC operations together with"
+      ],
+      "char_start": 28288,
+      "char_end": 29470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80b116d18bf104a910a25389fee084b6",
+      "kind": "heading",
+      "text": "50 100 150 200 250 300",
+      "order": 220,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300"
+      ],
+      "char_start": 29472,
+      "char_end": 29494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a775b6ea5376accac53ebd49d0591d4e",
+      "kind": "paragraph",
+      "text": "Time (s)",
+      "order": 221,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300"
+      ],
+      "char_start": 29496,
+      "char_end": 29504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff1a6c1659431c33502169fb28eec2e5",
+      "kind": "heading",
+      "text": "30",
+      "order": 222,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "30"
+      ],
+      "char_start": 29506,
+      "char_end": 29508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78f011872d465bcc4aea1cbcdf28e97b",
+      "kind": "heading",
+      "text": "35",
+      "order": 223,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "35"
+      ],
+      "char_start": 29510,
+      "char_end": 29512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4c7082b994dc02d1bcfb8c8f4f97c69",
+      "kind": "heading",
+      "text": "40",
+      "order": 224,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "40"
+      ],
+      "char_start": 29514,
+      "char_end": 29516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e32db19aceba6125d49e1a3c5bfb077d",
+      "kind": "heading",
+      "text": "45",
+      "order": 225,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "45"
+      ],
+      "char_start": 29518,
+      "char_end": 29520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b9899be4a6b1ebadcfb24a2b1eff48c",
+      "kind": "heading",
+      "text": "50",
+      "order": 226,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "50"
+      ],
+      "char_start": 29522,
+      "char_end": 29524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27bed23ecc2e8dbe6559a4c640583507",
+      "kind": "heading",
+      "text": "55",
+      "order": 227,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "55"
+      ],
+      "char_start": 29526,
+      "char_end": 29528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffb89c6beb89fc74dd7af6c0b4aae032",
+      "kind": "heading",
+      "text": "60",
+      "order": 228,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "60"
+      ],
+      "char_start": 29530,
+      "char_end": 29532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd3570c2d5e9fbcd12590abe52dec493",
+      "kind": "heading",
+      "text": "65",
+      "order": 229,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "65"
+      ],
+      "char_start": 29534,
+      "char_end": 29536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79a5148dd15acd10762551fd90ddb9eb",
+      "kind": "heading",
+      "text": "70",
+      "order": 230,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "70"
+      ],
+      "char_start": 29538,
+      "char_end": 29540,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:522242d358af864e6c55fcbdedd0790f",
+      "kind": "heading",
+      "text": "75Joint ISAC Utility",
+      "order": 231,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "50 100 150 200 250 300",
+        "75Joint ISAC Utility"
+      ],
+      "char_start": 29542,
+      "char_end": 29562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7181d411dcee20b2de2747c346de8f3",
+      "kind": "heading",
+      "text": "Clutter",
+      "order": 232,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Clutter"
+      ],
+      "char_start": 29564,
+      "char_end": 29571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:478b851ebcbc34af3377d2748b778be0",
+      "kind": "paragraph",
+      "text": "onset UAV loss + new task",
+      "order": 233,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Clutter"
+      ],
+      "char_start": 29573,
+      "char_end": 29598,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce1a6871e2b2228d805fbaef5c06ea30",
+      "kind": "heading",
+      "text": "10 20 30 40 50 60 70",
+      "order": 234,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70"
+      ],
+      "char_start": 29600,
+      "char_end": 29620,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ebb92669d0f296bb8e0705c1e78991f",
+      "kind": "heading",
+      "text": "58",
+      "order": 235,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "58"
+      ],
+      "char_start": 29622,
+      "char_end": 29624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5fb97f4798ffbfbd251e568b1785db9",
+      "kind": "heading",
+      "text": "60",
+      "order": 236,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "60"
+      ],
+      "char_start": 29626,
+      "char_end": 29628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ffba9149d765b2e19e391b4b7e71a40",
+      "kind": "heading",
+      "text": "62",
+      "order": 237,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "62"
+      ],
+      "char_start": 29630,
+      "char_end": 29632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de0b95287264008a6b4b3e73ff6239bb",
+      "kind": "heading",
+      "text": "64",
+      "order": 238,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "64"
+      ],
+      "char_start": 29634,
+      "char_end": 29636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d1f83c1ef01e0e852b2d763553eecdb",
+      "kind": "heading",
+      "text": "66",
+      "order": 239,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "66"
+      ],
+      "char_start": 29638,
+      "char_end": 29640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:086b55ab3b7a7456fe47dffe4110555c",
+      "kind": "heading",
+      "text": "68",
+      "order": 240,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "68"
+      ],
+      "char_start": 29642,
+      "char_end": 29644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94aeb093f32777ff0f5831fd5c8121e7",
+      "kind": "heading",
+      "text": "70",
+      "order": 241,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "70"
+      ],
+      "char_start": 29646,
+      "char_end": 29648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caec70c24acc8a46cf202a200d3c0ca7",
+      "kind": "paragraph",
+      "text": "Zoom: t = 0 75 s",
+      "order": 242,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "10 20 30 40 50 60 70",
+        "70"
+      ],
+      "char_start": 29650,
+      "char_end": 29666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:895c3b6977986e474ed5af2bbbe87272",
+      "kind": "heading",
+      "text": "Fixed",
+      "order": 243,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Fixed"
+      ],
+      "char_start": 29668,
+      "char_end": 29673,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1509b035f64216abc6e8e142cc0529a6",
+      "kind": "heading",
+      "text": "Rule-based",
+      "order": 244,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Rule-based"
+      ],
+      "char_start": 29675,
+      "char_end": 29685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d1e14441e54391adab751b48be59314",
+      "kind": "heading",
+      "text": "MADDPG",
+      "order": 245,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "MADDPG"
+      ],
+      "char_start": 29687,
+      "char_end": 29693,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4e9a6591e558fa2b8a006b0d86f0714",
+      "kind": "heading",
+      "text": "Direct LLM",
+      "order": 246,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Direct LLM"
+      ],
+      "char_start": 29695,
+      "char_end": 29705,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66e8c8ef8a20006a92dd6d0a14c320ac",
+      "kind": "heading",
+      "text": "Agent Compiler",
+      "order": 247,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "Agent Compiler"
+      ],
+      "char_start": 29707,
+      "char_end": 29721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a09c93b7693cb5714e8b2270fe54a613",
+      "kind": "caption",
+      "text": "Fig. 5. Joint ISAC utility over time for five strategies under dynamic events.",
+      "order": 248,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Agent Compiler"
+      ],
+      "char_start": 29723,
+      "char_end": 29801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b8af0bac353c468602e4c1f1cd12cb0",
+      "kind": "paragraph",
+      "text": "Vertical dashed lines mark clutter onset (t= 80s) and UA V loss with a new task directive (t= 200s). Compiler triggers a fast parameter update within one time step, immediately lowering the CFAR threshold and starting to shift τtoward communication. When the degradation lasts more than 10 seconds, it launches partial recompilation and drives τfrom 0.75 down to about 0.32, recognizing that under severe clutter it is better to rely more on the intact communication link than to keep spending resources on degraded sensing. After the second event att= 200s, namely UA V loss together with a new task directive, the Agent Compiler performs full recompilation and redistributes coverage across the remaining three UA Vs. Overall, the Agent Compiler achieves the highest average utility of 0.524, followed by Direct LLM (0.519), MADDPG (0.507), Fixed (0.498), and Rule-based (0.487). These results show the practical value of hierarchical, intentaware runtime adaptation.",
+      "order": 249,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Agent Compiler"
+      ],
+      "char_start": 29803,
+      "char_end": 30772,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5757a886a0a1e5a080f59cd03e98bcfa",
+      "kind": "heading",
+      "text": "OPENCHALLENGES ANDRESEARCHDIRECTIONS",
+      "order": 250,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "Agent Compiler",
+        "OPENCHALLENGES ANDRESEARCHDIRECTIONS"
+      ],
+      "char_start": 30774,
+      "char_end": 30810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e06400b9557432c064618f1d793ace58",
+      "kind": "paragraph",
+      "text": "Despite its promise, the Agent Compiler paradigm still faces several obstacles before it can be deployed in practical ISAC systems. The most important open issues concern runtime efficiency, robustness, verification, privacy, security, and operator trust.",
+      "order": 251,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "Agent Compiler",
+        "OPENCHALLENGES ANDRESEARCHDIRECTIONS"
+      ],
+      "char_start": 30812,
+      "char_end": 31067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e381884d5c663004825ee637c3c6dd7c",
+      "kind": "heading",
+      "text": "A. Real-Time Performance and Robustness",
+      "order": 252,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Real-Time Performance and Robustness"
+      ],
+      "char_start": 31069,
+      "char_end": 31108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2cbf2ed2c99d1cd2844861b2a20aa45",
+      "kind": "paragraph",
+      "text": "Although the Agent Compiler moves most LLM reasoning to the slower compilation stage, the compilation delay can still become a bottleneck when the wireless environment changes suddenly. In highly dynamic ISAC settings, stale plans may quickly lose effectiveness as channel conditions, target motion, or sensing demands shift over time. This challenge is further complicated by the non-deterministic nature of LLMs, since the same intent may lead to different structural outputs across repeated runs. Future work should therefore focus on lightweight models that can run closer to the network edge, pre-compilation caches indexed by intent patterns, and hierarchical execution paths that use validated cached plans for routine updates while invoking full compilation only for genuinely new tasks. In addition, practical systems should include fallback mechanisms that detect abnormal or low-confidence outputs and revert to verified safe-default policies rather than sending risky reconfigurations into the live network [14].",
+      "order": 253,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "A. Real-Time Performance and Robustness"
+      ],
+      "char_start": 31110,
+      "char_end": 32134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ab953daf58cb2cf6efe272aad168aa1",
+      "kind": "heading",
+      "text": "B. Verifiability, Constraint Satisfaction, and Safe Degradation",
+      "order": 254,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Verifiability, Constraint Satisfaction, and Safe Degradation"
+      ],
+      "char_start": 32136,
+      "char_end": 32199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65a37dc6ec171e29000491359f97cd22",
+      "kind": "paragraph",
+      "text": "A deployment plan may appear structurally correct while still violating hard physical, regulatory, or system-level constraints, such as interference temperature limits, spectral masks, power budgets, or sensing-quality requirements. For this reason, correctness at the syntax level is not enough for real deployment. Promising directions include static analysis at the IPG level, formal checking over symbolic plan representations, and simulation-in-the-loop validation before execution. It is equally important to design explicit safe-degradation mechanisms. When the requested intent cannot be satisfied under current resource and policy constraints, the compiler should gracefully reduce service quality or narrow the task scope in a transparent manner, instead of silently producing infeasible or unsafe plans.",
+      "order": 255,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Verifiability, Constraint Satisfaction, and Safe Degradation"
+      ],
+      "char_start": 32201,
+      "char_end": 33015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4bcdd2f7cbbc7b501b454bb5073fce34",
+      "kind": "heading",
+      "text": "Data Governance, Privacy, and Security",
+      "order": 256,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Verifiability, Constraint Satisfaction, and Safe Degradation",
+        "Data Governance, Privacy, and Security"
+      ],
+      "char_start": 33017,
+      "char_end": 33055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd8f1ffe30d1b049be38a503bc2e8f7f",
+      "kind": "paragraph",
+      "text": "ISAC systems process large volumes of sensitive data, including radar echoes, Doppler information, environmental maps, and geolocated target tracks. When the Agent Compiler prepares context for the LLM, a key question is how much of this raw information is actually needed. A practical system should minimize unnecessary exposure by replacing fullfidelity sensing data with compact semantic summaries, taskspecific abstractions, or privacy-preserving representations whenever possible. Beyond privacy, the compilation pipeline also introduces new security risks. Prompt injection may manipulate the generated plan, corrupted algorithm libraries may distort the compilation outcome, and adversarial physicallayer interference may trigger misleading recompilation behavior [15]. Protecting the full pipeline therefore requires joint consideration of data governance, AI safety, and conventional system security.",
+      "order": 257,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "B. Verifiability, Constraint Satisfaction, and Safe Degradation",
+        "Data Governance, Privacy, and Security"
+      ],
+      "char_start": 33057,
+      "char_end": 33966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a902ddd45cd8c1d1e927bc0115d1ffec",
+      "kind": "heading",
+      "text": "D. Human Oversight and Trustworthy Operation",
+      "order": 258,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Human Oversight and Trustworthy Operation"
+      ],
+      "char_start": 33968,
+      "char_end": 34012,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab8814cf8e533cf96f7b5582ea7ad946",
+      "kind": "paragraph",
+      "text": "Even a technically strong automation framework will be difficult to deploy if operators cannot understand or control its decisions. Engineers need tools to inspect the compiled IPG, trace how a high-level intent is mapped to specific algorithmic modules, and intervene before execution when necessary [13]. This calls for human-centered interfaces that support explanation, plan review, confidence reporting, and manual override. More broadly, trustworthy operation depends on keeping humans meaningfully involved in the loop, especially in high-stakes wireless scenarios where failures may affect both communication quality and sensing safety. Future research should therefore study not only better compilation accuracy, but also better transparency, accountability, and operator control.",
+      "order": 259,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Human Oversight and Trustworthy Operation"
+      ],
+      "char_start": 34014,
+      "char_end": 34803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:350f919d03e197dcf89937025742dde2",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 260,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Human Oversight and Trustworthy Operation",
+        "CONCLUSION"
+      ],
+      "char_start": 34805,
+      "char_end": 34815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:578bacb58b12decf584dd45443fdec7a",
+      "kind": "paragraph",
+      "text": "As ISAC networks grow more complex, isolated pointoptimization methods become less able to manage the full system. This article proposed theAgent Compileras a systemlevel abstraction layer that translates operator intent into structured ISAC Policy Graphs and then instantiates suitable domain-specific modules for real-time execution. The key principle is strict time-scale separation: LLMs handle strategic decisions in the slow loop, while established algorithms retain full authority in the fast loop. More broadly, the same intentto-infrastructure abstraction may also support the wider 6G vision of integrated communication, sensing, computation, and control.",
+      "order": 261,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "D. Human Oversight and Trustworthy Operation",
+        "CONCLUSION"
+      ],
+      "char_start": 34817,
+      "char_end": 35482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8440cb093e919e543f2686254c6b586",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 262,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "REFERENCES"
+      ],
+      "char_start": 35484,
+      "char_end": 35494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9524714a3b00697223caceb8e8781d58",
+      "kind": "reference",
+      "text": "[1] F. Liuet al., “Integrated sensing and communications: Toward dualfunctional wireless networks for 6G and beyond,”IEEE J. Sel. Areas Commun., vol. 40, no. 6, pp. 1728–1767, 2022. [2] A. Liuet al., “A survey on fundamental limits of integrated sensing and communication,”IEEE Commun. Surveys Tuts., vol. 24, no. 2, pp. 994–1034, 2022. [3] S. Luet al., “Integrated sensing and communications: Recent advances and ten open challenges,”IEEE Internet Things J., vol. 11, no. 11, pp.",
+      "order": 263,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "REFERENCES"
+      ],
+      "char_start": 35496,
+      "char_end": 35976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acb08dfc81868d89829b68f266f2dd41",
+      "kind": "heading",
+      "text": "094–19 120, 2024.",
+      "order": 264,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "ISAC Networks",
+        "094–19 120, 2024."
+      ],
+      "char_start": 35978,
+      "char_end": 35995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e52229b71cc2d4e4043934802a28aac5",
+      "kind": "paragraph",
+      "text": "[4] O. Rezaei, M. M. Naghsh, S. M. Karbasi, and M. Nayebi, “Resource allocation for UA V-enabled integrated sensing and communication (ISAC) via multi-objective optimization,” inProc. IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP), 2023, pp. 1–5. [5] X. Liet al., “Recent advances in resource allocation and beam prediction for large language models empowered ISAC systems,”IEEE Commun. Mag., pp. 1–7, 2026. [6] Z. Qu, W. Wang, Z. Yu, B. Sun, Y . Li, and X. Zhang, “LLM enabled multi-agent system for 6G networks: Framework and method of dualloop edge-terminal collaboration,”IEEE Commun. Mag., pp. 1–7, 2026. [7] H. Yang, S. Lambotharan, M. Derakhshani, and L. Hanzo, “LLMenhanced space-air-ground-sea integrated networks,”IEEE Commun. Mag., pp. 1–8, 2026. [8] S. Yaoet al., “ReAct: Synergizing reasoning and acting in language models,” inProc. Int. Conf. Learn. Representations (ICLR), 2023. [9] T. Schicket al., “Toolformer: Language models can teach themselves to use tools,” inProc. Advances Neural Inf. Process. Syst. (NeurIPS), vol. 36, 2023. [10] Z. Yuet al., “Active RIS-aided ISAC systems: Beamforming design and performance analysis,”IEEE Trans. Commun., vol. 71, no. 12, pp. 7265–7280, 2023. [11] A. Maatouk, N. Piovesan, F. Ayed, A. De Domenico, and M. Debbah, “Large language models for telecom: Forthcoming impact on the industry,”IEEE Commun. Mag., vol. 62, no. 7, pp. 64–69, 2024. [12] C. Lattneret al., “MLIR: A compiler infrastructure for the end of Moore’s law,”arXiv preprint arXiv:2002.11054, 2021.",
+      "order": 265,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "094–19 120, 2024."
+      ],
+      "char_start": 35997,
+      "char_end": 37527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4e46f4f63fa9d22204512bebdb93cae",
+      "kind": "paragraph",
+      "text": "[13] X. Huanget al., “Understanding the planning of LLM agents: A survey,” arXiv preprint arXiv:2402.02716, 2024. [14] I. Chatzistefanidis, A. Leone, and N. Nikaein, “Maestro: LLM-driven collaborative automation of intent-based 6G networks,”IEEE Netw. Lett., vol. 6, no. 4, pp. 258–262, 2024. [15] W. Zhang, M. Krunz, and G. Ditzler, “Stealthy adversarial attacks on machine learning-based classifiers of wireless signals,”IEEE Trans. Mach. Learn. Commun. Netw., vol. 2, pp. 276–293, 2024.",
+      "order": 266,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "ISAC Networks",
+        "094–19 120, 2024."
+      ],
+      "char_start": 37529,
+      "char_end": 38018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 7,
+    "removed_repeated_edge_lines": 7,
+    "extraction_method_counts": {
+      "native_text": 7
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.16269",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 7,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

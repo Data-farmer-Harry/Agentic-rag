@@ -1,0 +1,4367 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "b5151a2c15834b356f730bdafe3b7ce23c6903fd071cf3b9b4a84d445cefd847",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:c4428e5229bc24e72ab5044e96755c9e",
+      "kind": "heading",
+      "text": "Can Large Language Models Generate",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate"
+      ],
+      "char_start": 0,
+      "char_end": 34,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc39fcbddff9f3eac61e33dc58af9202",
+      "kind": "paragraph",
+      "text": "Observability-Aware Code? Yongliang Tao1, Hongyu Zhang 1, Pengfei Gao 2, Minghua Ma 2, Zhiyu Fan 2, Yu Kang 2 Jue Zhang 2, Si Qin 2, Liqun Li 2, Qingwei Lin 2, Saravan Rajmohan 2 1Chongqing University, Chongqing, China 2Microsoft Abstract—Recent advances in coding agents have enabled the generation of increasingly complex software systems. While existing evaluations primarily focus on functional correctness, production systems must expose failure evidence to support observability. In this paper, we present a systematic study of observability in agent-generated systems. We examine whether agents can reconstruct source-level diagnostic semantics by restoring observability artifacts in 10 open-source and 8 industrial repositories. We also evaluate whether these artifacts translate into effective fault signals at runtime through 200 generated microservice systems deployed on Kubernetes with 13 injected faults. Our results reveal a consistent gap between diagnostic semantics at the source level and fault signals (i.e., explicit, fault-specific evidence) at runtime. At the source level, agents partially recover observability artifacts but struggle to capture key diagnostic semantics. At runtime, generated systems expose fault signals for only a small fraction of failures (up to 13.99%), despite the presence of logging, suggesting that the generated observability artifacts may lack the failure-specific semantics needed to effectively expose faults. We further introduce an observability-oriented skill, which can serve as a guidance to",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate"
+      ],
+      "char_start": 36,
+      "char_end": 1588,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d19447fd6cd008ef96864095049b873",
+      "kind": "paragraph",
+      "text": "improve both diagnostic semantics and fault-signal exposure, but the gains remain limited, indicating that the gap is not easily addressed. More broadly, our findings suggest that current evaluations focusing primarily on functional correctness may overlook observability as an important dimension of practical software quality.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate"
+      ],
+      "char_start": 1590,
+      "char_end": 1918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42b37130e16c10f51323800e1d963243",
+      "kind": "heading",
+      "text": "Index Terms—Coding Agent, Fault Signal, Observability",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability"
+      ],
+      "char_start": 1920,
+      "char_end": 1973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea7b4c4a09a797826e1590c90b793a7b",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 1975,
+      "char_end": 1987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5d6c4237dffec6b227c26d6f02ab366",
+      "kind": "paragraph",
+      "text": "Recent advances in coding agents, such as Copilot [1], Cursor [2], and Claude Code [3], have made it increasingly feasible to generate complete software systems. These systems may compile, deploy, and run successfully under normal workloads. However, software that is runnable is not necessarily software that is operable. When failures occur, developers need sufficient information to understand what happened. This shift from runnability to operability brings failure-time observability into focus. Beyond generating runnable code, agents should also generate observability artifacts (i.e., logs, traces, and metrics) that expose fault-indicating runtime evidence. In human-written software systems, even though developers may have a substantial understanding of the system, unexpected production failures still occur, making observability a fundamental need for debugging. Coding agents further increase developers’ need for observability. While they can generate large amounts of code quickly, developers may not inspect or reason about all of the generated code in detail. As a result, developers may not fully understand the runtime behavior of the generated system. This creates knowledge debt: developers may need to maintain generated systems whose runtime behavior they do not fully understand. Knowledge debt makes observability more difficult to improve after systems are deployed. When developers lack comprehensive understanding of the runtime behavior of agentgenerated systems, they may lack the semantic context needed",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 1989,
+      "char_end": 3524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e98804e6e25fa7477123b115492c420",
+      "kind": "paragraph",
+      "text": "to determine what diagnostic semantics (i.e., failure-relevant context captured by observability artifacts) should be encoded. This is because observability design requires reasoning about potential failure modes and identifying relevant runtime states, which depends on a deep understanding of system behavior. Consequently, post-hoc instrumentation may fail to capture a failure-relevant context and, therefore, fail to expose the corresponding fault signal during failures. We therefore suggest that observability should be treated as a generation-time expectation for agent-generated code. As coding agents implement functionality, they should simultaneously generateobservability artifacts, so that diagnostic semantics are encoded during code generation and the fault signal can be exposed when failures occur. This reframes observability from a post-hoc remediation activity into an integral part of code generation. Accordingly, this paper askswhether current coding agents generate code that is not only runnable but also observable under failure? To answer this question, we connect source-level diagnostic semantics (i.e., failure-relevant context captured by observability artifacts, such as error codes or request IDs) with the fault signal (i.e., explicit, fault-specific evidence available during failure-time execution, such as a service crash observed in logs). Source-level analysis evaluates whether generated observability artifacts encode meaningful diagnostic semantics, while runtime analysis evaluates whether the generated",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 3526,
+      "char_end": 5073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caf2265f910d606099b8b50a25872516",
+      "kind": "paragraph",
+      "text": "systems expose the corresponding fault signal under injected failures. Together, these two perspectives enable a comprehensive evaluation of observability in agent-generated code. Accordingly, we structure our study around the following research questions:",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 5075,
+      "char_end": 5331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5273c7a05f09e3d45b56f8ce59ae929c",
+      "kind": "table",
+      "text": "arXiv:2607.05785v1  [cs.SE]  7 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 5333,
+      "char_end": 5372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db2bdfb9769e1461c892c0a52e15d55c",
+      "kind": "paragraph",
+      "text": "RQ1 (Static Observability Restoration):Can coding agents generate observability artifacts consistent with human-written observability artifacts? Method.We conduct a controlled source-level restoration study on 10 open-source and 8 industrial systems with mature human-written observability artifacts, covering 1,223 instances in total. We remove existing observability artifacts while preserving the original business logic, ask coding agents to restore them using the remaining repository context, and evaluate both the placement of generated observability artifacts and the diagnostic semantics they capture. Findings.Coding agents recover observability only partially. They are substantially better at identifying where observability artifacts should be placed than what diagnostic semantics should be recorded, revealing a persistent semantic observability gap even when the functional business logic is already available. RQ2 (Observability in Agent-Generated Microservice Systems):To what extent do end-to-end agent-generated microservice systems expose fault signals under realistic failure scenarios? Method.We generate 200 microservice systems from highlevel specifications using coding agents with SOTA LLMs, deploy them in Kubernetes, and inject 13 representative production faults, resulting in 1,615 failure instances. We collect runtime logs during each fault window and measureFault Signals Rate (FSR), the fraction of injected faults that produce explicit fault signals in logs. Findings.Agent-generated systems produce fault signals for",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 5374,
+      "char_end": 6927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef08b1fc513283343520c001e3671fe",
+      "kind": "paragraph",
+      "text": "only a small fraction of failures, with FSR ranging from 4.95% to 13.99% across models. The limitation is not the absence of logging, but the systematic absence of explicit fault-indicating semantics and diagnostic context in the generated logs. RQ3 (Observability-Oriented Guidance):Can lightweight observability-oriented guidance (Skill) improve both static diagnostic semantics and runtime fault signals exposure? Method.We derive a lightweight observability-oriented skill from approximately 200 real-world commits, summarizing diagnosis-oriented practices (e.g., instrumentation placement and diagnostic data capture) as structured generation guidance. We then re-evaluate the enhanced agents under both the source-level restoration (RQ1) and runtime fault-injection (RQ2) settings. Findings.Observability-oriented guidance yields only marginal improvements in static diagnostic semantics, ranging from 0.004 to 0.012 across models. For runtime fault exposure, while FSR increases modestly for GPT-5.5 (+8.67 pp), the gains for Claude Opus 4.8 (+0.99 pp) and Gemini 3.5 Flash (+2.54 pp) remain minimal, leaving the overall FSR relatively low (up to 16.53%). These limited gains suggest that lightweight generation-time guidance may partially mitigate, but is unlikely to fully resolve, the semantic observability gap, indicating substantial room for more effective methods. The major contributions of the paper are as follows: •A multi-level framework for evaluating agentgenerated observability.We introduce a multi-level eval-",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 6929,
+      "char_end": 8462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:125635f47a9e29052e3d61dd5d13b3cc",
+      "kind": "paragraph",
+      "text": "uation framework that examines agent-generated code from two complementary perspectives. Specifically, the framework evaluates, at the static level, the ability of coding agents to restore observability artifacts in terms of their placement and the diagnostic semantics they capture; at the dynamic level, it assesses whether the generated observability implementations can effectively expose fault signals under real system deployment and fault injection scenarios. •Empirical evidence of a semantic observability gap. Across 10 open-source and 8 industrial systems, agents recover human-written observability only partially: they are better at placing observability artifacts than recovering diagnostic semantics. In 200 generated microservice systems and 1,615 injected failure instances, logs are widely generated but often uninformative, failing to expose meaningful fault signals under failure conditions. As a result, only a small fraction of failures can be associated with actionable runtime evidence, indicating a substantial gap in failure-time observability. •Implications for observability-aware code generation. Our results show that current coding agents exhibit insufficient observability in generated code. Lightweight observability-oriented guidance improves fault signal exposure but still leaves a substantial gap, suggesting that future coding agents and benchmarks should treat observability as a first-class objective in code generation and evaluation.",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "INTRODUCTION"
+      ],
+      "char_start": 8464,
+      "char_end": 9939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:624c5e779a9368da438443386aa793c8",
+      "kind": "heading",
+      "text": "BACKGROUND ANDMOTIVATION",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Index Terms—Coding Agent, Fault Signal, Observability",
+        "BACKGROUND ANDMOTIVATION"
+      ],
+      "char_start": 9941,
+      "char_end": 9965,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f437d1d728571bda56fc2fa6d364bffb",
+      "kind": "heading",
+      "text": "A. Agent-Generated Code Creates Knowledge Debt",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Agent-Generated Code Creates Knowledge Debt"
+      ],
+      "char_start": 9967,
+      "char_end": 10013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41709fe7f23f24e4a14cb4bf4a89af55",
+      "kind": "paragraph",
+      "text": "The increasing adoption of coding agents changes how developers acquire operational understanding of software systems. Traditionally, implementation and understanding are tightly coupled: by constructing software themselves, developers gradually build mental models of execution flow, dependency interactions, and potential failure modes. Coding agents weaken this coupling and further increase developers’ reliance on observability. While they can generate large amounts of code quickly, developers may not inspect or reason about all of the generated code in detail. As a result, they may not fully understand the runtime behavior of the generated system. We refer to this gap as knowledge debt: developers may need to maintain systems whose runtime behavior they do not fully understand, making diagnosing failures in production significantly more difficult. Observability has long been essential for production diagnosis. In the era of coding agents, however, runtime evidence increasingly compensates for reduced authorship-based understanding. Consequently, the key question is not only whether coding agents can generate functionally correct software, but whether they can also generate observability that supports effective failure-time diagnosis.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Agent-Generated Code Creates Knowledge Debt"
+      ],
+      "char_start": 10015,
+      "char_end": 11270,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09bf7a3fdae7c8ece1ee89c589f3faf0",
+      "kind": "heading",
+      "text": "RQ1 Design: Static Observability Restoring",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "RQ1 Design: Static Observability Restoring"
+      ],
+      "char_start": 11272,
+      "char_end": 11314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcfefed60c74f5f9e84d03203605e6b7",
+      "kind": "heading",
+      "text": "Open Source",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Open Source"
+      ],
+      "char_start": 11316,
+      "char_end": 11327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:91b99537127ea317198ee5007e56c535",
+      "kind": "heading",
+      "text": "Repos",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Repos"
+      ],
+      "char_start": 11329,
+      "char_end": 11334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d8a8d0d2a7b430d0a0ad4eec3c4bd87",
+      "kind": "heading",
+      "text": "Industrial",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Industrial"
+      ],
+      "char_start": 11336,
+      "char_end": 11346,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d78ba52e7eac27ef737b8ae53348897",
+      "kind": "heading",
+      "text": "Repos",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Repos"
+      ],
+      "char_start": 11348,
+      "char_end": 11353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f111090f6b5c3a81743fe95dbb8b1b7",
+      "kind": "heading",
+      "text": "Observability",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Observability"
+      ],
+      "char_start": 11355,
+      "char_end": 11368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0861a0ff8df2adc77f423c7691809c3",
+      "kind": "heading",
+      "text": "Stripping",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Stripping"
+      ],
+      "char_start": 11370,
+      "char_end": 11379,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef0c785d02aaa7bd0e67fc7ace2cdfc9",
+      "kind": "heading",
+      "text": "Agentic",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Agentic"
+      ],
+      "char_start": 11381,
+      "char_end": 11388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c4bcfd3a9a40ad587211d5f20b20f35",
+      "kind": "heading",
+      "text": "Regeneration",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Regeneration"
+      ],
+      "char_start": 11390,
+      "char_end": 11402,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dd08a5233589b8ad2dab623792d4813",
+      "kind": "heading",
+      "text": "Ground Truth",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ground Truth"
+      ],
+      "char_start": 11404,
+      "char_end": 11416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fdd0eb4034a06eee36e98de04d48d48",
+      "kind": "heading",
+      "text": "Comparison",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Comparison"
+      ],
+      "char_start": 11418,
+      "char_end": 11428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4aab36a5ed6cee837881c31fb11a0a4d",
+      "kind": "heading",
+      "text": "Position",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position"
+      ],
+      "char_start": 11430,
+      "char_end": 11438,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c731ee7423eb06354d641ca4badcec29",
+      "kind": "heading",
+      "text": "F1 Score",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "F1 Score"
+      ],
+      "char_start": 11440,
+      "char_end": 11448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5165958d573e2870bc02b1fb0edd2103",
+      "kind": "heading",
+      "text": "KeyBag",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag"
+      ],
+      "char_start": 11450,
+      "char_end": 11456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d97aae59912757d52929d4de635e39ca",
+      "kind": "heading",
+      "text": "F1 Score",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "F1 Score"
+      ],
+      "char_start": 11458,
+      "char_end": 11466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5be978bfa00498dc4565ece1d0962c6a",
+      "kind": "heading",
+      "text": "RQ2 Design: Observability in Agent-Generated Microservice Systems",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "RQ2 Design: Observability in Agent-Generated Microservice Systems"
+      ],
+      "char_start": 11468,
+      "char_end": 11533,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:787e758eac609dbfe110bd825ab3b312",
+      "kind": "heading",
+      "text": "Vibe-coded",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Vibe-coded"
+      ],
+      "char_start": 11535,
+      "char_end": 11545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce2caa5b33f075b310a285b98d807761",
+      "kind": "paragraph",
+      "text": "microservices",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Vibe-coded"
+      ],
+      "char_start": 11547,
+      "char_end": 11560,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cebc7808ff4a0864cac72e91866b0e32",
+      "kind": "heading",
+      "text": "System",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "System"
+      ],
+      "char_start": 11562,
+      "char_end": 11568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1c89bd2d07a2276d7dddfe2e60424ec",
+      "kind": "heading",
+      "text": "Deployment",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Deployment"
+      ],
+      "char_start": 11570,
+      "char_end": 11580,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78e5b1c320bc9565540b07831754fc16",
+      "kind": "heading",
+      "text": "Fault",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault"
+      ],
+      "char_start": 11582,
+      "char_end": 11587,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e5a40e7edb61391585c0f698718df6f",
+      "kind": "heading",
+      "text": "Injection",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Injection"
+      ],
+      "char_start": 11589,
+      "char_end": 11598,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fca1673f85edc21ac0bf667c9a424635",
+      "kind": "heading",
+      "text": "Analyse",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Analyse"
+      ],
+      "char_start": 11600,
+      "char_end": 11607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be47fdb7ef8705c77d6303ed2e6e324f",
+      "kind": "heading",
+      "text": "Runtime Logs",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Runtime Logs"
+      ],
+      "char_start": 11609,
+      "char_end": 11621,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5be9e0596804e93f45f131f4694617ff",
+      "kind": "heading",
+      "text": "RQ3 Design: Observability-Oriented Guidance",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "RQ3 Design: Observability-Oriented Guidance"
+      ],
+      "char_start": 11623,
+      "char_end": 11666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:996030726f04caff672694a69b924791",
+      "kind": "heading",
+      "text": "Failure Profile",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Failure Profile"
+      ],
+      "char_start": 11668,
+      "char_end": 11683,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48008e2a72beb3f04c4c9a5de1e0bd94",
+      "kind": "heading",
+      "text": "Extraction",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Extraction"
+      ],
+      "char_start": 11685,
+      "char_end": 11695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4855b22aa82fa3608c167f02916f1fd",
+      "kind": "heading",
+      "text": "Observability",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Observability"
+      ],
+      "char_start": 11697,
+      "char_end": 11710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3758fe950604e3ea7df9ea121b1645f4",
+      "kind": "heading",
+      "text": "Skill",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Skill"
+      ],
+      "char_start": 11712,
+      "char_end": 11717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86e42cf6a53292f67ad2dbdf1583d9a0",
+      "kind": "heading",
+      "text": "Enhanced",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Enhanced"
+      ],
+      "char_start": 11719,
+      "char_end": 11727,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98f1c0feaf2482520ca3451faf64a4b5",
+      "kind": "heading",
+      "text": "Agent",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Agent"
+      ],
+      "char_start": 11729,
+      "char_end": 11734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e07d9d817f0edef7d45ad45cd35d8488",
+      "kind": "heading",
+      "text": "Fault Signal",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Signal"
+      ],
+      "char_start": 11736,
+      "char_end": 11748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:276e4d98a7d4bc19f5cd4ebde9d5846c",
+      "kind": "heading",
+      "text": "Rate",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Rate"
+      ],
+      "char_start": 11750,
+      "char_end": 11754,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0de424b522545fc38323c2ea9fe1456",
+      "kind": "heading",
+      "text": "Fault Signal",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Signal"
+      ],
+      "char_start": 11756,
+      "char_end": 11768,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74004bdc3384729fcb7b3d30dac21ca3",
+      "kind": "heading",
+      "text": "Rate",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Rate"
+      ],
+      "char_start": 11770,
+      "char_end": 11774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:083fe9aad4c85bcfb0ad29ca421963c3",
+      "kind": "heading",
+      "text": "Position",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position"
+      ],
+      "char_start": 11776,
+      "char_end": 11784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efd07184bf8c2cd074c0ba788c2c97f1",
+      "kind": "heading",
+      "text": "F1 Score",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "F1 Score"
+      ],
+      "char_start": 11786,
+      "char_end": 11794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77e0e9c2dce2cf4c836c265bb7013761",
+      "kind": "heading",
+      "text": "KeyBag",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag"
+      ],
+      "char_start": 11796,
+      "char_end": 11802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d86c2c9bc1ac7b5986e8e6ed8d3d887",
+      "kind": "heading",
+      "text": "F1 Score",
+      "order": 53,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "F1 Score"
+      ],
+      "char_start": 11804,
+      "char_end": 11812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29c0eb6ad4a44c6efca471198ec6b23c",
+      "kind": "heading",
+      "text": "Retest",
+      "order": 54,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Retest"
+      ],
+      "char_start": 11814,
+      "char_end": 11820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e84b2a6894eade7d1a6356f3f6dcb69c",
+      "kind": "heading",
+      "text": "Retest",
+      "order": 55,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Retest"
+      ],
+      "char_start": 11822,
+      "char_end": 11828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05ac823263105c79b2cdad6cd04ac085",
+      "kind": "caption",
+      "text": "Fig. 1. Overview of Study",
+      "order": 56,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Retest"
+      ],
+      "char_start": 11830,
+      "char_end": 11855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5af285397cbe35b5caf0a04084c94c79",
+      "kind": "heading",
+      "text": "B. From Diagnostic Semantics to Fault Signals",
+      "order": 57,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. From Diagnostic Semantics to Fault Signals"
+      ],
+      "char_start": 11857,
+      "char_end": 11902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ae5e63ca0db2598e5e88952af7654ee",
+      "kind": "paragraph",
+      "text": "We study observability across two levels. At thesource-code level, an observability artifact encodesdiagnostic semantics: the failure-relevant context it is intended to capture, such as dependency states, error codes, request identifiers, state transitions, and variables that explain exceptional behavior. At theruntime level, observability should produce afault signal: explicit, fault-specific evidence emitted during failuretime execution, such as a dependency becoming unavailable, a request exceeding its timeout, or an invalid state transition. In this study, observability refers to the ability of generated code to encode diagnostic semantics in source code and expose fault signals at runtime. These two levels are connected but not equivalent. Diagnostic semantics are a precondition for fault signals: instrumentation that does not encode failure-relevant context cannot expose such context at runtime. However, source-level semantics alone do not guarantee runtime evidence, because the relevant execution path must be exercised, the generated functionality must behave as intended, and the evidence must remain visible in logs. Thus, source-level analysis captures whether agents express meaningful diagnostic intent, while runtime analysis captures whether generated systems expose that intent under real failures. Evaluating coding agents across both levels is essential for understanding whether they can generate observability code that goes beyond functional correctness and exposes failurerelevant evidence in production-like settings.",
+      "order": 58,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. From Diagnostic Semantics to Fault Signals"
+      ],
+      "char_start": 11904,
+      "char_end": 13459,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3962315568ec47921d8e1c3251df9df1",
+      "kind": "heading",
+      "text": "STUDYDESIGN",
+      "order": 59,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. From Diagnostic Semantics to Fault Signals",
+        "STUDYDESIGN"
+      ],
+      "char_start": 13461,
+      "char_end": 13472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ed66b5a765941f7fa0c9e66eb32280d",
+      "kind": "heading",
+      "text": "A. Overview",
+      "order": 60,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Overview"
+      ],
+      "char_start": 13474,
+      "char_end": 13485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7cbcea48ef422350bf4256c35abf10b",
+      "kind": "paragraph",
+      "text": "Our study investigates the following central question:to what extent can current coding agents generate code with effective observability?To answer this question, we design a three-stage evaluation pipeline that progressively examines observability from isolated capability analysis to realistic runtime behavior and guided improvement, as illustrated in",
+      "order": 61,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Overview"
+      ],
+      "char_start": 13487,
+      "char_end": 13841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81993947f45352df8f60c53aa752fd54",
+      "kind": "caption",
+      "text": "Figure 1.",
+      "order": 62,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Overview"
+      ],
+      "char_start": 13843,
+      "char_end": 13852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4852508dd43f6e6b3a829167febbe6bb",
+      "kind": "paragraph",
+      "text": "RQ1 (Static Observability Restoration).To isolate the underlying capability of coding agents in capturing diagnostic semantics without the confounding burden of business logic generation, we conduct a controlled source-level reconstruction study. We curate 1,223 instances from 10 open-source and 8 industrial repositories, remove their human-written observability artifacts, and task coding agents with reconstructing them. This controlled, repository-aware setting enables us to evaluate the agents’ capability to recover diagnosis-oriented observability artifacts independently of business logic synthesis. We assess reconstruction quality usingPosition F1 (placement accuracy) andKeyBag F1(semantic overlap of essential diagnostic variables). RQ2 (Observability in Agent-Generated Microservice Systems).Building upon the capability analysis in RQ1, we investigate whether the observed source-level capability limitation is consistently or not reflected in realistic runtime behavior. We generate 200 microservice systems from highlevel specifications, deploy them in a Kubernetes environment, and inject 13 representative production faults, resulting in 1,615 failure instances. We analyze runtime logs using the Fault Signals Rate (FSR), which measures the proportion of injected faults that expose explicit fault signals. RQ3 (Observability-Oriented Guidance).Finally, we investigate whether structured diagnosis-oriented guidance can improve the observability capability of coding agents. We derive a lightweight observability skill from real-world",
+      "order": 63,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Overview"
+      ],
+      "char_start": 13854,
+      "char_end": 15409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3cb98548cf8b0258a8a77175139129fb",
+      "kind": "paragraph",
+      "text": "observability-related commits and apply them during system generation. The enhanced agents are then re-evaluated under the same source-level restoration and runtime fault-injection settings. Together, these three research questions form a unified multi-level evaluation framework. RQ1 isolates the capability of coding agents to model diagnostic semantics in a con-",
+      "order": 64,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Overview"
+      ],
+      "char_start": 15411,
+      "char_end": 15776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c298051e5fd95bd441cd96627cfd8f1",
+      "kind": "heading",
+      "text": "Coding Agent",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Coding Agent"
+      ],
+      "char_start": 15778,
+      "char_end": 15790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d4051d9b139f43444c66ddc83d6588e",
+      "kind": "heading",
+      "text": "Generate Service",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Generate Service"
+      ],
+      "char_start": 15792,
+      "char_end": 15808,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee634b0ac865aa17efb9d765203efeab",
+      "kind": "heading",
+      "text": "Evaluation Harness",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Harness"
+      ],
+      "char_start": 15810,
+      "char_end": 15828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb19a98bf227cc6fcce6384bf4695ca5",
+      "kind": "heading",
+      "text": "Config",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Config"
+      ],
+      "char_start": 15830,
+      "char_end": 15836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc8783b4e86ad47f3d00381e0e6a8f2f",
+      "kind": "heading",
+      "text": "Runtime Environment",
+      "order": 69,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Runtime Environment"
+      ],
+      "char_start": 15838,
+      "char_end": 15857,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2c89f744fdb3903d0d75cd05a79c5d9",
+      "kind": "heading",
+      "text": "Deployment",
+      "order": 70,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Deployment"
+      ],
+      "char_start": 15859,
+      "char_end": 15869,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16202d591e86aba838283f73dd486eff",
+      "kind": "paragraph",
+      "text": "Build & Deploy to kubernetes",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Deployment"
+      ],
+      "char_start": 15871,
+      "char_end": 15899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c7799a5c0ccffe8f86acb828232c397",
+      "kind": "heading",
+      "text": "Runtime Execution",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Runtime Execution"
+      ],
+      "char_start": 15901,
+      "char_end": 15918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:207c46d91751371440f10191b36c6a7b",
+      "kind": "heading",
+      "text": "Continuous Requests",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Continuous Requests"
+      ],
+      "char_start": 15920,
+      "char_end": 15939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae3ca1e15df164e0cd4ee1914c4b7991",
+      "kind": "heading",
+      "text": "Fault Signal Rate",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Signal Rate"
+      ],
+      "char_start": 15941,
+      "char_end": 15958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7335e3f30b60e2a53675f5b040feba40",
+      "kind": "heading",
+      "text": "Fault Injection Collect Runtime",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Injection Collect Runtime"
+      ],
+      "char_start": 15960,
+      "char_end": 15991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ac0041ce5b10d887de9f42d148d8756",
+      "kind": "heading",
+      "text": "Signals",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Signals"
+      ],
+      "char_start": 15993,
+      "char_end": 16000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd83fdde576751dc5126892498237b54",
+      "kind": "caption",
+      "text": "Fig. 2. Evaluation of Observability in Agent-Generated Microservice Systems",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Signals"
+      ],
+      "char_start": 16002,
+      "char_end": 16077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97e026c2ea1f8d5c6840e1d4dbe3c80f",
+      "kind": "caption",
+      "text": "Fig. 3. Example of Static Observability Restoration",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Signals"
+      ],
+      "char_start": 16079,
+      "char_end": 16130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c807a06867ae1585c91e6f309946ce61",
+      "kind": "paragraph",
+      "text": "trolled setting. RQ2 evaluates whether this capability limitation is consistently reflected in the runtime fault-signal exposure of end-to-end generated systems. RQ3 investigates how lightweight diagnosis-oriented guidance can further improve runtime fault-signal exposure, providing insights into the development of future observability-aware coding agents.",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Signals"
+      ],
+      "char_start": 16132,
+      "char_end": 16490,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3ae76c70f74a93487a07e7737fdc036",
+      "kind": "heading",
+      "text": "B. RQ1 Design: Static Observability Restoration",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. RQ1 Design: Static Observability Restoration"
+      ],
+      "char_start": 16492,
+      "char_end": 16539,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dca596ce7f740805b8cfaafac1fe990",
+      "kind": "paragraph",
+      "text": "Goal.RQ1 asks whether agents can restore human-written source-level observability at the code level, after the original observability statements are removed.",
+      "order": 81,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. RQ1 Design: Static Observability Restoration"
+      ],
+      "char_start": 16541,
+      "char_end": 16698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74be7807a84bf1cabb694c3371a324ba",
+      "kind": "heading",
+      "text": "Dataset:We construct a dataset from both open-source",
+      "order": 82,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Dataset:We construct a dataset from both open-source"
+      ],
+      "char_start": 16700,
+      "char_end": 16752,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da322be0691bca8acf8cafc11a5a8bcb",
+      "kind": "paragraph",
+      "text": "and industrial repositories, including 10 GitHub repositories [4], [5], [6], [7], [8], [9], [10], [11], [12], [13] (441 instances) and 8 industrial datasets (782 instances), resulting in 1,223 instances in total. The selected GitHub repositories are widely used microservice projects, generally with more than 1k stars, and are actively maintained by their communities. These projects exhibit sustained demand for observability improvements, where logging statements, telemetry instrumentation, and related observability artifacts are continuously introduced and refined to support operational diagnosis. The selected industrial repositories are maintained over extended periods (typically longer than one year), deployed in real production environments, and require observability improvements driven by incidents. In these settings, missing observability signals are often identified and introduced during incident diagnosis and operational maintenance.",
+      "order": 83,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Dataset:We construct a dataset from both open-source"
+      ],
+      "char_start": 16754,
+      "char_end": 17708,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdf46c6cd36ffbdb66b3cc67513226db",
+      "kind": "heading",
+      "text": "Procedure:Instances of static observability restoration",
+      "order": 84,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Procedure:Instances of static observability restoration"
+      ],
+      "char_start": 17710,
+      "char_end": 17765,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2e235dfb8d3d20cb76ee0b3bfe76317",
+      "kind": "paragraph",
+      "text": "are extracted using language-specific parsers and retained if they contain at least one observability construct, including logging statements, tracing operations, metric updates, span attributes, or span events. We exclude trivial functions, test files, generated code, and build artifacts. For each instance, we remove all observability statements (e.g., logging and tracing) while preserving business logic and control-flow structures. The stripped implementation serves as the agent input, whereas the original implementation is retained as the ground truth (Figure 3). Importantly, the agent operates over theentire repository context, rather than a single function in isolation. This setting distinguishes coding agents from standalone LLMs, allowing them to exploit repository-level conventions such as logging styles, tracing schemas, and telemetry naming patterns.",
+      "order": 85,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Procedure:Instances of static observability restoration"
+      ],
+      "char_start": 17767,
+      "char_end": 18639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74039368b98145579d92453b8fc472b5",
+      "kind": "heading",
+      "text": "Prompting Strategies:We evaluate three prompting con-",
+      "order": 86,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prompting Strategies:We evaluate three prompting con-"
+      ],
+      "char_start": 18641,
+      "char_end": 18694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2dd9fd6ced299f4f3638b2f717076ab",
+      "kind": "paragraph",
+      "text": "figurations: Observability-blind:no explicit instruction on observability; to assess whether coding agents can proactively introduce missing observability artifacts without explicit guidance, reflecting their inherent observability awareness. Observability-hinted:explicit instruction to improve observability; to evaluate how explicit guidance influences the quality and completeness of generated observability artifacts. Few-shot:same-file examples of observability instances; to evaluate whether coding agents can learn and adopt repositoryspecific observability practices from in-context example.",
+      "order": 87,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prompting Strategies:We evaluate three prompting con-"
+      ],
+      "char_start": 18696,
+      "char_end": 19296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d335accc97c4296c11929b1a1dd9ea9",
+      "kind": "heading",
+      "text": "Functional Scope:RQ1 is a static source-level restora-",
+      "order": 88,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Functional Scope:RQ1 is a static source-level restora-"
+      ],
+      "char_start": 19298,
+      "char_end": 19352,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6eb0cddc8cb01fed63de9ecee2b679ba",
+      "kind": "paragraph",
+      "text": "tion study. Generated code is not executed during this evaluation, and we do not assess whether the regenerated implementation preserves the original functional behavior. Instead, the evaluation focuses exclusively on whether coding agents recover human-written observability artifacts, including their placement and diagnostic semantics.",
+      "order": 89,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Functional Scope:RQ1 is a static source-level restora-"
+      ],
+      "char_start": 19354,
+      "char_end": 19692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f50057a347f3854725f87d261b5d0c5f",
+      "kind": "heading",
+      "text": "Evaluation Metrics:Because both the original and re-",
+      "order": 90,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Metrics:Because both the original and re-"
+      ],
+      "char_start": 19694,
+      "char_end": 19746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bac6a0613fe4c1ce6e4685d25fe0af3",
+      "kind": "paragraph",
+      "text": "constructed implementations are available, we can evaluate observability reconstruction along two complementary aspects: whereartifacts are placed andwhatthey capture. a) Position F1 (Where to instrument):Position F1 measures whether generated observability appears at the same execution regions as the ground truth. We first align generated and ground-truth functions using non-observability statements as anchors. These anchors partition each function into buckets: before the first matched statement, between consecutive matched statements, and after the last matched statement.",
+      "order": 91,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Metrics:Because both the original and re-"
+      ],
+      "char_start": 19748,
+      "char_end": 20329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:625ba0f39daa77ccdc13f50778dfb045",
+      "kind": "paragraph",
+      "text": "Each bucket is represented by a binary indicator denoting whether it contains any observability statement. A bucket is counted as a true positive if both the ground truth and generated code contain observability in that aligned bucket, as a false positive if only the generated code does, and as a false negative if only the ground truth does. LetT Ppos,F Ppos, andF N pos denote these bucket-level counts. We compute:",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Metrics:Because both the original and re-"
+      ],
+      "char_start": 20331,
+      "char_end": 20749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5cf53524518eaa11fe9a40dc43a43ed1",
+      "kind": "heading",
+      "text": "Position P = T Ppos",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position P = T Ppos"
+      ],
+      "char_start": 20751,
+      "char_end": 20770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:003cb6db69d5bca8fb26d5babb68ff00",
+      "kind": "heading",
+      "text": "T Ppos+F Ppos",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Ppos+F Ppos"
+      ],
+      "char_start": 20772,
+      "char_end": 20785,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bc42c2464e14b1a9d9e542351bec1c6",
+      "kind": "paragraph",
+      "text": ",Position R = T Ppos",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Ppos+F Ppos"
+      ],
+      "char_start": 20787,
+      "char_end": 20807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:492f58d89c8a5e2920fc6136d125d20d",
+      "kind": "heading",
+      "text": "T Ppos+F Npos",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Ppos+F Npos"
+      ],
+      "char_start": 20809,
+      "char_end": 20822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e2ae27328be49f10d3be0e22b74ed23",
+      "kind": "paragraph",
+      "text": ".",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Ppos+F Npos"
+      ],
+      "char_start": 20824,
+      "char_end": 20825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ec282cab4f6b7f4640ab7e35d75082f",
+      "kind": "heading",
+      "text": "Position F1 =2·Position P·Position R",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position F1 =2·Position P·Position R"
+      ],
+      "char_start": 20827,
+      "char_end": 20863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e5abefced268d8a83f09aaebbaac9d3",
+      "kind": "heading",
+      "text": "Position P + Position R",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position P + Position R"
+      ],
+      "char_start": 20865,
+      "char_end": 20888,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc6133728de62ff444109f1cf0e50000",
+      "kind": "table",
+      "text": "This metric evaluates whether observability is restored at the correct workflow locations, independently of the exact diagnostic content. b) KeyBag F1 (What to capture):Position correctness alone does not guarantee that the restored observability captures the same diagnostic concepts. We therefore compute a token-level content metric over aligned buckets where both the ground truth and generated code contain observability. For each such bucket, we extract a bag of normalized lexical tokens from the observability statements. The extractor considers string literals, identifiers, attribute names, and keyword-argument names, then normalizes them by lowercasing, splitting on common separators such as dots, underscores, hyphens, slashes, and camel-case boundaries, and removing observability-framework stop words such aslogger,span, andevent. LetT gt b andT gen b be the resulting token sets for a comparable bucketb. We aggregate token-level true positives, false positives, and false negatives across all comparable buckets: T Pkey = X b |T gt b ∩T gen b |, F Pkey = X b |T gen b \\T gt b |, F Nkey = X b |T gt b \\T gen b |. We then compute:",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Position P + Position R"
+      ],
+      "char_start": 20890,
+      "char_end": 22036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46e867dcb7d9e0cb486f33799affec51",
+      "kind": "heading",
+      "text": "KeyBag P = T Pkey",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag P = T Pkey"
+      ],
+      "char_start": 22038,
+      "char_end": 22055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d5cd7e6b654c18bd1767840f095e781",
+      "kind": "heading",
+      "text": "T Pkey+F Pkey",
+      "order": 102,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Pkey+F Pkey"
+      ],
+      "char_start": 22057,
+      "char_end": 22070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:808ed55d308a001634c1f77b07f1a94d",
+      "kind": "paragraph",
+      "text": ",KeyBag R = T Pkey",
+      "order": 103,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Pkey+F Pkey"
+      ],
+      "char_start": 22072,
+      "char_end": 22090,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69117f5e683622ec159b7ae3fd30ffe2",
+      "kind": "heading",
+      "text": "T Pkey+F Nkey",
+      "order": 104,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "T Pkey+F Nkey"
+      ],
+      "char_start": 22092,
+      "char_end": 22105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e5eb4cd596a4615bba6dd5e87b8b2da",
+      "kind": "heading",
+      "text": "KeyBag F1 =2·KeyBag P·KeyBag R",
+      "order": 105,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag F1 =2·KeyBag P·KeyBag R"
+      ],
+      "char_start": 22107,
+      "char_end": 22137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7256e5fc096f6fbbbfafc6ca28230cfe",
+      "kind": "heading",
+      "text": "KeyBag P + KeyBag R",
+      "order": 106,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag P + KeyBag R"
+      ],
+      "char_start": 22139,
+      "char_end": 22158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9202a7695883b7031cb12f8f528a8d2",
+      "kind": "paragraph",
+      "text": "KeyBag F1 is therefore a lightweight lexical proxy for diagnostic-content agreement. It rewards generated observability that mentions the same operational concepts as the ground truth, while Position F1 separately accounts for missing or spurious instrumentation locations.",
+      "order": 107,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag P + KeyBag R"
+      ],
+      "char_start": 22160,
+      "char_end": 22433,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc419132ce5e57cd8ab12f2492008460",
+      "kind": "heading",
+      "text": "RQ2 Design: Observability in Agent-Generated Microser-",
+      "order": 108,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag P + KeyBag R",
+        "RQ2 Design: Observability in Agent-Generated Microser-"
+      ],
+      "char_start": 22435,
+      "char_end": 22489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25511f8010126e8764f87d5b4b534934",
+      "kind": "paragraph",
+      "text": "vice Systems Goal.As the observability of systems generated by coding agents in practical settings remains largely unclear, RQ2 measures the Fault Signals Rate in agent-generated systems to assess whether generated systems can produce fault signals under faults.",
+      "order": 109,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "KeyBag P + KeyBag R",
+        "RQ2 Design: Observability in Agent-Generated Microser-"
+      ],
+      "char_start": 22491,
+      "char_end": 22753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:becb1582603883eea973d438a7201804",
+      "kind": "heading",
+      "text": "Dataset:We collect 200 representative architecture spec-",
+      "order": 110,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Dataset:We collect 200 representative architecture spec-"
+      ],
+      "char_start": 22755,
+      "char_end": 22811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:242eb673b6863e4bfa95ec23548fba00",
+      "kind": "paragraph",
+      "text": "ifications for cloud-native microservice applications, by abstracting architectures from real-world open-source and industrial systems, covering a diverse range of domains, including e-commerce, social networking, IoT telemetry, finance, healthcare, content management, SaaS platforms, travel, logistics, gaming, and observability/DevOps systems. Each architecture specification is provided to the coding agent as the implementation prompt, allowing the agent to automatically generate a complete deployable microservice system for subsequent runtime evaluation under fault injection.",
+      "order": 111,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Dataset:We collect 200 representative architecture spec-"
+      ],
+      "char_start": 22813,
+      "char_end": 23397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f5b766372f4787e1d881959dc80f0f7",
+      "kind": "heading",
+      "text": "Procedure:Figure 2 presents the end-to-end runtime",
+      "order": 112,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Procedure:Figure 2 presents the end-to-end runtime"
+      ],
+      "char_start": 23399,
+      "char_end": 23449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:468fd2a14e6bfe5b44cc497a53cf1fb2",
+      "kind": "paragraph",
+      "text": "fault-injection evaluation pipeline. For each architecture specification, the coding agent generates a deployable microservice implementation, which is subsequently executed within a standardized evaluation harness. The harness provides a unified runtime environment, deployment configuration, workload generation, and fault-injection infrastructure, ensuring that all generated systems are evaluated under the same settings. After deployment and successful health verification, each service is continuously exercised by the workload generator while representative production faults are injected using Chaos Mesh. Runtime logs are collected throughout each fault window and analyzed offline to determine whether the generated observability exposes diagnostic evidence corresponding to the injected fault.",
+      "order": 113,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Procedure:Figure 2 presents the end-to-end runtime"
+      ],
+      "char_start": 23451,
+      "char_end": 24255,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fde12e5f4b83943e5c0bf91cacce0339",
+      "kind": "heading",
+      "text": "Fault Injection:To evaluate runtime observability under",
+      "order": 114,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Injection:To evaluate runtime observability under"
+      ],
+      "char_start": 24257,
+      "char_end": 24312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a39f5b01700c482059ff2b011029562f",
+      "kind": "paragraph",
+      "text": "realistic operating conditions, we inject representative production faults using Chaos Mesh [14] in a Kubernetes cluster. As summarized in Table I, our benchmark covers 13 fault primitives spanning service failures, dependency failures, network anomalies, resource contention, and time-related faults. These fault types simulate common failure scenarios encountered in cloud-native microservice systems, including service crashes, upstream failures, database and cache outages, queue disruptions, CPU contention, network corruption, and clock skew. Across the 200 generated systems, these configurations produce a total of 1,615 executable fault instances.",
+      "order": 115,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Injection:To evaluate runtime observability under"
+      ],
+      "char_start": 24314,
+      "char_end": 24970,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:640996c94afbb5b59b4046916cc6a793",
+      "kind": "heading",
+      "text": "Evaluation Metrics:After fault injection, we allow suf-",
+      "order": 116,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Metrics:After fault injection, we allow suf-"
+      ],
+      "char_start": 24972,
+      "char_end": 25027,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ae7d07acf11d7bb566a9e6322f417c1",
+      "kind": "paragraph",
+      "text": "ficient time for fault propagation and collect runtime logs from all affected services. We focus on logs as the primary evaluation signal because they are themost widely used and consistently available observability artifacts produced by current coding agents, whereas traces and metrics are often incomplete or entirely absent in generated systems. As a result, logs provide the most reliable basis for assessing failure visibility. If even logsfail to expose fault signalseffectively, this suggests that the observability of current coding agents is fundamentally limited.",
+      "order": 117,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Evaluation Metrics:After fault injection, we allow suf-"
+      ],
+      "char_start": 25029,
+      "char_end": 25603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ab1f3b63253e5f7452b596e4be5fbbf",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 118,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE I"
+      ],
+      "char_start": 25605,
+      "char_end": 25612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23f6e171eb9ef6bd9972886122c9add7",
+      "kind": "paragraph",
+      "text": "EVALUATED FAULT PRIMITIVES WITH INJECTION AND LOG EVIDENCE.",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE I"
+      ],
+      "char_start": 25614,
+      "char_end": 25673,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74eab7c9420ed3f829ed18e212619517",
+      "kind": "heading",
+      "text": "ID Fault Chaos Type Injected Failure Summary of Fault-specific Log Evidence",
+      "order": 120,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "ID Fault Chaos Type Injected Failure Summary of Fault-specific Log Evidence"
+      ],
+      "char_start": 25675,
+      "char_end": 25750,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ded50d478a25b7a29c71603009742560",
+      "kind": "paragraph",
+      "text": "F01 pod-kill PodChaos Kill service pod restart/startup evidence or restartCount increase F02 network-delay NetworkChaos Service egress latency timeout/latency/deadline evidence F03 upstream-fail HTTPChaos Upstream returns 503 upstream/HTTP 503 F04 upstream-slow NetworkChaos Upstream latency upstream timeout/slow/deadline evidence F05 db-down PodChaos Postgres pod kill postgres/connection refused/FATAL evidence F06 db-slow NetworkChaos Postgres latency db timeout/query latency/deadline evidence F07 cache-down PodChaos Redis cache pod kill redis/connection reset/refused evidence F08 cache-slow NetworkChaos Redis cache latency redis timeout/slow/cache latency evidence F09 queue-down PodChaos Redis stream pod kill stream/queue/redis connection failure evidence F10 queue-slow NetworkChaos Redis stream latency queue/stream timeout or slow publish/consume evidence F11 cpu-stress StressChaos CPU pressure CPU/load/slow processing/timeout evidence F12 net-corrupt NetworkChaos Packet corruption reset, broken pipe, network error evidence F13 time-skew TimeChaos Clock offset clock/time skew/token expiry/timestamp evidence Conservative Notion of Observability.It is important to clarify that our evaluation adopts a conservative notion of observability. We do not require logs to fully diagnose root causes or support complete Root Cause Analysis [15], [16], [17], [18], [19], [20] (RCA). Instead, a log is considered a fault signal only if it explicitly encodes failure-related semantics, such as dependency failures, timeout conditions, protocol",
+      "order": 121,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "ID Fault Chaos Type Injected Failure Summary of Fault-specific Log Evidence"
+      ],
+      "char_start": 25752,
+      "char_end": 27303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5460afc9760ddfe0e45dedb7eb1529f",
+      "kind": "paragraph",
+      "text": "errors, or other fault-specific indicators that can be directly attributed to the injected fault. Generic information such as request logs or standard status codes is not sufficient unless it explicitly reflects abnormal system behavior. This design intentionally avoids relying on post-hoc inference from runtime symptoms and ensures that detected signals correspond to explicit and actionable fault semantics. For each fault type, we define a set of fault-specific log evidence (see Table I) derived from the expected manifestations of the injected failure. Examples include timeout-related messages for network delays, connection-refused errors for service disruptions, and out-of-memory indicators for resource exhaustion. These signatures serve as a proxy for the observability of failures in logs. A fault instance is considered observableif at least one corresponding fault signal appears in the collected logs after fault injection. Based on this definition, we compute the Fault Signals Rate (FSR) asF SR= NSignal",
+      "order": 122,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "ID Fault Chaos Type Injected Failure Summary of Fault-specific Log Evidence"
+      ],
+      "char_start": 27305,
+      "char_end": 28327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:afbdeca0a0e4c6028a23dc803c5be707",
+      "kind": "heading",
+      "text": "Nfault",
+      "order": 123,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Nfault"
+      ],
+      "char_start": 28329,
+      "char_end": 28335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8175923c2fb1b8df03b0eabf906070aa",
+      "kind": "paragraph",
+      "text": ", whereN Signal denotes the number of fault instances that produce observable fault-related signals, andN fault denotes the total number of injected fault instances Unlike traditional observability evaluations that focus on the quantity of generated logs, metrics, or traces, this evaluation measures whether generated observability artifacts actually expose runtime failures. A low FSR indicates that failures remain largely silent, preventing subsequent diagnosis regardless of the volume of generated observability artifacts. This evaluation enables us to quantify the practical effectiveness of observability in LLM-generated systems and to examine whether the observability artifacts introduced by coding agents are sufficient to surface failures in realistic deployment environments.",
+      "order": 124,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Nfault"
+      ],
+      "char_start": 28337,
+      "char_end": 29126,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6c0c13bbd029cc207a0d041914b6475",
+      "kind": "heading",
+      "text": "D. RQ3 Design: Observability-Oriented Guidance",
+      "order": 125,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "D. RQ3 Design: Observability-Oriented Guidance"
+      ],
+      "char_start": 29128,
+      "char_end": 29174,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:325c509e7839c6724660d6a655d86b06",
+      "kind": "paragraph",
+      "text": "Goal.RQ3 investigates whether the static and runtime observability gaps identified in RQ1 and RQ2 can be mitigated through targeted, diagnosis-oriented observability guidance. Dataset and System.To ensure comparability with prior findings, we reuse the same set of application generation tasks and fault-injection scenarios from RQ1 and RQ2. By reusing the same workload, we can directly measure whether the proposed mitigation reduces the previously observed gaps. Procedure.We construct an observability skill by analyzing approximately 200 observability-related code commits collected from an internal failure repository. These commits were created by experienced engineers to diagnose and remediate production failures, providing practical examples of effective observability artifacts. They capture recurring diagnosis and remediation patterns, including dependency failures, timeouts, retries, and exception propagation. We abstract these recurring patterns into a set of lightweight, diagnosis-oriented principles. We then evaluate askill-guided agent, where the observability skill is provided as structured generation guidance, and compare it against abaseline agentwithout such guidance. Both agents are tasked with generating or instrumenting services under the same workload and fault conditions. All other factors (model, prompts, and environment) are held constant to isolate the effect of the skill. Skill Content.Due to space constraints, we present a highlevel abstraction of the observability skill. The skill consists",
+      "order": 126,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "D. RQ3 Design: Observability-Oriented Guidance"
+      ],
+      "char_start": 29176,
+      "char_end": 30712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc0caa511c43ecd550c681f550f568cf",
+      "kind": "paragraph",
+      "text": "of diagnosis-oriented principles that guide the agent to: •Identify service boundaries, responsibilities, dependencies, and operational contexts. •Instrument dependency calls and control-flow boundaries where failures or latency may occur. •Capture key diagnostic signals, including correlation IDs, status codes, latency, retry counts, timeout values, and exception causes. •Follow or establish consistent observability conventions for service, operation, dependency, and request context. •Ensure that instrumentation remains lightweight, avoids high-cardinality or sensitive data, and supports efficient",
+      "order": 127,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "D. RQ3 Design: Observability-Oriented Guidance"
+      ],
+      "char_start": 30714,
+      "char_end": 31319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc641298010dab3d80c975fd142b5483",
+      "kind": "heading",
+      "text": "Ref. Blind Hinted",
+      "order": 128,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind Hinted"
+      ],
+      "char_start": 31321,
+      "char_end": 31338,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05f85d34b341b3708ca458aa64cdbc32",
+      "kind": "paragraph",
+      "text": "0 2 4 Statements / instance",
+      "order": 129,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind Hinted"
+      ],
+      "char_start": 31340,
+      "char_end": 31367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65e416ab5aea7357e0342729d7ed4190",
+      "kind": "heading",
+      "text": "2.1",
+      "order": 130,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind Hinted",
+        "2.1"
+      ],
+      "char_start": 31369,
+      "char_end": 31372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23b6d231e1a490a1b83037ee724ac846",
+      "kind": "heading",
+      "text": "9",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind Hinted",
+        "9"
+      ],
+      "char_start": 31374,
+      "char_end": 31375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20d2f6d160f78cde1bc5fe880c2a5001",
+      "kind": "paragraph",
+      "text": "(a) Obs. quantity",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind Hinted",
+        "9"
+      ],
+      "char_start": 31377,
+      "char_end": 31394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69db85f4044307f9133be03edb5207ef",
+      "kind": "heading",
+      "text": "Prec. Rec. F1",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1"
+      ],
+      "char_start": 31396,
+      "char_end": 31409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95fb3256fb50e6946e00fb50f5a125cc",
+      "kind": "heading",
+      "text": "0",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "0"
+      ],
+      "char_start": 31411,
+      "char_end": 31412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34326549f3822ab9de1fd70e2a77a39e",
+      "kind": "heading",
+      "text": "2",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "2"
+      ],
+      "char_start": 31414,
+      "char_end": 31415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb69d0854172958007ac3d4fc7747729",
+      "kind": "heading",
+      "text": "4",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "4"
+      ],
+      "char_start": 31417,
+      "char_end": 31418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13fde54cea6fada66442e1f5b3c924bc",
+      "kind": "heading",
+      "text": "6",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "6"
+      ],
+      "char_start": 31420,
+      "char_end": 31421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4eb810a22d02bd1a6c6e3327416c21e2",
+      "kind": "heading",
+      "text": "8",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "8"
+      ],
+      "char_start": 31423,
+      "char_end": 31424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cd63bddba9c38fcd078822939183f1a",
+      "kind": "heading",
+      "text": "Score",
+      "order": 139,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score"
+      ],
+      "char_start": 31426,
+      "char_end": 31431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f26507e7cfac039598f20db809e8b063",
+      "kind": "heading",
+      "text": "54",
+      "order": 140,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "54"
+      ],
+      "char_start": 31433,
+      "char_end": 31435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2e8b9b8546ca38c55d3d6365b021822",
+      "kind": "heading",
+      "text": "61",
+      "order": 141,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "61"
+      ],
+      "char_start": 31437,
+      "char_end": 31439,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bec4169bc8116db85b2ed8811b23ff7b",
+      "kind": "heading",
+      "text": "55",
+      "order": 142,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "55"
+      ],
+      "char_start": 31441,
+      "char_end": 31443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69b100f0642ad2c3fd0e04408c96bbdd",
+      "kind": "heading",
+      "text": "44",
+      "order": 143,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "44"
+      ],
+      "char_start": 31445,
+      "char_end": 31447,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59a1133050c293dca2a336547325238d",
+      "kind": "heading",
+      "text": "69",
+      "order": 144,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "69"
+      ],
+      "char_start": 31449,
+      "char_end": 31451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b78f0fe4306781663ce3578e1bb1cd61",
+      "kind": "heading",
+      "text": "51",
+      "order": 145,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "51"
+      ],
+      "char_start": 31453,
+      "char_end": 31455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:734e4178b2f3c2514a989ffe6050bd57",
+      "kind": "paragraph",
+      "text": "(b) Position quality",
+      "order": 146,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "51"
+      ],
+      "char_start": 31457,
+      "char_end": 31477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:97b2011b1f4c51cea6f5042dc663a0b3",
+      "kind": "heading",
+      "text": "Blind",
+      "order": 147,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Blind"
+      ],
+      "char_start": 31479,
+      "char_end": 31484,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0ba72518d1b3610394922a031813e7a",
+      "kind": "heading",
+      "text": "Hinted",
+      "order": 148,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31486,
+      "char_end": 31492,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6edc0f54a538a49c9943a5ea9abca71d",
+      "kind": "heading",
+      "text": "Ref. Blind",
+      "order": 149,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind"
+      ],
+      "char_start": 31494,
+      "char_end": 31504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0be1884ee3d06999b8c6747d3e043e89",
+      "kind": "paragraph",
+      "text": "gen.",
+      "order": 150,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Ref. Blind"
+      ],
+      "char_start": 31506,
+      "char_end": 31510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:741c2ad02e0444c87b1b239be5a5b742",
+      "kind": "heading",
+      "text": "Hinted",
+      "order": 151,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31512,
+      "char_end": 31518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e77743567d404e4ef3904c08bb71cbeb",
+      "kind": "paragraph",
+      "text": "gen. 0 10 20 KeyBag tokens / instance",
+      "order": 152,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31520,
+      "char_end": 31557,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:862f642ae7901bdeb4f634d06409fb33",
+      "kind": "heading",
+      "text": "6",
+      "order": 153,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "6"
+      ],
+      "char_start": 31559,
+      "char_end": 31560,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d94077f5d5e05814e03384dd597b318b",
+      "kind": "heading",
+      "text": "5",
+      "order": 154,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "5"
+      ],
+      "char_start": 31562,
+      "char_end": 31563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b5bbcee993bb5e57e728fcbf8c0f47e",
+      "kind": "heading",
+      "text": "9",
+      "order": 155,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "9"
+      ],
+      "char_start": 31565,
+      "char_end": 31566,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b354f55b7e8b70a682d788259317a86f",
+      "kind": "paragraph",
+      "text": "(c) KeyBag token quantity",
+      "order": 156,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "9"
+      ],
+      "char_start": 31568,
+      "char_end": 31593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61363880ad5310f88f711138d1a56858",
+      "kind": "heading",
+      "text": "Prec. Rec. F1",
+      "order": 157,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1"
+      ],
+      "char_start": 31595,
+      "char_end": 31608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2074b979f8919c77a59ee7bf201d379d",
+      "kind": "heading",
+      "text": "0",
+      "order": 158,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "0"
+      ],
+      "char_start": 31610,
+      "char_end": 31611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a6f7b34c050af2968c3cece843875f8",
+      "kind": "heading",
+      "text": "2",
+      "order": 159,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "2"
+      ],
+      "char_start": 31613,
+      "char_end": 31614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06a859e119ce5f545eedf659a51ef573",
+      "kind": "heading",
+      "text": "4",
+      "order": 160,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Prec. Rec. F1",
+        "4"
+      ],
+      "char_start": 31616,
+      "char_end": 31617,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2922caa1f42d3fc0b0affb8a87621d3a",
+      "kind": "heading",
+      "text": "Score",
+      "order": 161,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score"
+      ],
+      "char_start": 31619,
+      "char_end": 31624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f85d5613fa0b6f0df30050d2d79b129",
+      "kind": "heading",
+      "text": "33",
+      "order": 162,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "33"
+      ],
+      "char_start": 31626,
+      "char_end": 31628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:823f09ba61cf228740ad7b41bd59abcf",
+      "kind": "heading",
+      "text": "46",
+      "order": 163,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "46"
+      ],
+      "char_start": 31630,
+      "char_end": 31632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2224cb329d4df54f80caa285a1d1480",
+      "kind": "heading",
+      "text": "36",
+      "order": 164,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "36"
+      ],
+      "char_start": 31634,
+      "char_end": 31636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ebaf0cbbfc02452639058ed055cd401",
+      "kind": "heading",
+      "text": "20",
+      "order": 165,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "20"
+      ],
+      "char_start": 31638,
+      "char_end": 31640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bcd83295408039e1070aa847b5b2ddd",
+      "kind": "heading",
+      "text": "49",
+      "order": 166,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "49"
+      ],
+      "char_start": 31642,
+      "char_end": 31644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dc06892ff7cfcab4695dc88536664b4",
+      "kind": "heading",
+      "text": "26",
+      "order": 167,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "26"
+      ],
+      "char_start": 31646,
+      "char_end": 31648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:facd8e10aeea624222f9a805002de2b9",
+      "kind": "paragraph",
+      "text": "(d) KeyBag quality",
+      "order": 168,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Score",
+        "26"
+      ],
+      "char_start": 31650,
+      "char_end": 31668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8f709d1591087de2d0d4ae0433c3aeb",
+      "kind": "heading",
+      "text": "Blind",
+      "order": 169,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Blind"
+      ],
+      "char_start": 31670,
+      "char_end": 31675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90fdcea822b7d363487e2fabcfe5168d",
+      "kind": "heading",
+      "text": "Hinted",
+      "order": 170,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31677,
+      "char_end": 31683,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2fa85a895045c83a6be029f57c72ca4",
+      "kind": "caption",
+      "text": "Fig. 4. Quantity over Quality under observability-hinted prompt",
+      "order": 171,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31685,
+      "char_end": 31748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34199373e21f7516d1fb9580d088da3b",
+      "kind": "paragraph",
+      "text": "diagnosis under failure scenarios. E. Implementation and Reproducibility We evaluate three closed-source frontier models: GPT-",
+      "order": 172,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted"
+      ],
+      "char_start": 31750,
+      "char_end": 31876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d45edeb56dfe8a5458159007dcfb953c",
+      "kind": "heading",
+      "text": "[21], Claude Opus 4.8 [22], and Gemini 3.5 Flash [23].",
+      "order": 173,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "[21], Claude Opus 4.8 [22], and Gemini 3.5 Flash [23]."
+      ],
+      "char_start": 31878,
+      "char_end": 31932,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27060038777901deb640b81e02f9bc4f",
+      "kind": "paragraph",
+      "text": "All model calls are made through a unified agent interface based on GitHub Copilot SDK [24], using the model identifiers exposed by the provider at experiment time. For generatedservice experiments, all models share identical task descriptions, prompt templates, repository workspaces, and interaction protocols. The agent operates with repository access and automatic tool-permission approval, and execution traces are recorded for auditing.",
+      "order": 174,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "[21], Claude Opus 4.8 [22], and Gemini 3.5 Flash [23]."
+      ],
+      "char_start": 31934,
+      "char_end": 32376,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62ae2983f2da57ddf3cd0cdff5889e8e",
+      "kind": "heading",
+      "text": "STUDYRESULTS",
+      "order": 175,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Hinted",
+        "STUDYRESULTS"
+      ],
+      "char_start": 32378,
+      "char_end": 32390,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6c357f3ff58a60ff239add62313533b",
+      "kind": "heading",
+      "text": "A. RQ1 Results: Static Observability Restoration",
+      "order": 176,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. RQ1 Results: Static Observability Restoration"
+      ],
+      "char_start": 32392,
+      "char_end": 32440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04c5bfb345865f4aa980d76944e015d0",
+      "kind": "paragraph",
+      "text": "To answer RQ1, we systematically investigate how coding agents perform under the three prompting strategies introduced earlier. We obtain the following findings. Finding 1: Implicit observability awareness exists, but artifact quality remains limited.As shown in Table II, coding agents demonstrate a degree of implicit observability awareness even under theobservability-blindprompt, as they still recover a non-trivial portion of observability-related content. For instance, GPT-5.5 achieves a KeyBag recall of 0.458, while Claude Opus 4.8 reaches positional recall of 0.708, indicating that these models can recognize when observability artifacts are needed even without explicit guidance. However, this awareness does not translate into high-quality outputs. Under blind prompting, the KeyBag F1 scores remain low across all models (0.357 for GPT-5.5, 0.294 for Claude Opus 4.8, and 0.237 for Gemini 3.5 Flash), suggesting that the generated artifacts are frequently incomplete, noisy, or misaligned with the expected key elements. Finding 2: Quantity over Quality under Explicit Instructions.As shown in Fig. 4, explicit instructions (i.e., observability-hinted prompts) primarily encourage increased generation rather than improved quality, compared to implicit instructions (i.e., observability-blind prompts). From the quantity perspective, Fig. 4(a) and (c) show that explicit instructions lead to substantially more generated statements (4.9 vs. 2.1) and KeyBag tokens (22.9 vs. 11.5), indicating clear over-generation. We measure quantity as the",
+      "order": 177,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. RQ1 Results: Static Observability Restoration"
+      ],
+      "char_start": 32442,
+      "char_end": 33998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eed039ed9cb799746a1d232d58587a3f",
+      "kind": "paragraph",
+      "text": "average number of generated observability statements and the number of corresponding KeyBag tokens per instance. However, this increased quantity does not translate into better quality. In Fig. 4(b) and (d), precision drops notably while recall improves only slightly. Specifically, KeyBag recall increases (0.488 vs. 0.458, +0.030), but precision decreases sharply (0.20 vs. 0.33, -0.13), resulting in a lower F1 score (0.26 vs. 0.36, -0.10). A similar pattern is observed for position quality, where F1 also declines (0.51 vs. 0.55, -0.05). This reveals a potential quantity–quality trade-off: explicit instructions push the model toward over-generation, improving coverage at the expense of correctness. Such over-generation not only reduces output quality but also introduces unnecessary computational and post-processing overhead, posing an additional burden on downstream systems.",
+      "order": 178,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. RQ1 Results: Static Observability Restoration"
+      ],
+      "char_start": 34000,
+      "char_end": 34886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caeb69fdd608846883113d89e278a23f",
+      "kind": "heading",
+      "text": "Finding 3: Contextual Few-Shot Improves Both Content",
+      "order": 179,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Finding 3: Contextual Few-Shot Improves Both Content"
+      ],
+      "char_start": 34888,
+      "char_end": 34940,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d8f79818be7cdc18e3b6ad537e1ddb3",
+      "kind": "paragraph",
+      "text": "and Placement Quality.As shown in Table II, Contextual few-shot prompting improves both the content quality and placement accuracy of generated observability artifacts. Compared to implicit instructions, few-shot prompting increases KeyBag F1 from 0.357 to 0.383 (+0.025) and Position F1 from 0.551 to 0.594 (+0.043). These improvements are primarily driven by substantial gains in recall (KeyBag: +0.114; Position: +0.168), while maintaining comparable precision. This suggests that few-shot examples help the model better identify relevant observability signals without introducing excessive noise. We attribute this improvement to the contextual grounding provided by in-context examples, which enables the model to better align with repository-specific observability practices and reduce ambiguity during generation. Finding 4: Placement is Easier than Content Generation. As shown in Table II, across all prompting strategies, Position F1 consistently exceeds KeyBag F1, suggesting that agents more reliably determine where to introduce observability than what observability artifacts to generate. For example, under implicit prompting, Position F1 (0.551) is significantly higher than KeyBag F1 (0.357), with similar gaps under explicit prompting (0.505 vs. 0.260) and few-shot prompting (0.594 vs. 0.383). This reveals a gap between structural understanding and content-level precision, suggesting that coding agents can capture structural signals more reliably than semantic requirements of observability content.",
+      "order": 180,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Finding 3: Contextual Few-Shot Improves Both Content"
+      ],
+      "char_start": 34942,
+      "char_end": 36463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b765a8437986485ccc571b2379df6a5f",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 181,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE II"
+      ],
+      "char_start": 36465,
+      "char_end": 36473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a0853fd9fb7762507b89699ea073a155",
+      "kind": "heading",
+      "text": "PERFORMANCE COMPARISON ACROSS PROMPTING STRATEGIES",
+      "order": 182,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "PERFORMANCE COMPARISON ACROSS PROMPTING STRATEGIES"
+      ],
+      "char_start": 36475,
+      "char_end": 36525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df9294542629fedfb0e72825785c3b27",
+      "kind": "paragraph",
+      "text": "Prompt Model Pos. P Pos. R Pos. F1 KeyBag P KeyBag R KeyBag F1 observability-blind prompt GPT-5.5 0.544 0.606 0.551 0.331 0.458 0.357 Claude Opus 4.8 0.554 0.708 0.580 0.270 0.412 0.294 Gemini 3.5 Flash 0.277 0.333 0.278 0.233 0.262 0.237 observability-hinted prompt GPT-5.5 0.442 0.695 0.505 0.204 0.488 0.260 Claude Opus 4.8 0.426 0.842 0.528 0.243 0.476 0.291 Gemini 3.5 Flash 0.269 0.438 0.307 0.176 0.288 0.197 few-shot examples prompt GPT-5.5 0.530 0.774 0.594 0.334 0.571 0.383 Claude Opus 4.8 0.568 0.816 0.633 0.371 0.518 0.398 Gemini 3.5 Flash 0.409 0.578 0.448 0.349 0.446 0.367",
+      "order": 183,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "PERFORMANCE COMPARISON ACROSS PROMPTING STRATEGIES"
+      ],
+      "char_start": 36527,
+      "char_end": 37116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b81549552ff83509678a041be20f0d78",
+      "kind": "heading",
+      "text": "TABLE III",
+      "order": 184,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE III"
+      ],
+      "char_start": 37118,
+      "char_end": 37127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bc31c1d2ae1d1bd1792fd0279000af7",
+      "kind": "paragraph",
+      "text": "RQ2RUNTIME OBSERVABILITY UNDER FAULT INJECTION.",
+      "order": 185,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE III"
+      ],
+      "char_start": 37129,
+      "char_end": 37176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a98e22b7871836740ed2f6bd0f7762e5",
+      "kind": "heading",
+      "text": "Model Runnable Services FSR Subset FSR",
+      "order": 186,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Runnable Services FSR Subset FSR"
+      ],
+      "char_start": 37178,
+      "char_end": 37216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72eea9dfd1eda19c25fe38c5eeadb391",
+      "kind": "paragraph",
+      "text": "GPT-5.5 151 / 200 4.95% 6.56% Claude Opus 4.8 154 / 200 6.32% 8.28% Gemini 3.5 Flash 136 / 200 13.99% 20.62% Summary.Observability is not a simple instructionfollowing capability but a context-dependent generation problem. Coding agents show partial awareness of observability, but generated artifacts often lack precision and fail to record key diagnostic semantics, reflected in consistently low KeyBag F1 scores. This raises a key question: whether such source-level limitations persist in realistic settings, particularly in the ability of generated systems to expose fault signals during runtime?",
+      "order": 187,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Runnable Services FSR Subset FSR"
+      ],
+      "char_start": 37218,
+      "char_end": 37819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ce2422058a8b6dbaed0150fdbbec51c",
+      "kind": "heading",
+      "text": "B. RQ2 Results: Observability in Agent-Generated Microser-",
+      "order": 188,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. RQ2 Results: Observability in Agent-Generated Microser-"
+      ],
+      "char_start": 37821,
+      "char_end": 37879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:010c41bb0b0f998fc095512d65d53ce0",
+      "kind": "paragraph",
+      "text": "vice Systems To answer RQ2, we evaluate runtime observability using the Fault Signal Rate (FSR), defined as the fraction of intended fault instances for which the generated system emits faultspecific log evidence during the fault window. Each model is evaluated on 1,615 intended fault instances. We report both the overall FSR and the Subset FSR (computed only over successfully executed services). Finding 1: Most injected faults remain unobservable. As shown in Table III, all models exhibit consistently low FSR, ranging from 4.95% to 13.99%. Even when restricting the evaluation to successfully executed services, the bestperforming model achieves only20.62%, indicating that the majority of injected faults are not reflected as explicit fault signals in runtime logs. This result does not imply that generated systems lack logging. Many services emit runtime logs, including request processing events and status codes. However, these logs often do not encode fault-specific semantics that can be attributed to particular failure types. Thus, the limitation is not the absence",
+      "order": 189,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. RQ2 Results: Observability in Agent-Generated Microser-"
+      ],
+      "char_start": 37881,
+      "char_end": 38962,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1941fb3d2cc5d4b6f94e8a37d0ec5d3c",
+      "kind": "caption",
+      "text": "Fig. 5. Representative success and failure cases under the same evaluation.",
+      "order": 190,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "B. RQ2 Results: Observability in Agent-Generated Microser-"
+      ],
+      "char_start": 38964,
+      "char_end": 39039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f19b28ef6683dbd62905b69a35f8c538",
+      "kind": "heading",
+      "text": "TABLE IV",
+      "order": 191,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE IV"
+      ],
+      "char_start": 39041,
+      "char_end": 39049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e15c1e7610187a0d955086660dbc8378",
+      "kind": "paragraph",
+      "text": "PER-FAULTFSR UNDERFAULTINJECTION.",
+      "order": 192,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE IV"
+      ],
+      "char_start": 39051,
+      "char_end": 39084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4410a28f810b7f0cd3ce323320849692",
+      "kind": "heading",
+      "text": "Fault Caught / Total FSR Difficulty",
+      "order": 193,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Caught / Total FSR Difficulty"
+      ],
+      "char_start": 39086,
+      "char_end": 39121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa6976320d7c7d42d1a0b68eb5c4a4bc",
+      "kind": "paragraph",
+      "text": "F03 (upstream fail) 14 / 51 27.45% Easy F01 (pod kill) 122 / 600 20.33% Easy F07 (cache down) 55 / 321 17.13% Easy F08 (cache slow) 46 / 321 14.33% Easy F10 (queue slow) 18 / 198 9.09% Medium F02 (network delay) 53 / 600 8.83% Medium F05 (db down) 32 / 420 7.62% Medium F09 (queue down) 15 / 198 7.58% Medium F06 (db slow) 25 / 420 5.95% Hard F04 (upstream slow) 3 / 51 5.88% Hard F12 (net corrupt) 10 / 555 1.80% Hard F11 (cpu stress) 8 / 555 1.44% Hard F13 (time skew) 7 / 555 1.26% Hard of logging, but the absence of explicit failure semantics in logs. Finding 2: Observable faults are primarily those with explicit error manifestations.FSR varies significantly across fault types (Table IV). Faults that naturally produce explicit errors—such as upstream failures (27.45%), pod crashes (20.33%), and cache outages (17.13%)—achieve substantially",
+      "order": 194,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Fault Caught / Total FSR Difficulty"
+      ],
+      "char_start": 39123,
+      "char_end": 39972,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f045c034159d4ae91c40eefe060c6912",
+      "kind": "heading",
+      "text": "TABLE V",
+      "order": 195,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "TABLE V"
+      ],
+      "char_start": 39974,
+      "char_end": 39981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfc5cf59c3d5ad2516135aaf3c871010",
+      "kind": "heading",
+      "text": "EFFECT OF OBSERVABILITY SKILL ON DIAGNOSTIC SEMANTICS AND",
+      "order": 196,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "EFFECT OF OBSERVABILITY SKILL ON DIAGNOSTIC SEMANTICS AND"
+      ],
+      "char_start": 39983,
+      "char_end": 40040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f4a250a653cce31b11f6f4c69b4506d",
+      "kind": "paragraph",
+      "text": "FAULT SIGNALS.",
+      "order": 197,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "EFFECT OF OBSERVABILITY SKILL ON DIAGNOSTIC SEMANTICS AND"
+      ],
+      "char_start": 40042,
+      "char_end": 40056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fac97efcc179bd5d899b373215401afa",
+      "kind": "heading",
+      "text": "Model Setting Pos F1 KeyBag F1 FSR",
+      "order": 198,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR"
+      ],
+      "char_start": 40058,
+      "char_end": 40092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2d75258823a5e20465242eca2cc875d",
+      "kind": "paragraph",
+      "text": "GPT-5.5 w/o skill 0.594 0.383 4.95% w/ skill 0.597 0.395 13.62% Gain∆0.003∆0.012 +8.67 pp Claude Opus 4.8 w/o skill 0.633 0.398 6.32% w/ skill 0.649 0.407 7.31% Gain∆0.015∆0.009 +0.99 pp Gemini 3.5 Flash w/o skill 0.448 0.367 13.99% w/ skill 0.452 0.371 16.53% Gain∆0.004∆0.004 +2.54 pp higher detection rates, as they directly manifest as connection failures, error responses, or service unavailability.As illustrated in our success cases (Figure 5), when such explicit errors occur, the generated logs successfully capture failure-related semantics (e.g., affected dependencies, concrete timeout messages), allowing the faults to be directly exposed as fault signals. In contrast, faults with weaker or more implicit effects—such as time skew (1.26%), CPU stress (1.44%), and network corruption (1.80%)—exhibit consistently low coverage. These faults do not inherently generate explicit error messages and can only be observed if the system proactively records additional runtime context. Finding 3: Generated logs lack diagnostic semantics.Although generated systems frequently emit runtime logs, these logs rarely include the information required to distinguish between different failure types. In particular, generated logs seldom explicitly encode affected dependencies, failure modes, or abnormal system conditions. This is clearly demonstrated in our failure cases (Figure 5): the system emits multiple runtime logs (e.g., request events, normal HTTP 201 status codes), but completely lacks explicit failure semantics (e.g., timestamp",
+      "order": 199,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR"
+      ],
+      "char_start": 40094,
+      "char_end": 41636,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a5a9070e5529691da6e5990353c7e95",
+      "kind": "paragraph",
+      "text": "mismatches or clock drift). The logs exist in abundance, but they are semantically hollow regarding the actual fault. As a result, even when faults occur and logs are present, the available information is often insufficient to determine what kind of failure has happened. This observation is consistent with the pattern in Finding 2: faults that inherently produce explicit errors can still be detected, whereas faults requiring contextual interpretation remain unobservable because the generated logs fail to express the necessary failure-relevant information. Summary.The observability of microservices generated by current coding agents appears limited, with at most 13.99% of injected faults being exposed. This limitation does not seem to arise from the absence of logs, but is associated with the inability of logs to capture fault-relevant signals. This finding is consistent with the low KeyBag F1 scores observed in RQ1.",
+      "order": 200,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR"
+      ],
+      "char_start": 41638,
+      "char_end": 42567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1bf2a194097da0d00c20f5ff8e2b13f6",
+      "kind": "heading",
+      "text": "RQ3 Results: Observability-Oriented Guidance",
+      "order": 201,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "RQ3 Results: Observability-Oriented Guidance"
+      ],
+      "char_start": 42569,
+      "char_end": 42613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7650f2229e7f02593783737fa1ea3115",
+      "kind": "paragraph",
+      "text": "RQ1 shows the limitations in generating diagnostic semantics, and RQ2 shows that generated systems exhibit low FSR under failures. To examine whether such limitations can be easily mitigated, we evaluate whether or not an explicit observability skill can improve system observability under the same setting. The results are shown in Table V. Finding 1: Improvements in fault signals.Observability skill improves FSR across all evaluated coding agents. GPT-",
+      "order": 202,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "RQ3 Results: Observability-Oriented Guidance"
+      ],
+      "char_start": 42615,
+      "char_end": 43071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48d5c1fe8615558c224018a17665ec42",
+      "kind": "heading",
+      "text": "increases from 4.95% to 13.62% (+8.67 pp), Claude Opus",
+      "order": 203,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "increases from 4.95% to 13.62% (+8.67 pp), Claude Opus"
+      ],
+      "char_start": 43073,
+      "char_end": 43127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f0650a6688e4a18268475ecd0f164c9",
+      "kind": "heading",
+      "text": "from 6.32% to 7.31% (+0.99 pp), and Gemini 3.5 Flash",
+      "order": 204,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "from 6.32% to 7.31% (+0.99 pp), and Gemini 3.5 Flash"
+      ],
+      "char_start": 43129,
+      "char_end": 43181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e2cdffadf153df6360f6f0c823e3067",
+      "kind": "paragraph",
+      "text": "from 13.99% to 16.53% (+2.54 pp). However, the overall FSR remains relatively low. Finding 2: Limited improvements in diagnostic semantics.In addition to FSR, both Pos F1 and KeyBag F1 show small but consistent improvements across models (see Table V), indicating that observability skill can partially enhance source-level diagnostic semantics. Summary.Overall, observability skill improves FSR, Pos F1, and KeyBag F1 to a limited extent. While these results suggest that skill-based guidance can enhance observability, the remaining gap indicates substantial room for future methods to further improve observability-aware code generation.",
+      "order": 205,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "from 6.32% to 7.31% (+0.99 pp), and Gemini 3.5 Flash"
+      ],
+      "char_start": 43183,
+      "char_end": 43823,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64ec27886ec39137e94588d0f717ee75",
+      "kind": "heading",
+      "text": "DISCUSSION ANDTHREATS TOVALIDITY",
+      "order": 206,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Model Setting Pos F1 KeyBag F1 FSR",
+        "DISCUSSION ANDTHREATS TOVALIDITY"
+      ],
+      "char_start": 43825,
+      "char_end": 43857,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:140be08652a74d149ce2449e4581a53f",
+      "kind": "heading",
+      "text": "A. Discussion",
+      "order": 207,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 43859,
+      "char_end": 43872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9fada741886cc57ba664cac56834e75",
+      "kind": "paragraph",
+      "text": "This study examines the observability of agent-generated microservice systems from two complementary perspectives. At the source-code level, observability restoration evaluates whether coding agents can recover the diagnostic semantics embedded in human-written observability code. The results show that agents are able to restore only part of these observability artifacts, indicating limited capability in encoding faultrelevant diagnostic semantics. At the system level, observability evaluation measures whether the generated systems expose actionable fault signals during failures. Despite producing runnable systems with abundant logging output, the generated systems expose fault signals for only a small fraction of injected faults. Taken together, these findings suggest that current coding agents remain insufficient in generating observability that effectively supports failure diagnosis. To investigate whether this limitation can be mitigated during generation, we introduce lightweight observabilityoriented skills. Although these skills consistently improve FSR, Position F1, and KeyBag F1, the overall gains remain modest. This suggests that simply augmenting prompts with observability-related guidance is insufficient to substantially improve diagnostic quality. Instead, generating effective observability appears to require deeper reasoning about failure propagation, runtime states, and diagnostic semantics, which current prompt-level interventions do not fully provide. Overall, our findings indicate that observability should be",
+      "order": 208,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 43874,
+      "char_end": 45426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99137ac76640ab70ee2b9d373d4cfcc9",
+      "kind": "paragraph",
+      "text": "considered an independent capability of coding agents rather than a by-product of functional code generation. Future research may require integrating failure-aware reasoning or runtime feedback into the generation process, instead of relying solely on prompt engineering.",
+      "order": 209,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 45428,
+      "char_end": 45699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:500f4358d2ba87a7ab55dea0008e8ee5",
+      "kind": "paragraph",
+      "text": "One possible explanation is that observability is rarely represented as an independent objective in the training data. In realworld software repositories, logging and other observabilityrelated code are typically developed together with functional code and are gradually refined during software evolution. Consequently, coding agents may learn where observability components are usually inserted, allowing them to reproduce common logging structures, while failing to infer what diagnostic information should be recorded for specific failures. Another possible explanation is that current coding agents primarily learn from static source code rather than runtime system behavior. Effective observability depends on understanding how failures manifest during execution and which runtime states provide actionable diagnostic evidence. Without deploymentor execution feedback during training, agents may lack sufficient knowledge to reason about failure propagation, resulting in logs that execute correctly but rarely expose informative fault signals. B. Threats to V alidity We have identified the following major threats to validity. Oracle-based FSR may miss valid fault signals.The definition of Fault Signals Rate (FSR) relies on fault-specific oracles to identify valid fault signals. Although the oracle is constructed based on failure-relevant patterns, it may not capture all possible forms of valid signals. In particular, some logs may contain partial or indirect information that does not satisfy the oracle criteria and is therefore counted asno signal.",
+      "order": 210,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 45701,
+      "char_end": 47265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4db2d498ee901d50abd36d9ddd22100c",
+      "kind": "paragraph",
+      "text": "However, since the same oracle is consistently applied across all evaluated settings, and our goal is to measure the presence of actionable fault signals rather than arbitrary logging outputs, the relative comparisons and overall trends remain stable. Human-written observability does not represent an optimal upper bound.Our study derives diagnostic semantics (KeyBags) from human-written code. Many of these observability-related signals are introduced or refined after faults have occurred, reflecting practical debugging and operational processes. While such code captures realistic engineering practice, it does not guarantee complete or optimal observability. In some cases, human-written systems may still omit fault-relevant signals or include redundant logging. Therefore, our evaluation reflects alignment with practical engineering standards rather than an ideal ground truth. Importantly, coding agents still fail to reproduce these practical diagnostic patterns even under simplified settings such as observability reconstruction, suggesting that the observed limitation is unlikely to be caused by the choice of reference. Randomness of LLM-based generation may affect FSR. Coding agents based on large language models exhibit inherent randomness in generation. Variations in decoding may affect the placement and content of generated logs, which in turn can influence the observed FSR. To mitigate this effect, we follow previous works [25] and repeat each experiment five times, reporting the average results. We further note that LLM",
+      "order": 211,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 47267,
+      "char_end": 48817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbd62fecfff81c13e5fbecb580c595d4",
+      "kind": "paragraph",
+      "text": "hallucination [26], [27] may introduce additional variability in generated logs; however, the consistency of trends across repeated runs suggests that randomness does not materially affect our conclusions.",
+      "order": 212,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion"
+      ],
+      "char_start": 48819,
+      "char_end": 49024,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bc943ffde002003597e9d592528464a",
+      "kind": "heading",
+      "text": "RELATED WORK",
+      "order": 213,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion",
+        "RELATED WORK"
+      ],
+      "char_start": 49026,
+      "char_end": 49038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:022eaf06dda3f07f05f14467b5e34c9f",
+      "kind": "paragraph",
+      "text": "Evaluation of Coding Agents:The rapid advancement of large language models has led to a wide range of benchmarks [28], [29], [30], [31], [32] for evaluating coding agents. Early studies primarily focused on function-level code generation, with datasets such as HumanEval [33] and Terminal- Bench [34] assessing functional correctness through unit test pass rates. These benchmarks emphasize whether generated programs execute correctly, but largely abstract away systemlevel complexity. More recent repository-level benchmarks such as SWE-Bench [35] extend evaluation to realistic software engineering tasks, where agents are required to resolve issues in full GitHub repositories. This line of work better captures engineering complexity, but evaluation remains largely centered on task completion or patch correctness. As a result, they provide limited insight into runtime behavior under failure conditions, particularly whether generated systems expose fault signals for debugging. This reveals a gap between functional correctness-oriented evaluation and observability in real-world deployment scenarios.",
+      "order": 214,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "A. Discussion",
+        "RELATED WORK"
+      ],
+      "char_start": 49040,
+      "char_end": 50149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9ff02df450da0a3e873f55290b12729",
+      "kind": "heading",
+      "text": "Software Observability and Logging Practices:Software",
+      "order": 215,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Software Observability and Logging Practices:Software"
+      ],
+      "char_start": 50151,
+      "char_end": 50204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2b3df07a1f2d672f9a3e47ec46ddc1f",
+      "kind": "paragraph",
+      "text": "observability, particularly logging, is a fundamental practice for understanding and debugging complex systems. Prior work shows that effective logs should provide rich contextual information, such as variable states, dependency interactions, and error propagation paths, rather than simple execution traces [36]. As systems evolve toward distributed and microservice architectures, observability becomes increasingly critical, since failures often arise from cross-service interactions [37]. Moreover, logging is typically not designed upfront but evolves iteratively as developers encounter failures and augment instrumentation with additional diagnostic context. Log Analysis and Instrumentation:Automated log analysis has evolved from heuristic methods to recent deep learning and large language models, demonstrating strong semantic reasoning in Log Parsing [38], [39], [40], Log Anomaly Detection [41], [42], [43], [44], [45], [46], [47], [48], [49], [50], and Root Cause Analysis [51], [52], [53]. Despite these advances, log analysis and instrumentation remain largely decoupled. Existing instrumentation approaches focus on surface-level patterns and rarely ensure that generated logs encode sufficient failure-relevant semantics for effective runtime diagnosis. As a result, whether automated coding agents can generate observability artifacts with rich diagnostic semantics remains an open question.",
+      "order": 216,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Software Observability and Logging Practices:Software"
+      ],
+      "char_start": 50206,
+      "char_end": 51616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ef81ab6a69eef7de67a236de334a2d8",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 217,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Software Observability and Logging Practices:Software",
+        "CONCLUSION"
+      ],
+      "char_start": 51618,
+      "char_end": 51628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f5fda643aec622f7a566e9c6d1e334f",
+      "kind": "paragraph",
+      "text": "In this paper, we present a systematic study of observability in code generated by coding agents. The lack of diagnostic semantics observed in source-level observability restoration, together with the low FSR under fault injection, suggests that current coding agents generate code withlimited observability. We further introduce a lightweight observability-",
+      "order": 218,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Software Observability and Logging Practices:Software",
+        "CONCLUSION"
+      ],
+      "char_start": 51630,
+      "char_end": 51988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af57470942e172fef9d5f5d23155e354",
+      "kind": "paragraph",
+      "text": "oriented guidance, which improves both diagnostic semantics and fault signals exposure. While these results demonstrate the potential of observability-oriented guidance, they also show that the improvements remain limited, and reveal substantial room for future research toward enabling coding agents to consistently generate observability-aware code. We call for future research to focus on enabling coding agents to generate observability-aware code that can consistently produce fault signals reflecting underlying failures.",
+      "order": 219,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "Software Observability and Logging Practices:Software",
+        "CONCLUSION"
+      ],
+      "char_start": 51990,
+      "char_end": 52517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa7179ab7e3ef7de9dfc1b2bb74a1102",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 220,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES"
+      ],
+      "char_start": 52519,
+      "char_end": 52529,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90c2384b4a507ecc47e6f112a48a6f4f",
+      "kind": "reference",
+      "text": "[1] Microsoft, “Microsoft copilot,” https://copilot.microsoft.com, 2026. [2] Cursor, “Cursor,” https://cursor.com, 2026. [3] Anthropic, “Claude code,” https://www.anthropic.com/claude-code, 2026, accessed: 2026. [4] OpenTelemetry, “opentelemetry-demo,” gitHub repository. Available: https://github.com/open-telemetry/opentelemetry-demo. Accessed: July 2026. [5] GoogleCloudPlatform, “microservices-demo,” gitHub repository. Available: https://github.com/GoogleCloudPlatform/microservices-demo. Accessed: July 2026. [6] Delimitrou Lab, “Deathstarbench,” gitHub repository. Available: https: //github.com/delimitrou/DeathStarBench. Accessed: July 2026. [7] dotnet, “eshop,” gitHub repository. Available: https://github.com/dotnet/ eShop. Accessed: July 2026. [8] golevelup, “nestjs,” gitHub repository. Available: https://github.com/ golevelup/nestjs. Accessed: July 2026. [9] Robusta Dev, “robusta,” gitHub repository. Available: https://github.com/ robusta-dev/robusta. Accessed: July 2026. [10] microservices-demo, “microservices-demo,” gitHub repository. Available: https://github.com/microservices-demo/microservices-demo. Accessed: July 2026. [11] FudanSELab, “train-ticket,” gitHub repository. Available: https://github. com/FudanSELab/train-ticket. Accessed: July 2026. [12] Strapi, “strapi,” gitHub repository. Available: https://github.com/strapi/ strapi. Accessed: July 2026. [13] Vector.dev, “vector,” gitHub repository. Available: https://github.com/ vectordotdev/vector. Accessed: July 2026. [14] C. M. Authors, “Chaos mesh,” https://github.com/chaos-mesh/",
+      "order": 221,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES"
+      ],
+      "char_start": 52531,
+      "char_end": 54099,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aad88e7ce9a26a77703e93cb874d12ae",
+      "kind": "paragraph",
+      "text": "chaos-mesh, gitHub repository, accessed July 2026. [15] Y . Sui, Y . Zhang, J. Sun, T. Xu, S. Zhang, Z. Li, Y . Sun, F. Guo, J. Shen, Y . Zhanget al., “Logkg: Log failure diagnosis through knowledge graph,”IEEE Transactions on Services Computing (TSC), 2023. [16] J. Huang, J. Liu, Z. Chen, Z. Jiang, Y . Li, J. Gu, C. Feng, Z. Yang, Y . Yang, and M. R. Lyu, “Faultprofit: Hierarchical fault profiling of incident tickets in large-scale cloud systems,” ser. ICSE-SEIP ’24. Association for Computing Machinery, 2024, p. 392–404. [17] Q. Zhang, T. Jia, Z. Wu, Q. Wu, L. Jia, D. Li, Y . Tao, and Y . Xiao, “Fault localization for microservice applications with system logs and monitoring metrics,” in2022 7th International Conference on Cloud Computing and Big Data Analytics (ICCCBDA), 2022, pp. 149–154. [18] Y . Chen, H. Xie, M. Ma, Y . Kang, X. Gao, L. Shi, Y . Cao, X. Gao, H. Fan, M. Wen, J. Zeng, S. Ghosh, X. Zhang, C. Zhang, Q. Lin, S. Rajmohan, D. Zhang, and T. Xu, “Automatic root cause analysis via large language models for cloud incidents,” ser. EuroSys ’24, New York, NY , USA, 2024, p. 674–688. [19] D. Liu, C. He, X. Peng, F. Lin, C. Zhang, S. Gong, Z. Li, J. Ou, and Z. Wu, “Microhecl: High-efficient root cause localization in largescale microservice systems,” in2021 IEEE/ACM 43rd International Conference on Software Engineering: Software Engineering in Practice (ICSE-SEIP), 2021, pp. 338–347. [20] X. Zhou, X. Peng, T. Xie, J. Sun, C. Ji, D. Liu, Q. Xiang, and",
+      "order": 222,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES"
+      ],
+      "char_start": 54101,
+      "char_end": 55581,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6be544fab41b7a5323d4f7025f8b29f",
+      "kind": "heading",
+      "text": "He, “Latent error prediction and fault localization for microservice",
+      "order": 223,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES",
+        "He, “Latent error prediction and fault localization for microservice"
+      ],
+      "char_start": 55583,
+      "char_end": 55651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19261e132b24d93f545ab5459ad001e3",
+      "kind": "paragraph",
+      "text": "applications by learning from system trace logs,” inProceedings of the 2019 27th ACM Joint Meeting on European Software Engineering Conference and Symposium on the F oundations of Software Engineering, ser. ESEC/FSE 2019. New York, NY , USA: Association for Computing Machinery, 2019, p. 683–694. [21] OpenAI, “Openai official website,” https://openai.com, 2026. [22] Anthropic, “Claude,” https://www.anthropic.com/claude, 2026. [23] G. DeepMind, “Gemini,” https://deepmind.google/technologies/gemini/, 2026. [24] GitHub, “Copilot sdk,” https://github.com/github/copilot-sdk, gitHub repository, accessed July 2026. [25] Y . Liu, Y . Ji, S. Tao, M. He, W. Meng, S. Zhang, Y . Sun, Y . Xie, B. Chen, and H. Yang, “Loglm: From task-based to instruction-based automated log analysis,” 2025. [Online]. Available: https://arxiv.org/abs/2410.09352 [26] B. Galitsky, A. Chernyavskiy, and D. Ilvovsky, “Truth-o-meter: Handling multiple inconsistent sources repairing llm hallucinations,” inProceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, 2024, p. 2817–2821. [27] C. S. Xia, M. Paltenghi, J. Le Tian, M. Pradel, and L. Zhang, “Fuzz4all: Universal fuzzing with large language models,” inProceedings of the IEEE/ACM 46th International Conference on Software Engineering, 2024, pp. 1–13. [28] N. Jain, K. Han, A. Gu, W.-D. Li, F. Yan, T. Zhang, S. Wang, A. Solar-Lezama, K. Sen, and I. Stoica, “Livecodebench: Holistic and contamination free evaluation of large language models for code,”",
+      "order": 224,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES",
+        "He, “Latent error prediction and fault localization for microservice"
+      ],
+      "char_start": 55653,
+      "char_end": 57193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38c81e1c0c7688ec7cb86856f56c806d",
+      "kind": "heading",
+      "text": "[Online]. Available: https://arxiv.org/abs/2403.07974",
+      "order": 225,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES",
+        "[Online]. Available: https://arxiv.org/abs/2403.07974"
+      ],
+      "char_start": 57195,
+      "char_end": 57248,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50905c7664e3d43ce4e2b96c99674943",
+      "kind": "paragraph",
+      "text": "[29] H. Chen, C. Li, and J. Li, “Featbench: Towards more realistic evaluation of feature-level code generation.” [Online]. Available: https://arxiv.org/abs/2509.22237 [30] J. Austin, A. Odena, M. Nye, M. Bosma, H. Michalewski, D. Dohan,",
+      "order": 226,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "REFERENCES",
+        "[Online]. Available: https://arxiv.org/abs/2403.07974"
+      ],
+      "char_start": 57250,
+      "char_end": 57486,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68c56d048a9aae8d427be39fc8074709",
+      "kind": "heading",
+      "text": "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program",
+      "order": 227,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program"
+      ],
+      "char_start": 57488,
+      "char_end": 57546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f834ae079d9e98386e36ea9db166113",
+      "kind": "paragraph",
+      "text": "synthesis with large language models,” 2021. [Online]. Available: https://arxiv.org/abs/2108.07732 [31] J. Li, G. Li, Y . Zhao, Y . Li, H. Liu, H. Zhu, L. Wang, K. Liu, Z. Fang,",
+      "order": 228,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program"
+      ],
+      "char_start": 57548,
+      "char_end": 57725,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d7da6c7b6c80c4c39825684ff147a91",
+      "kind": "heading",
+      "text": "Wang, J. Ding, X. Zhang, Y . Zhu, Y . Dong, Z. Jin, B. Li, F. Huang,",
+      "order": 229,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program",
+        "Wang, J. Ding, X. Zhang, Y . Zhu, Y . Dong, Z. Jin, B. Li, F. Huang,"
+      ],
+      "char_start": 57727,
+      "char_end": 57795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44df202c900a6cd605d6d55f7c548ad8",
+      "kind": "paragraph",
+      "text": "and Y . Li, “Deveval: A manually-annotated code generation benchmark aligned with real-world code repositories,” 2024. [Online]. Available: https://arxiv.org/abs/2405.19856 [32] H. Yu, B. Shen, D. Ran, J. Zhang, Q. Zhang, Y . Ma, G. Liang, Y . Li, Q. Wang, and T. Xie, “Codereval: A benchmark of pragmatic code generation with generative pre-trained models,” inProceedings of the IEEE/ACM 46th International Conference on Software Engineering, ser. ICSE ’24. New York, NY , USA: Association for Computing Machinery,",
+      "order": 230,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program",
+        "Wang, J. Ding, X. Zhang, Y . Zhu, Y . Dong, Z. Jin, B. Li, F. Huang,"
+      ],
+      "char_start": 57797,
+      "char_end": 58312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe65c9bbb7101c8fa98ae42b234928c9",
+      "kind": "heading",
+      "text": "[Online]. Available: https://doi.org/10.1145/3597503.3623316",
+      "order": 231,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program",
+        "[Online]. Available: https://doi.org/10.1145/3597503.3623316"
+      ],
+      "char_start": 58314,
+      "char_end": 58374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d221dedec8d57ea1b554c9f622c5924c",
+      "kind": "paragraph",
+      "text": "[33] M. Chen, J. Tworek, H. Junet al., “Evaluating large language models trained on code,” 2021. [Online]. Available: https://arxiv.org/abs/2107. 03374 [34] M. A. Merrill, A. G. Shaw, N. Carliniet al., “Terminal-bench: Benchmarking agents on hard, realistic tasks in command line interfaces,” 2026. [Online]. Available: https://arxiv.org/abs/2601.11868 [35] C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, and K. Narasimhan, “Swe-bench: Can language models resolve real-world github issues?” 2024. [Online]. Available: https://arxiv.org/abs/2310. 06770 [36] Q. Fu, J. Zhu, W. Hu, J.-G. Lou, R. Ding, Q. Lin, D. Zhang, and T. Xie, “Where do developers log? an empirical study on logging practices in industry,” pp. 24–33, 2014. [Online]. Available: https://doi.org/10.1145/2591062.2591175 [37] U. Faseeha, H. Jamil Syed, F. Samad, S. Zehra, and H. Ahmed, “Observability in microservices: An in-depth exploration of frameworks, challenges, and deployment paradigms,”IEEE Access, vol. 13, pp.",
+      "order": 232,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "E. Jiang, C. Cai, M. Terry, Q. Le, and C. Sutton, “Program",
+        "[Online]. Available: https://doi.org/10.1145/3597503.3623316"
+      ],
+      "char_start": 58376,
+      "char_end": 59378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0199238a67100dab4b0be98afd22e5dd",
+      "kind": "heading",
+      "text": "011–72 039, 2025.",
+      "order": 233,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "011–72 039, 2025."
+      ],
+      "char_start": 59380,
+      "char_end": 59397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2ef29fad06a0383a258db4cd72e6dad",
+      "kind": "paragraph",
+      "text": "[38] P. He, J. Zhu, Z. Zheng, and M. R. Lyu, “Drain: An online log parsing approach with fixed depth tree,” in2017 IEEE International Conference on Web Services (ICWS). IEEE, 2017, pp. 33–40. [39] Z. Jiang, J. Liu, J. Huang, Y . Li, Y . Huo, J. Gu, Z. Chen, J. Zhu, and M. R. Lyu, “A large-scale evaluation for log parsing techniques: How far are we?” inProc. International Symposium on Software Testing and Analysis (ISSTA), 2024. [40] Z. Ma, A. R. Chen, D. J. Kim, T.-H. Chen, and S. Wang, “Llmparser: An exploratory study on using large language models for log parsing,” inProceedings of the IEEE/ACM 46th International Conference on Software Engineering. ACM, Apr. 2024. [Online]. Available: http://dx.doi.org/10.1145/3597503.3639150 [41] W. Guan, J. Cao, S. Qian, J. Gao, and C. Ouyang, “Logllm: Log-based anomaly detection using large language models.” [Online]. Available: https://arxiv.org/abs/2411.08561 [42] Y . Liu, S. Tao, W. Meng, F. Yao, X. Zhao, and H. Yang, “Logprompt: Prompt engineering towards zero-shot and interpretable log analysis,” in",
+      "order": 234,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "011–72 039, 2025."
+      ],
+      "char_start": 59399,
+      "char_end": 60457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa3755fe6fa2e5822f8daa036479d01c",
+      "kind": "heading",
+      "text": "IEEE/ACM 46th International Conference on Software Engineer-",
+      "order": 235,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "IEEE/ACM 46th International Conference on Software Engineer-"
+      ],
+      "char_start": 60459,
+      "char_end": 60519,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d4c25442b4d4bc1a609378e6f4bc77a",
+      "kind": "paragraph",
+      "text": "ing: Companion Proceedings (ICSE-Companion), 2024, pp. 364–365. [43] J. Pan, W. S. Liang, and Y . Yidi, “Raglog: Log anomaly detection using retrieval augmented generation,” in2024 IEEE World F orum on Public Safety Technology (WFPST), 2024, pp. 169–174. [44] X. Li, P. Chen, L. Jing, Z. He, and G. Yu, “Swisslog: Robust and unified deep learning based log anomaly detection for diverse faults,” in2020 IEEE 31st International Symposium on Software Reliability Engineering (ISSRE). IEEE, 2020, pp. 92–103. [45] Q. Lin, H. Zhang, J.-G. Lou, Y . Zhang, and X. Chen, “Log clustering based problem identification for online service systems,” inProceedings of the 38th International Conference on Software Engineering Companion, ser. ICSE ’16, 2016, p. 102–111. [46] Y . Huo, C. Lee, Y . Su, S. Shan, J. Liu, and M. R. Lyu, “Evlog: Identifying anomalous logs over software evolution,” in2023 IEEE 34th International Symposium on Software Reliability Engineering (ISSRE), 2023, pp. 391–402. [47] J.-G. Lou, Q. Fu, S. Yang, Y . Xu, and J. Li, “Mining invariants from console logs for system problem detection.” inUSENIX Annual Technical Conference, 2010, pp. 1–14. [48] M. Du, F. Li, G. Zheng, and V . Srikumar, “Deeplog: Anomaly detection and diagnosis from system logs through deep learning,” inProceedings of the 2017 ACM SIGSAC Conference on Computer and Communications Security, 2017, p. 1285–1298. [49] H. Studiawan, F. Sohel, and C. Payne, “Anomaly detection in operating system logs with deep learning-based sentiment analysis,”IEEE",
+      "order": 236,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "IEEE/ACM 46th International Conference on Software Engineer-"
+      ],
+      "char_start": 60521,
+      "char_end": 62054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d3564789d3f4c56fc66a31772d65613",
+      "kind": "paragraph",
+      "text": "Transactions on Dependable and Secure Computing, vol. 18, no. 5, pp. 2136–2148, 2021. [50] L. Yang, J. Chen, Z. Wang, W. Wang, J. Jiang, X. Dong, and W. Zhang, “Plelog: Semi-supervised log-based anomaly detection via probabilistic label estimation,” in2021 IEEE/ACM 43rd International Conference on Software Engineering: Companion Proceedings (ICSE-Companion), 2021, pp. 230–231. [51] C. Lee, T. Yang, Z. Chen, Y . Su, and M. R. Lyu, “Eadro: An endto-end troubleshooting framework for microservices on multi-source data,” inProceedings of the 45th International Conference on Software Engineering, ser. ICSE ’23, 2023, p. 1750–1762. [52] C. Zhang, X. Peng, C. Sha, K. Zhang, Z. Fu, X. Wu, Q. Lin, and D. Zhang, “Deeptralog: Trace-log combined microservice anomaly detection through graph-based deep learning,” in2022 IEEE/ACM 44th International Conference on Software Engineering (ICSE), 2022, pp. 623–634. [53] Y . Meng, S. Zhang, Y . Sun, R. Zhang, Z. Hu, Y . Zhang, C. Jia, Z. Wang, and D. Pei, “Localizing failure root causes in a microservice through causality inference,” in2020 IEEE/ACM 28th International Symposium on Quality of Service (IWQoS), 2020, pp. 1–10.",
+      "order": 237,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Can Large Language Models Generate",
+        "IEEE/ACM 46th International Conference on Software Engineer-"
+      ],
+      "char_start": 62056,
+      "char_end": 63225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 12,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 12
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.05785",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 12,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

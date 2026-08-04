@@ -1,0 +1,4119 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "97739df28048ce6c9441a8f2f7e595dcbbad2c676e320631170344410d9387c2",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:bd3c3ea077cc9408c9a59d85143d54a3",
+      "kind": "paragraph",
+      "text": "PatchOptic for Shared-State LLM Workflows with Projected Views and Verified Structured Updates Zhaoyu Bai*1 and Jiaqi Cai ∗2 1Department of Particle Physics and Astrophysics, Weizmann Institute of Science, Rehovot, Israel, 7610001 2Department of Physics, Massachusetts Institute of Technology, Cambridge, MA, USA, 02139",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fd3349abe9946478b4b49214abe9a8d",
+      "kind": "heading",
+      "text": "06-30",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30"
+      ],
+      "char_start": 321,
+      "char_end": 326,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cd084640cf07e511b76dfd2ba612702",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Abstract"
+      ],
+      "char_start": 328,
+      "char_end": 336,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36003a697a126d9b09b13d0ddad3aae9",
+      "kind": "paragraph",
+      "text": "Agentic workflows often operate over shared, structured state [1–3]. Because LLM context windows are limited, each model invocation is typically shown only the state fragment needed for the current workflow step, a pattern commonly known as progressive disclosure. Modern systems construct such model-facing views using grep-like keyword search, retrieval-augmented generation (RAG), abstract-syntax-tree (AST) queries, and task-specific agent skills. These methods make the read side manageable, but they do not define when a locally proposed rewrite is valid after it is applied back to the full state. The missing piece is a contract between local updates and global validity. We introduce PatchOptic, an optic-inspired interface for shared-state LLM workflows. Optics are compositional bidirectional accessors that describe how views of structured data are read and updated. PatchOptic borrows this view/update intuition and realizes it through projected reads and verified structured patches. Each workflow step declares a projected read view, an authorized write region, and a patch-source region. The actor sees only the projected view, while the verifier checks each proposed patch against the full state before commit. Beyond runtime enforcement, the same declaration yields a path-level footprint that supports delegation, sub-workflow composition, and static certificates for reordering independent steps within the same phase. We evaluate this design with PatchBench, a benchmark with",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Abstract"
+      ],
+      "char_start": 338,
+      "char_end": 1834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68e75be11fa8181da73f904c78a597cf",
+      "kind": "heading",
+      "text": "cases across domains. The results show that projected reads reduce reported leakage and",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "cases across domains. The results show that projected reads reduce reported leakage and"
+      ],
+      "char_start": 1836,
+      "char_end": 1923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:68550ef0789cf5f4807312ee415cc6ec",
+      "kind": "paragraph",
+      "text": "token cost while preserving accepted-output quality under the strong actor. Runtime verification blocks declared workflow-contract violations before commit, and patch-read enforcement rejects compromised patch artifacts that use hidden sources. Together, these results pave the way for safely using LLM workflow agents in large shared-state systems, where local actions can be composed, delegated, and verified through explicit workflow footprints.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "cases across domains. The results show that projected reads reduce reported leakage and"
+      ],
+      "char_start": 1925,
+      "char_end": 2373,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d536904eb867c0477f4746b684bc137",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 2375,
+      "char_end": 2387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e95e3f222f4eaec4d31b349d5726c491",
+      "kind": "paragraph",
+      "text": "Progressive disclosure is now common in agentic workflows. Because LLM context windows are limited, systems typically expose to each model invocation only the fragment of the full state needed for the current step. For example, RAG retrieves relevant corpus passages, agent skills provide task-specific tools and instructions, and syntax-aware AST queries expose relevant code structure. These techniques make the read side manageable [4–9]. The write side is less settled. In a multi-step ∗Corresponding authors’ emails:jiaqic@mit.edu;zhaoyu.bai@weizmann.ac.il 1",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 2389,
+      "char_end": 2952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32e85e9353f7df5b00d4554a3787aa7d",
+      "kind": "table",
+      "text": "arXiv:2607.05483v1  [cs.LG]  6 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 2954,
+      "char_end": 2993,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed21aadd123749e3572d0b5945736147",
+      "kind": "paragraph",
+      "text": "workflow over shared structured state [1–3], an agent often proposes an update based only on the fragment it was shown. With only that fragment, the agent may miss how the proposed write relates to the rest of the state, including dependencies, schema, phase, references, and permissions. Judging global validity from this local view places a heavy cognitive burden on the agent. Recent agent benchmarks evaluate this multi-step stateful regime [7,10–13]. Prompt-injection work studies a related class of failures in which untrusted context affects agent behavior [14–16]. Existing controls cover only parts of this problem. Schema validators can check output structure and some local value constraints, but they do not by themselves establish that the values are semantically correct or derived from authorized state [17]. Constrained decoding can restrict the syntax of the generated string, but it does not verify the provenance or authorization of the state values used to construct that string [18,19]. Used alone, these mechanisms remain local to the generated artifact or to a single transition. We still need a way to judge a local write against the whole state and to scale that judgment across a multi-step, multi-agent workflow. Closing both gaps requires a contract that connects local rewrites to global validity and composes across steps. We propose PatchOptic, an optic-inspired step interface for shared-state workflows. Optics are compositional bidirectional accessors that describe how views of structured data are read and",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 2995,
+      "char_end": 4536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7a2832b73c05d91737df0ceb6266757",
+      "kind": "paragraph",
+      "text": "updated [20,21]. PatchOptic borrows this view/update intuition, then realizes it through projected views and patch verification. For each workflow step, the actor receives a local view, while its proposed write is checked against the whole state before commit. At runtime, PatchOptic gives the model only the projected view for its step. The model returns a patch, and the verifier checks that patch against the whole state before commit. The same step contract determines both sides of the interface. It contains an optic-inspired authority triple together with phase constraints, schemas, applicability checks, and invariant predicates. The authority triple defines the projected-read view, write scope, and patch-source paths (Figure 1). For static reasoning, each step also has afootprintthat records projected-read, write, and patch-source paths. Footprints support restriction for delegation and union for peer composition. They also give a static commutation check when two steps have disjoint writes and neither reads what the other writes. Contributions. (i) A runtime mechanism that couples projected views with verified JSON Patch writes over shared state, with structured traces that record projected views, proposed patches, verifier decisions, and rejection diagnostics. (ii) A footprint algebra for declared projected-read, write, and patch-source regions. It supports delegated restriction, peer composition by union, data-dependent regions, and same-phase reordering certificates. (iii) PatchBench, a 46-case benchmark spanning six domains, and an evaluation protocol that",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 4538,
+      "char_end": 6127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7171845382d02b074c3376086f46a00d",
+      "kind": "paragraph",
+      "text": "separates live actor runs from no-model compromised-artifact tests. Projected-read settings raise accepted-output semantic pass from about 0.61 to 0.78–0.80 under GPT-5-mini. PatchOptic combines this read-side benefit with runtime verification, reducing leak runs to 0.1 per round and rejecting all hidden-source patch artifacts in the containment test. The rest of the paper is organized as follows. Section 2 defines the shared-state workflow setting, the hidden sources that must be protected, and the workflow risks considered in this paper. Section 3 presents the PatchOptic design, including the runtime path that gives the actor a projected view and checks a JSON Patch before commit, and the footprint algebra that supports delegation, workflow composition, and safe reordering of independent same-phase steps. Section 4 describes PatchBench and the evaluation protocol, including the separation between live actor runs and tests using compromised artifacts without a model. Section 5 reports the empirical results, focusing on output quality, reported leakage, runtime enforcement, and token cost. Section 6 discusses how the 2",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 6129,
+      "char_end": 7265,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:361ca43524cea04f9641f7c66fbaf41f",
+      "kind": "paragraph",
+      "text": "results relate to the paper’s runtime, algebraic, and benchmark contributions, situates the work relative to prior systems, and outlines limitations and future work. Section 7 concludes.",
+      "order": 12,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Introduction"
+      ],
+      "char_start": 7267,
+      "char_end": 7453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f47826b76e81eb22598ed45343040220",
+      "kind": "heading",
+      "text": "Shared-State Workflow Setting and Failure Model",
+      "order": 13,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Shared-State Workflow Setting and Failure Model"
+      ],
+      "char_start": 7455,
+      "char_end": 7502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:409d5d8023f8b0873df52f09bc570bd8",
+      "kind": "paragraph",
+      "text": "In a multi-step workflow over shared structured state, two broad failure families arise. First, the state may contain private values that are irrelevant to a given step. If those values enter the step’s view, a minor prompt perturbation or compromised instruction can cause the actor to disclose them. We call this family secret leakage. Second, an untrusted or unreliable actor may return a patch that is not legal for the workflow. The patch may be malformed, target the wrong phase, write outside the step scope, violate schema, or construct an update from a source path that the step was not allowed to use. We call this family commit-legality failures. A separate class of semantic output errors remains possible when the actor invents a contract-valid but wrong value. We focus on failures caused by an untrusted LLM invocation in a shared-state workflow. The step prompt, actor, or returned patch may be faulty, compromised, or adversarial. It may disclose hidden information, propose writes outside the intended task, act in the wrong workflow phase, or construct an update from state that should not have influenced the step. We assume the workflow policy itself is trusted, and discuss policy mistakes as a limitation in Section 6. Thisframingfollowstheleast-privilegeandmediated-accesstraditioninprotectionsystems[22,23]. In our setting, the protected resource is shared workflow state. Table 1 summarizes the failures considered in this work. Failure family Covered? Scope Direct secret exposure Partly Projection removes fields outside the declared",
+      "order": 14,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Shared-State Workflow Setting and Failure Model"
+      ],
+      "char_start": 7504,
+      "char_end": 9065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3085cc760969ba72030844b3d6a0841",
+      "kind": "paragraph",
+      "text": "read view; transformed or policy-authorized disclosures may remain. Commit-legality violations Yes Phase, write-scope, patch-source, applicability, schema, and invariant violations are rejected before commit. Semantic output errors No The actor may still fabricate an allowed-looking but wrong value. Policy-authorized disclosure No If the policy authorizes the disclosure, the runtime enforces that policy. Misuse of policy-visible context No The system does not prevent the actor from relying on information that the policy intentionally exposes.",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Shared-State Workflow Setting and Failure Model"
+      ],
+      "char_start": 9067,
+      "char_end": 9615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11b8ca4e68df3538834529008a09ac8e",
+      "kind": "caption",
+      "text": "Table 1: Failure-model summary.",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Shared-State Workflow Setting and Failure Model"
+      ],
+      "char_start": 9617,
+      "char_end": 9648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f5273752c84183c9059ac51c42a2535",
+      "kind": "heading",
+      "text": "PatchOptic Design",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design"
+      ],
+      "char_start": 9650,
+      "char_end": 9667,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbb669df9745d979e4c503944ac4c4d2",
+      "kind": "heading",
+      "text": "Step Interface and Runtime Path",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design",
+        "Step Interface and Runtime Path"
+      ],
+      "char_start": 9669,
+      "char_end": 9700,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e9459f80c59d6fa8515d9e806094ab3",
+      "kind": "paragraph",
+      "text": "PatchOptic addresses these failure modes with a single declared step interface that is used both at prompt time and at commit time. At runtime, projection restricts the information visible to an actor, while verification checks proposed mutations before commit. The declared regions also 3",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design",
+        "Step Interface and Runtime Path"
+      ],
+      "char_start": 9702,
+      "char_end": 9991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6dfba121a09910615a2fd7b3775bd27",
+      "kind": "paragraph",
+      "text": "support static checks for delegation, composition, and same-phase reordering before the workflow runs. Formally, the step contract contains an optic-inspired authority triple Is = (Os,W s,P s), along with phase constraints, schemas, applicability checks, invariants, and optional preconditions or postconditions. Here Os is a projection over the shared state,Ws is the write region, andPs is the patch-source region. The projection maps the full statex to a step-local viewOs(x). Ws defines the destinations that the patch may modify, andPs defines the current-state paths that patch operations may read during application. When the projection is path-realizable, we writeRs for the set of leaf paths exposed byOs. The static footprint used below is then(Rs,W s,P s). The optic terminology follows lens and view-update work [20,21]. In PatchOptic, this authority triple serves as part of the workflow contract. Projection and verification therefore operate from one step declaration without claiming a full categorical optic implementation.",
+      "order": 20,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design",
+        "Step Interface and Runtime Path"
+      ],
+      "char_start": 9993,
+      "char_end": 11033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bbeeb49b4d17c43e93b1d24ad5f33cd",
+      "kind": "caption",
+      "text": "Figure 1 summarizes the resulting runtime path. For a steps, the actor receives the projected",
+      "order": 21,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design",
+        "Step Interface and Runtime Path"
+      ],
+      "char_start": 11035,
+      "char_end": 11128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e80cc6f13af2befbab751c709fceb4b",
+      "kind": "paragraph",
+      "text": "viewOs(x), performs the local task, and returns a mutation proposalp. The interface is independent of any particular patch representation. In the current prototype, proposals are represented as JSON Patch [24] over JSON Pointer paths [25], which makes proposed state changes explicit before commit. Shared state x Projected view Os(x) LLM actor Patch proposal p",
+      "order": 22,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PatchOptic Design",
+        "Step Interface and Runtime Path"
+      ],
+      "char_start": 11130,
+      "char_end": 11491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e485072654531f2f8fe204118dc66ef2",
+      "kind": "heading",
+      "text": "Verifier",
+      "order": 23,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 11493,
+      "char_end": 11501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95af54a7d1fb4f0f5e9c0e1cc4c48526",
+      "kind": "paragraph",
+      "text": "scope schema phase invariants verifyp currentx commit:x←p(x) reject:xunchanged all gates pass any gate fails mutate",
+      "order": 24,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 11503,
+      "char_end": 11618,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed0da82b9634d90c7e40a5927350632c",
+      "kind": "caption",
+      "text": "Figure 1: Operational workflow and inspection point. The runtime holds the full shared state",
+      "order": 25,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 11620,
+      "char_end": 11712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a532f621270a282a32991bfce4887f63",
+      "kind": "paragraph",
+      "text": "x; the model only sees the projected viewOs(x), with hidden fields absent. Each step returns a JSON-Patch proposalp that passes through a single verifier with four gates: write/patch-source scope, schema, phase, and invariants. State mutates only when every gate passes; otherwise the proposal is rejected and recorded in the audit log. A mutation proposal must pass through the verifier before any state change occurs. Verification interprets the declared write and patch-source regions(Ws,P s), then checks whether the proposed state transition is admissible. To do so, the verifier evaluates both the proposed destinations and any source paths referenced by patch operators. Formove, the from path is also a write effect, because JSON Patch removes that value before adding it at the target. The verifier also checks phase constraints, write scope, patch applicability, schema validity, and workflow invariants. A proposal that fails any check leaves the shared state unchanged. Table 2 summarizes the checks. The implementation also supports optional preconditions and postconditions, which are checked 4",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 11714,
+      "char_end": 12822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7899d271baa86b927c63510385412c00",
+      "kind": "paragraph",
+      "text": "Check Question answered before mutation Phase ordering Is this step allowed to act in the current workflow phase? Write scope Do target paths stay inside the step’s authorized write region, and for move, does thefrompath also stay inside that region? Patch-source scope Do copy, move, and test source paths stay inside allowed source regions? Patch applicability Is the patch structurally valid and applicable to the current state? Schema validity Does the resulting state satisfy the case schema and output contract? Invariants Do the workflow’s declared invariants still hold on the resulting state?",
+      "order": 27,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 12824,
+      "char_end": 13425,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f10e6c3a558794dd49db644c1716e0c",
+      "kind": "caption",
+      "text": "Table 2: Verifier checks executed before any mutation commits. The four gates in Figure 1 (scope,",
+      "order": 28,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 13427,
+      "char_end": 13524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c545d74c9e0832df1a6a29fc8c8c549",
+      "kind": "paragraph",
+      "text": "schema, phase, invariants) group these six rows: “scope” covers both write scope and patch-source scope, “schema” covers applicability plus output shape, and “phase” and “invariants” are one-to-one with the rows here. before scope validation and after invariant validation, respectively. They are not used as separate benchmark dimensions in the results below. Beyond enforcement, PatchOptic also emits audit traces. The runtime records projected views, mutation proposals, verifier outcomes, and lineage edges. These traces support debugging and audit, but they do not affect the runtime accept/reject decision.",
+      "order": 29,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier"
+      ],
+      "char_start": 13526,
+      "char_end": 14138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2071abd4b76e5b7ea67b4abf05dbb073",
+      "kind": "heading",
+      "text": "Footprints for Static Checks",
+      "order": 30,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Verifier",
+        "Footprints for Static Checks"
+      ],
+      "char_start": 14140,
+      "char_end": 14168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38c734074a3d0bf1bd1ee174e4dfe994",
+      "kind": "paragraph",
+      "text": "The runtime path above explains how one proposed update is checked before it commits. That same step declaration is also used before any actor runs. Its declared read, write, and patch-source regions give a footprint for the step. PatchOptic compares these footprints to check delegation, sub-workflow composition, local actor replacement, and same-phase reordering before the workflow runs. We now define the footprint used for these static checks. We separate the step policy from the prompt input used by each setting. Static checks compare declared regions of a structured state. WriteL for the locations used by the state representation, and write⪯ for containment between locations. We use stable names for locations, so containment is a partial order: if two locations contain each other, they are the same location. For a statex, letΠ(x)⊆L be the leaf paths that currently exist inx. A declared region is a finite subset ofL. When a declared regionS is used to materialize a view onx, it exposes the current leaves S[x] ={ℓ∈Π(x)|∃s∈S. s⪯ℓ}. In the JSON prototype,L is the JSON Pointer region universe,Π(x)is the set of existing leaf paths, and⪯is prefix containment. The step policy for actorAis the footprint(RA,W A,P A), where RA,W A,P A⊆L, P A⊆R A. The regionRA is the read region authorized by the step. The regionWA contains the locations whose write effects the verifier may accept. The patch-source regionPA contains current-state locations that an update may read during application. In the prototype, these source reads correspond to the",
+      "order": 31,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier",
+        "Footprints for Static Checks"
+      ],
+      "char_start": 14170,
+      "char_end": 15724,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3aae0fe3464d1c15caeec48b97c9b896",
+      "kind": "paragraph",
+      "text": "from paths of copy and move, and to thepath read by test. A move source must also lie inWA, because JSON Patch removes the source value as part of the operation. In the prototype,PA =RA. Thuscopy,move, andtestmay read only from the step’s authorized read region. 5",
+      "order": 32,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier",
+        "Footprints for Static Checks"
+      ],
+      "char_start": 15726,
+      "char_end": 15990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef0facbb34c1fb9aae1bb20065bb098d",
+      "kind": "paragraph",
+      "text": "The prompt input is separate. LetVA⊆ Π(x)be the leaf paths shown to the actor in a given setting. Projected-read settings useVA = RA[x]. Full-input settings, including Verify Only, use VA = Π(x). This larger prompt input does not change the verifier policy. Verify Only may show the full state to the actor, but patch-source checks are still evaluated againstPA. Byfootprint algebra, we mean two operations on footprints,restrictionandunion, together with acommutation conditionfor reordering within one workflow phase. Restriction maps an actor footprint to a smaller footprint:",
+      "order": 33,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier",
+        "Footprints for Static Checks"
+      ],
+      "char_start": 15992,
+      "char_end": 16571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:277746ddd77fc13bff30719b214feadb",
+      "kind": "heading",
+      "text": "(RA,W A,P A)↦→(R′",
+      "order": 34,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "(RA,W A,P A)↦→(R′"
+      ],
+      "char_start": 16573,
+      "char_end": 16590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70b03656197fb56cb72fa106763b8900",
+      "kind": "paragraph",
+      "text": "A,W′ A,P′ A), where R′",
+      "order": 35,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "(RA,W A,P A)↦→(R′"
+      ],
+      "char_start": 16592,
+      "char_end": 16614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd055952dd3202a8fdfebd5655c3d80c",
+      "kind": "heading",
+      "text": "A⊆R A, W ′",
+      "order": 36,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A⊆R A, W ′"
+      ],
+      "char_start": 16616,
+      "char_end": 16626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2b77948b5361d447e2b831300635224",
+      "kind": "heading",
+      "text": "A⊆W A, P ′",
+      "order": 37,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A⊆W A, P ′"
+      ],
+      "char_start": 16628,
+      "char_end": 16638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5b0f9a1a76991a6a0c87292055037d8",
+      "kind": "heading",
+      "text": "A⊆P A, P ′",
+      "order": 38,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′"
+      ],
+      "char_start": 16640,
+      "char_end": 16650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26d0afe9230a43b1dac2019e6897619c",
+      "kind": "paragraph",
+      "text": "A⊆R′ A. Union combines two peer footprints component-wise: (RA,W A,P A)∪(R B,W B,P B) = (RA∪R B, WA∪W B, PA∪P B). For two declared regionsSandT, writeS⊥ ⪯Twhen neither region contains a location from the other: S⊥⪯T⇐⇒ ∀s∈S,t∈T.¬(s⪯t∨t⪯s). The commutation condition certifies two actors in the same workflow phase as independent when WA⊥⪯WB, R A⊥⪯WB, R B⊥⪯WA. The first condition prevents conflicting writes, including parent-child conflicts such as writing/user while another actor writes/user/name. The other two conditions ensure that neither actor reads a value written by the other actor. SincePA⊆R A and PB⊆R B, the same check also covers patch-source paths. For operations that can change array shape, such asadd, remove, or move on an array element, the write-effect set used by the certificate also includes the containing array path. The patch-source regionPA is the component checked by the patch-source-scope rule in Table 2 and exercised directly by the no-model artifact test. These definitions draw on two lines of prior work. The projectionx| RA is the view side of the optic. It follows the lens and view-update lineage, where a view exposes part of a source state and an update propagates changes back to that source [20,21]. In the current prototype, the update side is realized as a checked JSON Patch rather than an unconstrained writeback. As an access-control mechanism,( RA,W A,P A)is closer to role-based access control (RBAC), attribute-based access control (ABAC), and capability-style protection [26–28]. Together, the declared regions make",
+      "order": 39,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′"
+      ],
+      "char_start": 16652,
+      "char_end": 18219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a880be864b5398874ca37b945c1edf1e",
+      "kind": "paragraph",
+      "text": "path-level authority explicit before the actor reads state or commits a mutation. The footprint algebra above turns each step declaration into a static object that can be compared before the actors run. Restriction gives the boundary used for delegation and local replacement. The commutation condition gives the pairwise check used for same-phase reordering. Union is used again when a certified sub-workflow is packaged for composition reuse, where reads and patch-source paths supplied by earlier actors become internal handoffs rather than external inputs. The next subsection fixes the actor behavior assumed by these checks. We then use that model to state the commutation certificate and the reusable composite interface.",
+      "order": 40,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′"
+      ],
+      "char_start": 18221,
+      "char_end": 18949,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87f3cb2cdf5f6d63796854d0f1d066e2",
+      "kind": "heading",
+      "text": "Static Actor Model",
+      "order": 41,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′",
+        "Static Actor Model"
+      ],
+      "char_start": 18951,
+      "char_end": 18969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b174ac231427f8a9f681848a04e40b61",
+      "kind": "paragraph",
+      "text": "With this static footprint in place, we model the behavior attached to one step. In this model, an actor is a deterministic function from its prompt input to a proposed patch. This is the actor 6",
+      "order": 42,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′",
+        "Static Actor Model"
+      ],
+      "char_start": 18971,
+      "char_end": 19166,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1234d21431e15f5c5ac71c18ac2bfe8c",
+      "kind": "table",
+      "text": "behavior used by the static checks; live runs may still be stochastic and are evaluated empirically. For π∈ Π(x), writex[π]for the value stored at that path. Given a statex, a step policy(RA,W A,P A), and a setting-specific prompt inputVA, actorAreceivesx| VA and proposes a patch A:x| VA↦−→pA. The verifier does not useVA as the authority boundary. It acceptspA only when its update targets lie inWA and every current-state path read by the patch lies inPA. For move, the source path must satisfy both conditions, since the operation reads that path and removes it. In the current prototype, source reads arise from the copy, move, and test operations of JSON Patch. For projected-read executions, including PatchOptic,VA =RA[x]. For full-input ablations such as Verify Only,VA = Π(x). Thus the static model separates the local actor logic from the step policy that bounds patch sources and writes. Restriction gives the delegation rule. If actorB is delegated from actorA, thenB’s footprint must be a component-wise restriction ofA’s footprint: RB⊆R A, W B⊆W A, P B⊆P A, P B⊆R B. The actor layer uses this relation to certifyB’s narrowed footprint before materializingB’s view. Actor B then receives onlyx| RB, and the verifier checksB’s patch againstWB and PB. Fields outsideR B are not represented inB’s prompt, and writes outsideWB fail before commit.",
+      "order": 43,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A⊆P A, P ′",
+        "Static Actor Model"
+      ],
+      "char_start": 19168,
+      "char_end": 20524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6059a3f7b7f8ac8821a5032608f194f",
+      "kind": "heading",
+      "text": "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+      "order": 44,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)"
+      ],
+      "char_start": 20526,
+      "char_end": 20610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d40e52b6c425c15da178bec9e1a9f42",
+      "kind": "paragraph",
+      "text": "may use different prompts or model implementations. For projected-read execution, the runtime still gives them the sameRA prompt input, and the verifier still accepts only the same target and source paths. The replacement can change values insideWA. It cannot expand the projected-read surface, cite new patch-source paths, or write outsideWA without changing the declared footprint. Such a change is an interface change and is rejected by the scope checks unless the declaration is updated.",
+      "order": 45,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)"
+      ],
+      "char_start": 20612,
+      "char_end": 21103,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9043d6a545ba088536c35524dc8cbeb",
+      "kind": "heading",
+      "text": "Commutation Certificate",
+      "order": 46,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Commutation Certificate"
+      ],
+      "char_start": 21105,
+      "char_end": 21128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4a439d546558a11e45e23920870276a",
+      "kind": "paragraph",
+      "text": "Same-phase reordering uses the static actor model from the previous subsection. After phase constraints have selected actors that may run in one phase, the certificate compares the committed state produced by the two possible orders. We first attach a state transition to each actor. For actorA, letu A be its update producer. On statex, the proposed update is pA(x) =u A(x| VA). Let commit(p,x )denote the runtime commit rule. It returnsapply(p,x )when p is applicable and accepted by the verifier, and returnsxotherwise. The state transition induced by actorAis TA(x) = commit(pA(x),x). The certificate uses the following phase assumptions. Each actor is deterministic in its prompt input and runs once. Actors have no externally visible side effects except their declared writes, and the schedule has no retries, rollbacks, or exception-dependent branches. Footprints are fixed for the phase. Conflict checks are prefix-closed, and verifier predicates use declared support disjoint from the other actor’s writes. These predicate supports cover applicability, schemas, preconditions, postconditions, and invariants. 7",
+      "order": 47,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Commutation Certificate"
+      ],
+      "char_start": 21130,
+      "char_end": 22249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29c46a8135eb14876764468f5a568a11",
+      "kind": "paragraph",
+      "text": "For two actorsA andB, the certificate checks disjoint writes and no read-after-write dependence across the pair: WA⊥⪯WB, R A⊥⪯WB, R B⊥⪯WA. Here the first condition prevents conflicting writes. The other two conditions ensure that neither actor reads a value written by the other actor. The patch-source regions matter because update operations may read state through source paths. For example, under a JSON Patch realization, copy, move, and test read from existing paths. Amove source is also a write effect, so it must be covered by the write region as well. BecausePA⊆R A and PB⊆R B, the read-dependence conditions also keep patch sources away from the other actor’s writes. The certificate also needs structural conflicts to be represented in the footprint. A prefix-closed conflict relation treats parent and child paths as conflicting. A leaf-granular realization must instead expand every structural write to the leaves whose values or applicability it can affect. Parent-container rewrites, array-index shifts, and other shape-changing updates are not certified unless this effect is represented in the declared footprint. IfA’s source paths could reach intoWB, the two schedules could giveA different source values. The prototype implements this as a conservative sufficient test over realized leaf footprints. It refuses pairs with data-dependent prism footprints, opaque pre/post conditions, or invariants whose declared support touches both write regions. Pairs outside these assumptions are kept in the given",
+      "order": 48,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Commutation Certificate"
+      ],
+      "char_start": 22251,
+      "char_end": 23772,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b88077ffc09fc8c45ebe5785eeb311a",
+      "kind": "paragraph",
+      "text": "order or sent to the differential check discussed below. For a workflow phase withN actors and fixed footprints, certification costs (N 2 ) pairwise conflict checks and no model execution. Under the assumptions above, if all pairs pass, allN!orderings produce the same final state in the static actor model. Any two orderings differ by a finite sequence of adjacent transpositions. Each ordering terminates after exactlyN steps because each actor runs once. For each adjacent pair of certified actorsiandi+ 1, the pairwise certificate gives Ti+1(Ti(x)) =T i(Ti+1(x)) on every reachable statex, since the conflict check and declared verifier supports are stable when footprints are fixed for the phase. Applying these equalities along the adjacent-swap sequence gives equal final states for any two certified orderings. The certificate therefore replaces an enumeration of schedules with the (N 2 ) pairwise checks above. When the fixed-footprint assumptions are not available, the workflow keeps the declared order, or PatchOptic compares the two deterministic executions on fixed emitted artifacts.",
+      "order": 49,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Commutation Certificate"
+      ],
+      "char_start": 23774,
+      "char_end": 24873,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0db1ecbd7b9c591a48614c287ae48c59",
+      "kind": "heading",
+      "text": "Composition and Incremental Reuse",
+      "order": 50,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Composition and Incremental Reuse"
+      ],
+      "char_start": 24875,
+      "char_end": 24908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78b1793226a36a26038f6a7f6187ed9a",
+      "kind": "paragraph",
+      "text": "On top of the reordering result, the same footprint algebra supports composition reuse. A certified sequence should expose only the state it still needs from the larger workflow. Reads and patch-source paths supplied by earlier actors in the sequence become internal handoffs, while the remaining reads, remaining patch-source paths, and all writes form the composite boundary. WriteA;B for the composite that runsA and thenB. For a fixed source statex, let∆ A(x)⊆W A be the leaf paths whose values are created, replaced, removed, or otherwise modified by the accepted run ofAonx. Then the external footprint ofA;Bis",
+      "order": 51,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Localactorreplacementusesthesameboundary. Twoactorswiththesamefootprint( RA,W A,P A)",
+        "Composition and Incremental Reuse"
+      ],
+      "char_start": 24910,
+      "char_end": 25526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef063c3e46c0f918e65301412e604432",
+      "kind": "heading",
+      "text": "Rext",
+      "order": 52,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Rext"
+      ],
+      "char_start": 25528,
+      "char_end": 25532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb7ff2f8712c5b36c5d09c496f5c205b",
+      "kind": "heading",
+      "text": "A;B =R A∪",
+      "order": 53,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A;B =R A∪"
+      ],
+      "char_start": 25534,
+      "char_end": 25543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d13fc628325108f80c44b0a0576f4032",
+      "kind": "paragraph",
+      "text": "(",
+      "order": 54,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A;B =R A∪"
+      ],
+      "char_start": 25545,
+      "char_end": 25546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c24a1a0b4a3771c50f48c49200da776b",
+      "kind": "heading",
+      "text": "RB\\∆ A(x)",
+      "order": 55,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "RB\\∆ A(x)"
+      ],
+      "char_start": 25548,
+      "char_end": 25557,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ad68209fa205517b28d4f029c766960",
+      "kind": "paragraph",
+      "text": ") , WA;B =W A∪W B, and, for patch-source paths, P ext",
+      "order": 56,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "RB\\∆ A(x)"
+      ],
+      "char_start": 25559,
+      "char_end": 25612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bedbdee14d183cf8687200508fdc2635",
+      "kind": "heading",
+      "text": "A;B =P A∪",
+      "order": 57,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A;B =P A∪"
+      ],
+      "char_start": 25614,
+      "char_end": 25623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36356a782bb5ad12f0bacee7f9c9f1a9",
+      "kind": "paragraph",
+      "text": "(",
+      "order": 58,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A;B =P A∪"
+      ],
+      "char_start": 25625,
+      "char_end": 25626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73b41eb6045dcbaacc1b51c858d024e5",
+      "kind": "heading",
+      "text": "PB\\∆ A(x)",
+      "order": 59,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "PB\\∆ A(x)"
+      ],
+      "char_start": 25628,
+      "char_end": 25637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34d5ca34c0dd3fb655e62a262ecba8ae",
+      "kind": "paragraph",
+      "text": ") . 8",
+      "order": 60,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PB\\∆ A(x)"
+      ],
+      "char_start": 25639,
+      "char_end": 25644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0ded531bab27fe31ccdf687ca680a9b",
+      "kind": "paragraph",
+      "text": "A later projected read or patch source drops out of the external boundary only when the later dependency is satisfied by a prior write inside the composite. IfB’s projected-read region contains more paths thanA wrote, the unwritten leaves remain external. This is the handoff internalization used by composition. Thus the external footprint of a composite can be state-dependent whenever the set of actually written paths is state-dependent. For a sub-workflowP = (A1;... ;Ak), let∆ <i(x)be the leaf paths written by the prefix A1;...;A i−1 on the source state used for certification. The reusable interface ofPis σ(P) = ( k⋃ i=1 ( RAi\\∆ <i(x) ) , k⋃ i=1 WAi, k⋃ i=1 ( PAi\\∆ <i(x) ) ) . The first component contains only reads not supplied by earlier actors inP. The second component is the composite write boundary. The third component applies the same boundary calculation to patch-source paths. Internal handoffs are checked whenP is certified, including both the path region and the schema expected by the consuming actor. OnceP is certified, the larger workflow can useσ(P )as the boundary of a single packaged actor. It checks new connections againstσ(P )rather than reopening the internal actor graph. A refactor that changes only the grouping of already certified actors can reuse the cached interface, while a refactor that changes an external projected-read path, patch-source path, write path, or handoff shape changesσ(P)and must be checked again.",
+      "order": 61,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PB\\∆ A(x)"
+      ],
+      "char_start": 25646,
+      "char_end": 27105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b856f477737a7a8b6b4c0f1bf6f6fce",
+      "kind": "heading",
+      "text": "Data-Dependent Footprints",
+      "order": 62,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "PB\\∆ A(x)",
+        "Data-Dependent Footprints"
+      ],
+      "char_start": 27107,
+      "char_end": 27132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b695217e80472b79e721cc4ccab41fde",
+      "kind": "paragraph",
+      "text": "The reordering and reuse rules above use fixed realized paths. This is literal for lenses and for any optic whose realized paths stay fixed during the phase. Traversals and prisms use the same view/update interface from the optic lineage [20,21], but their concrete leaf paths are obtained by evaluating the optic on the current document. A traversal expands one declaration over the current members of a container, so its realized paths depend on the container shape. A prism filters candidate members by a predicate, so its realized paths also depend on the selected values. When those realized paths can change during the phase, the footprint is better written as a state-indexed function FA(x) = (RA(x),W A(x),P A(x)). The pairwise commutation test compares the regions the actors will actually use: WA(x)⊥⪯WB(x), R A(x)⊥⪯WB(x), R B(x)⊥⪯WA(x). For a state-indexed footprint, checking those prefix conflicts atx is not enough if one actor can change the other actor’s realized paths. IfB writes a field used byA’s prism predicate, or changes the container shape used by a traversal, thenA’s footprint afterB runs isFA(B(x)), not necessarily",
+      "order": 63,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PB\\∆ A(x)",
+        "Data-Dependent Footprints"
+      ],
+      "char_start": 27134,
+      "char_end": 28277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19ec6d68904ceba7f30914055ccc3f4c",
+      "kind": "heading",
+      "text": "FA(x). Thus",
+      "order": 64,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "FA(x). Thus"
+      ],
+      "char_start": 28279,
+      "char_end": 28290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c9e6a31d7d691013183b6e063642e2c",
+      "kind": "heading",
+      "text": "FA(x)̸=F A(B(x))",
+      "order": 65,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "FA(x)̸=F A(B(x))"
+      ],
+      "char_start": 28292,
+      "char_end": 28308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76710466c7ab75f3790275549d4633c8",
+      "kind": "paragraph",
+      "text": "can hold, and the prefix-conflict check at the initial state may refer to the wrong path sets. The current commute implementation therefore refuses predicate-dependent footprints and relies on shape-stability assumptions for traversal regions. It does not try to prove that each actor leaves the other actor’s selector inputs unchanged. When reordering still matters,commute_differential runs A;B and B;A on the current document, using deterministic actors or frozen proposals, and accepts only if the final documents are identical. The conclusion is tied to that document, because a different document can realize different path sets. 9",
+      "order": 66,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FA(x)̸=F A(B(x))"
+      ],
+      "char_start": 28310,
+      "char_end": 28947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc0f6a1e2216d03d370b413c22801337",
+      "kind": "paragraph",
+      "text": "Taken together, these footprint operations provide capabilities that are not captured by pathprefix ACLs or finite-state workflow policies. Path-prefix ACLs typically authorize individual target paths, and FSM-style policies authorize phase transitions. The footprint layer keeps those checks, but it also records the projected read surface, patch-source authority, reusable composite interfaces, handoff boundaries, and sufficient static certificates for same-phase reordering. It also extends the same interface to state-indexed regions such as traversals and prisms with the caveats above. When the static certificate does not apply, the differential check can still compare the two concrete executions on the current document.",
+      "order": 67,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FA(x)̸=F A(B(x))"
+      ],
+      "char_start": 28949,
+      "char_end": 29679,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38e779d070576cbc04dd173ba2573418",
+      "kind": "heading",
+      "text": "Benchmark and Methodology",
+      "order": 68,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Benchmark and Methodology"
+      ],
+      "char_start": 29681,
+      "char_end": 29706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65d81d05038a93be4568f0149f562669",
+      "kind": "paragraph",
+      "text": "The design above defines PatchOptic as a projected-read and verified-write interface for shared-state workflows. We now introduce PatchBench, a benchmark that evaluates this design on realistic, domain-inspired tasks. PatchBench is designed to measure whether projection and verification improve artifact quality, reduce leakage, and reject invalid commits, and to separate their effects through ablations.",
+      "order": 69,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Benchmark and Methodology"
+      ],
+      "char_start": 29708,
+      "char_end": 30114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ba10b590f6e196f59995edae2010961",
+      "kind": "heading",
+      "text": "Benchmark Construction",
+      "order": 70,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Benchmark and Methodology",
+        "Benchmark Construction"
+      ],
+      "char_start": 30116,
+      "char_end": 30138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01618917e68bb0a65c56eb32d5e5e6c7",
+      "kind": "paragraph",
+      "text": "Following the problem setting and failure model in Section 2, a PatchBench case consists of a shared structured state, a task instruction, a workflow contract, and an expected runtime outcome. The contract specifies the step read policy, the allowed write region, the patch-source policy, and the runtime checks that apply to the step or workflow. Each setting then chooses whether the actor prompt uses the step read policy or the full state. We keep this case record fixed across settings so that comparisons isolate the control layer rather than the underlying task. By design, the benchmark contains 46 hand-authored cases across six domains: finance (10), marketing (5), medical (7), science (6), software (9), and support (9). The same visibility and mutation-control patterns are repeated across domains so that the results do not depend on a single application setting. In this respect, PatchBench complements broader agent benchmarks such as API-Bank, WebArena, tau-bench, and AppWorld [7,10–13]. Cases are also organized into six construction levels L0–L5. The levels describe what each case stresses rather than a single scalar notion of difficulty. Table 3 gives the count for each level. The level label is separate from the expected runtime outcome. An accepted artifact can still be incomplete or leaky, and a rejected patch can be the correct behavior for the case. For finer-grained analysis, we also attach non-exclusive scenario tags. These tags mark recurring patterns such as hidden-value exfiltration, patch-source smuggling, hidden-visible near misses, and",
+      "order": 71,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Benchmark and Methodology",
+        "Benchmark Construction"
+      ],
+      "char_start": 30140,
+      "char_end": 31719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6084f93b95b2be7d1aa7ea76e624835",
+      "kind": "paragraph",
+      "text": "authorized-sensitive use. They support result slices rather than partitioning the benchmark. To separate mechanisms and support ablations, we run every case under six settings. The settings separate the effects of structured output, conventional workflow controls, read projection, and write verification. Table 3 summarizes both the case metadata and the six evaluation settings. 10",
+      "order": 72,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Benchmark and Methodology",
+        "Benchmark Construction"
+      ],
+      "char_start": 31721,
+      "char_end": 32104,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bd2d59a4d041e74fb819041f7d5d2dc",
+      "kind": "heading",
+      "text": "Axis Class Cases Role",
+      "order": 73,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role"
+      ],
+      "char_start": 32106,
+      "char_end": 32127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e3fb7352f3e45990b4da164e341a49d",
+      "kind": "paragraph",
+      "text": "Level L0 valid commit 3 Policy-compliant update that should commit. Level L1 isolated violation 6 One contract failure, such as scope or phase. Level L2 hidden-source leakage 18 Protected value can enter public output or patch-source paths. Level L3 visibility pressure 6 Larger or look-alike context. Level L4 multi-step workflow 6 Phase ordering, handoffs, and transitions. Level L5 authorized sensitive use 7 Policy-permitted sensitive reference. Tag Hidden-value exfiltration 14 Protected value is copied into an output field the actor may write. Tag Patch-source smuggling 7copy,move, ortestcites a hidden source. Tag Hidden-visible near miss 5 Protected field has a similar visible counterpart. Tag Authorized-sensitive use 7 Policy permits the sensitive reference. Setting Unconstrained 46 Raw actor, no structured runtime control. Setting Schema Only 46 Structured-output validation [17,18,29]. Setting FSM + ACL 46 Phase and path-scope checks [26,28,30,31]. Setting View Only 46 Projected prompt, well-formed patch commits. Setting Verify Only 46 Full-state prompt, complete verifier over the same step policy. Setting PatchOptic 46 Projected prompt, complete verifier over the same step policy.",
+      "order": 74,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role"
+      ],
+      "char_start": 32129,
+      "char_end": 33333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0575c83d46c2d512ae19d554189d1980",
+      "kind": "caption",
+      "text": "Table 3: PatchBench case taxonomy and evaluation settings. Levels L0–L5 are exclusive and sum",
+      "order": 75,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role"
+      ],
+      "char_start": 33335,
+      "char_end": 33428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3ade28b15b7696ee6c4f7c4e6476d6b",
+      "kind": "paragraph",
+      "text": "to 46 cases. Each case also has an expected runtime outcome: 22 should commit and 24 should be rejected. Tags are non-exclusive. Each setting is run on all 46 cases.",
+      "order": 76,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role"
+      ],
+      "char_start": 33430,
+      "char_end": 33595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f3229feb9eb3786783f5fb96618ae70",
+      "kind": "heading",
+      "text": "Evaluation Protocol",
+      "order": 77,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role",
+        "Evaluation Protocol"
+      ],
+      "char_start": 33597,
+      "char_end": 33616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66d57add0660a63992592b0fb7212236",
+      "kind": "paragraph",
+      "text": "In this subsection, we describe how evaluation proceeds at runtime. As shown in Figure 2, for each run, the runtime first accepts or rejects the proposed patch. This decision gives the runtime outcome directly. The runtime decision is compared with the case’s expected outcome: expected-reject cases test whether invalid commits are blocked, while expected-accept cases test whether policy-compliant work is allowed to proceed.",
+      "order": 78,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Axis Class Cases Role",
+        "Evaluation Protocol"
+      ],
+      "char_start": 33618,
+      "char_end": 34045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4fbf5d60ba51d1bb1884143a499e6b1",
+      "kind": "heading",
+      "text": "Case Definition",
+      "order": 79,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Case Definition"
+      ],
+      "char_start": 34047,
+      "char_end": 34062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3719da15d3d68ffe5c74b3e8ca02a833",
+      "kind": "paragraph",
+      "text": "state, task, contract",
+      "order": 80,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Case Definition"
+      ],
+      "char_start": 34064,
+      "char_end": 34085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2df0aa376fc179808e4b13eddd3f275",
+      "kind": "heading",
+      "text": "Setting Choice",
+      "order": 81,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Setting Choice"
+      ],
+      "char_start": 34087,
+      "char_end": 34101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6d265afe9de88888b12ea201464f601",
+      "kind": "heading",
+      "text": "U, S, F, V, Ve, PO",
+      "order": 82,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U, S, F, V, Ve, PO"
+      ],
+      "char_start": 34103,
+      "char_end": 34121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fff2239a0d00f05e7982e838045f17f1",
+      "kind": "heading",
+      "text": "Actor",
+      "order": 83,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Actor"
+      ],
+      "char_start": 34123,
+      "char_end": 34128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05bd50f8eef166c4816696ea378191d0",
+      "kind": "paragraph",
+      "text": "run case",
+      "order": 84,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Actor"
+      ],
+      "char_start": 34130,
+      "char_end": 34138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:369d0b6943a6ff10af8717ae51455281",
+      "kind": "heading",
+      "text": "Patch",
+      "order": 85,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Patch"
+      ],
+      "char_start": 34140,
+      "char_end": 34145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:668225d7e684e9539c12531924ee05fc",
+      "kind": "paragraph",
+      "text": "proposal Runtime decision schema phase scope source check gates accepted artifact rejected no mutation commit block",
+      "order": 86,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Patch"
+      ],
+      "char_start": 34147,
+      "char_end": 34262,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7932c0e4b8f8389d326b86186a21107d",
+      "kind": "heading",
+      "text": "Token",
+      "order": 87,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Token"
+      ],
+      "char_start": 34264,
+      "char_end": 34269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0876114f512ba14ee29d42692e5b38b",
+      "kind": "paragraph",
+      "text": "use",
+      "order": 88,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Token"
+      ],
+      "char_start": 34271,
+      "char_end": 34274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df9aeed33ddf9f098215c61e88f6be3f",
+      "kind": "heading",
+      "text": "Quality",
+      "order": 89,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Quality"
+      ],
+      "char_start": 34276,
+      "char_end": 34283,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e27448629b528de542cbdfc236434e60",
+      "kind": "paragraph",
+      "text": "judge",
+      "order": 90,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Quality"
+      ],
+      "char_start": 34285,
+      "char_end": 34290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28faa64e3300caf1e40550213f594081",
+      "kind": "heading",
+      "text": "Leakage",
+      "order": 91,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Leakage"
+      ],
+      "char_start": 34292,
+      "char_end": 34299,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0467328d255dd7f67d49edf0408eca02",
+      "kind": "paragraph",
+      "text": "review",
+      "order": 92,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Leakage"
+      ],
+      "char_start": 34301,
+      "char_end": 34307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c91f0def587c7610c8e750a8b8bba65b",
+      "kind": "heading",
+      "text": "Aggregate",
+      "order": 93,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Aggregate"
+      ],
+      "char_start": 34309,
+      "char_end": 34318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65505088dfb87233082a2a00e536435f",
+      "kind": "paragraph",
+      "text": "mean±s.d. U = Unconstrained; S = Schema Only; F = FSM + ACL; V = View Only; Ve = Verify Only; PO = PatchOptic",
+      "order": 94,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate"
+      ],
+      "char_start": 34320,
+      "char_end": 34429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d52e5fc8006ca2969ff0d5bd9be4099d",
+      "kind": "caption",
+      "text": "Figure 2: PatchBench evaluation workflow. A fixed case record is replayed under six settings. The",
+      "order": 95,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate"
+      ],
+      "char_start": 34431,
+      "char_end": 34528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:560525745182734d5671bee5afde362c",
+      "kind": "paragraph",
+      "text": "actor sees the view chosen by the setting and proposes a JSON Patch. The runtime produces an accept or reject verdict. Accepted artifacts are judged for visible-task quality and reviewed for protected-content leakage, while all runs contribute token-use measurements. Quality and leakage are measured only for accepted artifacts. For quality, a hosted GPT-5-mini judge compares the accepted artifact with the visible task record using a fixed prompt and low 11",
+      "order": 96,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate"
+      ],
+      "char_start": 34530,
+      "char_end": 34990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7dadedfb8b9b2dcde635d75bebb0fdc",
+      "kind": "paragraph",
+      "text": "reasoning effort [32,33]. The judge assigns a content score from five non-leakage components:",
+      "order": 97,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate"
+      ],
+      "char_start": 34992,
+      "char_end": 35085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10c2ab188623f334da0d2134a205354e",
+      "kind": "heading",
+      "text": "25·coverage+0.25·non-omission+0.20·non-hallucination+0.20·non-contradiction+0.10·format.",
+      "order": 98,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Aggregate",
+        "25·coverage+0.25·non-omission+0.20·non-hallucination+0.20·non-contradiction+0.10·format."
+      ],
+      "char_start": 35087,
+      "char_end": 35175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5bce969542049e2c2fcac92343449b5b",
+      "kind": "paragraph",
+      "text": "The weights are fixed across all settings and rounds. Coverage and non-omission carry the largest weights because they measure whether the artifact includes the needed information without dropping essential content. Format receives the smallest weight because it mainly distinguishes otherwise similar artifacts. The judge prompt is provided in subsection B.2. Leakage is measured in two stages. A deterministic matcher first scans accepted artifacts for protected values and compact protected signatures. This pass is intentionally recall-oriented, capturing partial matches and other suspicious surface forms that may indicate leakage. A separate GPT-5-mini review then determines whether each candidate actually reveals protected content in context. The reported leakage includes only disclosures confirmed by this review stage. Raw matcher candidates remain an audit queue; only reviewed disclosures enter the reported leakage metrics. We also report semantic pass for accepted artifacts. An accepted artifact passes semantically if its content score is at least0.80and it has no reported leakage. This combined label keeps visible-task quality and protected-content disclosure separate while still giving one accepted-output success measure. Token use is measured from the actor prompt and completion. It is reported per run so that projected-view settings can be compared with full-state settings. Runtime enforcement is deterministic for a fixed patch, but live actor runs can produce different patches. We use two actor",
+      "order": 99,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate",
+        "25·coverage+0.25·non-omission+0.20·non-hallucination+0.20·non-contradiction+0.10·format."
+      ],
+      "char_start": 35177,
+      "char_end": 36704,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:466558dd741329f847d0a16e340d1d64",
+      "kind": "paragraph",
+      "text": "settings: a hosted GPT-5-mini actor and a local Mistral 7B actor attemperature=0. We refer to GPT-5-mini as the stronger actor and local Mistral 7B as the weaker actor because their baseline content scores differ substantially. We execute each case-setting pair ten times. For one actor setting, this gives46× 10 = 460runs per setting and2,760runs across six settings. Across both actor settings, the live sweep contains5,520runs. Results are reported as means and standard deviations across rounds.",
+      "order": 100,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Aggregate",
+        "25·coverage+0.25·non-omission+0.20·non-hallucination+0.20·non-contradiction+0.10·format."
+      ],
+      "char_start": 36706,
+      "char_end": 37205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca4c195de38227a9ad6a0c7aa5a5d3da",
+      "kind": "heading",
+      "text": "Results",
+      "order": 101,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Results"
+      ],
+      "char_start": 37207,
+      "char_end": 37214,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bca2affa86df11db12546120d6be88b2",
+      "kind": "paragraph",
+      "text": "We now report the PatchBench results, which show how each part of the PatchOptic boundary behaves. The results show that projected reads reduce reported leakage and token cost, while runtime verification blocks declared contract violations before commit. In addition, patch-source checks reject submitted compromised artifacts that name hidden source paths.",
+      "order": 102,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results"
+      ],
+      "char_start": 37216,
+      "char_end": 37573,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b43abb0e752772218ee5c0416b432c04",
+      "kind": "heading",
+      "text": "Projected Reads Reduce Leakage and Cost",
+      "order": 103,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Projected Reads Reduce Leakage and Cost"
+      ],
+      "char_start": 37575,
+      "char_end": 37614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed18089f8c905ff95b9ba7906e4eee9a",
+      "kind": "paragraph",
+      "text": "The live sweep shows the read-side effect of projection. Full-state settings report leakage much more often than projected-read settings. Projected-read settings also use fewer tokens, and under GPT-5-mini they do not lower accepted-artifact quality. Table 5 gives the full table, and Figure 3 visualizes the same pattern across the two actor settings. We also report a projection-stress subset of 22 cases. These are the cases whose expected failure mode depends on hidden state being visible to the actor, rather than only on phase, schema, or write-scope enforcement. Under GPT-5-mini, settings that expose the full state have reported leakage in25.9%–31.5% of live runs. View Only and PatchOptic reduce the leak rate to0.7%and0 .2%, with mean leak runs falling from roughly 12–15 per round to less than one. The same pattern appears on the 12",
+      "order": 104,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Projected Reads Reduce Leakage and Cost"
+      ],
+      "char_start": 37616,
+      "char_end": 38462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7f2ecf0cbf59abee9e76d4cd1150296",
+      "kind": "paragraph",
+      "text": "Reported quantity Denominator Interpretation Live sweep 2× 6× 46× 10 = 5520actor runs Full live-behavior sample across two actor settings, six evaluation settings, 46 cases, and ten rounds Content score Accepted artifacts only Content quality of artifacts that passed runtime enforcement; computed before leakage labels are applied Semantic pass Accepted artifacts only Accepted artifact has content score≥ 0.80and no reported leakage Leak runs 46 case runs per setting-roundMean number of runs per round with reported leakage Leak rate 46 case runs per setting-roundLeak runs divided by 46; live-round leakage frequency Mean tokens All actor runs in the settinground Average prompt/context token cost per run",
+      "order": 105,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Projected Reads Reduce Leakage and Cost"
+      ],
+      "char_start": 38464,
+      "char_end": 39173,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:217f0e9bf1a24ec7b1591405f0fe5a48",
+      "kind": "caption",
+      "text": "Table 4: How to read the reported result columns. The measurements do not share one denominator.",
+      "order": 106,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Projected Reads Reduce Leakage and Cost"
+      ],
+      "char_start": 39175,
+      "char_end": 39271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4439fa7927f484424f296585ef06fb2",
+      "kind": "paragraph",
+      "text": "Live-sweep and token quantities use all actor runs, while content score and semantic pass are computed only over accepted artifacts. Values in Table 5 are reported as mean±1s.d. over ten rounds. projection-stress subset. In that subset, full-state settings retain hidden-value leak rates between",
+      "order": 107,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Projected Reads Reduce Leakage and Cost"
+      ],
+      "char_start": 39273,
+      "char_end": 39568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83c3cf76a8d18259d45227ace04d7dd0",
+      "kind": "heading",
+      "text": "509and0 .591, while View Only and PatchOptic fall to0.014and0 .005. The residual projected-read",
+      "order": 108,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "509and0 .591, while View Only and PatchOptic fall to0.014and0 .005. The residual projected-read"
+      ],
+      "char_start": 39570,
+      "char_end": 39665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0538a308f428a70d68f906106a20fc3e",
+      "kind": "paragraph",
+      "text": "leakage comes frommedical_L2_copy_rationale_to_summary. In that case, the actor introduced a clinical differential term that matched the protected internal differential even though the projected view hid that field. The leakage reduction does not come at the cost of lower accepted-artifact quality. Under GPT-5-mini, the Unconstrained baseline has content score0.925± 0.020, while View Only and PatchOptic score0.928± 0.019and0 .927± 0.032. These differences are smaller than the roundto-round variation. Semantic pass therefore rises because accepted artifacts keep their visible-task quality while avoiding reported leakage. View Only reaches0.796, and PatchOptic reaches0.779, compared with0.609–0.621for the full-state baselines. Projected reads are also token-efficient. Under GPT-5-mini, View Only and PatchOptic use 11%–13%fewer tokens per run than settings that expose the full state. Together, these results show the read-side effect. Projection lowers reported leakage and token use without lowering accepted-output quality under the strong actor. Local Mistral attemperature=0 shows how the pattern changes with a weaker actor. Figure 3 still shows the projection effect. View Only and PatchOptic eliminate reported leakage, while guarded full-state settings still leak at the same reported rate because the actor can see hidden values before proposing a patch. The weaker actor also shows a quality cost under projection. View Only has the lowest content score, mainly from lower coverage and non-omission subscores rather",
+      "order": 109,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "509and0 .591, while View Only and PatchOptic fall to0.014and0 .005. The residual projected-read"
+      ],
+      "char_start": 39667,
+      "char_end": 41202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9128322614e81cbb964e83122ee9d50",
+      "kind": "paragraph",
+      "text": "than leakage. PatchOptic recovers part of this content quality and reaches the highest semantic-pass rate in the local-Mistral setting,0.690. It does so by combining projected reads with runtime verification rather than relying on projection alone.",
+      "order": 110,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "509and0 .591, while View Only and PatchOptic fall to0.014and0 .005. The residual projected-read"
+      ],
+      "char_start": 41204,
+      "char_end": 41452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:591162de8711b0360d3cd4d4ef4f119b",
+      "kind": "heading",
+      "text": "Verification Blocks Declared Contract Violations",
+      "order": 111,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Verification Blocks Declared Contract Violations"
+      ],
+      "char_start": 41454,
+      "char_end": 41502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00e21121c514d83a586f12e88a8b2cfb",
+      "kind": "paragraph",
+      "text": "The live sweep explains the read-side effect of PatchOptic, but projection alone does not decide whether a proposed patch is legal. We next look at the write side. Verification controls what the actor can change after it has produced a patch. The relevant PatchBench cases are expected-reject cases, including hidden-value traps, patch-source smuggling, wrong-phase actions, and wrong-scope mutations. They test whether outputs that violate the declared phase, write scope, schema, or source-path policy are stopped before they become state changes. 13",
+      "order": 112,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Verification Blocks Declared Contract Violations"
+      ],
+      "char_start": 41504,
+      "char_end": 42056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc447df92417b2ab0c568e207c730fb9",
+      "kind": "caption",
+      "text": "Table 5: Main live results on 46 cases, six settings, and ten rounds per actor setting. Cells report",
+      "order": 113,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Verification Blocks Declared Contract Violations"
+      ],
+      "char_start": 42058,
+      "char_end": 42158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2a5854d49da6303598b9dd9d0153c32",
+      "kind": "paragraph",
+      "text": "mean±1s.d. over rounds. Semantic pass and content score are computed over accepted artifacts. Semantic pass additionally requires no reported leakage. Leak runs are per-round means out of 46 cases, and leak rate is leak runs divided by 46. For Mistral attemperature=0, zero leak and token standard deviations are omitted. Setting Sem. pass (↑) Content score (↑) Leak rate (↓) Leak runs (↓) Mean tokens (↓) GPT-5-mini actor (strong) Unconstrained 0.609±0.0410.925±0.0200.315±0.02114.5±1.0817.5±5.4 Schema Only 0.621±0.0360.916±0.0330.259±0.01611.9±0.7805.5±2.7",
+      "order": 114,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Results",
+        "Verification Blocks Declared Contract Violations"
+      ],
+      "char_start": 42160,
+      "char_end": 42719,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0dbd96259c53148ba08f5e387d68ee39",
+      "kind": "heading",
+      "text": "FSM + ACL 0.606±0.0340.897±0.0310.283±0.02513.0±1.2811.4±6.5",
+      "order": 115,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 0.606±0.0340.897±0.0310.283±0.02513.0±1.2811.4±6.5"
+      ],
+      "char_start": 42721,
+      "char_end": 42781,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:638de3d17feb03a024fc6c973475be5a",
+      "kind": "heading",
+      "text": "View Only0.796±0.0240.928±0.0190.007±0.0110.3±0.5718.1±7.9",
+      "order": 116,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "View Only0.796±0.0240.928±0.0190.007±0.0110.3±0.5718.1±7.9"
+      ],
+      "char_start": 42783,
+      "char_end": 42841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:024768061c0a68615b3171735f49423d",
+      "kind": "paragraph",
+      "text": "Verify Only 0.619±0.0200.928±0.0250.276±0.01812.7±0.8827.2±5.1",
+      "order": 117,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "View Only0.796±0.0240.928±0.0190.007±0.0110.3±0.5718.1±7.9"
+      ],
+      "char_start": 42843,
+      "char_end": 42905,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e14c0192d9b9e8c549acc29f6f8e7fd",
+      "kind": "heading",
+      "text": "PatchOptic0.779±0.0320.927±0.0320.002±0.0070.1±0.3718.6±3.2",
+      "order": 118,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "PatchOptic0.779±0.0320.927±0.0320.002±0.0070.1±0.3718.6±3.2"
+      ],
+      "char_start": 42907,
+      "char_end": 42966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49c284081d7724dc1d65d0d9c342480d",
+      "kind": "paragraph",
+      "text": "Local Mistral 7B actor (weak) Unconstrained 0.560±0.0280.862±0.0270.239 11.0 986.2 Schema Only 0.590±0.0240.904±0.0230.196 9.0 990.1",
+      "order": 119,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "PatchOptic0.779±0.0320.927±0.0320.002±0.0070.1±0.3718.6±3.2"
+      ],
+      "char_start": 42968,
+      "char_end": 43100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b46ffb0d7b7b30f4a353b5fec32426d4",
+      "kind": "heading",
+      "text": "FSM + ACL 0.603±0.0290.892±0.0280.196 9.0 988.2",
+      "order": 120,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 0.603±0.0290.892±0.0280.196 9.0 988.2"
+      ],
+      "char_start": 43102,
+      "char_end": 43149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12ed4b6d8d6358a5e2518786316d28a0",
+      "kind": "paragraph",
+      "text": "View Only 0.579±0.0470.837±0.0280.000 0.0 824.4 Verify Only0.655±0.0360.916±0.0130.196 9.0 1010.2 PatchOptic0.690±0.0270.884±0.0150.000 0.0 829.3 Within each block, bold marks the best-mean cluster whose±1s.d. band overlaps the best-mean setting for semantic pass, leakage, and token cost.",
+      "order": 121,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 0.603±0.0290.892±0.0280.196 9.0 988.2"
+      ],
+      "char_start": 43151,
+      "char_end": 43440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fbdcb112c6f3be8e0d164e4d23527bc6",
+      "kind": "heading",
+      "text": "U S F V Ve PO",
+      "order": 122,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 43442,
+      "char_end": 43455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:403afbf509780eefbedfc305fe713023",
+      "kind": "heading",
+      "text": "4",
+      "order": 123,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "4"
+      ],
+      "char_start": 43457,
+      "char_end": 43458,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f847fc41e35d5f172ac34ff2663bfc7",
+      "kind": "heading",
+      "text": "6",
+      "order": 124,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "6"
+      ],
+      "char_start": 43460,
+      "char_end": 43461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9125d24c25ebe866fdbb9ce16bce1edc",
+      "kind": "heading",
+      "text": "8Semantic Pass",
+      "order": 125,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "8Semantic Pass"
+      ],
+      "char_start": 43463,
+      "char_end": 43477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66efe7e90daa0684023c3abf121447fb",
+      "kind": "heading",
+      "text": "GPT-5-mini Local Mistral",
+      "order": 126,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "GPT-5-mini Local Mistral"
+      ],
+      "char_start": 43479,
+      "char_end": 43503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac5bd5417c336e7d443c7198919d9ce2",
+      "kind": "paragraph",
+      "text": "(a) Quality.",
+      "order": 127,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "GPT-5-mini Local Mistral"
+      ],
+      "char_start": 43505,
+      "char_end": 43517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51d22cd7ed3798e6d60e8658c3c8a014",
+      "kind": "heading",
+      "text": "U S F V Ve PO",
+      "order": 128,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 43519,
+      "char_end": 43532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6852bec9625548a6d6715c392cb83c2e",
+      "kind": "paragraph",
+      "text": "0 5 10 15 20Leak Runs (b) Leakage.",
+      "order": 129,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 43534,
+      "char_end": 43568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:387dd539930f36527ee54c01c94e0d3a",
+      "kind": "heading",
+      "text": "U S F V Ve PO",
+      "order": 130,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 43570,
+      "char_end": 43583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e342356b204d0049eb056a14f5df192d",
+      "kind": "heading",
+      "text": "7",
+      "order": 131,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "7"
+      ],
+      "char_start": 43585,
+      "char_end": 43586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b848f97fa790e03896fb583ea903cdf",
+      "kind": "heading",
+      "text": "8",
+      "order": 132,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "8"
+      ],
+      "char_start": 43588,
+      "char_end": 43589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c494b11776ed89077c91c58dd9a85f4",
+      "kind": "heading",
+      "text": "9",
+      "order": 133,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "9"
+      ],
+      "char_start": 43591,
+      "char_end": 43592,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78e866efd6b1ffd59970faff2a8b701a",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 134,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "9"
+      ],
+      "char_start": 43594,
+      "char_end": 43595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37bcaae3c9f2bd455708f438c6033947",
+      "kind": "heading",
+      "text": "1Normalized token cost",
+      "order": 135,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "1Normalized token cost"
+      ],
+      "char_start": 43597,
+      "char_end": 43619,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0acb6b10c23f130af50e43ce8d74979",
+      "kind": "paragraph",
+      "text": "(c) Normalized cost.",
+      "order": 136,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "1Normalized token cost"
+      ],
+      "char_start": 43621,
+      "char_end": 43641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:338a7bc700b76124ddbedcbcdec50a37",
+      "kind": "caption",
+      "text": "Figure 3: Parallel actor comparison on the same 46 cases, six settings, and ten-round protocol.",
+      "order": 137,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "1Normalized token cost"
+      ],
+      "char_start": 43643,
+      "char_end": 43738,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86b47551b6a244912aadbf652a7cc0b2",
+      "kind": "paragraph",
+      "text": "GPT-5-mini is the strong-actor setting. Local Mistral is the weak-actor setting. Error bars show±1 s.d. across rounds where nonzero. The cost panel normalizes each actor to its own Unconstrained setting, so token savings are compared within actor rather than across tokenizers. Setting codes are defined in Figure 2. Wrong-phase and wrong-scope cases give the cleanest view of this verifier role. We audit the stored live runs conservatively. A case–round pair enters Table 6 only when at least one setting with verifier checks emitted aphase_violationorwrite_scope_violationdiagnostic. The Unsafe-accept column shows the verifier’s role. Under local Mistral, Unconstrained and View Only produce 9.0 and 8.0 unsafe accepts per round, while FSM + ACL, Verify Only, and PatchOptic reduce unsafe accepts to zero. The same pattern holds under GPT-5-mini on a smaller 14",
+      "order": 138,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "1Normalized token cost"
+      ],
+      "char_start": 43740,
+      "char_end": 44605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4728e19d94659c5fd17aa08adc5aca6",
+      "kind": "paragraph",
+      "text": "Weak local Mistral actor GPT-5-mini actor Setting Verif. block Other rej. Verif. acc. Unsafe acc. Verif. block Other rej. Verif. acc. Unsafe acc. Unconstrained 0.0 0.0 0.0 9.0 0.0 0.0 0.0 3.1 Schema Only 0.0 8.0 0.0 5.0 0.0 0.9 0.0 2.2",
+      "order": 139,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "1Normalized token cost"
+      ],
+      "char_start": 44607,
+      "char_end": 44842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60df2bf0d9676ce0af2dd04d35a1650d",
+      "kind": "heading",
+      "text": "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0",
+      "order": 140,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 44844,
+      "char_end": 44885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37fad41c8ad29a2d9c4c4966e18bdb06",
+      "kind": "paragraph",
+      "text": "View Only 0.0 2.0 0.0 8.0 0.0 0.0 0.0 3.1 Verify Only 9.0 3.0 0.0 0.0 2.5 0.0 0.6 0.0 PatchOptic 5.0 1.0 3.0 0.0 2.5 0.4 0.6 0.0",
+      "order": 141,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 44887,
+      "char_end": 45015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fdc508f49cc729878b3b82c258d2ceb",
+      "kind": "caption",
+      "text": "Table 6: Phase/scope safety buckets under weak and strong actor models. Counts are per-round",
+      "order": 142,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 45017,
+      "char_end": 45109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbfab55c563d16a5cb18445a49e9c991",
+      "kind": "paragraph",
+      "text": "means over audit case–rounds where at least one setting with verifier checks emitted a phase/writescope diagnostic. Verifier block means a direct phase/scope verifier rejection. Verifier accepted marks cross-setting verifier disagreement in this audit slice; it does not imply that the output is semantically correct. Unsafe accept means the misbehavior was accepted with no check catching it. audit denominator. Settings without phase/scope verifier checks produce2.2–3.1unsafe accepts per round, while settings with phase/scope verifier checks produce none. The phase/scope verifier therefore turns this class of mechanical actor error into runtime rejection rather than accepted mutation.",
+      "order": 143,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 45111,
+      "char_end": 45802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8949128cec49c5c23651149f0a754758",
+      "kind": "caption",
+      "text": "Figure 4 shows the local-Mistral outcome audit. For expected-accept cases, the figure separates",
+      "order": 144,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 45804,
+      "char_end": 45899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b6cffb5b25936016b7999b374181fd0",
+      "kind": "paragraph",
+      "text": "clean accepted artifacts, accepted artifacts that fail quality or leakage checks, and invalid patches blocked before mutation. These categories make the failures easy to read. Insupport_L0_valid _classify, a patch can be schema-valid but assign the wrong risk label. Inmarketing_L4_cam paign_send_rollout, a one-step rollout patch can both approve and schedule delivery before the workflow permits it. In the expected-accept local-Mistral setting, PatchOptic retains the largest good-output region among the guarded settings, while most blocked runs correspond to invalid weak-model outputs.",
+      "order": 145,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "FSM + ACL 9.0 3.0 0.0 0.0 2.1 0.0 1.0 0.0"
+      ],
+      "char_start": 45901,
+      "char_end": 46492,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b96de4b3cbf6ca6319897269bcedab7",
+      "kind": "heading",
+      "text": "U S F V Ve PO0",
+      "order": 146,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0"
+      ],
+      "char_start": 46494,
+      "char_end": 46508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dfdc26f073f0f03e88e7254fbcc0b30",
+      "kind": "heading",
+      "text": "2",
+      "order": 147,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "2"
+      ],
+      "char_start": 46510,
+      "char_end": 46511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5581fe3e7067a9acc5feb23274083cb",
+      "kind": "heading",
+      "text": "4",
+      "order": 148,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "4"
+      ],
+      "char_start": 46513,
+      "char_end": 46514,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7109934b123233250c2f4c0468ecc365",
+      "kind": "heading",
+      "text": "6",
+      "order": 149,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "6"
+      ],
+      "char_start": 46516,
+      "char_end": 46517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:055c0ce8156fed8e0b915bcdddaea60a",
+      "kind": "heading",
+      "text": "8",
+      "order": 150,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "8"
+      ],
+      "char_start": 46519,
+      "char_end": 46520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33f0c4d6507c5dfbb5a7029df67be643",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 151,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "8"
+      ],
+      "char_start": 46522,
+      "char_end": 46523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d3552a4ea4b95dcac4274e41bef894e",
+      "kind": "heading",
+      "text": "Fraction",
+      "order": 152,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Fraction"
+      ],
+      "char_start": 46525,
+      "char_end": 46533,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36b9898939fbe64cdbcc3350fdd3e61d",
+      "kind": "heading",
+      "text": "Good Accepted Failure Invalid-Patch Block",
+      "order": 153,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Good Accepted Failure Invalid-Patch Block"
+      ],
+      "char_start": 46535,
+      "char_end": 46576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:501f12fe5486a82972a5bbaff8b33833",
+      "kind": "paragraph",
+      "text": "(a) Expected-accept audit.",
+      "order": 154,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Good Accepted Failure Invalid-Patch Block"
+      ],
+      "char_start": 46578,
+      "char_end": 46604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d33d77fc5fafb40324e69b3e10ab7ac",
+      "kind": "heading",
+      "text": "U S F V Ve PO0",
+      "order": 155,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0"
+      ],
+      "char_start": 46606,
+      "char_end": 46620,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ad50731cd4fa99c7b0345569af61f328",
+      "kind": "heading",
+      "text": "2",
+      "order": 156,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "2"
+      ],
+      "char_start": 46622,
+      "char_end": 46623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11a266de00177bb75f1c7945880d763a",
+      "kind": "heading",
+      "text": "4",
+      "order": 157,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "4"
+      ],
+      "char_start": 46625,
+      "char_end": 46626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e734e94b2be47f62fd768b686f4b3fe8",
+      "kind": "heading",
+      "text": "6",
+      "order": 158,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "6"
+      ],
+      "char_start": 46628,
+      "char_end": 46629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdb42f1f72ddbb05c549208b822d8d5f",
+      "kind": "heading",
+      "text": "8",
+      "order": 159,
+      "page_number": 15,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "8"
+      ],
+      "char_start": 46631,
+      "char_end": 46632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77789a6853dd0ec0b0442270a23c703a",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 160,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO0",
+        "8"
+      ],
+      "char_start": 46634,
+      "char_end": 46635,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52c5c4a50586751f03d26815d85e7f20",
+      "kind": "heading",
+      "text": "Fraction",
+      "order": 161,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Fraction"
+      ],
+      "char_start": 46637,
+      "char_end": 46645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ad5dca54629c972c47b4298709b9358",
+      "kind": "heading",
+      "text": "Verifier Block Other Block Missed: No Leak Missed: Leak",
+      "order": 162,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak"
+      ],
+      "char_start": 46647,
+      "char_end": 46702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e27c3ad9687398db14e9500825a4e0ac",
+      "kind": "paragraph",
+      "text": "(b) Expected-reject audit.",
+      "order": 163,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak"
+      ],
+      "char_start": 46704,
+      "char_end": 46730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:892df121ce21f7b58384a7f9a5b2ecf4",
+      "kind": "caption",
+      "text": "Figure 4: Audit-only outcome breakdown on the repeat-ten local Mistral runs. Left: expected-accept",
+      "order": 164,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak"
+      ],
+      "char_start": 46732,
+      "char_end": 46830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:98475ecec2050dbe663b420e5185ce90",
+      "kind": "paragraph",
+      "text": "cases are split into good accepted artifacts, accepted failures, and invalid patches blocked before mutation. Right: expected-reject cases are split into blocked traps and missed traps. “No leak match” means the accepted artifact lacks an exact protected-value match. Setting codes are defined in Figure 2. The right panel shows the expected-reject cases. Averaged over the 24 local Mistral expectedreject cases, Verify Only and FSM + ACL each block 6 traps per round, while PatchOptic blocks 3. The lower block count for PatchOptic does not mean that the verifier is less strict on identical patches. 15",
+      "order": 165,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak"
+      ],
+      "char_start": 46832,
+      "char_end": 47436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e97544a90f08583ed493ceac3ea44f85",
+      "kind": "paragraph",
+      "text": "Rather, projection changes what the weak actor emits. Some hidden-value traps become off-policy or fabricated accepted outputs instead of explicit hidden-value copies or scope violations. The important difference is what happens when a trap is missed. With full-state visibility, a missed trap can copy a hidden value into the accepted artifact, as infinance_L2_copy_customer_pii. With projection, the actor usually cannot see that value, so the accepted artifact becomes a fabricated substitute or off-policy content instead. PatchOptic can still miss the reject label, but the accepted artifact no longer carries an exact protected-value match. In this audit, false accepts with exact protected-value matches stay at 9 per round for Verify Only and FSM + ACL, and fall to zero for PatchOptic. Overall, the audits show a simple pattern. Verification eliminates unsafe accepts when phase or scope checks fire. Projection does not make every expected-reject case block, but it removes exact hidden-value copies from the missed traps in the local-Mistral audit. This happens because the two checks act at different points. The verifier checks whether the proposed write is legal. Projection limits what the actor can read before it writes the patch, so a missed hidden-value trap becomes fabricated or off-policy content rather than a copied protected value.",
+      "order": 166,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak"
+      ],
+      "char_start": 47438,
+      "char_end": 48794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b69d56aac2ed947cbe5f15586f636426",
+      "kind": "heading",
+      "text": "Patch-Source Enforcement Blocks Compromised Artifacts",
+      "order": 167,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak",
+        "Patch-Source Enforcement Blocks Compromised Artifacts"
+      ],
+      "char_start": 48796,
+      "char_end": 48849,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a45fe912afb3cace58f5913bcb293fc0",
+      "kind": "paragraph",
+      "text": "The live sweeps measure what actors emit under each boundary. The compromised-patch stress test isolates a different question. If a compromised patch artifact is submitted directly, does the runtime reject it before mutation? We remove the model from the loop and submit nine fixed patch artifacts that name hidden fields throughcopy,move, ortest.",
+      "order": 168,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Verifier Block Other Block Missed: No Leak Missed: Leak",
+        "Patch-Source Enforcement Blocks Compromised Artifacts"
+      ],
+      "char_start": 48851,
+      "char_end": 49198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d9e0096c404f2746823fe65a2cf4d26",
+      "kind": "heading",
+      "text": "U S F V Ve PO",
+      "order": 169,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 49200,
+      "char_end": 49213,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11fe2519706ee1f546dfe039f153c5a0",
+      "kind": "paragraph",
+      "text": "0",
+      "order": 170,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO"
+      ],
+      "char_start": 49215,
+      "char_end": 49216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:130320f0992e2d3102e9ba90a9bd00d0",
+      "kind": "heading",
+      "text": "5",
+      "order": 171,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "5"
+      ],
+      "char_start": 49218,
+      "char_end": 49219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc3e7060b4ea5d54fae9ee2442ca3053",
+      "kind": "paragraph",
+      "text": "1",
+      "order": 172,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "U S F V Ve PO",
+        "5"
+      ],
+      "char_start": 49221,
+      "char_end": 49222,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f998cf26b76163efdd387f2a9c8e95f0",
+      "kind": "heading",
+      "text": "0 0 0",
+      "order": 173,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "0 0 0"
+      ],
+      "char_start": 49224,
+      "char_end": 49229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7b7ae025ea115484e096cdd99dd93ab",
+      "kind": "heading",
+      "text": "1",
+      "order": 174,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "1"
+      ],
+      "char_start": 49231,
+      "char_end": 49232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01056bfbb79fb24fb02e55d99be2ec93",
+      "kind": "heading",
+      "text": "0",
+      "order": 175,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "0"
+      ],
+      "char_start": 49234,
+      "char_end": 49235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9adde2bcf318ac6d054a03fbe7419a6",
+      "kind": "heading",
+      "text": "11",
+      "order": 176,
+      "page_number": 16,
+      "heading_level": 3,
+      "heading_path": [
+        "06-30",
+        "0",
+        "11"
+      ],
+      "char_start": 49237,
+      "char_end": 49239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54636d40629960c5ddd82ac0c1fbb732",
+      "kind": "paragraph",
+      "text": "0",
+      "order": 177,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "0",
+        "11"
+      ],
+      "char_start": 49241,
+      "char_end": 49242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d43b21c1ba6589ef73e6237d0e6b8a3f",
+      "kind": "heading",
+      "text": "1",
+      "order": 178,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "1"
+      ],
+      "char_start": 49244,
+      "char_end": 49245,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6eeb58654a97a16f91f82b38b755ce63",
+      "kind": "paragraph",
+      "text": "Block / reject rate",
+      "order": 179,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "1"
+      ],
+      "char_start": 49247,
+      "char_end": 49266,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:746b16d8749ff7e24a3ddc04b211424b",
+      "kind": "heading",
+      "text": "Strict Patch-Source Block Any Reject",
+      "order": 180,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Strict Patch-Source Block Any Reject"
+      ],
+      "char_start": 49268,
+      "char_end": 49304,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6d1efe33c2c8922e47ee49abfe48832",
+      "kind": "caption",
+      "text": "Figure 5: No-model compromised-patch stress test on nine fixed patch artifacts that name hidden",
+      "order": 181,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Strict Patch-Source Block Any Reject"
+      ],
+      "char_start": 49306,
+      "char_end": 49401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94c086afd63eef24bd65f7bf0bb91595",
+      "kind": "paragraph",
+      "text": "source paths. Strict Patch-Source Block means rejection with the implementation diagnostic patch_read_scope_violation; Any Reject includes any runtime rejection before mutation. Setting codes are defined in Figure 2. The result is clear. Verify Only and PatchOptic reject all nine such artifacts with the implementation diagnostic patch_read_scope_violation. FSM + ACL rejects one artifact through another check and accepts the remaining eight. Unconstrained, Schema Only, and View Only accept all nine. Intherepresentativesoftwarefixture, software_L2_copy_deploy_key_instead_of_service_name, the patch copies a hidden deploy key into a public service-reference field. Unconstrained, Schema Only, FSM + ACL, and View Only accept the patch, while Verify Only and PatchOptic reject it withpatch_read_scope_violation. The Verify Only result follows from the separation above. Verify Only gives the actor the full prompt input, but the submitted artifact is checked against the same patch-source policyPA. The hidden source paths named by these artifacts are outsidePA, so the complete verifier rejects them 16",
+      "order": 182,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Strict Patch-Source Block Any Reject"
+      ],
+      "char_start": 49403,
+      "char_end": 50509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59156cc78d19dc5ae3a25d3e3145dadd",
+      "kind": "paragraph",
+      "text": "with thepatch_read_scope_violationdiagnostic. This happens because phase and write-scope checks do not inspect the current-state paths read by copy, move, or test. They can decide whether a write is allowed, but a submitted operation can still read from a hidden field unless the runtime checks patch-source scope. This stress test is not a general leakage or quality result, and authorized sensitive uses such asphysics_L5_authorize d_calibration_note sit outside it. Its role is to show the artifact-level side of the boundary. It does not detect literal values that an actor generated after seeing hidden state. Projected reads control what the actor can observe before it writes a patch. Patch-source enforcement controls what the patch itself can read while it is being applied. Both are needed because a compromised patch artifact can cite hidden state even when it was not produced by a live actor.",
+      "order": 183,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Strict Patch-Source Block Any Reject"
+      ],
+      "char_start": 50511,
+      "char_end": 51416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b48485ad1bbe0e08c7948960a221f3f",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 184,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Discussion"
+      ],
+      "char_start": 51418,
+      "char_end": 51428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae60726359f92ea52d62e0cf49bb96aa",
+      "kind": "paragraph",
+      "text": "The paper has three main contributions. PatchOptic defines a step interface for shared-state LLM workflows. The declaration specifies the projected-read view, the allowed write paths, and the patch-source paths that may be read during commit. This connects prompt-time exposure with commit-time verification. The footprint algebra gives the declaration a static form, so projected-read, write, and patch-source regions can be restricted, composed, and checked for same-phase reordering. PatchBench then measures the interface in two ways. Live actor runs test projected reads under normal model generation, and no-model compromised-artifact tests check whether submitted patch operations that name hidden source paths are rejected. The results support this design point. Projected reads reduce reported leakage and token cost in the live PatchBench runs. Verification blocks invalid phase and scope mutations before commit. Patch-source enforcement blocks every submitted patch artifact that names hidden source paths in the stress test. The footprint algebra is evaluated analytically rather than as a benchmark score: its role is to make step authority explicit enough for delegation, composition, and reuse to be checked outside the prompt. Relation to prior work.PatchOptic sits between protection systems, structured generation, and tool-using agents. Access-control, capability, and information-flow systems define least privilege, delegation, and secrecy or integrity tracking [22,23,26–28,34–38]. Structured data standards and",
+      "order": 185,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Discussion"
+      ],
+      "char_start": 51430,
+      "char_end": 52964,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a30a35faaf1dd28fe94ee77fc63bf717",
+      "kind": "paragraph",
+      "text": "structured-generation methods provide JSON Patch, JSON Pointer, JSON Schema, and constrained decoding techniques for producing or validating machine-readable outputs [17–19,24,25,29,39 –42]. Agent and prompt-injection work studies model outputs that trigger external actions and defenses that separate prompt and data channels or check tool authority [1–3,7,10 –16,43–47]. Provenance systems motivate path-level lineage and workflow traces [48–50]. PatchOptic applies these ideas to a shared workflow store, where the actor sees only a projected view and the runtime commits only verified structured mutations. Limitations.The main limitations follow directly from the failure model and benchmark design. PatchOptic trusts the policy author. If the declared projected-read view, write region, patch-source region, schema, or workflow rule is wrong, the runtime will enforce that wrong contract. It also does not prevent every information leak. Direct exposure is reduced when the policy omits sensitive fields from the projected view, but transformed disclosure, policy-authorized disclosure, and misuse of policy-visible context remain outside the system’s guarantees. Finally, PatchOptic does not make the actor semantically reliable. The actor may fabricate an allowed-looking value or produce a 17",
+      "order": 186,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Discussion"
+      ],
+      "char_start": 52966,
+      "char_end": 54267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d0dab70fd3bd678f65ead901acbde4c",
+      "kind": "paragraph",
+      "text": "low-quality but contract-valid artifact. For the benchmark results, the reported magnitudes also depend on the actor, judge, task suite, and leakage review protocol. Future work.The first direction is a stronger verifier. The cleanest target is to represent the step interface with a typed optic implementation, for example in Haskell, so the projected-read view, update path, and patch-source policy can be checked as one typed contract rather than as separate path predicates. The second direction is a broader PatchBench with more edge cases, including aliasing, dynamic paths, hidden-visible near misses, authorized sensitive use, schema-valid but semantically invalid patches, and multi-step interactions. The third direction is deployment in real workflows and large projects. JSON Patch over compact JSON state is useful for a prototype, but production systems may need database updates, file edits, tool calls, and domain-specific operations with the same source-read discipline.",
+      "order": 187,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Discussion"
+      ],
+      "char_start": 54269,
+      "char_end": 55256,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:acaf49e5df40c4e86cb4d429ec651ecb",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 188,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Conclusion"
+      ],
+      "char_start": 55258,
+      "char_end": 55268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b293ed673cc01b8f255a764604f0af5",
+      "kind": "paragraph",
+      "text": "PatchOptic addresses a central mismatch in shared-state LLM workflows. An LLM actor often sees only a fragment of state, but its proposed update must still be satisfy the global policy and invariants of the whole state. PatchOptic makes that fragment-to-whole contract explicit. A step declaration defines the projected-read view, authorized write region, and patch-source region. The runtime gives the actor only the projected view and verifies each structured patch against the full state before commit. The same declaration also yields footprint regions for restriction, composition, and same-phase reordering checks. PatchBench shows why both sides are needed. Projected reads reduce reported leakage and token cost while preserving accepted-output quality in live runs. Runtime verification blocks wrong-phase and wrong-scope mutations, and patch-source enforcement rejects submitted patch artifacts that name hidden source paths in the no-model stress test. These results support PatchOptic as an inspectable control layer for shared-state LLM workflows. It separates what the actor may observe from what the runtime will commit, and it records where a failure is blocked or allowed. By turning local model actions into scoped, verified, and auditable state updates, PatchOptic supports safer deployment of LLM workflow agents in large shared-state systems. Instead of asking the model to carry global security and consistency obligations, the runtime makes those obligations an explicit contract. 18",
+      "order": 189,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Conclusion"
+      ],
+      "char_start": 55270,
+      "char_end": 56776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:888da2b6f351b3c4983650a954f575d7",
+      "kind": "heading",
+      "text": "References",
+      "order": 190,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "References"
+      ],
+      "char_start": 56778,
+      "char_end": 56788,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2f6998b995c1b0c5b0ac94d127f0ee9",
+      "kind": "reference",
+      "text": "[1] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. Toolformer: Language models can teach themselves to use tools. InAdvances in Neural Information Processing Systems, 2023. [2] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. ReAct: Synergizing reasoning and acting in language models. InProceedings of the International Conference on Learning Representations, 2023. [3] Yujia Qin, Shihao Liang, Yining Ye, Kunlun Zhu, Lan Yan, Yaxi Lu, Yankai Lin, Xin Cong, Xiangru Tang, Bill Qian, Sihan Zhao, Lauren Hong, Runchu Tian, Ruobing Xie, Jie Zhou, Mark Gerstein, Dahai Li, Zhiyuan Liu, and Maosong Sun. ToolLLM: Facilitating large language models to master 16000+ real-world APIs. InProceedings of the International Conference on Learning Representations, 2024. [4] Hamel Husain, Ho-Hsiang Wu, Tiferet Gazit, Miltiadis Allamanis, and Marc Brockschmidt. CodeSearchNet challenge: Evaluating the state of semantic code search. arXiv preprint arXiv:1909.09436, 2019. [5] Nandan Thakur, Nils Reimers, Andreas Rücklé, Abhishek Srivastava, and Iryna Gurevych. BEIR: A heterogeneous benchmark for zero-shot evaluation of information retrieval models. In Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks (NeurIPS Datasets and Benchmarks), 2021. [6] Yangruibo Ding, Zijian Wang, Wasi Uddin Ahmad, Hantian Ding, Ming Tan, Nihal Jain,",
+      "order": 191,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "References"
+      ],
+      "char_start": 56790,
+      "char_end": 58291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d61a79c3d456f7324f7e91d3b68e2f1b",
+      "kind": "heading",
+      "text": "Murali Krishna Ramanathan, Ramesh Nallapati, Parminder Bhatia, Dan Roth, and Bing",
+      "order": 192,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Murali Krishna Ramanathan, Ramesh Nallapati, Parminder Bhatia, Dan Roth, and Bing"
+      ],
+      "char_start": 58293,
+      "char_end": 58374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:950cc99073ebac4d7fb4a73d8a3d9917",
+      "kind": "paragraph",
+      "text": "Xiang. CrossCodeEval: A diverse and multilingual benchmark for cross-file code completion. In Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks (NeurIPS Datasets and Benchmarks), 2023. [7] Minghao Li, Yingxiu Zhao, Bowen Yu, Feifan Song, Hangyu Li, Haiyang Yu, Zhoujun Li, Fei Huang, and Yongbin Li. API-bank: A comprehensive benchmark for tool-augmented LLMs. InProceedings of the 2023 Conference on Empirical Methods in Natural Language Processing, pages 3102–3116, 2023. [8] Xiao Yang, Kai Sun, Hao Xin, Yushi Sun, Nikita Bhalla, Xiangsen Chen, Sajal Choudhary, Rongze Daniel Gui, Ziran Will Jiang, Ziyu Jiang, et al. CRAG – comprehensive RAG benchmark. InProceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks (NeurIPS Datasets and Benchmarks), 2024. [9] Shishir G. Patil, Huanzhi Mao, Charlie Cheng-Jie Ji, Fanjia Yan, Vishnu Suresh, Ion Stoica, and Joseph E. Gonzalez. The berkeley function calling leaderboard (BFCL): From tool use to agentic evaluation of large language models. InForty-second International Conference on Machine Learning, 2025. [10] Harsh Trivedi, Tushar Khot, Mareike Hartmann, Ruskin Manku, Vinty Dong, Edward Li,",
+      "order": 193,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Murali Krishna Ramanathan, Ramesh Nallapati, Parminder Bhatia, Dan Roth, and Bing"
+      ],
+      "char_start": 58376,
+      "char_end": 59592,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22f916d5fb1e5e759674e361199e5751",
+      "kind": "heading",
+      "text": "Shashank Gupta, Ashish Sabharwal, and Niranjan Balasubramanian. AppWorld: A controllable",
+      "order": 194,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Shashank Gupta, Ashish Sabharwal, and Niranjan Balasubramanian. AppWorld: A controllable"
+      ],
+      "char_start": 59594,
+      "char_end": 59682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a42d78adb905fa7433406ca0c89804bb",
+      "kind": "paragraph",
+      "text": "world of apps and people for benchmarking interactive coding agents. InProceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pages 16022–16076, 2024. 19",
+      "order": 195,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Shashank Gupta, Ashish Sabharwal, and Niranjan Balasubramanian. AppWorld: A controllable"
+      ],
+      "char_start": 59684,
+      "char_end": 59895,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64189415ad41407d30b063ffae9fcb76",
+      "kind": "paragraph",
+      "text": "[11] Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik Narasimhan.τ-bench: A benchmark for tool-agent-user interaction in real-world domains, 2024. [12] Shuyan Zhou, Frank F. Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Tianyue Ou, Yonatan Bisk, Daniel Fried, Uri Alon, and Graham Neubig. WebArena: A realistic web environment for building autonomous agents. InProceedings of the International Conference on Learning Representations, 2024. [13] Jiarui Lu, Thomas Holleis, Yizhe Zhang, Bernhard Aumayer, Feng Nan, Haoping Bai, Shuang Ma, Shen Ma, Mengyu Li, Guoli Yin, Zirui Wang, and Ruoming Pang. ToolSandbox: A stateful, conversational, interactive evaluation benchmark for LLM tool use capabilities. In Findings of the Association for Computational Linguistics: NAACL 2025, pages 1160–1183, Albuquerque, New Mexico, April 2025. Association for Computational Linguistics. [14] Kai Greshake, Sahar Abdelnabi, Shailesh Mishra, Christoph Endres, Thorsten Holz, and Mario Fritz. Not what you’ve signed up for: Compromising real-world LLM-integrated applications with indirect prompt injection. InProceedings of the 16th ACM Workshop on Artificial Intelligence and Security, pages 79–90, 2023.",
+      "order": 196,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Shashank Gupta, Ashish Sabharwal, and Niranjan Balasubramanian. AppWorld: A controllable"
+      ],
+      "char_start": 59897,
+      "char_end": 61110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f15a7dba97ef362c16c7d3366362754",
+      "kind": "heading",
+      "text": "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and",
+      "order": 197,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 61112,
+      "char_end": 61205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25e2a1ae967c568264831c60ee97c204",
+      "kind": "paragraph",
+      "text": "Florian Tramèr. AgentDojo: A dynamic environment to evaluate prompt injection attacks and defenses for LLM agents. arXiv preprint arXiv:2406.13352, 2024. [16] Qiusi Zhan, Zhixiang Liang, Zifan Ying, and Daniel Kang. InjecAgent: Benchmarking indirect prompt injections in tool-integrated large language model agents. InFindings of the Association for Computational Linguistics: ACL 2024, pages 10471–10506, 2024. [17] Austin Wright, Henry Andrews, Ben Hutton, and Greg Dennis. JSON Schema: A media type for describing JSON documents. Draft 2020-12 specification, JSON Schema, 2022. [18] Torsten Scholak, Nathan Schucher, and Dzmitry Bahdanau. PICARD: Parsing incrementally for constrained auto-regressive decoding from language models. InProceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, pages 9895–9901, 2021. [19] Luca Beurer-Kellner, Marc Fischer, and Martin Vechev. Prompting is programming: A query language for large language models.Proceedings of the ACM on Programming Languages, 7(PLDI):1946–1969, 2023. [20] J. Nathan Foster, Michael B. Greenwald, Jonathan T. Moore, Benjamin C. Pierce, and Alan Schmitt. Combinators for bidirectional tree transformations: A linguistic approach to the view-update problem. InProceedings of the 32nd ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages, pages 233–246, 2005. [21] Aaron Bohannon, Benjamin C. Pierce, and Jeffrey A. Vaughan. Relational lenses: A language for updatable views. InProceedings of the Twenty-Fifth ACM SIGMOD-SIGACT-SIGART",
+      "order": 198,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 61207,
+      "char_end": 62751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bf66b1859708387986f6942bb3588ec",
+      "kind": "paragraph",
+      "text": "Symposium on Principles of Database Systems, pages 338–347. Association for Computing Machinery, 2006. [22] Butler W. Lampson. Protection. InProceedings of the Fifth Princeton Symposium on Information Sciences and Systems, pages 437–443, 1971. [23] Jerome H. Saltzer and Michael D. Schroeder. The protection of information in computer systems.Proceedings of the IEEE, 63(9):1278–1308, 1975. 20",
+      "order": 199,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 62753,
+      "char_end": 63146,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79981484c8aeffb76cf0d824fa642603",
+      "kind": "paragraph",
+      "text": "[24] Paul C. Bryan and Mark Nottingham. JavaScript Object Notation (JSON) Patch. RFC 6902, Internet Engineering Task Force, 2013. [25] Paul C. Bryan, Kris Zyp, and Mark Nottingham. JavaScript Object Notation (JSON) Pointer. RFC 6901, Internet Engineering Task Force, 2013. [26] Ravi S. Sandhu, Edward J. Coyne, Hal L. Feinstein, and Charles E. Youman. Role-based access control models.Computer, 29(2):38–47, 1996. [27] Mark S. Miller, Ka-Ping Yee, and Jonathan Shapiro. Capability myths demolished. Technical report, Technical Report, 2003. [28] Vincent C. Hu, David Ferraiolo, Rick Kuhn, Adam Schnitzer, Kenneth Sandlin, Robert Miller, and Karen Scarfone. Guide to attribute based access control (ABAC) definition and considerations. NIST Special Publication 800-162, National Institute of Standards and Technology, 2014. [29] Brandon T. Willard and Rémi Louf. Efficient guided generation for large language models, 2023. [30] Wil M. P. van der Aalst, Arthur H. M. ter Hofstede, Bartek Kiepuszewski, and Alistair P. Barros. Workflow patterns.Distributed and Parallel Databases, 14(1):5–51, 2003. [31] Jim Barnett, Rahul Akolkar, Rob Auburn, Michael Bodell, Daniel C. Burnett, Jerry Carter, Scott McGlashan, and Torbjörn Lager. State chart XML (SCXML): State machine notation for control abstraction. W3C recommendation, World Wide Web Consortium, 2015. [32] Yang Liu, Dan Iter, Yichong Xu, Shuohang Wang, Ruochen Xu, and Chenguang Zhu. Geval: NLG evaluation using GPT-4 with better human alignment. InProceedings of the 2023",
+      "order": 200,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 63148,
+      "char_end": 64673,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f8734d123489e29321c9abcb39b1b48",
+      "kind": "paragraph",
+      "text": "Conference on Empirical Methods in Natural Language Processing, pages 2511–2522, 2023. [33] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica. Judging LLM-as-a-judge with MT-bench and chatbot arena. InAdvances in Neural Information Processing Systems, 2023. [34] Dorothy E. Denning. A lattice model of secure information flow.Communications of the ACM, 19(5):236–243, 1976. [35] Andrew C. Myers and Barbara Liskov. A decentralized model for information flow control. InProceedings of the 16th ACM Symposium on Operating Systems Principles, pages 129–142, 1997. [36] Andrew C. Myers and Barbara Liskov. Complete, safe information flow with decentralized labels. InProceedings of the IEEE Symposium on Security and Privacy, pages 186–197, 1998. [37] Andrew C. Myers. JFlow: Practical mostly-static information flow control. InProceedings of the 26th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages, pages 228–241, 1999. [38] Fangzhou Wu, Ethan Cecchetti, and Chaowei Xiao. System-level defense against indirect prompt injection attacks: An information flow control perspective, 2024. 21",
+      "order": 201,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 64675,
+      "char_end": 65908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2a918f7918f77535f12bd460166bc070",
+      "kind": "paragraph",
+      "text": "[39] Jiuzhou Han, Nigel Collier, Wray Buntine, and Ehsan Shareghi. PiVe: Prompting with iterative verification improving graph-based generative capability of LLMs. arXiv preprint arXiv:2305.12392, 2023. [40] Saibo Geng, Berkay Döner, Chris Wendler, Martin Josifoski, and Robert West. Sketch-guided constrained decoding for boosting blackbox large language models without logit access. arXiv preprint arXiv:2401.09967, 2024. [41] Sarel Duanis, Asnat Greenstein-Messica, and Eliya Habba. JSON whisperer: Efficient JSON editing with LLMs. InProceedings of the 2025 Conference on Empirical Methods in Natural Language Processing: Industry Track, pages 1265–1274, Suzhou (China), November 2025. Association for Computational Linguistics. [42] Yixin Dong, Charlie F. Ruan, Yaxing Cai, Ziyi Xu, Yilong Zhao, Ruihang Lai, and Tianqi Chen. XGrammar: Flexible and efficient structured generation engine for large language models. In Proceedings of Machine Learning and Systems, volume 7, 2025. [43] Eyal Karpas, Omri Abend, Yonatan Belinkov, Barak Lenz, Omer Lieber, Nir Ratner, Yoav",
+      "order": 202,
+      "page_number": 22,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "[15] Edoardo Debenedetti, Jie Zhang, Mislav Balunović, Luca Beurer-Kellner, Marc Fischer, and"
+      ],
+      "char_start": 65910,
+      "char_end": 66983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c842794dad3d356c0ab5524121f2dbb",
+      "kind": "heading",
+      "text": "Shoham, Harry Bata, Yoav Levine, Kevin Leyton-Brown, Dor Muhlgay, Neer Rozen, Roy",
+      "order": 203,
+      "page_number": 22,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Shoham, Harry Bata, Yoav Levine, Kevin Leyton-Brown, Dor Muhlgay, Neer Rozen, Roy"
+      ],
+      "char_start": 66985,
+      "char_end": 67066,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d101a1ca38d6fc10e58951b4412369d",
+      "kind": "heading",
+      "text": "Schwartz, Gal Shachaf, Shai Shalev-Shwartz, and Moshe Tenenholtz. MRKL systems: A",
+      "order": 204,
+      "page_number": 22,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Schwartz, Gal Shachaf, Shai Shalev-Shwartz, and Moshe Tenenholtz. MRKL systems: A"
+      ],
+      "char_start": 67068,
+      "char_end": 67149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea76ef9b4324e28f2d9e95191b339a13",
+      "kind": "paragraph",
+      "text": "modular, neuro-symbolic architecture that combines large language models, external knowledge sources and discrete reasoning, 2022. [44] Keegan Hines, Gary Lopez, Matthew Hall, Federico Zarfati, Yonatan Zunger, and Emre Kiciman. Defending against indirect prompt injection attacks with spotlighting, 2024. [45] Yangjun Ruan, Honghua Dong, Andrew Wang, Silviu Pitis, Yongchao Zhou, Jimmy Ba, Yann Dubois, Chris J. Maddison, and Tatsunori Hashimoto. Identifying the risks of LM agents with an LM-emulated sandbox, 2024. [46] Sizhe Chen, Julien Piet, Chawin Sitawarin, and David Wagner. StruQ: Defending against prompt injection with structured queries. In34th USENIX Security Symposium (USENIX Security 25), pages 2383–2400. USENIX Association, 2025.",
+      "order": 205,
+      "page_number": 22,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Schwartz, Gal Shachaf, Shai Shalev-Shwartz, and Moshe Tenenholtz. MRKL systems: A"
+      ],
+      "char_start": 67151,
+      "char_end": 67898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6716bc363794507ab7b16058b673d031",
+      "kind": "heading",
+      "text": "[47] Edoardo Debenedetti, Ilia Shumailov, Tianqi Fan, Jamie Hayes, Nicholas Carlini, Daniel",
+      "order": 206,
+      "page_number": 22,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "[47] Edoardo Debenedetti, Ilia Shumailov, Tianqi Fan, Jamie Hayes, Nicholas Carlini, Daniel"
+      ],
+      "char_start": 67900,
+      "char_end": 67991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bed17c470a7255ce2c0096fdbd8406a8",
+      "kind": "heading",
+      "text": "Fabian, Christoph Kern, Chongyang Shi, Andreas Terzis, and Florian Tramèr. Defeating",
+      "order": 207,
+      "page_number": 22,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "Fabian, Christoph Kern, Chongyang Shi, Andreas Terzis, and Florian Tramèr. Defeating"
+      ],
+      "char_start": 67993,
+      "char_end": 68077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e08a8c1111854ab1c416cbd12eaf0b2",
+      "kind": "paragraph",
+      "text": "prompt injections by design, 2025. [48] Umut Acar, Peter Buneman, James Cheney, Jan Van den Bussche, Natalia Kwasnikowska, and Stijn Vansummeren. A graph model of data and workflow provenance. InProceedings of the 2nd USENIX Workshop on the Theory and Practice of Provenance, 2010. [49] Zhuowei Bao, Susan B. Davidson, and Tova Milo. A fine-grained workflow model with provenance-aware security views. InProceedings of the 3rd USENIX Workshop on the Theory and Practice of Provenance, 2011. [50] Luc Moreau and Paolo Missier. PROV-DM: The PROV data model. W3C recommendation, World Wide Web Consortium, 2013. 22",
+      "order": 208,
+      "page_number": 22,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "Fabian, Christoph Kern, Chongyang Shi, Andreas Terzis, and Florian Tramèr. Defeating"
+      ],
+      "char_start": 68079,
+      "char_end": 68690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e01cb2504f69ea5adde36a7f574d9778",
+      "kind": "heading",
+      "text": "A Artifact and Reproducibility Summary",
+      "order": 209,
+      "page_number": 23,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "A Artifact and Reproducibility Summary"
+      ],
+      "char_start": 68692,
+      "char_end": 68730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3aaee6c42462441bcc57fb291c339dc1",
+      "kind": "paragraph",
+      "text": "The released artifacts separate paper reproduction from full run inspection. The package contains every CSV needed to compile the figures and tables underdata/. The 46 benchmark YAML files live in the source repository underbenchmark/cases/patchbench/instances, while the source-run JSONL files remain repository artifacts for audit and reanalysis. The live-run artifacts cover ten GPT-5-mini actor rounds and ten local Mistral actor rounds over six benchmark settings. The hosted semantic-quality judge uses GPT-5-mini with prompt version integrity_v2 and low reasoning effort. The deterministic records include runtime verdicts, final-state checks, leakage detection, and reject diagnostics. The no-model artifact test contains nine patch artifacts that name hidden source paths across the six settings and is used only for compromised-patch containment evidence.",
+      "order": 210,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "A Artifact and Reproducibility Summary"
+      ],
+      "char_start": 68732,
+      "char_end": 69597,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b5d856588ce18c9a2b2cc0a9c22fd1f",
+      "kind": "heading",
+      "text": "B Measurement Prompts",
+      "order": 211,
+      "page_number": 23,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "B Measurement Prompts"
+      ],
+      "char_start": 69599,
+      "char_end": 69620,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e13b403a42bb83b655e00826ee498d9",
+      "kind": "paragraph",
+      "text": "This appendix records the measurement prompts used by the live actor and the semantic-quality judge.",
+      "order": 212,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B Measurement Prompts"
+      ],
+      "char_start": 69622,
+      "char_end": 69722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d3092a7a19d85f7b4f24f48a899aaaa",
+      "kind": "heading",
+      "text": "B.1 Actor Prompt Excerpt",
+      "order": 213,
+      "page_number": 23,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 69724,
+      "char_end": 69748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cacb779a69e328a05c9199f77231c4e5",
+      "kind": "paragraph",
+      "text": "The live actor prompt is generated bybenchmark/patchbench_live.py, using the shared system instruction frombenchmark/models/base.py. The system instruction is: You are a JSON Patch generator. Given a current JSON state and a task description, output ONLY a JSON array of RFC 6902 patch operations. Do not include any explanation or markdown formatting. Return just the raw JSON array. The user prompt then adds the case, setting, and step markers followed by the step-local task context. In the released artifacts, the setting marker is namedPatchBench Arm for backward compatibility. Case-specific state and instruction content are abbreviated here: ## PatchBench Case ID: ... ## PatchBench Arm: ... ## PatchBench Step: ... ## Current State . . . ## Current Phase: ... ## Current Step: ... ## Allowed Write Paths",
+      "order": 214,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 69750,
+      "char_end": 70563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:118425d31ab90d4725345af4dc4c38b3",
+      "kind": "list_item",
+      "text": "- ...",
+      "order": 215,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 70565,
+      "char_end": 70570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10ab8fd7d64e98d727297adf0bbfed3a",
+      "kind": "paragraph",
+      "text": "Visible state is restricted to the current step projected-read scope. (used by View Only and PatchOptic; i.e. the projected-read settings) or Full state is visible; verifier still enforces the current step contract. (used by Unconstrained, Schema Only, FSM + ACL, and Verify Only; i.e. the full-input settings) ## Patch Output Rules",
+      "order": 216,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 70572,
+      "char_end": 70904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46cd4f164a197f508ed57960b2b8c4af",
+      "kind": "list_item",
+      "text": "- Output only minimal RFC 6902 operations on the current allowed write paths;",
+      "order": 217,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 70906,
+      "char_end": 70983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9a5a3b4fd785b175b26fa594e56e8c2",
+      "kind": "paragraph",
+      "text": "do not add debug, internal, rationale, provenance, or secret fields.",
+      "order": 218,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 70985,
+      "char_end": 71053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5fd919a240214266bcf582118d10d51",
+      "kind": "list_item",
+      "text": "- Follow output_contract constraints when present;",
+      "order": 219,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 71055,
+      "char_end": 71105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:264ed4bfde9783ace92abba6690d2a85",
+      "kind": "paragraph",
+      "text": "for object containers, write only declared descendants; for allowed_values, write exactly one listed scalar, never the allowed_values array. 23",
+      "order": 220,
+      "page_number": 23,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 71107,
+      "char_end": 71250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2729ea11a162f468b96a2f26d76bb884",
+      "kind": "paragraph",
+      "text": "## Instruction . . . Output your JSON Patch (RFC 6902) array:",
+      "order": 221,
+      "page_number": 24,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.1 Actor Prompt Excerpt"
+      ],
+      "char_start": 71252,
+      "char_end": 71313,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:575042834fd8393d0ea09f48a192b54e",
+      "kind": "heading",
+      "text": "B.2 Semantic-Quality Judge Prompt Excerpt",
+      "order": 222,
+      "page_number": 24,
+      "heading_level": 2,
+      "heading_path": [
+        "06-30",
+        "B.2 Semantic-Quality Judge Prompt Excerpt"
+      ],
+      "char_start": 71315,
+      "char_end": 71356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:087d6310df752bac0a6110511b2090cb",
+      "kind": "paragraph",
+      "text": "The GPT-5-mini semantic-quality judge uses the prompt generated inbenchmark/integrity_judg e.py. The full prompt supplies the case instruction, judged artifact, allowed evidence, expected output, hidden signatures, and required JSON schema. The core instruction is: You are grading semantic quality of an accepted output. Return exactly one JSON object. Judge only the semantic quality of the output content itself. Do not judge workflow correctness, accept/reject correctness, runtime correctness, or policy enforcement success. Compare the expected output meaning against the judged artifact meaning. First decompose the expected output into a short checklist of atomic important meanings, then check whether each important meaning is present. Return integrity_verdict, overall_score, coverage_score, omission_score, hallucination_score, contradiction_score, leakage_semantic_score, format_score, critical_failures, and path-level evidence. 24",
+      "order": 223,
+      "page_number": 24,
+      "heading_level": null,
+      "heading_path": [
+        "06-30",
+        "B.2 Semantic-Quality Judge Prompt Excerpt"
+      ],
+      "char_start": 71358,
+      "char_end": 72303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 24,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 24
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.05483",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 24,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

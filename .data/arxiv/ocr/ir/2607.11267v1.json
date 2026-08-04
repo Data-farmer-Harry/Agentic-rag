@@ -1,0 +1,2399 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "4e61ff4b622da037254fffc19dd9292807361bf1de2c6b4d2068b38c2d3bda2d",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:034b37cf6a3f16a15f208161f1fa1972",
+      "kind": "paragraph",
+      "text": "Enhancing LLMs through human feedback: a journey towards self-improvement Tatiana Pelc1, Gila Kamhi 1, Asaf Avrahamy 1 and Adi Fledel-Alon 1,* 1Intel Corporation",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c39919ce85f6de56a53d009f3c88808e",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 163,
+      "char_end": 171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0bdec19e1dbd7e57acff6b68f2f70bdb",
+      "kind": "paragraph",
+      "text": "In the rapidly evolving landscape of information retrieval systems, the ability to adapt and improve through user feedback is paramount. This study introduces a novel methodology for refining the performance of aprimaryRetrieval Augmented Generation (RAG) system by strategically integrating anauxiliaryfeedback RAG system. By systematically harnessing human-generated feedback, the approach aims to enhance the accuracy, relevance, and overall quality of responses, driving the system towards self-improvement. Central to this methodology is a human-in-the-loop implementation, where user feedback is continuously collected, classified, and integrated into the inference workflow, enabling the system to learn and evolve iteratively. To validate the effectiveness of this approach, the study employs rigorous testing against three diverse benchmark datasets focused on general and custom domain knowledge, utilizing aLLM-as-a-Judge evaluation strategy. This comprehensive framework not only underscores the transformative potential of feedback-driven enhancements in RAG systems but also sets a precedent for future research in adaptive information retrieval technologies, marking a significant step in the journey towards autonomous refinement and optimization through user engagement.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 173,
+      "char_end": 1460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6768d38380f4a465dc78567869c535c1",
+      "kind": "heading",
+      "text": "Keywords",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Keywords"
+      ],
+      "char_start": 1462,
+      "char_end": 1470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd7739e58f54db157fdb7a27783c284e",
+      "kind": "paragraph",
+      "text": "RLHF, Retrieval Augmented Generation, Large language models, LLM-as-a-Judge",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords"
+      ],
+      "char_start": 1472,
+      "char_end": 1547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9ef6b12d5fea56d00225c3ea5c2cee4",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 1549,
+      "char_end": 1561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eedf6fcbd3122241341626dc44f4f9f0",
+      "kind": "paragraph",
+      "text": "Large Language Models (LLMs) have driven recent advances in AI, enabled by their unprecedented scale and improved through Reinforcement Learning from Human Feedback (RLHF). RLHF refines model behavior using human input, significantly enhancing adaptability, responsiveness, and overall performance. However, traditional AI systems have relied on binary feedback (e.g., like/dislike), which limits learning depth. This paper proposes incorporating rich textual human feedback—including detailed corrections—into the generative AI pipeline. This enables more nuanced learning and improves response accuracy and contextual alignment.",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 1563,
+      "char_end": 2193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9a80acab742f85567c307af6abdd2ad",
+      "kind": "heading",
+      "text": "Related work",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction",
+        "Related work"
+      ],
+      "char_start": 2195,
+      "char_end": 2207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89f768c1c2384eec442ea1c951e2da54",
+      "kind": "paragraph",
+      "text": "Retrieval Augmented Generation (RAG) enhances LLMs by retrieving relevant documents, but often fails to capture user preferences, resolve contextual mismatches, or adapt to evolving information needs. Common issues include retrieval bias, robustness challenges, and fairness and privacy concerns [1, 2]. Early approaches with static retrieval and binary feedback offered limited gains. Recent work emphasizes the role of structured and dynamic feedback to improve alignment and reliability. Hybrid methods combining human judgment with automated evaluation have been explored to reduce hallucinations. Human-in-the-loop systems and cross-domain adaptation are emerging as effective strategies for building self-improving, context-aware RAG systems.",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction",
+        "Related work"
+      ],
+      "char_start": 2209,
+      "char_end": 2957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf68ff80f0e87a08cc2583bee4be862f",
+      "kind": "heading",
+      "text": "Feedback in RAG and LLM systems",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction",
+        "Related work",
+        "Feedback in RAG and LLM systems"
+      ],
+      "char_start": 2959,
+      "char_end": 2990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fd848c458bd4862542399c073c564db",
+      "kind": "paragraph",
+      "text": "Structured feedback pipelines such as CDF-RAG (Causal",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction",
+        "Related work",
+        "Feedback in RAG and LLM systems"
+      ],
+      "char_start": 2992,
+      "char_end": 3045,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21d9f9813428ff1cf673da0b03d80fab",
+      "kind": "heading",
+      "text": "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-"
+      ],
+      "char_start": 3047,
+      "char_end": 3101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:975a50213eb165e053908fa9241bbaa0",
+      "kind": "paragraph",
+      "text": "eration) refine retrieval and generation through iterative loops guided by causal graphs, enabling multi-hop reasoning and improving accuracy [3]. In educational applications, *Corresponding author. /envel⌢pe-⌢penadi.fledel.alon@intel.com (A. Fledel-Alon) ©2025 Copyright for this paper by its authors. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0). timestamp-anchored feedback has reduced hallucinations by 37% and improved user satisfaction and learning outcomes [4].",
+      "order": 12,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-"
+      ],
+      "char_start": 3103,
+      "char_end": 3613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e2210d52820f076a6f6342e92e95a6a",
+      "kind": "heading",
+      "text": "Cross-domain, comparative, multi-modal",
+      "order": 13,
+      "page_number": 1,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal"
+      ],
+      "char_start": 3615,
+      "char_end": 3653,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6458c3e49006ec42405c93ccb8e37eea",
+      "kind": "paragraph",
+      "text": "feedback integration LLM-Cure addresses large-scale user review analysis by combining automated feature extraction with competitive analysis [5]. Analyzing over one million reviews from 70 apps, it introduces a three-stage remediation process. The method achieves an 85% F1-score in categorizing featurespecific complaints, outperforming prior approaches by 13%. The system matches issues with top competitor solutions and generates actionable suggestions, 73% of which have been adopted by developers. Additionally, 68% of recommended features appeared in app updates within three months, demonstrating effective, scalable, and marketaware remediation. Complementing this, USER-LLM integrates textual feedback with behavioral data—such as clickstreams and session durations—into unified embeddings [6]. This approach improves personalization accuracy by 28% over text-only models and enables LLMs to distinguish between transient frustrations and systemic issues needing intervention.",
+      "order": 14,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal"
+      ],
+      "char_start": 3655,
+      "char_end": 4640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59cab8fa1f9d9118c7d602c6f99ca10e",
+      "kind": "heading",
+      "text": "Feedback driven alignment",
+      "order": 15,
+      "page_number": 1,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal",
+        "Feedback driven alignment"
+      ],
+      "char_start": 4642,
+      "char_end": 4667,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:588e176bfecc90d731e715bc740e0154",
+      "kind": "paragraph",
+      "text": "Effective feedback-driven learning requires addressing challenges in feedback collection, interpretation, and alignment. Subjective user preferences, inconsistent evaluation criteria, and underrepresentation in feedback datasets can introduce bias and reduce generalizability [7, 8]. To address this, recent research expands feedback modalities to include natural language critiques, numerical ratings, and direct edits, increasing expressiveness but complicating integration [9]. To overcome limitations of traditional RLHF, alternative alignment strategies have emerged. Direct Preference Optimization (DPO) simplifies training by replacing reinforcement learning with a closed-form objective, reducing computational overhead [10]. Safe RLHF introduces dual objectives—helpfulness and harmlessness—to promote aligned and safe outputs [11, 12]. Reinforcement Learning from AI",
+      "order": 16,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal",
+        "Feedback driven alignment"
+      ],
+      "char_start": 4669,
+      "char_end": 5545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85dab87bd8e0091deee1936b10144bef",
+      "kind": "paragraph",
+      "text": "Feedback (RLAIF) further automates alignment by using AI-generated reward signals, enhancing scalability [13].",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal",
+        "Feedback driven alignment"
+      ],
+      "char_start": 5547,
+      "char_end": 5657,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07aae4bcc5c0742e407b0290c975e8d0",
+      "kind": "heading",
+      "text": "Our contribution",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal",
+        "Our contribution"
+      ],
+      "char_start": 5659,
+      "char_end": 5675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:478f7cd49683ed6d071aea149aacef61",
+      "kind": "paragraph",
+      "text": "This paper introduces a dynamic framework for enhancing LLMs through real user feedback, enabling continuous system-level adaptation. Unlike static RLHF pipelines, our method classifies, aggregates, embeds, and retrieves feedback within the generation loop. Validated using the LLM-as-a-Judgeprotocol [ 14], the framework improves contextual relevance, factual accuracy, and alignment. By integrating diverse feedback types—such as textual corrections and behavioral signals—and employing efficient optimization, we support scalable, robust, and user-centered LLM solutions.",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Cross-domain, comparative, multi-modal",
+        "Our contribution"
+      ],
+      "char_start": 5677,
+      "char_end": 6251,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:548ade76a06a02bd4b28066356f129d2",
+      "kind": "heading",
+      "text": "Methods",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods"
+      ],
+      "char_start": 6253,
+      "char_end": 6260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1783ab2e2ac829343373d4d1c7fd2bbe",
+      "kind": "heading",
+      "text": "FLARE Framework Overview",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "FLARE Framework Overview"
+      ],
+      "char_start": 6262,
+      "char_end": 6286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fbe9e6206f155f6ebf85c24d8afbc10",
+      "kind": "paragraph",
+      "text": "We present FLARE (Feedback-driven LLM Adaptive RAG Enhancement), an iterative framework designed to improve RAG systems by leveraging structured user feedback. FLARE operates through two independent phases: offline preprocessing and online inference. These phases run in parallel with the primary RAG pipeline. We evaluate the framework using three datasets: the Fictional Persona Dialogs dataset, available on Hugging Face Fictional_Persona_Dialogs_Anonymized; the Trivia dataset, accessible on Hugging Face Current_Trivia_Knowledge-benchmark ; and the Wireless Technical Documentation dataset (proprietary). The effectiveness is assessed using theLLM-as-a-Judge protocol.",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "FLARE Framework Overview"
+      ],
+      "char_start": 6288,
+      "char_end": 6961,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db665ea82f9e38a3f2c1c4eb96fbcc87",
+      "kind": "heading",
+      "text": "Feedback processing architecture",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture"
+      ],
+      "char_start": 6963,
+      "char_end": 6995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e5240f4d1a917bfd2d2ca69cd1ce39c",
+      "kind": "heading",
+      "text": "Offline feedback management pipeline",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture",
+        "Offline feedback management pipeline"
+      ],
+      "char_start": 6997,
+      "char_end": 7033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e23fb8801bab4ba3c5de273fd66c24e1",
+      "kind": "paragraph",
+      "text": "The offline component of FLARE processes user feedback through a multi-stage pipeline that extracts actionable insights and converts them into structured knowledge representations: Feedback collection and storageUser-generated freetext feedback is continuously collected and stored in a MongoDB database. This feedback is processed in periodic batches to ensure scalability while maintaining a responsive user experience. Contextual enrichmentRaw feedback often lacks sufficient context for standalone interpretation. To address this, each feedback instance is enriched with relevant conversation history, converting fragmented inputs into selfcontained, interpretable statements. For example: • Original interaction: Q: “Who is the current president of the US?” A: “Joe Biden. ” F: “Wrong, it is Donald Trump. ” • Enriched feedback: “The current president of the US is Donald Trump as of 2025. ” Prompt:Synthesize a new question from the user’s question and chat history context. Make the question concise, retaining only the core content. (a) LLM prompt for synthesizing a new question Prompt:Generate a concise factual statement by synthesizing factual information from the user question and feedback text. Ensure the statement is accurate and coherent based on the provided feedback. If the feedback text does not directly answer the user question or is not relevant, leave the field empty. (b) LLM prompt for generating factual statements Prompt:Extract key general guidelines from the feedback that could",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture",
+        "Offline feedback management pipeline"
+      ],
+      "char_start": 7035,
+      "char_end": 8545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34d5940f36fa218df10fea3eb1d0b0f0",
+      "kind": "paragraph",
+      "text": "be added to the prompt for future use; keep empty if not relevant. (c) LLM prompt for extracting general guidelines",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture",
+        "Offline feedback management pipeline"
+      ],
+      "char_start": 8547,
+      "char_end": 8662,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bfc9c366e196f3526115b0b29187a5c",
+      "kind": "caption",
+      "text": "Figure 1:System prompt instructions. The figure illustrates dif-",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture",
+        "Offline feedback management pipeline"
+      ],
+      "char_start": 8664,
+      "char_end": 8728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93eaf512e26ab695efcf4c9af862dd0b",
+      "kind": "paragraph",
+      "text": "ferent types of prompts used in LLM systems for synthesizing questions, generating factual statements, and extracting guidelines. Multi-category feedback classificationThe enriched feedback is automatically processed by LLM to generate two categories:",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Methods",
+        "Feedback processing architecture",
+        "Offline feedback management pipeline"
+      ],
+      "char_start": 8730,
+      "char_end": 8981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d321f92078cc4a672c3b747369a5ae43",
+      "kind": "heading",
+      "text": "Factual data corrections— Target inaccuracies,",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Factual data corrections— Target inaccuracies,"
+      ],
+      "char_start": 8983,
+      "char_end": 9029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbe138480b39149dbc9c0c50df108584",
+      "kind": "paragraph",
+      "text": "outdated information, or missing knowledge, prompting direct updates to the system’s knowledge base (Figure 1b).",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Factual data corrections— Target inaccuracies,"
+      ],
+      "char_start": 9031,
+      "char_end": 9143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d74540f06e34ef78f5d21b5668625b6",
+      "kind": "heading",
+      "text": "Stylistic and structural guidelines— Address clar-",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-"
+      ],
+      "char_start": 9145,
+      "char_end": 9195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:865e31bd6498834cbec3c38d4af7b984",
+      "kind": "paragraph",
+      "text": "ity, coherence, and presentation quality without altering factual content (Figure 1c). Query synthesis and refinementOriginal user queries undergo context-aware refinement to remove extraneous elements while preserving core semantic meaning, as illustrated in Figure 1a. This process ensures feedback can be accurately linked to clean, standardized query representations. Structured knowledge organizationProcessed outputs are stored as structured dictionaries, pairing synthesized queries with corresponding factual corrections and stylistic guidelines. This format enables efficient retrieval and application during inference. Intelligent feedback aggregationGPT-4o aggregates feedback by identifying and consolidating redundant or conflicting entries. A relevance filter retains only actionable feedback that directly improves system performance, optimizing computational efficiency. Vector embedding and indexingSynthesized queries are embedded using OpenAI’s text-embedding-ada-002 model and indexed in an Azure Vector Database, enabling fast similarity-based retrieval during inference.",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-"
+      ],
+      "char_start": 9197,
+      "char_end": 10289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17ca35a493aabceaee2117554dd124e8",
+      "kind": "caption",
+      "text": "Figure 2:FLARE offline processing flow",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-"
+      ],
+      "char_start": 10291,
+      "char_end": 10329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:caac3b7bacb08b41a9dc7d8727002a05",
+      "kind": "caption",
+      "text": "Figure 3:FLARE inference flow",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-"
+      ],
+      "char_start": 10331,
+      "char_end": 10360,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b95a5e3ed06831fd5f9b56367e197f2",
+      "kind": "heading",
+      "text": "Online feedback integration workflow",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Online feedback integration workflow"
+      ],
+      "char_start": 10362,
+      "char_end": 10398,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:649085e276de0f68b7c1847200daf6f5",
+      "kind": "paragraph",
+      "text": "The online component integrates processed feedback into the active RAG pipeline in real time: Dual retrieval architectureEach incoming query is processed in parallel by the primary RAG system and a dedicated Feedback-RAG module. This setup ensures comprehensive coverage without increasing latency. Adaptive feedback integrationAzure Hybrid Search identifies previously indexed queries that exhibit semantic similarity to the current user input. Queries exceeding a predefined relevance threshold are selected for integration. Factual corrections from these selected queries are injected directly into the primary RAG context, while stylistic guidelines are integrated as system-level instructions to refine output formatting and tone.",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Online feedback integration workflow"
+      ],
+      "char_start": 10400,
+      "char_end": 11135,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10101a044a04987f2cb3614de0b13c04",
+      "kind": "heading",
+      "text": "Experimental design and datasets",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Experimental design and datasets"
+      ],
+      "char_start": 11137,
+      "char_end": 11169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54d8751b4814954c2e8abf1999f96d38",
+      "kind": "heading",
+      "text": "Dataset selection and construction",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Experimental design and datasets",
+        "Dataset selection and construction"
+      ],
+      "char_start": 11171,
+      "char_end": 11205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93105da1f26625ab535609f3ba302a34",
+      "kind": "paragraph",
+      "text": "We evaluated FLARE on three datasets representing varying degrees of real-world complexity, from fully synthetic environments to real user interactions and feedback: Fictional Persona Dialogs (FPD) datasetThis dataset consists of 68 anonymized dialogues from fictional media sources, selected to avoid contamination from prior model knowledge. Question-answer pairs were generated contextually using GPT-4o, and the dataset is publicly available on Hugging Face for reproducibility. Baseline evaluations without contextual information demonstrated low accuracy (~1 on a 1–5 scale), which improved dramatically to near-perfect performance following context integration. For FLARE evaluation, we removed 30% of the context to measure improvements in a controlled setting. Full-context answers were used to generate training feedback, while semantically altered questions formed the test set—ensuring improvements reflected adaptive generalization, not memorization Trivia datasetThis dataset simulates realistic RAG deployment conditions involving ambiguous, time-sensitive queries and human feedback. It spans diverse domains—e.g., Olympic results, Nobel laureates, leadership changes—requiring up-to-date knowledge.",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Experimental design and datasets",
+        "Dataset selection and construction"
+      ],
+      "char_start": 11207,
+      "char_end": 12422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feed9c41542d66d912805389d5887174",
+      "kind": "caption",
+      "text": "Algorithm 1:Batch processing of user feedback",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Experimental design and datasets",
+        "Dataset selection and construction"
+      ],
+      "char_start": 12424,
+      "char_end": 12469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3c10bf50c24cf9ea0b848c4013874b0f",
+      "kind": "paragraph",
+      "text": "(offline FLARE) Input:Batch𝐵={𝑓 1, . . . , 𝑓𝑛}of raw user feedback; conversation log𝒞 Output: Structured feedback store𝒮; vector index𝒱 1foreach𝑓 𝑖∈𝐵do",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dynamic Feedback for Adaptive Retrieval-Augmented Gen-",
+        "Stylistic and structural guidelines— Address clar-",
+        "Experimental design and datasets",
+        "Dataset selection and construction"
+      ],
+      "char_start": 12471,
+      "char_end": 12622,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62db18c8fc7623e96852fd4f7a289a43",
+      "kind": "heading",
+      "text": "˜𝑓𝑖←EnrichContext(𝑓 𝑖,𝒞);// Add",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "˜𝑓𝑖←EnrichContext(𝑓 𝑖,𝒞);// Add"
+      ],
+      "char_start": 12624,
+      "char_end": 12655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0299b57f3ff75f64f320006aece8e6aa",
+      "kind": "paragraph",
+      "text": "dialogue history 3(𝑞 𝑖, 𝜅𝑖)← RefineQueryAndExtractCore( ˜𝑓𝑖); 4𝑐 𝑖←ClassifyFeedback(𝜅 𝑖);// factual vs. stylistic 5𝒮←𝒮∪{(𝑞 𝑖, 𝑐𝑖)}; 6𝒮←AggregateAndResolveConflicts(𝒮); 7𝒮←FilterActionable(𝒮);// drop noisy items 8foreach(𝑞, 𝑐)∈𝒮do 9𝑣←Embed(𝑞); 10𝒱←𝒱∪{(𝑣, 𝑐)};// store in Azure",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "˜𝑓𝑖←EnrichContext(𝑓 𝑖,𝒞);// Add"
+      ],
+      "char_start": 12657,
+      "char_end": 12932,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d91f3ea68ff1a6c255a9bdd97964f528",
+      "kind": "heading",
+      "text": "Vector DB",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Vector DB"
+      ],
+      "char_start": 12934,
+      "char_end": 12943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b855820099178fc93dbf17dcb2eb243",
+      "kind": "paragraph",
+      "text": "11return(𝒮,𝒱)",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB"
+      ],
+      "char_start": 12945,
+      "char_end": 12958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d6d1b4a6adab5add21907ac40b8d84c",
+      "kind": "caption",
+      "text": "Algorithm 2:Adaptive feedback-aware inference",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB"
+      ],
+      "char_start": 12960,
+      "char_end": 13005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:122ea41c6cb77fd04a0cb3822c4171db",
+      "kind": "paragraph",
+      "text": "(online FLARE) Input:User query𝑞 *; primary RAG systemℛ; feedback store𝒮; vector index𝒱; similarity threshold𝜏 Output: Final answer 𝑎* with integrated factual and stylistic improvements 1𝑣 *←Embed(𝑞 *); 2ℱ←HybridSearch(𝒱, 𝑣 *, 𝜏);// retrieve nearest neighbours 3ifℱ̸=∅then 4(∆ fact,∆ style)←ExtractCorrections(ℱ,𝒮); 5ℛ←InjectFactualContext(ℛ,∆ fact); 6ℛ←InjectStylisticGuidelines(ℛ,∆ style); 7𝑎 *←ℛ(𝑞 *);// run augmented RAG 8LogInteraction(𝑞 *, 𝑎*);// for future offline batches 9return𝑎 * Question-answer pairs were generated with GPT-4o using recent web-sourced data; context was drawn from relevant Wikipedia articles to reflect standard RAG usage. The dataset includes 70 training and 30 testing questionanswer pairs. Human-annotated feedback guided the training phase, while test question-answer pairs were derived from feedback-enhanced examples to evaluate generalization. Wireless Technical Documentation datasetThis domain-specific dataset reflects real-world RAG usage in technical support, requiring expert knowledge of wireless networking. Questions were sourced from actual user queries; answers were generated using retrievals from Intel documentation, specifications, and internal resources. The dataset contains 80 question-answer pairs for training. Test queries were semantically modified versions of training examples to assess generalization and robustness in a high-precision, expert-driven domain.",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB"
+      ],
+      "char_start": 13007,
+      "char_end": 14427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9049bc4dc6d16c835f1ea724772f3e24",
+      "kind": "heading",
+      "text": "Evaluation framework",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Evaluation framework"
+      ],
+      "char_start": 14429,
+      "char_end": 14449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9f0924fb74ca2a148ee6e6ccca26291",
+      "kind": "heading",
+      "text": "LLM-as-a-Judge assessment protocol",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 5,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Evaluation framework",
+        "LLM-as-a-Judge assessment protocol"
+      ],
+      "char_start": 14451,
+      "char_end": 14485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:930582204d4e6ea0f83b463edfa3860f",
+      "kind": "paragraph",
+      "text": "We implemented a comprehensive evaluation framework using anLLM-as-a-Judgeapproach to systematically assess response quality across multiple dimensions: Quantitative metricsFor list-based queries requiring enumeration or categorization, we used F1-score metrics to balance precision and recall, based on standard True Positive (TP), False Positive (FP), and False Negative (FN) counts. Representative examples include: “List all products implementing Wi-Fi 6 technology” and “Which frame types can remain unprotected, and under what conditions are they dropped?”. Qualitative assessment criteriaNon-list queries underwent comprehensive evaluation across three critical dimensions:",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Evaluation framework",
+        "LLM-as-a-Judge assessment protocol"
+      ],
+      "char_start": 14487,
+      "char_end": 15167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f01f8797aae7151d44e4c754a66b6fb7",
+      "kind": "heading",
+      "text": "Factual Accuracy: Verification of content correct-",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Factual Accuracy: Verification of content correct-"
+      ],
+      "char_start": 15169,
+      "char_end": 15219,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e9ad096e829b49e58cad431b97adbfb",
+      "kind": "paragraph",
+      "text": "ness against established ground truth",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Factual Accuracy: Verification of content correct-"
+      ],
+      "char_start": 15221,
+      "char_end": 15258,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eaac72548acf5948c2b18be02abb9fb",
+      "kind": "heading",
+      "text": "Contextual Relevance: Assessment of response",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Contextual Relevance: Assessment of response"
+      ],
+      "char_start": 15260,
+      "char_end": 15304,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28c6b015906b4bf4739b77369d0b4837",
+      "kind": "paragraph",
+      "text": "appropriateness to the specific query context",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Contextual Relevance: Assessment of response"
+      ],
+      "char_start": 15306,
+      "char_end": 15351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5a845486a7802aeab11046fac02c754",
+      "kind": "heading",
+      "text": "Completeness: Evaluation of response comprehen-",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Completeness: Evaluation of response comprehen-"
+      ],
+      "char_start": 15353,
+      "char_end": 15400,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d3e150fb5dc707808a1d316d1de5037",
+      "kind": "paragraph",
+      "text": "siveness relative to predefined reference answers This multi-dimensional evaluation provides robust validation of FLARE’s effectiveness and establishes a reproducible framework for future research in adaptive retrieval and feedback-driven generative AI.",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Completeness: Evaluation of response comprehen-"
+      ],
+      "char_start": 15402,
+      "char_end": 15655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62b2bd4ea4f17fe9ed2d2f09ac684f0e",
+      "kind": "heading",
+      "text": "Results",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results"
+      ],
+      "char_start": 15657,
+      "char_end": 15664,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:855c4b076171f4b0d1c13f4105083ce9",
+      "kind": "paragraph",
+      "text": "As described in the previous section, we constructed three benchmark datasets to gain confidence on the premise of our solution across both general and domain-specific knowledge settings, demonstrating FLARE’s versatility and effectiveness in diverse contexts.. We generated embedding representations using questionanswer conversations and feedback history, and synthesized revised questions to form a test set. Below, we report our findings, showing significant gains in RAG system performance when augmented with the FLARE methodology.",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results"
+      ],
+      "char_start": 15666,
+      "char_end": 16203,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47d6a806c10fd8bea97b11cfc04d08dc",
+      "kind": "heading",
+      "text": "General knowledge: FPD benchmark",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results",
+        "General knowledge: FPD benchmark"
+      ],
+      "char_start": 16205,
+      "char_end": 16237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e53221a43b6e2903fb2f264cb7db086",
+      "kind": "paragraph",
+      "text": "This benchmark was primarily used as a sanity check to verify the correctness of our implementation and ensure adherence to the intended FLARE flow. As can be seen in the results depicted in Figure 4 and Table 3 , we demonstrate a marked improvement in performance with the use ofFLARE, achieving a maximum score of 5 on nearly all items.",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results",
+        "General knowledge: FPD benchmark"
+      ],
+      "char_start": 16239,
+      "char_end": 16577,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c4e8e72640888e77a795fbf33d4a465",
+      "kind": "heading",
+      "text": "General knowledge: Trivia benchmark",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results",
+        "General knowledge: Trivia benchmark"
+      ],
+      "char_start": 16579,
+      "char_end": 16614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de7719ff7a15f1033cf2bd521cb8d444",
+      "kind": "paragraph",
+      "text": "Additionally, we constructed a benchmark consisting of Trivia questions centered on events from 2024 and 2025—beyond the knowledge cut-off of the LLM under evaluation (GPT-4o). To ensure the RAG system had access to relevant,",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results",
+        "General knowledge: Trivia benchmark"
+      ],
+      "char_start": 16616,
+      "char_end": 16841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d4d4518fcf7797e7e35908e507ba56d",
+      "kind": "caption",
+      "text": "Table 1 Summary of evaluation datasets",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Vector DB",
+        "Results",
+        "General knowledge: Trivia benchmark"
+      ],
+      "char_start": 16843,
+      "char_end": 16881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f877ee993a2fcbb5d243948870b7420",
+      "kind": "heading",
+      "text": "Dataset Size (Train/Test) Domain Source Type Purpose",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Dataset Size (Train/Test) Domain Source Type Purpose"
+      ],
+      "char_start": 16883,
+      "char_end": 16935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84886624b5c27e2a96cbed55eb3ed08d",
+      "kind": "paragraph",
+      "text": "Fictional Persona Dialogs 68 (train/test split) Open-domain dialogue Synthetic Controlled evaluation Trivia 70/30 Current events Semi-synthetic Generalization Wireless Technical Documentation 80 (train/test split) Technical Q&A Real-world Domain-specific validation Table 2 Example of how FLARE leverages user feedback: initial RAG response and score; injected knowledge and instruction; improved output with its correctness score.",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Dataset Size (Train/Test) Domain Source Type Purpose"
+      ],
+      "char_start": 16937,
+      "char_end": 17368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:155d598042b536e0209f25ad59a14bb6",
+      "kind": "heading",
+      "text": "Section Content",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Section Content"
+      ],
+      "char_start": 17370,
+      "char_end": 17385,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce9a82d2033d7eb08a5d1f2d592ad079",
+      "kind": "paragraph",
+      "text": "User Question \"Which acting award recipient at the 2025 Oscars both earned their very first nomination and became the first American of Dominican descent ever to win an acting Oscar?\" Reference Answer \"Zoe Saldaña, another first-time nominee, took home Best Supporting Actress for her performance in *Emilia Pérez*, making history as the first American of Dominican descent to win an acting Oscar. \" Initial RAG Response \"The acting award recipient at the 2025 Oscars who both earned their very first nomination and became the first American of Dominican descent ever to win an acting Oscar is Mikey Madison. She won the award for Actress in a Leading Role for her performance inAnora\" Suggested Knowledge \"At the 2025 Oscars, several first-time nominees won major awards, including Mikey Madison, Kieran Culkin, and Zoe Saldaña, who made history as the first American of Dominican descent to win an acting Oscar. Sean Baker also tied Walt Disney’s record for most wins in a single night, with additional debut wins in directing and technical categories. \" Suggested Takeaway \"Include detailed and historically significant information from the feedback when summarizing key winners, such as notable upsets, demographic records, and additional category recognitions. \" RAG Response with FLARE \"Zoe Saldaña earned her very first nomination and became the first American of Dominican descent ever to win an acting Oscar, winning in the category of Actress in a Supporting Role for her performance inEmilia Pérez. \" Score:5 (correct host, country, and dates)",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Section Content"
+      ],
+      "char_start": 17387,
+      "char_end": 18941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96500aa8cc2e5f6b1dd38b49846c020d",
+      "kind": "caption",
+      "text": "Table 3 FPD benchmark results summary Score T-Test (p)",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Section Content"
+      ],
+      "char_start": 18943,
+      "char_end": 18997,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05530a1bc46b506444c53de110869af1",
+      "kind": "heading",
+      "text": "No FLARE FLARE",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE"
+      ],
+      "char_start": 18999,
+      "char_end": 19013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a005802fb70517eb513751aeb5dffd7c",
+      "kind": "paragraph",
+      "text": "AVG 4.0 5.0 – STD 1.7 0.24×10 −6 up-to-date information, we supplemented its retrieval corpus with curated Wiki and web pages. Human evaluators were then asked to provide textual feedback on the system’s responses. Using the questions, RAG answers, and feedback history, we generated embedding representations and created a revised set of test questions within the same domain. The integration of FLARE resulted in a substantial improvement in both the accuracy and relevance of responses. As shown in Figure 5, FLARE achieved an average score of",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE"
+      ],
+      "char_start": 19015,
+      "char_end": 19561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42f78197d7bceba98ee5c24e7e4510ec",
+      "kind": "heading",
+      "text": "compared to 3.06 for the baseline RAG system, based",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "compared to 3.06 for the baseline RAG system, based"
+      ],
+      "char_start": 19563,
+      "char_end": 19614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4292d8364cdc1bab2e764fd3013c904",
+      "kind": "paragraph",
+      "text": "on a test set of 30 newly generated questions from the same domain as the training data. Average and best score were computed across three different responses per question. Unlike the baseline RAG system—which struggled to generate accurate answers even with access to up-to-date Wiki and web content—FLARE effectively leveraged user feedback to adapt to new information beyond its initial feedback training data. Table 4 presents a curated sample of test questions, underscoring the LLM’s efficacy in evaluating the quality of RAG system responses. The table also highlights the substantial enhancement in answer quality when utilizing FLARE compared to the absence of FLARE.",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "compared to 3.06 for the baseline RAG system, based"
+      ],
+      "char_start": 19616,
+      "char_end": 20292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:200f917b695855d5a4bea156546779ef",
+      "kind": "heading",
+      "text": "Feedback utilization:FLARE’s dynamic feedback re-",
+      "order": 73,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Feedback utilization:FLARE’s dynamic feedback re-"
+      ],
+      "char_start": 20294,
+      "char_end": 20343,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e09bea7385cf555f9ad8adcbff588f8",
+      "kind": "paragraph",
+      "text": "trieval mechanism plays a central role across benchmarks, enabling continuous adaptation based on userprovided feedback. This iterative loop yields more contextually appropriate and nuanced responses.",
+      "order": 74,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Feedback utilization:FLARE’s dynamic feedback re-"
+      ],
+      "char_start": 20345,
+      "char_end": 20545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05fc9be0b82a433822e03a6cacb968a8",
+      "kind": "heading",
+      "text": "LLM-as-a-Judgeevaluation:Implementing this eval-",
+      "order": 75,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "LLM-as-a-Judgeevaluation:Implementing this eval-"
+      ],
+      "char_start": 20547,
+      "char_end": 20595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a81b654230c418f538d0a6ac1df45b96",
+      "kind": "paragraph",
+      "text": "uation strategy offers a robust, scalable framework for assessing FLARE’s improvements. It demonstrates the system’s alignment with human judgment and preferences, further validating the efficacy of the feedbackdriven approach.",
+      "order": 76,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "LLM-as-a-Judgeevaluation:Implementing this eval-"
+      ],
+      "char_start": 20597,
+      "char_end": 20824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7eab66e8043cbfef664df599870c1122",
+      "kind": "heading",
+      "text": "Targeted context via feedback:Sample question-",
+      "order": 77,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 20826,
+      "char_end": 20872,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34efb569cf0de72515bab704c9fccf97",
+      "kind": "paragraph",
+      "text": "answer pairs reveal that the baseline RAG system often fails to produce satisfactory responses, even when relevant data is available. In contrast, FLARE effectively",
+      "order": 78,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 20874,
+      "char_end": 21038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e663c773313ae5c3e51a820c90c4b33",
+      "kind": "caption",
+      "text": "Figure 4:Performance on the 68-question FPD benchmark, with and without FLARE. FLARE attains the maximum score of 5",
+      "order": 79,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 21040,
+      "char_end": 21155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e10319c158874977a2d46be4f7380088",
+      "kind": "paragraph",
+      "text": "on all but two items, which receive scores of 3.66 and 4.67, respectively (scores are out of 5).",
+      "order": 80,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 21157,
+      "char_end": 21253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f595a593889f0fa6928101d469e9c01d",
+      "kind": "caption",
+      "text": "Table 4 Sample Trivia test set evaluation via LLM:Each entry presents the user query, the RAG system’s response without FLARE, followed by feedback and the response with FLARE. RAG Answer with and without FLARE Who won the Best Actor award at the 2025 Oscars, and for which film performance was the accolade given? No FLARE:Adrien Brody won the Best Actor award at the 2025 Oscars for his performance in \"The Brutalist. \" LLM evaluation:The response is accurate regarding Adrien Brody’s win for \"The Brutalist. \" FLARE:Adrien Brody won the Best Actor award for his role as László Tóth in \"The Brutalist. \" This marks his second Oscar win, the first being for \"The Pianist\" in 2003. Which company or individual won the Best Innovation Award at CES 2025, and what innovation did they showcase? No FLARE:Anker Solix won the Best Innovation Award at CES 2025 for their solar-powered cloak. This jacket blends fashion with technology, allowing device charging on the go. LLM evaluation:The response incorrectly mentions Anker Solix, while Suprema AI won the award for their Q-Vision Pro. FLARE:Suprema AI won the Best Innovation Award for their Q-Vision Pro, an AI module for predicting and preventing financial crimes at ATMs. It features AI-powered facial recognition and behavior analysis. What is the official name of Intel’s PC AI platform launched in late 2024-2025, and what are its main features? No FLARE:Gemini is Intel’s PC AI platform, featuring AI-powered performance optimization and enhanced security. It integrates seamlessly with other devices.",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 21255,
+      "char_end": 22811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4513e3c97eb40c166ef03ca56e7c9b5f",
+      "kind": "paragraph",
+      "text": "LLM evaluation:The response incorrectly names the platform \"Gemini, \" while it is officially the Intel Core Ultra processor family. FLARE:Intel’s PC AI platform, the Intel Core Ultra processor family, integrates CPUs, GPUs, and NPUs to enhance productivity and security. The Lunar Lake series marks a significant step in embedding AI capabilities into hardware. Did Intel win a Best Product Award at MWC 2025, and what was the specific category of the award? No FLARE:The context does not mention Intel winning a Best Product Award at MWC 2025. Various gadgets were showcased, but Intel’s award status is unconfirmed. LLM evaluation:The response incorrectly states Intel did not win an award, while they won the \"Best AI Debut Award\" for their Intel AI Assistant Builder Tool. FLARE:Intel won the \"Best AI Debut Award\" for their Intel AI Assistant Builder, a tool for creating customized AI assistants. This highlights Intel’s innovation in making AI technology more accessible.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 22813,
+      "char_end": 23791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06810827bed8e47311cfa3215cb6d66f",
+      "kind": "caption",
+      "text": "Figure 5:Results with and without FLARE for 30 Trivia bench-",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 23793,
+      "char_end": 23853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4af22e5b1ca1d22bdf7c72417fff25e3",
+      "kind": "paragraph",
+      "text": "mark questions: where FLARE average score is 3.91 versus NO FLARE 3.06, respectively (out of score 5) utilizes context extracted from previous user feedback to provide satisfactory answers.",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-"
+      ],
+      "char_start": 23855,
+      "char_end": 24044,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b8e424b7f1cad9253e7a7be82ec643f",
+      "kind": "heading",
+      "text": "Custom domain benchmark",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-",
+        "Custom domain benchmark"
+      ],
+      "char_start": 24046,
+      "char_end": 24069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4dc7e2aa653351b2bfd3e155f4f027d",
+      "kind": "paragraph",
+      "text": "In the custom Wireless domain, we built a benchmark from a year’s worth of real-world customer feedback on our internal large-scale RAG platform. It reflects practical challenges and evolving needs in a dynamic environment. For this benchmark, FLARE effectively integrated user feedback to enhance the RAG system’s responses. We embedded 210 textual user feedback entries collected over the year. These entries were provided by users in response to a dislike tag and were integrated into a RAG system built on division-specific data. We created a test set of 80 questions, derived from the original user queries but phrased differently. We assessed FLARE’s ability to utilize feedback for more accurate answers in two key areas:",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Targeted context via feedback:Sample question-",
+        "Custom domain benchmark"
+      ],
+      "char_start": 24071,
+      "char_end": 24799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8e813ae3f19035322199f7de1fb6cd",
+      "kind": "heading",
+      "text": "Ability to extract relevant feedback:we initially",
+      "order": 87,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Ability to extract relevant feedback:we initially"
+      ],
+      "char_start": 24801,
+      "char_end": 24850,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d1bb9ccd424c52ae6504cdff63ce8ec",
+      "kind": "paragraph",
+      "text": "tested FLARE’s ability to retrieve relevant feedback for queries related to past user input. In our custom test set, FLARE successfully extracted relevant feedback in 95% of cases (76 out of 80 queries). The four failures occurred with queries concerning specific JIRA entries, where feedback linked to the same entries was not always retrieved.",
+      "order": 88,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Ability to extract relevant feedback:we initially"
+      ],
+      "char_start": 24852,
+      "char_end": 25197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e0635d130e9cdf547ea59b1b4876ca1",
+      "kind": "heading",
+      "text": "Ability to enhance answers using feedback:we fur-",
+      "order": 89,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Ability to enhance answers using feedback:we fur-"
+      ],
+      "char_start": 25199,
+      "char_end": 25248,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cef6774608f5869f565aba2f2a2601e",
+      "kind": "paragraph",
+      "text": "ther evaluated FLARE’s ability to generate meaningful answers by leveraging feedback, automating this process using anLLM-as-a-Judge. Results showed that although relevant feedback was retrieved as context in nearly all cases (95%), FLARE incorporated that feedback into its answers only 61% of the time. Our results clearly demonstrate the substantial improvements made possible by incorporating user feedback into the continuous self-improvement cycle of RAG systems. Nevertheless, as illustrated in Table 5, there remain opportunities to further refine FLARE’s performance.",
+      "order": 90,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Ability to enhance answers using feedback:we fur-"
+      ],
+      "char_start": 25250,
+      "char_end": 25826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:913be11abee4e38790d979ffdd894b4f",
+      "kind": "heading",
+      "text": "Conclusions and future work",
+      "order": 91,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Conclusions and future work"
+      ],
+      "char_start": 25828,
+      "char_end": 25855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a837049473f321df260ef5bcce04b3d6",
+      "kind": "paragraph",
+      "text": "We introduced FLARE, a feedback-aware extension to RAG. A straightforward pipeline—comprising feedback classification, aggregation, embedding, and retrieval at a similarity threshold of 0.85—significantly improves average answer quality, as demonstrated across three diverse contextual benchmarks. The use ofLLM-as-a-Judgealigns automated scoring with human preference while offering concise rationales. During evaluation, two notable limitations emerged: First, although the retrieval module successfully located relevant feedback for nearly every custom-domain query, the generation module incorporated this feedback in only 61% of the answers. Thisretrieval–utilization gapsuggests that our current context injection method—template-based string concatenation—can marginalize important details. We currently lack a principled mechanism to prioritize feedback when model attention is constrained, or when snippets overlap or conflict. Second, feedback selection currently depends on a fixed cosine similarity threshold and treats all retrieved comments as carrying equal weight. This uniform policy ignores cues that strongly influence a comment’s utility—such as author expertise, recency, consistency with other feedback, and historical impact on answer quality. As a result, the system may surface outdated or low-quality guidance while excluding more recent, reliable corrections that fall just below the fixed cut-off. In future work, we plan to develop adaptive ranking mechanisms that weight feedback based on rele-",
+      "order": 92,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Conclusions and future work"
+      ],
+      "char_start": 25857,
+      "char_end": 27381,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ced3f37ebba24bf275423d21e904971",
+      "kind": "paragraph",
+      "text": "vance, freshness, and author credibility. We also aim to incorporate an iterative decoding loop that re-retrieves evi-",
+      "order": 93,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Conclusions and future work"
+      ],
+      "char_start": 27383,
+      "char_end": 27501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9662060e80840b60690a9509f40dd32e",
+      "kind": "caption",
+      "text": "Table 5 Insights for enhancing FLARE:this table presents three examples from a custom domain benchmark, highlighting challenges and potential improvements for FLARE (user feedback-driven RAG). Generic names are used to protect intellectual property. The table also includes insights for further development, identifying areas where FLARE can be improved. Insights on further improvements of FLARE answers (based on detailed analysis of test results from the custom test set) In which JIRA entry is Feature X referenced? Original User Feedback:Feature X appears in JIRA Entry-61987 but was not referenced for some reason. FLARE:Feature X is referenced in JIRA Entry-61987. Insight:Retrieval Reiteration- The FLARE answer could be further improved by providing details on the respective JIRA entry. This can be achieved by reiterating the RAG flow once context for the specific user query is obtained from multiple sources, such as feedback and vector store embedding of custom domain data. Which specific models does OEM Y use? Please refer to models (a, b, and c) in your answer. Original User Feedback:Only models a and b are used by OEM Y. The c model is used by OEM X. FLARE:OEM Y uses several versions of models a, b, and c.<Rest of the answer > Insight:Feedback Prioritization- The fact that OEM Y does not use model c was overlooked. This indicates that the information in the feedback needs to be prioritized. Please provide details of architectural feature Z. Original User Feedback:Should at least provide some pointers to the right JIRA entry for this architectural feature.",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Conclusions and future work"
+      ],
+      "char_start": 27503,
+      "char_end": 29087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4dc9b7a3996f2010c5aa93892962b29",
+      "kind": "paragraph",
+      "text": "FLARE:The details of the architectural feature are...<Details of the architectural feature are provided without pointers to specific JIRA entries > Insight:Feedback Generalization- The FLARE answer could be improved through generalized learning from all past feedbacks, such as always including JIRA entry information when providing details on architectural features. dence when the current context is sparse or contradictory. Additionally, we intend to broaden the feedback schema to support hierarchical labels and multimodal inputs, such as screenshots, voice notes, and click traces. Finally, we will build a low-latency streaming pipeline capable of ingesting, evaluating, and applying feedback in real time, blending automated scoring with targeted expert review. Together, these extensions aim to advance FLARE toward becoming a fully autonomous, continuously self-improving RAG framework. Declaration on Generative AI During the preparation of this work, the author(s) used GPT- 4o spell check and revise grammar, after which the author(s) reviewed and edited the content as needed and take(s) full responsibility for the publication’s content.",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "No FLARE FLARE",
+        "Conclusions and future work"
+      ],
+      "char_start": 29089,
+      "char_end": 30241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2732a05b2b359b11e5830cb4b10aef95",
+      "kind": "heading",
+      "text": "References",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 30243,
+      "char_end": 30253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a2cf6836a7475f4e3df15bb9facb4d6",
+      "kind": "heading",
+      "text": "[1] S. Barnett, S. Kurniawan, S. Thudumu, Z. Bran-",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[1] S. Barnett, S. Kurniawan, S. Thudumu, Z. Bran-"
+      ],
+      "char_start": 30255,
+      "char_end": 30305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daff301a54a96f3625ddedba8f8e5f85",
+      "kind": "paragraph",
+      "text": "nelly, M. Abdelrazek, Seven failure points when engineering a retrieval augmented generation system, 2024. URL: https://arxiv.org/abs/2401.05856. arXiv:2401.05856. [2] B. Ni, Z. Liu, L. Wang, Y. Lei, Y. Zhao, X. Cheng, Q. Zeng, L. Dong, Y. Xia, K. Kenthapadi, R. Rossi, F. Dernoncourt, M. M. Tanjim, N. Ahmed, X. Liu,",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[1] S. Barnett, S. Kurniawan, S. Thudumu, Z. Bran-"
+      ],
+      "char_start": 30307,
+      "char_end": 30624,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28e8119741bd16cd171abedee558a25b",
+      "kind": "heading",
+      "text": "W. Fan, E. Blasch, Y. Wang, M. Jiang, T. Derr, To-",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "W. Fan, E. Blasch, Y. Wang, M. Jiang, T. Derr, To-"
+      ],
+      "char_start": 30626,
+      "char_end": 30676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e59f7e85431c33757bce038793e52e77",
+      "kind": "paragraph",
+      "text": "wards trustworthy retrieval augmented generation for large language models: A survey, 2025. URL: https: //arxiv.org/abs/2502.06872.arXiv:2502.06872.",
+      "order": 100,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "W. Fan, E. Blasch, Y. Wang, M. Jiang, T. Derr, To-"
+      ],
+      "char_start": 30678,
+      "char_end": 30826,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc1871fcecd0ebc42f3976a9c40e2c39",
+      "kind": "heading",
+      "text": "[3] E. Khatibi, Z. Wang, A. M. Rahmani, Cdf-rag: Causal",
+      "order": 101,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[3] E. Khatibi, Z. Wang, A. M. Rahmani, Cdf-rag: Causal"
+      ],
+      "char_start": 30828,
+      "char_end": 30883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:583e24c8ca90808ce4414312aa1b5d9a",
+      "kind": "paragraph",
+      "text": "dynamic feedback for adaptive retrieval-augmented generation, 2025. URL: https://arxiv.org/abs/2504.",
+      "order": 102,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[3] E. Khatibi, Z. Wang, A. M. Rahmani, Cdf-rag: Causal"
+      ],
+      "char_start": 30885,
+      "char_end": 30985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7dbdbce1a357d0ca1919c6de3858d92",
+      "kind": "heading",
+      "text": "arXiv:2504.12560.",
+      "order": 103,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "[3] E. Khatibi, Z. Wang, A. M. Rahmani, Cdf-rag: Causal",
+        "arXiv:2504.12560."
+      ],
+      "char_start": 30987,
+      "char_end": 31004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:413a28e11067b291ca7bb9d014ca0083",
+      "kind": "paragraph",
+      "text": "[4] S. Jacobs, S. Jaschke, Leveraging lecture content for improved feedback: Explorations with gpt-4 and retrieval augmented generation, in: 2024 36th International Conference on Software Engineering Education and Training (CSEE&T), IEEE, 2024, p. 1–5. URL: http://dx. doi.org/10.1109/CSEET62301.2024.10663001. doi: 10. 1109/cseet62301.2024.10663001.",
+      "order": 104,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[3] E. Khatibi, Z. Wang, A. M. Rahmani, Cdf-rag: Causal",
+        "arXiv:2504.12560."
+      ],
+      "char_start": 31006,
+      "char_end": 31356,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c9138ac0be147f29f7a7d535a05a6578",
+      "kind": "heading",
+      "text": "[5] M. Assi, S. Hassan, Y. Zou, Llm-cure: Llm-based",
+      "order": 105,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[5] M. Assi, S. Hassan, Y. Zou, Llm-cure: Llm-based"
+      ],
+      "char_start": 31358,
+      "char_end": 31409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdd88b4c7be0a9c60bfdb5e1453672f8",
+      "kind": "paragraph",
+      "text": "competitor user review analysis for feature enhancement, 2024. URL: https://arxiv.org/abs/2409.15724. arXiv:2409.15724. [6] L. Ning, L. Liu, J. Wu, N. Wu, D. Berlowitz,",
+      "order": 106,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[5] M. Assi, S. Hassan, Y. Zou, Llm-cure: Llm-based"
+      ],
+      "char_start": 31411,
+      "char_end": 31579,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20b18d32f3ce163799042f225825dd91",
+      "kind": "heading",
+      "text": "S. Prakash, B. Green, S. O’Banion, J. Xie, User-",
+      "order": 107,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-"
+      ],
+      "char_start": 31581,
+      "char_end": 31629,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3007048a522fb313033963caae976dfa",
+      "kind": "paragraph",
+      "text": "llm: Efficient llm contextualization with user embeddings, 2024. URL: https://arxiv.org/abs/2402.13598. arXiv:2402.13598. [7] P. Christiano, J. Leike, T. B. Brown, M. Martic, S. Legg, D. Amodei, Deep reinforcement learning from human preferences, 2023. URL: https://arxiv.org/abs/1706.",
+      "order": 108,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-"
+      ],
+      "char_start": 31631,
+      "char_end": 31916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4f441d837547845d3ff3d5bfddd66a8",
+      "kind": "heading",
+      "text": "arXiv:1706.03741.",
+      "order": 109,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-",
+        "arXiv:1706.03741."
+      ],
+      "char_start": 31918,
+      "char_end": 31935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e7e22abb51e95ca53519048b070778a",
+      "kind": "paragraph",
+      "text": "[8] N. Stiennon, L. Ouyang, J. Wu, D. M. Ziegler, R. Lowe,",
+      "order": 110,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-",
+        "arXiv:1706.03741."
+      ],
+      "char_start": 31937,
+      "char_end": 31995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63e047aa8e0b08bac0c6ac0d18def619",
+      "kind": "heading",
+      "text": "Voss, A. Radford, D. Amodei, P. Christiano, Learning",
+      "order": 111,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-",
+        "Voss, A. Radford, D. Amodei, P. Christiano, Learning"
+      ],
+      "char_start": 31997,
+      "char_end": 32049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58a0ebfe88e528d126f78bf817cce813",
+      "kind": "paragraph",
+      "text": "to summarize from human feedback, 2022. URL: https: //arxiv.org/abs/2009.01325.arXiv:2009.01325.",
+      "order": 112,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "S. Prakash, B. Green, S. O’Banion, J. Xie, User-",
+        "Voss, A. Radford, D. Amodei, P. Christiano, Learning"
+      ],
+      "char_start": 32051,
+      "char_end": 32147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a52e37d2d479cf91d781808fbab869cb",
+      "kind": "heading",
+      "text": "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+      "order": 113,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-"
+      ],
+      "char_start": 32149,
+      "char_end": 32204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9b736964fb85237c6136446b10adcbb",
+      "kind": "paragraph",
+      "text": "wright, P. Mishkin, C. Zhang, S. Agarwal, K. Slama, A. Ray, J. Schulman, J. Hilton, F. Kelton, L. Miller, M. Simens, A. Askell, P. Welinder, P. Christiano, J. Leike, R. Lowe, Training language models to follow instructions with human feedback, 2022. URL: https: //arxiv.org/abs/2203.02155.arXiv:2203.02155. [10] R. Rafailov, A. Sharma, E. Mitchell, S. Ermon,",
+      "order": 114,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-"
+      ],
+      "char_start": 32206,
+      "char_end": 32564,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f512c8f8d9faf4a327f944591aa777d1",
+      "kind": "heading",
+      "text": "D. Manning, C. Finn, Direct preference optimiza-",
+      "order": 115,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+        "D. Manning, C. Finn, Direct preference optimiza-"
+      ],
+      "char_start": 32566,
+      "char_end": 32614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3db8c3e1e27aac7d1e16842ba5bf914",
+      "kind": "paragraph",
+      "text": "tion: Your language model is secretly a reward model, 2024. URL: https://arxiv.org/abs/2305.18290. arXiv:2305.18290. [11] J. Dai, X. Pan, R. Sun, J. Ji, X. Xu, M. Liu, Y. Wang, Y. Yang, Safe rlhf: Safe reinforcement learning from human feedback, 2023. URL: https://arxiv.org/abs/2310.",
+      "order": 116,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+        "D. Manning, C. Finn, Direct preference optimiza-"
+      ],
+      "char_start": 32616,
+      "char_end": 32900,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:288936b38f591d4ce1536b31f13a556d",
+      "kind": "heading",
+      "text": "arXiv:2310.12773.",
+      "order": 117,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+        "arXiv:2310.12773."
+      ],
+      "char_start": 32902,
+      "char_end": 32919,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3fb539dd1dc6643d58fb510468ab229",
+      "kind": "paragraph",
+      "text": "[12] J. Ji, X. Chen, R. Pan, H. Zhu, C. Zhang, J. Li, D. Hong, B. Chen, J. Zhou, K. Wang, J. Dai, C.-M. Chan, S. Han, Y. Guo, Y. Yang, Safe rlhf-v: Safe reinforcement learning from human feedback in multimodal large language models, 2025. URL: https://arxiv.org/abs/2503.",
+      "order": 118,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+        "arXiv:2310.12773."
+      ],
+      "char_start": 32921,
+      "char_end": 33192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a81cbecfc98a0ca22e9795eab754dfa",
+      "kind": "heading",
+      "text": "arXiv:2503.17682.",
+      "order": 119,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "[9] L. Ouyang, J. Wu, X. Jiang, D. Almeida, C. L. Wain-",
+        "arXiv:2503.17682."
+      ],
+      "char_start": 33194,
+      "char_end": 33211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ec49fe2a369cfc349eaa1960b4c5376",
+      "kind": "heading",
+      "text": "[13] H. Lee, S. Phatale, H. Mansoor, T. Mesnard, J. Fer-",
+      "order": 120,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[13] H. Lee, S. Phatale, H. Mansoor, T. Mesnard, J. Fer-"
+      ],
+      "char_start": 33213,
+      "char_end": 33269,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b398b625b5c9be6c8c611e5326ff7f1",
+      "kind": "heading",
+      "text": "ret, K. Lu, C. Bishop, E. Hall, V. Carbune, A. Ras-",
+      "order": 121,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ret, K. Lu, C. Bishop, E. Hall, V. Carbune, A. Ras-"
+      ],
+      "char_start": 33271,
+      "char_end": 33322,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6a0a7ee560ca3064a6340910ac8071f",
+      "kind": "paragraph",
+      "text": "togi, S. Prakash, Rlaif vs. rlhf: Scaling reinforcement learning from human feedback with ai feedback, 2024. URL: https://arxiv.org/abs/2309.00267. arXiv:2309.00267.",
+      "order": 122,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ret, K. Lu, C. Bishop, E. Hall, V. Carbune, A. Ras-"
+      ],
+      "char_start": 33324,
+      "char_end": 33489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:47fe047ebc234b4e6e93f6552e5f2772",
+      "kind": "heading",
+      "text": "[14] G. Azov, T. Pelc, A. F. Alon, G. Kamhi, Self-",
+      "order": 123,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "[14] G. Azov, T. Pelc, A. F. Alon, G. Kamhi, Self-"
+      ],
+      "char_start": 33491,
+      "char_end": 33541,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1b216769cd475d13c8e4d0f1e6d862d",
+      "kind": "paragraph",
+      "text": "improving customer review response generation based on llms, 2024. URL: https://arxiv.org/abs/2405.03845. arXiv:2405.03845.",
+      "order": 124,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "[14] G. Azov, T. Pelc, A. F. Alon, G. Kamhi, Self-"
+      ],
+      "char_start": 33543,
+      "char_end": 33666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 7,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 7
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.11267",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 7,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,3377 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "81a450adaf07f8878153d294ed15c8031cb4abfebe83bc8a3c9eb07a0277d16c",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:93d4826f92cbb2acb56464ab13980400",
+      "kind": "heading",
+      "text": "Otap: Structure-Aware Optimal Transport for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for"
+      ],
+      "char_start": 0,
+      "char_end": 43,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3583301ab9d75dec6a908a3bc1c2a56d",
+      "kind": "paragraph",
+      "text": "Evaluating Planning and Execution in Agent Trajectories",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for"
+      ],
+      "char_start": 45,
+      "char_end": 100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5635ca1accb369037d4f382e0e3ceb52",
+      "kind": "heading",
+      "text": "Babak Barazandeh1∗, Subhabrata Majumdar2, George Michailidis3",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Babak Barazandeh1∗, Subhabrata Majumdar2, George Michailidis3"
+      ],
+      "char_start": 102,
+      "char_end": 163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1000cbbfb8a7c6c92cf68b2445b44f8",
+      "kind": "paragraph",
+      "text": "1Fortinet,2IIMB,3UCLA",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Babak Barazandeh1∗, Subhabrata Majumdar2, George Michailidis3"
+      ],
+      "char_start": 165,
+      "char_end": 186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f5377365c1fc95192086ec2a8f7292d",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Abstract"
+      ],
+      "char_start": 188,
+      "char_end": 196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21d20e0366862d1488ffa03dcc21ba6b",
+      "kind": "paragraph",
+      "text": "Large language model agents solve tasks by generating trajectories that interleave planning, tool calls, and intermediate results. Current evaluation metrics reduce such a trajectory to a binary success flag or compare it against a reference by exact matching. A success flag cannot distinguish a sound solution from one that succeeds by luck, and says nothing about why a failed run went wrong. Exact matching penalizes plans that are valid but reordered or decomposed differently from the reference. We reframe trajectory evaluation as a distance between the agent’s execution graph and a set of valid solution graphs, and instantiate it via an unbalanced fused Gromov-Wasserstein transport problem over attributed dependency graphs. The resulting score, termedOtap(Optimal Transport for Agentic Planning), is a pseudo-metric that is provably invariant to dependency-preserving reorderings and has bounded sensitivity to redundant steps. Its unbalancedmarginalshandlemissingorhallucinatedstepswithout forcing a match, and its soft coupling accommodates variationinplangranularity.Oncontrolledperturbationsandthree public benchmarks,Otapseparates valid from invalid trajectories in a regime where semantics-only metrics score below chance. Its accuracy is highest when the dependency graph is recovered exactly, and drops only when the graph is inferred heuristically from free-text traces.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Abstract"
+      ],
+      "char_start": 198,
+      "char_end": 1589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:273b985c73677f2a5c4ab9ab13fb8d16",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 1591,
+      "char_end": 1603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:439316d1b97a6ad3e3e82ade9a94d6c8",
+      "kind": "paragraph",
+      "text": "Agentic systems built on large language models (LLMs) decomposeopen-endednaturallanguagegoalsintodistinctexecution trajectories. These trajectories interleave high-level planning, explicit tool calls, and dynamic environment interactionstomanageintermediateexecutionstates.Contemporaryframeworksspanexplicitplan-and-executepipelines, ReAct-style interleaved reasoning and acting pipelines (Yao et al. 2023a), and tree- or graph-structured deliberation graphs(Yaoetal.2023b).Asagentarchitecturesincreasingly transition into production environments, establishing rigorous, process-level evaluation methodologies has become a primary bottleneck for both academic research and systematic deployment. Current agent evaluation metrics generally fall into three paradigms, each exhibiting distinct limitations: ∗Corresponding author: bbarazandeh@fortinet.com •Outcome-only evaluation(e.g., end-task success rates in benchmarkslikeAgentBench(Liuetal.2024),GAIA(Mialon et al. 2024), or WebArena (Zhou et al. 2024)) offers objectivequantificationbutlacksgranularity.Itcannotdistinguishasound,efficienttrajectoryfromonethatsucceeds by chanceand providesno diagnosticsignals onfailed execution paths. •Reference-matching evaluationmeasures agent trajectories against a gold standard using exact string matching, token-level n-gram overlap (e.g., BLEU/ROUGE), or sequential embedding similarity. This imposes a restrictive assumption inherited from chain-of-thought datasets: that a task admits a unique and valid decomposition. In prac-",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 1605,
+      "char_end": 3129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e93ba0ffba6059c89d2df5cc5e1ecb5",
+      "kind": "paragraph",
+      "text": "tice,validplansoftendivergeinstepordering,granularity, tool selection, or overall strategy. •LLM-as-a-judgeevaluation(Zhengetal.2023)provides qualitative flexibility but introduces high computational overhead, non-determinism, extreme prompt sensitivity, and systemic self-preference biases, making it difficult to audit or integrate as a reliable optimization signal. For realistic agentic tasks, there are multiple valid solutions,forexamplethosedifferingbydependency-preserving reorderings,stepgranularity,orinterchangeabletools.Hence agentevaluationmetricsshouldmeasureclosenesstothissolutionspaceratherthanidentitywithonereferencesequence. Because of this reason, we argue that the central evaluation paradigm should shift from checking whether an agent reproduced an exact sequence of reference steps to a holistic graph alignment question: How close is the agent’s execution graph to the set of valid solution graphs for the task? Answering this question requires trajectory comparison metrics that satisfies a few criteria that non-unique but valid solutions to the same task satisfy: (i)semantic awarenessto accommodate paraphrased steps, (ii)permutation tolerance paired with causal strictnessto permit independent step reorderingsbutpenalizetruecausalinversions,(iii)granularity toleranceto support one-to-many step mappings, (iv)cardinalityrobustnesstohandlemissingorhallucinatedsteps,(v) execution-groundingto incorporate tool environments and state changes, and (vi)multi-reference supportto reflect di-",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 3131,
+      "char_end": 4648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08d8e63b8797d7e0674d4f34985d4324",
+      "kind": "paragraph",
+      "text": "verse valid planning strategies. A standard baseline approach might align the agent and",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 4650,
+      "char_end": 4737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35495d5538cb3d38d4ef81babc49ae9e",
+      "kind": "table",
+      "text": "arXiv:2607.17082v1  [cs.AI]  19 Jul 2026",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 4739,
+      "char_end": 4779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b12c21344b58c9d82d7637a989e41646",
+      "kind": "paragraph",
+      "text": "reference steps via the Hungarian algorithm (Wright 1990) orgreedyassignmentoverapairwiseembeddingcostmatrix, similar to token-matching metrics of text similarity (Zhang et al. 2020). However, Hungarian matching is inherently restricted to rigid one-to-one correspondences, requires equal cardinalities,anddiscardscausalandsequentialgraphstructure entirely. In this paper, we formalize trajectory evaluation through the lens of Optimal Transport (OT) to overcome such issues and satisfy the above six requirements. Our use of unbalanced marginal constraints to absorb cardinality mismatches and step variations (Chizat et al. 2018a), softtransportplansnaturallycapturenon-uniformplangranularities, and a fused Gromov-Wasserstein objective directly incorporatesrelationalandcausaldependenciesintoaunified geometricalignment(Titouanetal.2019).Morespecifically,",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction"
+      ],
+      "char_start": 4781,
+      "char_end": 5639,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71a3cfb4dbcc43eb830511587bfe8b06",
+      "kind": "heading",
+      "text": "We formalize agent trajectory evaluation as a divergence",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We formalize agent trajectory evaluation as a divergence"
+      ],
+      "char_start": 5641,
+      "char_end": 5697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8ac6cab680575ed050d4b53bb881549",
+      "kind": "paragraph",
+      "text": "computation betweenattributed dependency graphsand define criteria for valid trajectory metrics (Sec. 3).",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We formalize agent trajectory evaluation as a divergence"
+      ],
+      "char_start": 5699,
+      "char_end": 5804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:725745b9f15115b013adcd52cc800bfc",
+      "kind": "heading",
+      "text": "We introduceOtap, instantiating this divergence via an",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We introduceOtap, instantiating this divergence via an"
+      ],
+      "char_start": 5806,
+      "char_end": 5860,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e774193eb96d949153c4dc37063d9979",
+      "kind": "paragraph",
+      "text": "unbalancedfusedGromov-Wasserstein(UFGW)formulation that couples action, argument, effect, tool, and statetransition attributes with signed dependency structures (Sec. 4).",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We introduceOtap, instantiating this divergence via an"
+      ],
+      "char_start": 5862,
+      "char_end": 6032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7ddccf237ff41863520446ff0d547c0",
+      "kind": "heading",
+      "text": "WeenableOtaptoreferenceensemblesviaatemperature-",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "WeenableOtaptoreferenceensemblesviaatemperature-"
+      ],
+      "char_start": 6034,
+      "char_end": 6082,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee3c0595d01e4b5a69d8e9ef8d42e050",
+      "kind": "paragraph",
+      "text": "controlled soft-minimum aggregation, using causal mass weighting to emphasize important path dependencies (Sec. 4.2).",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "WeenableOtaptoreferenceensemblesviaatemperature-"
+      ],
+      "char_start": 6084,
+      "char_end": 6201,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e4f4652da3fd725c8cee786755249c1",
+      "kind": "heading",
+      "text": "We establish theoretical guarantees forOtap, including",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We establish theoretical guarantees forOtap, including"
+      ],
+      "char_start": 6203,
+      "char_end": 6257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e15b72df378436f05f0e938bf5ffba4",
+      "kind": "paragraph",
+      "text": "pseudo-metric structure, invariance under dependencypreserving permutations, bounded sensitivity to redundant step insertions, and polynomial computational complexity (Sec. 5).",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We establish theoretical guarantees forOtap, including"
+      ],
+      "char_start": 6259,
+      "char_end": 6435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cef323d05916b75b01911bdec95732c",
+      "kind": "heading",
+      "text": "We empirically validateOtapon a set of hand-curated",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We empirically validateOtapon a set of hand-curated"
+      ],
+      "char_start": 6437,
+      "char_end": 6488,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94de00865c3fa8bc54b177b44e49ed2e",
+      "kind": "paragraph",
+      "text": "tasks and public benchmarks (Sec. 6).",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Introduction",
+        "We empirically validateOtapon a set of hand-curated"
+      ],
+      "char_start": 6490,
+      "char_end": 6527,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:819faae6ea1d723be50eec14e9daac11",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Related Work"
+      ],
+      "char_start": 6529,
+      "char_end": 6541,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23c7567989f6adbe65bcfff8c16a7781",
+      "kind": "paragraph",
+      "text": "Agent benchmarks.Existing evaluation suites like Agent- Bench (Liu et al. 2024), GAIA (Mialon et al. 2024), WebArena (Zhou et al. 2024), ToolBench (Qin et al. 2024), and τ-bench (Yao et al. 2024) primarily emphasize environmental task execution. PlanBench (Valmeekam et al. 2023) utilizes formal verification to assess planning accuracy, which provides exact ground truth but remains restricted to highly structured deterministic domains. These benchmarks do not offer a graded, open-ended distance metric between structural execution graphs. Some recent papers propose metricsbeyondaccuracytomeasureagentperformance,suchas confidencecalibration(Zhang,Xiong,andWu2026),uncertainty quantification (Tayebati et al. 2026), and consistency measurement (Raj et al. 2026).",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Related Work"
+      ],
+      "char_start": 6543,
+      "char_end": 7309,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c9d52cdbf9f9a6ffb409c1b9c9de907",
+      "kind": "heading",
+      "text": "Process-levelevaluation.Processrewardmodels(PRMs)",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Process-levelevaluation.Processrewardmodels(PRMs)"
+      ],
+      "char_start": 7311,
+      "char_end": 7360,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd34d2bde156476cad3dc7ed5884aa30",
+      "kind": "paragraph",
+      "text": "evaluateintermediatereasoningstepstooptimizemathematical and logical execution (Lightman et al. 2024). However, PRMs require extensive step-level manual annotations and act as black-box learned models. Similarly, LLM-as-a-judge methods(Zhengetal.2023)inherithighinferencecostsand non-deterministic variations. In contrast,Otapis deterministic given text embeddings, is computationally lightweight, and provides explicit sub-loss decompositions. Text and structure similarity.Output level lexical metrics (BLEU, ROUGE) and semantic metrics (Raj, Rosati, and Majumdar 2023; Zhang et al. 2020) alike fail to model trajectory-levelnuancessuchascausaldependencies,macrolevel plan structure, or tool environments. Classical graph matchers such as Graph Edit Distance (GED) (Sanfeliu and Fu 1983) do capture topological structure, but are generally NP-hard and lack the capacity to incorporate soft, highdimensional semantic vector spaces over node attributes. Optimal transport.Optimal transport provides a mathematical foundation for aligning probability distributions (Peyré and Cuturi 2019). Computational efficiency is achieved via entropic regularization and Sinkhorn iterations(Cuturi2013),whileunbalancedOTvariantsrelaxstrict marginalconstraintstoallowmassmodification(Chizatetal. 2018b).TheGromov-Wasserstein(GW)formulationenables alignment between disparate relational structures (Mémoli",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Process-levelevaluation.Processrewardmodels(PRMs)"
+      ],
+      "char_start": 7362,
+      "char_end": 8752,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efe6c5bbc35687547323d404e50f71c9",
+      "kind": "heading",
+      "text": ",andFusedGWextendsthistoattributedgraphs(Vayer",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        ",andFusedGWextendsthistoattributedgraphs(Vayer"
+      ],
+      "char_start": 8754,
+      "char_end": 8800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11ce3089de623a44557542b5fe24f7ac",
+      "kind": "paragraph",
+      "text": "etal.2019).OTmethodshavebeenadaptedtodocumentsimilarity(Kusneretal.2015)andtranslationevaluation (Zhao etal.2019))inNLP.Otapadaptsthismathematicalmachinery to the structured, causal constraints of agent trajectories.",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        ",andFusedGWextendsthistoattributedgraphs(Vayer"
+      ],
+      "char_start": 8802,
+      "char_end": 9018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a68151385a7fd2ebe883b797336f271d",
+      "kind": "heading",
+      "text": "Problem Formulation",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Problem Formulation"
+      ],
+      "char_start": 9020,
+      "char_end": 9039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eab13839b1794858c6c0f1e10cabdf4a",
+      "kind": "paragraph",
+      "text": "Definition 1(Trajectory graph).An agent execution trajectory is represented as an attributed directed acyclic graph G= (V, E, ϕ),whereeachvertexsi ∈Vdefinesanexecuted step: si = (ai, τi, ci, ei), comprising an action descriptionai, an invoked tool identifierτ i ∈ T(whereτ i =∅denotes an internal reasoning step), specific contextual argumentsci, and an execution effect or post-state artifactei. A directed edge(si, sk)∈E indicates a strict data or causal dependency where stepsk consumes an artifact or requires the prior execution of step si.Themappingfunctionϕprojectsstepfieldsintoacontinuous vector space. Edges are systematically constructed via three mechanisms: (a) extracting explicit dependency graphs from planand-execute planners; (b) tracing artifact dependencies in ReAct sequences by linking actions to recent observations; or(c)revertingconservativelytoatotalexecutionorderwhen structural dependencies are unrecoverable. LetP= (V P , EP )denote the agent trajectory with",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Problem Formulation"
+      ],
+      "char_start": 9041,
+      "char_end": 10028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32d544a217aedd651dd5505deaf42062",
+      "kind": "table",
+      "text": "|V P |=n, and letR={R 1, . . . , RK}represent a set of",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Problem Formulation"
+      ],
+      "char_start": 10030,
+      "char_end": 10084,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e59314fe7aa83743ec4f0f9a458dc5a",
+      "kind": "table",
+      "text": "diverse reference trajectories where|VRk |=m k. The eval-",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Problem Formulation"
+      ],
+      "char_start": 10086,
+      "char_end": 10143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56a72f70d95f54d917bd3b2ee10e212d",
+      "kind": "paragraph",
+      "text": "uation problem requires computing a normalized distance scorescore(P,R)∈[0,1]that faithfully reflects structural and semantic deviations from the valid solution space.",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Problem Formulation"
+      ],
+      "char_start": 10145,
+      "char_end": 10312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01445e4975cc8093ee50b68b5db7cbd0",
+      "kind": "heading",
+      "text": "TheOtapMetric",
+      "order": 33,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "TheOtapMetric"
+      ],
+      "char_start": 10314,
+      "char_end": 10327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:522d823cc8ef5e34df04df109e23cf17",
+      "kind": "paragraph",
+      "text": "We now formalize Optimal Transport Agent Plan (Otap) to quantify the similarity between am agent trajectoryPand a reference setR. Instead of treating agent trajectories as flat text strings or relying on binary success criteria,Otap modelsexecutionhistoriesasdirectedacyclicgraphs(DAGs) capturingbothsemanticcontentandexecutiondependencies.",
+      "order": 34,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "TheOtapMetric"
+      ],
+      "char_start": 10329,
+      "char_end": 10669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:101fc06207eb983f06f2205eb64b22f7",
+      "kind": "heading",
+      "text": "The optimization problem",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "TheOtapMetric",
+        "The optimization problem"
+      ],
+      "char_start": 10671,
+      "char_end": 10695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0eaf5b1c18acef205ec533633d76058",
+      "kind": "paragraph",
+      "text": "We begin by calculatingOtapbetween twoindividualtrajectories (sayP, R) in a three-stage process: (i) computing node-level semantic distances between their individual executionsteps,(ii)constructingdependencymatricestocapture the topology of the plans, and (iii) solving an OT problem that globally aligns the trajectories. Step representation and node costTo prevent argument stringsfromdominatingsemanticrepresentations,stepcomponents are embedded independently using a text encoder ψ(·):a i =ψ(a i),c i =ψ(c i), ande i =ψ(e i). The local node-level cost matrix between agent stepiand reference stepjis defined as: Cij =α d(ai,a j) +β d(ci,c j) +γ d(ei,e j) +δ dT (τi, τj) +η dstate(i, j),(1) whereddenotes cosine distance and the hyper-parameters satisfyα+β+γ+δ+η= 1.Thetooldissimilaritytermd T evaluates functional equivalence (e.g., scoring0for identical tools, a fractional value for substitutable tools like a Python interpreter vs. a calculator, and1for completely incompatible domains). When environment state logsxt are available,d state(i, j)evaluates world state congruence via directpropertycomparisonorDOM/fileserializationembeddings, providing an execution-grounded proxy. When states are omitted, we setη= 0. Structure representationTo model plan topologies, we constructanormalized,signedpairwisedependencydistance matrix for each graph. For the agent graphP, letDP ik evaluate the structural distance from stepsi tos k relative to the maximum DAG heightH: Dik =    +ρ(i, k)/H i≺k(ancestor), 0i∥k(incomparable),",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "TheOtapMetric",
+        "The optimization problem"
+      ],
+      "char_start": 10697,
+      "char_end": 12227,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23609e9f8f486b426e6083a614ea701a",
+      "kind": "paragraph",
+      "text": "−ρ(k, i)/H k≺i(descendant), (2) whereρdefines the directed shortest path hop distance. The sign preserves causal direction. Consequently, mapping a truecausalsequenceontoaninvertedsequenceyieldsasubstantial quadratic penalty within the structural optimization term, whereas permuting order-independent steps (where D= 0) incurs no penalty. Unbalanced Fused Gromov-Wasserstein objectiveLet µi = 1/nandν j = 1/mdefine the initial marginal mass distributions over the agent and reference nodes, respectively.Otapminimizes an unbalanced fused Gromov- Wasserstein objective to compute the optimal coupling matrixT∈R n×m ≥0 : L(P, R) = min T≥0 (1−θ) X i,j",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "TheOtapMetric",
+        "The optimization problem"
+      ],
+      "char_start": 12229,
+      "char_end": 12878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42c57befdb36740ab6e87e9156f3d06e",
+      "kind": "heading",
+      "text": "CijTij",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "CijTij"
+      ],
+      "char_start": 12880,
+      "char_end": 12886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d9c1e7aa8d501fe3d5cfaad9eb0fe27",
+      "kind": "paragraph",
+      "text": "+θ X i,k,j,l DP ik −D R jl 2",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "CijTij"
+      ],
+      "char_start": 12888,
+      "char_end": 12916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1902b0fb130027a84c7e385f632b4c19",
+      "kind": "heading",
+      "text": "Tij Tkl",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tij Tkl"
+      ],
+      "char_start": 12918,
+      "char_end": 12925,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5dd709ba77540b96def92a551e985b0",
+      "kind": "equation",
+      "text": "+λ 1 KL(T1∥µ) +λ 2 KL",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tij Tkl"
+      ],
+      "char_start": 12927,
+      "char_end": 12948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3abb43d9849f9e8e32daf9cbfa0d33ca",
+      "kind": "paragraph",
+      "text": "T⊤1∥ν",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tij Tkl"
+      ],
+      "char_start": 12950,
+      "char_end": 12955,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69b417cdf59eb123c1739c6cd306617f",
+      "kind": "paragraph",
+      "text": "−ε H(T),(3) whereH(T) =− P ij Tij(logT ij −1)provides entropic regularizationandθ∈[0,1]modulatesthetrade-offbetween localattributealignmentandglobalstructuralmatching.This formulation overcomes the limitations of one-to-one matching baselines via three behaviors: •Flexiblestepgranularity:Thecontinuouscouplingmatrix Tpermits soft mass splitting, allowing a singular highlevel reference step to align across multiple decomposed agent sub-steps. •Robustness to hallucinations and omissions:The Kullback-Leibler (KL) marginal penalties relax strict mass conservation constraints. Unmatched reference massrepresentsmissingactions(recallfailure),whileunalignedagentmasscaptureshallucinatedsteps(precision failure). Trajectory-level metrics are extracted via: π= ∥T1∥1 ∥µ∥1 , ρ= ∥T⊤1∥1 ∥ν∥1 .(4) •Causaltopologyalignment:Bymeasuringstructuralvarianceoversigneddistancespaces,structuralorientationis optimized directly inside the transport alignment. We solve (3) using a conditional gradient scheme. At each outeriteration,thequadraticGWtermislinearized,reducing the inner loop to an unbalanced entropic optimal transport problem resolved via generalized Sinkhorn iterations. Remark 1(Hierarchical Execution).When hierarchical executiondataisprovidedbytheplanner,OtapappliesEq.(3) recursively. Sub-step alignment costs are aggregated to define parent-node distances, ensuring top-level tasks match effectively if their underlying child DAGs exhibit low structural transport costs.",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tij Tkl"
+      ],
+      "char_start": 12957,
+      "char_end": 14432,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e2191f0c2b945fcd5abb4a8ef8f6818",
+      "kind": "heading",
+      "text": "Multiple references and causal mass",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tij Tkl",
+        "Multiple references and causal mass"
+      ],
+      "char_start": 14434,
+      "char_end": 14469,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:958fb72048c45a0cb10f9741c0b9c966",
+      "kind": "heading",
+      "text": "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-"
+      ],
+      "char_start": 14471,
+      "char_end": 14524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efbd335e6f382e060a1aa1d346e30ece",
+      "kind": "paragraph",
+      "text": "gates scores across a reference setRusing a temperaturecontrolled softmin function: L(P,R) =−Tlog 1 K KX k=1 exp",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-"
+      ],
+      "char_start": 14526,
+      "char_end": 14638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6bf40e4e516829068f32a499aee34b68",
+      "kind": "paragraph",
+      "text": "− L(P, Rk) T",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-"
+      ],
+      "char_start": 14640,
+      "char_end": 14652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef6b2bc95eba6f3235e2c72cf1f90b82",
+      "kind": "paragraph",
+      "text": ",(5) which converges to an exact minimum operator asT→0 and evaluates the arithmetic mean asT→ ∞. To prevent trivial utility steps from skewing evaluation, weintroducenon-uniformtargetmarginalsbasedonastep’s structural criticality: νj ∝1 +κ·crit(j),(6) wherecrit(j)∈ {0,1}indicates whether removing vertex jbreaks path reachability between sources and goals within the reference DAG. This ensures that missing a critical step incurs a higher penalty.",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-"
+      ],
+      "char_start": 14654,
+      "char_end": 15104,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aca3f4dbb84f3e72d93307fc9e2a35c8",
+      "kind": "heading",
+      "text": "Final score",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15106,
+      "char_end": 15117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8347217913c241bf26c0a49b1ad107b9",
+      "kind": "paragraph",
+      "text": "Finally, we report the aggregate similarity score as Otap(P,R) = exp",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15119,
+      "char_end": 15187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b44d3ef72fecf065a22617131dd9f74b",
+      "kind": "paragraph",
+      "text": "− L(P,R)",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15189,
+      "char_end": 15197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41dda776b4215d7c02928e079b70e52d",
+      "kind": "paragraph",
+      "text": "∈(0,1],(7) paired with sub-loss diagnostics, precision/recall metrics (π, ρ),andtheoptimalcouplingmatrixT ⋆ toprovideanauditable execution alignment map. Algorithm 1 summarizes the complete procedure.",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15199,
+      "char_end": 15399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8c8156491cb06d13a9098d7ab6d635c",
+      "kind": "caption",
+      "text": "Algorithm 1:Otapevaluation",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15401,
+      "char_end": 15427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4c665dbbf14ccca51255bd1299a70285",
+      "kind": "paragraph",
+      "text": "Require:agent traceP, referencesR, encoderψ, weights (α, β, γ, δ, η, θ, λ1,2, ε, T)",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Tohandlediverse,equallyvalidplanstructures,Otapaggre-",
+        "Final score"
+      ],
+      "char_start": 15429,
+      "char_end": 15512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e9402f76403853a1a74c13870e3203e",
+      "kind": "heading",
+      "text": "ParsePinto steps(a i, τi, ci, ei); build DAGEP by ar-",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ParsePinto steps(a i, τi, ci, ei); build DAGEP by ar-"
+      ],
+      "char_start": 15514,
+      "char_end": 15567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9d6d0b860ae0e03eee33cf1c5e709aa",
+      "kind": "paragraph",
+      "text": "tifact tracing; computeDP via (2)",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ParsePinto steps(a i, τi, ci, ei); build DAGEP by ar-"
+      ],
+      "char_start": 15569,
+      "char_end": 15602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3f1bb1dbdb40795cd25c6ff50032be9",
+      "kind": "heading",
+      "text": "fork= 1toKdo",
+      "order": 57,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "fork= 1toKdo"
+      ],
+      "char_start": 15604,
+      "char_end": 15616,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e90184ff1c941a2a2c378fd8ac3ebe6",
+      "kind": "heading",
+      "text": "BuildD Rk; embed fields withψ; formC(k) via (1)",
+      "order": 58,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BuildD Rk; embed fields withψ; formC(k) via (1)"
+      ],
+      "char_start": 15618,
+      "char_end": 15665,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03c6cb3d8964ddea65130cc5b91821aa",
+      "kind": "heading",
+      "text": "L k ←solve UFGW (3) by conditional gradient with",
+      "order": 59,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L k ←solve UFGW (3) by conditional gradient with"
+      ],
+      "char_start": 15667,
+      "char_end": 15715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6941014e8e793912fdab40063185896",
+      "kind": "paragraph",
+      "text": "unbalanced Sinkhorn inner loops",
+      "order": 60,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L k ←solve UFGW (3) by conditional gradient with"
+      ],
+      "char_start": 15717,
+      "char_end": 15748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18b825ed05dfee97bd03ec24695732cd",
+      "kind": "heading",
+      "text": "end for",
+      "order": 61,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "end for"
+      ],
+      "char_start": 15750,
+      "char_end": 15757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d56553d438fc7cf244d8a889bb01aaee",
+      "kind": "heading",
+      "text": "L ←soft-min over{Lk}via (5)",
+      "order": 62,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L ←soft-min over{Lk}via (5)"
+      ],
+      "char_start": 15759,
+      "char_end": 15786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:542a2de3d1cc8c7dfc4abb61b427fde9",
+      "kind": "heading",
+      "text": "returnscore (7), precision/recall(π, ρ), component",
+      "order": 63,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "returnscore (7), precision/recall(π, ρ), component"
+      ],
+      "char_start": 15788,
+      "char_end": 15838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac1c9f717f02078a942ef8c8c8f89cd5",
+      "kind": "paragraph",
+      "text": "losses, best transport planT⋆",
+      "order": 64,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "returnscore (7), precision/recall(π, ρ), component"
+      ],
+      "char_start": 15840,
+      "char_end": 15869,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c40459297f7a8a1661dc20f702c32bb9",
+      "kind": "heading",
+      "text": "Theoretical Properties",
+      "order": 65,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Theoretical Properties"
+      ],
+      "char_start": 15871,
+      "char_end": 15893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6e63450d298c4d8711cfa1919cd1201",
+      "kind": "heading",
+      "text": "LetL(P, R)denotetheobjectivefunctionin(3)evaluatedat",
+      "order": 66,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "LetL(P, R)denotetheobjectivefunctionin(3)evaluatedat"
+      ],
+      "char_start": 15895,
+      "char_end": 15947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d052c60113b8bd2171a90c4e5e97df8",
+      "kind": "paragraph",
+      "text": "ε= 0. Proposition 1(Pseudo-metric structure).Letd(P, R) = 1 2",
+      "order": 67,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "LetL(P, R)denotetheobjectivefunctionin(3)evaluatedat"
+      ],
+      "char_start": 15949,
+      "char_end": 16010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d18a9adf39451e95463cd871fdc684e2",
+      "kind": "heading",
+      "text": "L(P, R) +L(R, P)",
+      "order": 68,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 16012,
+      "char_end": 16028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a7e0e5e71a8257d27466ff4df31d18b",
+      "kind": "paragraph",
+      "text": ". Thend≥0,d(P, P) = 0,dis symmetric, andd(P, R) = 0if there exists an attributepreservinganddependency-isomorphicmappingbetweenP andR. Proof sketch.Non-negativity holds directly from the component bounds. For identical graphsP=R, settingT= diag(µ)zeroes out the attribute cost sinceCii = 0, zeroes out the structural variance sinceDP =D R, and minimizes the KL divergence to zero since the marginals match perfectly. Symmetry and graph-isomorphism conditions follow directly from the structural invariance of the matrix operations under isomorphic vertex permutations. Proposition 2(Dependency-respecting permutation invariance).LetP ′ beanexecutionsequencegeneratedbyavalid topological sort of the DAGEP. ThenL(P ′, R) =L(P, R) for any reference graphR. Proof sketch.The construction of the structural matrixDP in Eq. (2) and the local cost computation in Eq. (1) depend strictly on the invariant topological reachability relations of the DAG, remaining completely independent of the specific serialization order chosen for execution. Proposition 3(Bounded sensitivity to redundant insertion). LetP +r representanagenttrajectoryexpandedbyinserting rredundantleafnodesthatcarrynodownstreamdependencies, under renormalized uniform mass allocations. Then: L(P +r, R)−L(P, R) ≤ r n+r",
+      "order": 69,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 16030,
+      "char_end": 17310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:043642da011a0a340f24f7983e665d19",
+      "kind": "equation",
+      "text": "λ1 ω+(1−θ) ¯C+4θ",
+      "order": 70,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 17312,
+      "char_end": 17328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f2df815eb5a0f26713b9568c9e412e7",
+      "kind": "paragraph",
+      "text": ", where ¯C≤1bounds node attribute costs andωbounds the maximumper-unit-massKLdestructioncost.Scorevariation scales strictly asO(r/n). Proof sketch.The proof proceeds by extending the OT coupling matrix computed for(P, R)and leaving thernewly introduced leaf nodes completely unassigned. The resulting objectiveinflationisstrictlyboundedbytheexplicitKLcost",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 17330,
+      "char_end": 17685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4bf9035b07f43a77d61eecc954c1ae1",
+      "kind": "caption",
+      "text": "Table 1: Pairwise ranking accuracy per perturbation (%) per",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 17687,
+      "char_end": 17746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef8c1f10ddd89a464566a978b78bfe49",
+      "kind": "paragraph",
+      "text": "and valid-vs-invalid AUROC over 20 hand-curated tasks.",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "L(P, R) +L(R, P)"
+      ],
+      "char_start": 17748,
+      "char_end": 17802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b2209187b215c6d414c79d25c354030",
+      "kind": "heading",
+      "text": "Metric P1 P2 P3 P4 P5 AUROC",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Metric P1 P2 P3 P4 P5 AUROC"
+      ],
+      "char_start": 17804,
+      "char_end": 17831,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a512480fc91b93b728113440a701a2f",
+      "kind": "paragraph",
+      "text": "Exact step match 36.4 44.8 45.8 41.2 53.7 0.485",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Metric P1 P2 P3 P4 P5 AUROC"
+      ],
+      "char_start": 17833,
+      "char_end": 17880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cc0d8cf1b5af7905c66223f4c8272d1",
+      "kind": "heading",
+      "text": "BLEU 49.2 67.2 52.8 48.3 70.7 0.599",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BLEU 49.2 67.2 52.8 48.3 70.7 0.599"
+      ],
+      "char_start": 17882,
+      "char_end": 17917,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14379ff529416fa739af293a34e62314",
+      "kind": "heading",
+      "text": "ROUGE-L 56.7 45.882.9 84.447.7 0.674",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 56.7 45.882.9 84.447.7 0.674"
+      ],
+      "char_start": 17919,
+      "char_end": 17955,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8263ed5b5cb7f67ea89cb4c409d92300",
+      "kind": "paragraph",
+      "text": "Embed greedy F1 41.1 66.7 31.7 25.4 69.2 0.468 Embed+Hungarian 41.7 66.7 28.9 25.5 67.8 0.462 Otap89.4 10054.7 70.793.6 0.820 of leavingr/(n+r)mass unaligned plus minor renormalizationperturbationsovertheremainingstructurallinks. Computational ComplexityMapping attributes requires",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 56.7 45.882.9 84.447.7 0.674"
+      ],
+      "char_start": 17957,
+      "char_end": 18238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cd85a5f3c2002f64f9eaf46a80fecf8",
+      "kind": "heading",
+      "text": "O(n+m)embeddinggenerationpasses.Structuraldistance",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "O(n+m)embeddinggenerationpasses.Structuraldistance"
+      ],
+      "char_start": 18240,
+      "char_end": 18290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:178388dd63bf8d77a952b75267b73d76",
+      "kind": "paragraph",
+      "text": "calculation via all-pairs reachability over the DAG scales as",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "O(n+m)embeddinggenerationpasses.Structuraldistance"
+      ],
+      "char_start": 18292,
+      "char_end": 18353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7c6a7604aca12d3c31c6735a8e95057",
+      "kind": "table",
+      "text": "O(n3)intheworstcase,orO(n·|E|)undersparseconditions.",
+      "order": 81,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "O(n+m)embeddinggenerationpasses.Structuraldistance"
+      ],
+      "char_start": 18355,
+      "char_end": 18407,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8f14dcd6228e73ad80de2476ab4426a",
+      "kind": "paragraph",
+      "text": "For the UFGW optimization, each conditional-gradient pass linearizes the relational term inO(n2m+nm 2)operations, while each inner Sinkhorn iteration requiresO(nm)steps. Forcommonapplicationswheren, m≤50,totalevaluation executes in milliseconds on standard CPUs.",
+      "order": 82,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "O(n+m)embeddinggenerationpasses.Structuraldistance"
+      ],
+      "char_start": 18409,
+      "char_end": 18671,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:225616c4f435ef9e7127536a5feb3fba",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 83,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Experiments"
+      ],
+      "char_start": 18673,
+      "char_end": 18684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:008eade4bc56e2472596f9d6b371242f",
+      "kind": "paragraph",
+      "text": "We evaluateOtapby comparing it with a range of metrics (lexical, semantic, and graph-based) in a diverse set of tasks. We hand curate a set of realistic and challenging agentic tasks, as well as use three public benchmarks: PlanBench (Valmeekam et al. 2023), WebArena (Zhou et al. 2024), and GAIA (Mialon et al. 2024). As baseline metrics, we use exact step match, BLEU, and ROUGE-",
+      "order": 84,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Experiments"
+      ],
+      "char_start": 18686,
+      "char_end": 19067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:490b6a3a7b3fd1680185a69e1b5b2d08",
+      "kind": "heading",
+      "text": "over concatenated step text, andOtapwith the defaults",
+      "order": 85,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "over concatenated step text, andOtapwith the defaults"
+      ],
+      "char_start": 19069,
+      "char_end": 19122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e24de2c65900dd0ff5712215afb3028b",
+      "kind": "paragraph",
+      "text": "α=.35, β=.20, γ=.25, δ=.20, η=0(noenvironmentstates in these corpora),θ=.35, ε=.05, λ1,2=1, T=.05.",
+      "order": 86,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "over concatenated step text, andOtapwith the defaults"
+      ],
+      "char_start": 19124,
+      "char_end": 19222,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:535f7ca122bfe919b939a09efe236648",
+      "kind": "heading",
+      "text": "Validity",
+      "order": 87,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "over concatenated step text, andOtapwith the defaults",
+        "Validity"
+      ],
+      "char_start": 19224,
+      "char_end": 19232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:866eda2975e89ce935b42d96f43eefc0",
+      "kind": "heading",
+      "text": "Weapplyfivecontrolledperturbationsonthecanonicalrefer-",
+      "order": 88,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Weapplyfivecontrolledperturbationsonthecanonicalrefer-"
+      ],
+      "char_start": 19234,
+      "char_end": 19288,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90714c070183a26499c7ff5a7680b530",
+      "kind": "paragraph",
+      "text": "ence trajectories in our hand-curated benchmark, then compare with a reference set that contains the canonical trajectory,avariantinwhichinstructionsareparaphrasedandsteps are reordered, and a coarse variant with merged steps. The perturbations are:(P1)synonym-level paraphrase of all step texts;(P2)an alternative linear extension of the same DAG; (P3)merge of two dependent adjacent steps, or split of a compound step into two chained sub-steps;(P4)causal inversion: swapping two steps across a dependency edge, so the consumer executes before its producer;(P5)corruption: deletionofacriticalstep,insertionof1-3irrelevantdistractor steps, incompatible tool swaps, or combinations. Agent-side graphs are re-extracted from the perturbed sequences by artifact tracing, so a P4 inversion manifests exactly as it would in a real trace: an unsatisfiable dependency. Ground truth places the original and P1–P3 in one validity tier, P4 strictly below, and P5 at the bottom. For benign familiesb∈ {P1, P2, P3}, pairwise Ranking Accuracy(PRA)isthefractionofsame-taskpairs(x, y)with x∈bandy∈P4∪P5for whichscore(x)>score(y)(ties",
+      "order": 89,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Weapplyfivecontrolledperturbationsonthecanonicalrefer-"
+      ],
+      "char_start": 19290,
+      "char_end": 20408,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8f15d7595523fc37c2e25fd305f0639",
+      "kind": "caption",
+      "text": "Table 2: Part B on the controlled corpus: correlation with",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Weapplyfivecontrolledperturbationsonthecanonicalrefer-"
+      ],
+      "char_start": 20410,
+      "char_end": 20468,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9146846eedbcf26d8a277cf5610a7db8",
+      "kind": "paragraph",
+      "text": "thegradedcorruptionladder(per-task,averaged).Damagedonly=Q1–Q4. All levels Damaged-only Metricρ τ ρ τ Exact step match 0.755 0.655 0.562 0.474",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Weapplyfivecontrolledperturbationsonthecanonicalrefer-"
+      ],
+      "char_start": 20470,
+      "char_end": 20612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b03c9b9b7aadc23fe074222101074f2a",
+      "kind": "heading",
+      "text": "BLEU 0.883 0.765 0.827 0.691",
+      "order": 92,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BLEU 0.883 0.765 0.827 0.691"
+      ],
+      "char_start": 20614,
+      "char_end": 20642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48cc9eb5bcb5f4afa3647fc88c23e9d7",
+      "kind": "heading",
+      "text": "ROUGE-L 0.723 0.619 0.503 0.418",
+      "order": 93,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 0.723 0.619 0.503 0.418"
+      ],
+      "char_start": 20644,
+      "char_end": 20675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f8d337c7e16cb71718d721d973bc706",
+      "kind": "paragraph",
+      "text": "Embed. greedy F1 0.781 0.655 0.829 0.697 Embed.+Hungarian 0.782 0.651 0.819 0.681 Otap(ours)0.923 0.837 0.851 0.748 count0.5). PRA(P4) and PRA(P5) usex∈ {original} ∪ P1–P3against the damaging family. SEV is the fraction of (P4, P5) pairs with the P4 variant scored higher. AUROC separatesthevalidtierfromP4∪P5,computedpertaskand averaged. Chance is50throughout.",
+      "order": 94,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 0.723 0.619 0.503 0.418"
+      ],
+      "char_start": 20677,
+      "char_end": 21038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb86ecdeb7aaa3c5cf4ca3c00ab35212",
+      "kind": "heading",
+      "text": "Table1showsthefindings.Theembeddingbaselinesscore",
+      "order": 95,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table1showsthefindings.Theembeddingbaselinesscore"
+      ],
+      "char_start": 21040,
+      "char_end": 21089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c21424a67bd9493a29284372ebaa4275",
+      "kind": "paragraph",
+      "text": "below chance on every corpus, meaning they rank broken plansabovevalidones.Acausalinversionchangesnowords, whileavalidparaphrasechangesmany,soametricthatreads onlytextprefersthebrokenplan.Otapusesthesameencoder anddoesnothavethisproblem,sothedifferencecomesfrom thedependencystructureinthetransportformulation.Ordersensitivity alone is not sufficient either. ROUGE-L detects inversions everywhere but penalizes valid reorderings just as heavily and rates corruptions above inversions. What is needed is sensitivity to the dependency relation rather than to sequence position, which is the content of Prop. 2.Otap hasthehighestAUROConallfourcorpora,butitsadvantage dependsonhowwellthegraphisrecovered.Itislargestwhere edges follow from PDDL semantics or explicit templates, andreducesunderGAIA’sheuristictracing,whereincorrect edgesmakevalidreorderingsappeartoviolatedependencies. The size of this reduction matches ablation (ix), placing the loss in extraction rather than in the transport objective.",
+      "order": 96,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table1showsthefindings.Theembeddingbaselinesscore"
+      ],
+      "char_start": 21091,
+      "char_end": 22091,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8141b24124e634911012098b60ea65ff",
+      "kind": "heading",
+      "text": "Robustness to perturbations",
+      "order": 97,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table1showsthefindings.Theembeddingbaselinesscore",
+        "Robustness to perturbations"
+      ],
+      "char_start": 22093,
+      "char_end": 22120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7748b2cafd2a84ce05ed4d608797ffba",
+      "kind": "heading",
+      "text": "Eachtaskadditionallyreceivesafive-levelcorruptionladder",
+      "order": 98,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Eachtaskadditionallyreceivesafive-levelcorruptionladder"
+      ],
+      "char_start": 22122,
+      "char_end": 22177,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:488ccf9c5c2b1caeb77bfd8dd0857df1",
+      "kind": "paragraph",
+      "text": "withtwosamplesperlevel:Q5=paraphrase+validreorder; Q4=Q5+one causal inversion; Q3=two inversions; Q2 =deletion of a critical step; Q1=deletion+distractor insertions+incompatibletoolswaps+inversion.Wereport Spearmanρand Kendallτbetween metric scores and the quality level, computed per task and averaged; “damagedonly” restricts to Q1–Q4, the analogue of evaluating among failedtrajectories where outcome metrics are constant. We emphasizethatthecorrelationtargetisaconstructedquality scale, not human judgment.",
+      "order": 99,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Eachtaskadditionallyreceivesafive-levelcorruptionladder"
+      ],
+      "char_start": 22179,
+      "char_end": 22689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:276bc04c16d8995cc4ff5a57fd6076cc",
+      "kind": "heading",
+      "text": "OtapleadsoneverycolumnofTable2andhasthelowest",
+      "order": 100,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "OtapleadsoneverycolumnofTable2andhasthelowest"
+      ],
+      "char_start": 22691,
+      "char_end": 22736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6db7584ddbefc0e4909666f6211d0ac7",
+      "kind": "paragraph",
+      "text": "cross-task variance (σρ = 0.056vs.0.064–0.177for baselines). Two caveats belong here rather than in fine print. First,BLEUisrespectableonthisaxis(ρ= 0.883)foramechanicalreason:theladderisbuiltbystackingperturbations, so damage is confounded with token divergence—precisely what BLEU measures. A correlation study of this kind sys-",
+      "order": 101,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "OtapleadsoneverycolumnofTable2andhasthelowest"
+      ],
+      "char_start": 22738,
+      "char_end": 23068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f9b418e34973fe3e4dce351a3ed3981",
+      "kind": "heading",
+      "text": "Table3:Ablationsonthecontrolledcorpus.Benign=mean",
+      "order": 102,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table3:Ablationsonthecontrolledcorpus.Benign=mean"
+      ],
+      "char_start": 23070,
+      "char_end": 23119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6c8864b55c0f5118b190512a6018630",
+      "kind": "paragraph",
+      "text": "PRA over P1–P3; AUROC×100;ρfrom Part B (all levels). Each row changes one component of (3).",
+      "order": 103,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table3:Ablationsonthecontrolledcorpus.Benign=mean"
+      ],
+      "char_start": 23121,
+      "char_end": 23212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b0f87c87abd19256a9fd9233a045121",
+      "kind": "heading",
+      "text": "Variant Benign P4 P5 AUROCρ",
+      "order": 104,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Variant Benign P4 P5 AUROCρ"
+      ],
+      "char_start": 23214,
+      "char_end": 23241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc0db91a45926a82f10f1f379471a361",
+      "kind": "paragraph",
+      "text": "Otap(full) 81.4 70.7 93.6 82.0 0.923 no structure (θ=0) 54.4 19.4 90.6 54.5 0.771 unsignedD81.4 69.7 94.7 82.0 0.925 balanced marginals 78.5 67.0 91.7 79.2 0.929 Hungarian transport 50.7 18.1 85.5 51.4 0.787 whole-step embedding 71.7 72.2 72.7 72.5 0.895 no tool term (δ=0) 67.8 69.3 68.4 68.9 0.910 K=1reference 64.4 46.5 85.3 65.1 0.909 soft-minT=1.078.8 66.1 93.3 79.5 0.923 uniform mass 79.5 67.4 93.4 80.3 0.934 total-order edges 64.5 43.8 89.4 65.8 0.949 tematicallyflatterssurface-overlapmetrics,whichiswhywe treat Part A, whose contrasts hold text constant while varying validity, as the primary criterion. Second, correlating with a constructed scale demonstrates thatOtapbehaves as designed under known ground truth; the benchmark studies of Sec. 6.4 test how far that behavior transfers.",
+      "order": 105,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Variant Benign P4 P5 AUROCρ"
+      ],
+      "char_start": 23243,
+      "char_end": 24041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54fa3401ef33f7f6b49a9cdddec63b5a",
+      "kind": "heading",
+      "text": "Ablations",
+      "order": 106,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Variant Benign P4 P5 AUROCρ",
+        "Ablations"
+      ],
+      "char_start": 24043,
+      "char_end": 24052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38dcc14d64d0fbfa6511f2845685b71f",
+      "kind": "caption",
+      "text": "Table 3 separates the essential from the decorative.",
+      "order": 107,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Variant Benign P4 P5 AUROCρ",
+        "Ablations"
+      ],
+      "char_start": 24054,
+      "char_end": 24106,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f61b93f4a092a23d7b9a0c63e25dd25",
+      "kind": "heading",
+      "text": "Thestructuretermistheload-bearingcomponent.Set-",
+      "order": 108,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-"
+      ],
+      "char_start": 24108,
+      "char_end": 24155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93936c226a9b58687357d45162fe2478",
+      "kind": "paragraph",
+      "text": "tingθ= 0collapses inversion detection from70.7to19.4 andAUROCfrom82.0to54.5:withoutpairwisedependency geometry,Otapdegenerates into a well-dressed unbalanced Wasserstein and inherits the same below-chance pathology as the embedding baselines. Replacing soft transport with Hungarian assignmentinside our own fused costperforms no better (51.4AUROC): the gap between this paper and its seedidea—Hungarianmatchingonplansteps—isthedifference between a working metric and a coin flip. Multi-reference aggregation is essential, not garnish. A single reference costs16.9AUROC points (82.0→65.1) and halves inversion detection; even with our modest synthetic reference diversity, distance-to-a-set is decisively betterthandistance-to-a-plan.Aggregationshouldstaynearthe minimum:raisingthesoft-mintemperaturetowardaveraging (T= 1.0) costs2.5points. Tool grounding and fielded costs each pay for themselves.Removing the tool term costs13.1AUROC points, concentrated exactly where tools are corrupted (P5:93.6→",
+      "order": 109,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-"
+      ],
+      "char_start": 24157,
+      "char_end": 25157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94d5b651c14f5dceb9459a89453e0546",
+      "kind": "heading",
+      "text": ";collapsingthefieldedcosttoawhole-stepembedding",
+      "order": 110,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        ";collapsingthefieldedcosttoawhole-stepembedding"
+      ],
+      "char_start": 25159,
+      "char_end": 25206,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9da07d98b7cc90707b5894612990f2bf",
+      "kind": "paragraph",
+      "text": "costs9.5points with the same P5 signature, confirming that separate fields keep opposite actions with shared arguments distinguishable and give the tool term room to act. Two components do not earn their complexity, and we sayso.Signedversusunsigneddependencydistancesareindistinguishable (82.0vs.82.0AUROC): under artifact tracinganinversiondeletestheunsatisfiableedgeratherthanreversingit,soanancestorpairbecomesincomparableandthe",
+      "order": 111,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        ";collapsingthefieldedcosttoawhole-stepembedding"
+      ],
+      "char_start": 25208,
+      "char_end": 25640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9165ad0df07e265548e8a2c0e1ea6bb0",
+      "kind": "table",
+      "text": "magnitude change|DP −D R|2 already fires; the signcould",
+      "order": 112,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        ";collapsingthefieldedcosttoawhole-stepembedding"
+      ],
+      "char_start": 25642,
+      "char_end": 25697,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b5c8ef0ae54aaba491a6c4320c29457",
+      "kind": "paragraph",
+      "text": "matter only for traces in which a reversed dependency is explicitly recorded. Causal mass weighting is likewise a wash",
+      "order": 113,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        ";collapsingthefieldedcosttoawhole-stepembedding"
+      ],
+      "char_start": 25699,
+      "char_end": 25817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:895bebddfa9c994a844998256613e92b",
+      "kind": "paragraph",
+      "text": "(+1.7AUROC,−1.1ρagainst uniform mass); we retain both as options, with uniform unsigned settings a defensible simpler default. Balanced marginals degrade gracefully here—but the cardinalitygapsaresmall.Forcingbalancedtransportcosts",
+      "order": 114,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        ";collapsingthefieldedcosttoawhole-stepembedding"
+      ],
+      "char_start": 25819,
+      "char_end": 26050,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab1eea067dce273a48257f8380dc257a",
+      "kind": "heading",
+      "text": "8AUROC points on a corpus whose step counts differ by",
+      "order": 115,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "8AUROC points on a corpus whose step counts differ by"
+      ],
+      "char_start": 26052,
+      "char_end": 26105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d3dcf33031ca56027dd9953df72266b",
+      "kind": "paragraph",
+      "text": "atmostthree;largerinsertion/deletionregimesshouldwiden this gap, and Prop. 3 is the relevant guarantee. An instructive dissociation.The total-order fallback (ix) is theworstconfiguration for validity discrimination (65.8 AUROC: a chain cannot distinguish valid from invalid reorderings) yet thebestfor ladder correlation (ρ= 0.949: a chainregisterseveryperturbation,soitslosstracksrawdamage count monotonically). Two lessons follow. First, correlation with a graded scale is, by itself, a misleading modelselectioncriterion—itwould selectaconfigurationthatcannot tell a valid plan from an inverted one; metrics should be selected on the joint (Part A, Part B) evidence. Second, the qualityofdependencyextractionmattersmaterially:thefallback degrades discrimination by16.2points—a prediction the GAIA study below confirms on real data.",
+      "order": 116,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "8AUROC points on a corpus whose step counts differ by"
+      ],
+      "char_start": 26107,
+      "char_end": 26941,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0db1f5360920a96c36c0a6cd5148a0de",
+      "kind": "heading",
+      "text": "Benchmark evaluations",
+      "order": 117,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "Benchmark evaluations"
+      ],
+      "char_start": 26943,
+      "char_end": 26964,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1dee53764f6b14e5c4e7d84e53201aa3",
+      "kind": "paragraph",
+      "text": "The controlled corpus establishes internal validity; we now test transfer on three public benchmarks that differ deliberately in how much trust each places in the dependency structure and in the labels. PlanBench (real LLM plans, oracle labels).The Plan- Bench release (Valmeekam et al. 2023) ships blocksworld plans generated by real LLMs together with VAL-checked validity flags. We convert each LLM plan and the gold plan into trajectory graphs usingexactproduces/consumes sets from the PDDL operator semantics—dependency DAGs are ground truth here, not heuristic (mechanism (a) of Sec. 3)— and buildK=3genuinely distinctvalidreferences per instance with an exact solver (gold plan, an alternative optimum under a different tie-break, and a state-preserving detour variant). We sample60plans per model (balanced across valid/invalid where possible) for12models spanning GPT-3.5/4/4o, Claude 3/3.5, Gemini, Llama-3.1, and Qwen families:720real trajectories. Our re-implemented validity checker agrees with the shipped VAL labels on720/720 plans. Two studies result: (a) anoracle study—per-metric AUROC of the score against the validity label, the “external checkatzeroannotationcost”;and(b)theP1–P5/Q1–Q5protocol run on20gold plans (520trajectories), i.e. controlled ground truth overreal-domainplans with exact dependency semantics. GAIA (real human-authored solutions, heuristic extraction).EveryGAIArecord(Mialonetal.2024)carriesan annotator-writtenstep-by-stepsolution.Weparse30ofthese into trajectory graphs with tool inference by keyword rules",
+      "order": 118,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "Benchmark evaluations"
+      ],
+      "char_start": 26966,
+      "char_end": 28517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6a04819d5e1c07fb892b3b36b9cc460",
+      "kind": "paragraph",
+      "text": "anddependencyedgesfromadeterministicsalient-tokenartifact heuristic with a conservative chain fallback—exactly the extraction mechanism (c) that a practitioner would face on free-text traces—and run the full protocol (768trajectories). This corpus stress-testsOtapundernoisystructure. WebArena (real intents, template-derived references). WebArena (Zhou et al. 2024) ships812task configurations",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "Benchmark evaluations"
+      ],
+      "char_start": 28519,
+      "char_end": 28913,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1abb6de01da9e3f9a4662cdf2086d889",
+      "kind": "caption",
+      "text": "Table 4: PlanBench oracle study: AUROC (×100) of each",
+      "order": 120,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "Benchmark evaluations"
+      ],
+      "char_start": 28915,
+      "char_end": 28968,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fc4714e9d9ca521f0f5407de75935ca",
+      "kind": "paragraph",
+      "text": "metric’s score against VAL-checked plan validity, over720 real LLM plans from12models (60per model; macro= mean over models). Our validity checker agrees with the shipped labels on720/720plans. HereOtapisworst: see text.",
+      "order": 121,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thestructuretermistheload-bearingcomponent.Set-",
+        "Benchmark evaluations"
+      ],
+      "char_start": 28970,
+      "char_end": 29190,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abad6597dd78833973742691c4a371af",
+      "kind": "heading",
+      "text": "Metric Macro Pooled",
+      "order": 122,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Metric Macro Pooled"
+      ],
+      "char_start": 29192,
+      "char_end": 29211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3fc60ba1ddc7f3e5020dd0f8d392daa",
+      "kind": "paragraph",
+      "text": "Exact step match 85.3 85.6",
+      "order": 123,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Metric Macro Pooled"
+      ],
+      "char_start": 29213,
+      "char_end": 29239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f602764412774f0c51144d92c009ec6",
+      "kind": "heading",
+      "text": "BLEU86.7 86.9",
+      "order": 124,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BLEU86.7 86.9"
+      ],
+      "char_start": 29241,
+      "char_end": 29254,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3889f5b099dae71144d7bc0eed3a3f8f",
+      "kind": "heading",
+      "text": "ROUGE-L 85.4 85.2",
+      "order": 125,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 85.4 85.2"
+      ],
+      "char_start": 29256,
+      "char_end": 29273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22be686abcf767bae0fc8d602fa73baa",
+      "kind": "paragraph",
+      "text": "Embed. greedy F1 82.1 82.7 Embed.+Hungarian 84.2 84.1 Otap(ours) 79.2 79.3 (intent+evaluation spec) but no gold step trajectories. We deriveareferenceplanpertaskfromasmallruleengineover (intent, sites, eval type)—edges explicit by construction— andruntheprotocolon24template-deduplicatedtasks(576 trajectories).Wereportthesereferencesastemplate-derived; theytestthemetricoverrealisticwebintents,notoverhuman plans. Oracle study: an honest negative result.Table 4 shows that on the task of predicting formal plan validity, every reference-proximity metric is a decent proxy (79–87AU- ROC over real LLM outputs)—andOtapis theweakestof them,7.5points behind BLEU. We report this prominently becauseitdelimitsthemethod’sscope.TheoracleasksadifferentquestionthantheoneOtapisbuilttoanswer:validity in blocksworld is a global executability property of a nearunique optimal plan, soanydeviation from the reference— extra steps, missing steps, granularity drift—is evidence of invalidity,andthestrictestsurfacemetricsprofitfrompunishing all of it.Otapis designed toforgiveexactly those deviations(unbalancedmarginalsabsorbinsertionsanddeletions; soft transport absorbs granularity), and that deliberate tolerance costs discrimination when tolerance is unwarranted.",
+      "order": 126,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 85.4 85.2"
+      ],
+      "char_start": 29275,
+      "char_end": 30530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48800a60e62d3eb5ccd8ff4861e9ddc8",
+      "kind": "heading",
+      "text": "Thepracticalreadingisunambiguous:whenaformalchecker",
+      "order": 127,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker"
+      ],
+      "char_start": 30532,
+      "char_end": 30583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93cccd26c38fdd24b8d2e179b75828a9",
+      "kind": "paragraph",
+      "text": "exists, use the checker—no proximity metric, ours included, should substitute for it. Reference-based process metrics are fortheopen-endeddomainswherenoverifierexists,andthe perturbation results below measure that regime directly. Perturbation protocol on the benchmarks: performance tracks structure fidelity.Tables 5 and 6 arrange the corpora by how trustworthy their dependency structure is, and Otap’s behavior follows that gradient. With exact or explicit structure, the controlled-corpus picture transfers intact.On PlanBench gold plans—realdomain plans whose edges follow from PDDL operator semantics—Otapattains the best AUROC (80.4vs.67.7 forthebestbaseline),realizesProp.2exactlyoncemore(P2 = 100.0), and leads the graded ladder (ρ= 0.92). On WebArenathesameholds(85.9AUROC,P2= 97.9,ρ= 0.90), with severity ordering at96.3against ROUGE-L’s inverted",
+      "order": 128,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker"
+      ],
+      "char_start": 30585,
+      "char_end": 31443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f0a07d8edc7df5aa8cc977ef577e52f",
+      "kind": "heading",
+      "text": "The characteristic baseline pathologies also replicate",
+      "order": 129,
+      "page_number": 6,
+      "heading_level": 4,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker",
+        "The characteristic baseline pathologies also replicate"
+      ],
+      "char_start": 31445,
+      "char_end": 31499,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b5f9f825f4876aee05b83439077c05b",
+      "kind": "paragraph",
+      "text": "theembeddingmetricsareagainatorbelowchanceAUROC on both corpora with P4 in the twenties, and ROUGE-L",
+      "order": 130,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker",
+        "The characteristic baseline pathologies also replicate"
+      ],
+      "char_start": 31501,
+      "char_end": 31601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:932d303eb2b7743b445c2bffc580fa03",
+      "kind": "caption",
+      "text": "Table 5: Perturbation protocol on the three benchmark corpora (all values×100; chance=50; full P1–P5 columns in the",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker",
+        "The characteristic baseline pathologies also replicate"
+      ],
+      "char_start": 31603,
+      "char_end": 31718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f33550ea60f8004c1745b8b98e7f235",
+      "kind": "paragraph",
+      "text": "released harness output). P2=valid reordering, P4=causal inversion, SEV=severity ordering P4>P5. The corpora are ordered by decreasing dependency-structure fidelity: exact PDDL semantics (PlanBench gold plans), explicit template edges (WebArena), heuristic artifact tracing over free text (GAIA). PlanBench (exact DAGs) WebArena (explicit DAGs) GAIA (traced DAGs) Metric P2 P4 SEV AUROC P2 P4 SEV AUROC P2 P4 SEV AUROC Exact step match 30.0 38.0 63.3 48.7 47.9 66.4 51.4 65.4 11.1 14.6 71.1 31.7 BLEU 46.2 27.3 80.0 54.4 88.5 63.7 68.1 68.7 0.0 39.4 71.3 48.2",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thepracticalreadingisunambiguous:whenaformalchecker",
+        "The characteristic baseline pathologies also replicate"
+      ],
+      "char_start": 31720,
+      "char_end": 32279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45ba83b999102e66e278471d405a43fe",
+      "kind": "heading",
+      "text": "ROUGE-L 22.177.423.9 67.7 70.8100.018.8 83.3 0.059.770.7 58.5",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 22.177.423.9 67.7 70.8100.018.8 83.3 0.059.770.7 58.5"
+      ],
+      "char_start": 32281,
+      "char_end": 32342,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b76fc6de9abe60d8796825a0df88f91",
+      "kind": "paragraph",
+      "text": "Embed. greedy F1 66.4 25.5 90.8 51.2 62.5 23.1 84.7 47.3 65.7 33.585.652.3 Embed.+Hungarian 70.0 27.2 90.0 53.9 63.5 25.0 84.0 46.868.634.485.655.5 Otap(ours)100.066.392.8 80.4 97.979.296.3 85.967.3 53.8 68.969.8",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 22.177.423.9 67.7 70.8100.018.8 83.3 0.059.770.7 58.5"
+      ],
+      "char_start": 32344,
+      "char_end": 32556,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd37df48354eb16c1aa363d03ef9935e",
+      "kind": "heading",
+      "text": "Table6:PartBonthebenchmarkcorpora:Spearmanρwith",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table6:PartBonthebenchmarkcorpora:Spearmanρwith"
+      ],
+      "char_start": 32558,
+      "char_end": 32605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ef2c3e5ad61e263b9c5b3ebd2ed01be",
+      "kind": "paragraph",
+      "text": "the graded ladder, all levels / damaged-only (Q1–Q4).",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Table6:PartBonthebenchmarkcorpora:Spearmanρwith"
+      ],
+      "char_start": 32607,
+      "char_end": 32660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4a5e09be03d57ec8542a78749a5017b",
+      "kind": "heading",
+      "text": "PlanBench WebArena GAIA",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "PlanBench WebArena GAIA"
+      ],
+      "char_start": 32662,
+      "char_end": 32685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a777f94750eb81c202b2e36cc567881a",
+      "kind": "paragraph",
+      "text": "Metric all dmg all dmg all dmg Exact step match 0.48 0.69 0.83 0.67 0.35 0.77",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "PlanBench WebArena GAIA"
+      ],
+      "char_start": 32687,
+      "char_end": 32764,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a80200afe416025e8ef0c1c34aa6fbfd",
+      "kind": "heading",
+      "text": "BLEU 0.790.850.89 0.84 0.140.95",
+      "order": 139,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BLEU 0.790.850.89 0.84 0.140.95"
+      ],
+      "char_start": 32766,
+      "char_end": 32797,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de92fa19ef3ba7081179176fe4a0ca89",
+      "kind": "heading",
+      "text": "ROUGE-L 0.19 0.32 0.73 0.48 0.11 0.93",
+      "order": 140,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 0.19 0.32 0.73 0.48 0.11 0.93"
+      ],
+      "char_start": 32799,
+      "char_end": 32836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fcf066f6d2a1cab44f509d84ba3caa2",
+      "kind": "paragraph",
+      "text": "Embed. greedy F1 0.73 0.78 0.800.870.82 0.87 Embed.+Hungarian 0.79 0.84 0.80 0.860.860.88 Otap(ours)0.92 0.85 0.900.81 0.53 0.55 againbuysinversiondetectionatthepriceofpunishingvalid reorderings and inverting severity. With heuristic structure, the advantage persists but shrinks,andwecanquantifythecost.OnGAIA,Otapstill hasthebestdiscriminationbyawidemargin(69.8AUROC; no baseline exceeds58.5, and four of five are at or below chance), and it is the only metric above50onall threebenignfamilies—thetokenmetricsrankeveryvalidreordering below every corruption (BLEU and ROUGE-L P2= 0.0). But the noisy extraction exacts a measurable toll onOtap itself: P2 falls from the exact100.0of every clean-structure corpusto67.3,severityorderingdropsto68.9,andtheladder correlation collapses toρ= 0.53while the order-blind embedding baselines, immune to edge noise by construction, stay high (0.82–0.86). The mechanism is the one ablation (ix) predicted: when salient-token tracing mistakes coincidental lexical overlap for a dependency, a valid reordering perturbs the extractedDP and is charged for structure it did not break. The controlled ablation put the extraction-quality cost at16.2AUROC points; GAIA confirms on real humanauthored plans that dependency extraction is the binding constraint for structural metrics in the wild.",
+      "order": 141,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 0.19 0.32 0.73 0.48 0.11 0.93"
+      ],
+      "char_start": 32838,
+      "char_end": 34162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9faa6acca5c67ac7f1820db1916a3700",
+      "kind": "heading",
+      "text": "Runtime",
+      "order": 142,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ROUGE-L 0.19 0.32 0.73 0.48 0.11 0.93",
+        "Runtime"
+      ],
+      "char_start": 34164,
+      "char_end": 34171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa5cc5824ba87c8e0e60ff51b54e0579",
+      "kind": "heading",
+      "text": "OnCPU,oneOtapevaluationofasix-steptrajectoryagainst",
+      "order": 143,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "OnCPU,oneOtapevaluationofasix-steptrajectoryagainst"
+      ],
+      "char_start": 34173,
+      "char_end": 34224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:127f241d294fba9552afcf9596bd4910",
+      "kind": "paragraph",
+      "text": "K=3references—including all Sinkhorn and conditionalgradient iterations, excluding encoder cache warm-up— takes28–33ms across the controlled, PlanBench, and WebArena corpora, against0.006–22ms for the baselines. Cost is not flat in trajectory length: on GAIA’s longer humanauthored solutions the quadratic Gromov–Wasserstein term raises the mean to23.9s per evaluation (ROUGE-L’s LCS suffers similarly, at180s), consistent with the complexity analysis of Sec. 5; sparse structural distances and earlystopped outer iterations are the natural mitigations for longhorizon traces. In the short-horizon regimeOtapremains negligible next to an LLM-judge call, which costs seconds oflatencyandper-tokenfeesandisnon-deterministic;Otap is deterministic, offline, and cheap enough to run inside a training loop as a process reward.",
+      "order": 144,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "OnCPU,oneOtapevaluationofasix-steptrajectoryagainst"
+      ],
+      "char_start": 34226,
+      "char_end": 35047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbd7190fd7f01117e9023fc8a2c668f5",
+      "kind": "heading",
+      "text": "Human evaluation",
+      "order": 145,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "OnCPU,oneOtapevaluationofasix-steptrajectoryagainst",
+        "Human evaluation"
+      ],
+      "char_start": 35049,
+      "char_end": 35065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a39de321731137b8d56c6fe9ec78b962",
+      "kind": "heading",
+      "text": "Validatingametricrequirestrajectorieswhoserelativequal-",
+      "order": 146,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Validatingametricrequirestrajectorieswhoserelativequal-"
+      ],
+      "char_start": 35067,
+      "char_end": 35122,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f66a041cf5e4d732f6518280d1c3ca1",
+      "kind": "paragraph",
+      "text": "ity is known. Our evidence therefore comes in two tiers.",
+      "order": 147,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Validatingametricrequirestrajectorieswhoserelativequal-"
+      ],
+      "char_start": 35124,
+      "char_end": 35180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f102fd55ce5ea8db10574d0d776c142",
+      "kind": "heading",
+      "text": "Thefirstisafullyautomatic,reproducibleprotocolinwhich",
+      "order": 148,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thefirstisafullyautomatic,reproducibleprotocolinwhich"
+      ],
+      "char_start": 35182,
+      "char_end": 35235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:364a9e64c9a69e81c40ebe811dcf78e3",
+      "kind": "paragraph",
+      "text": "ground-truth quality orderings holdby construction: a corpus of plan DAGs is subjected to controlled perturbations of known severity, and a metric is measured by how often it recovers the resulting ordering (Part A) and by its correlation with a graded corruption ladder (Part B). The second tier moves to three public benchmarks: PlanBench, where 720real LLM-generated planscarry oracle validity labels at zero annotation cost; and GAIA and WebArena, where the perturbation protocol is re-run on real human-authored solutions and real task intents, respectively. Across all studies (3,092trajectories in total) we use a single fixed seed and thea prioridefault hyper-parameters of Sec. 4; no tuning of any kind was performed on any corpus. We release the full harness—corpora, loaders, perturbation generator, all metric implementations, and seeds—for one-command reproduction.",
+      "order": 149,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Thefirstisafullyautomatic,reproducibleprotocolinwhich"
+      ],
+      "char_start": 35237,
+      "char_end": 36115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:732932f490f62963f874190118404607",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 150,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Conclusion"
+      ],
+      "char_start": 36117,
+      "char_end": 36127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ffb04a2123dc2f6bf2e947ef0950a967",
+      "kind": "paragraph",
+      "text": "In this paper, we have proposedOtapas a granular metric for evaluating agent trajectories that account for their heterogenous graph structure and multiple reference solutions. Beyond evaluation, the differentiable structure of (3) makes Otapa candidate dense process reward, and the soft-min overreferencespointstowardlearnedmodelsofthesolution manifold.Theexperimentsrevealtwoopenproblemsthatwe leave for future work: dependency extraction from free-text traces, and principled granularity invariance.",
+      "order": 151,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Conclusion"
+      ],
+      "char_start": 36129,
+      "char_end": 36631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a643edfc2e12a8182d1a5a9a0483d4f",
+      "kind": "heading",
+      "text": "References",
+      "order": 152,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "References"
+      ],
+      "char_start": 36633,
+      "char_end": 36643,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52bef4958785c412ba7ea0b715c6484e",
+      "kind": "paragraph",
+      "text": "Chizat,L.;Péré,G.;Schmitzer,B.;andVialard,F.-X.2018a. Scaling algorithms for unbalanced optimal transport.SIAM Journal on Imaging Sciences, 11(1): 256–282. Chizat, L.; et al. 2018b. Scaling Algorithms for Unbalanced Optimal Transport Problems.Mathematics of Computation,",
+      "order": 153,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "References"
+      ],
+      "char_start": 36645,
+      "char_end": 36915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed5c439cff36d1d989bcf7c537910406",
+      "kind": "heading",
+      "text": "2563–2609.",
+      "order": 154,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "2563–2609."
+      ],
+      "char_start": 36917,
+      "char_end": 36927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b25c9f80694f48c0673fd5e86dc4a52",
+      "kind": "heading",
+      "text": "Cuturi,M.2013. SinkhornDistances:LightspeedComputa-",
+      "order": 155,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cuturi,M.2013. SinkhornDistances:LightspeedComputa-"
+      ],
+      "char_start": 36929,
+      "char_end": 36980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff4bf1fad00ead8f0a052ac8908eda67",
+      "kind": "paragraph",
+      "text": "tionofOptimalTransport.InAdvancesinNeuralInformation Processing Systems (NeurIPS). Kusner, M.; et al. 2015. From Word Embeddings to Document Distances. InInternational Conference on Machine Learning (ICML). Lightman, H.; Kosaraju, V.; Burda, Y.; Edwards, H.; Baker, B.;Lee,T.;Leike,J.;Schulman,J.;Sutskever,I.;andCobbe, K. 2024. Let’s verify step by step. InInternational Conference on Learning Representations, volume 2024, 39578– 39601. Liu, X.; Yu, H.; Zhang, H.; Xu, Y.; Lei, X.; Lai, H.; Gu, Y.; Ding, H.; Men, K.; Yang, K.; et al. 2024. Agentbench: Evaluating llms as agents. InInternational Conference on Learning Representations, volume 2024, 52989–53046. Mémoli, F. 2011. Gromov–Wasserstein Distances and the Metric Approach to Object Matching.Foundations of Computational Mathematics, 11: 417–487. Mialon,G.;Fourrier,C.;Wolf,T.;LeCun,Y.;andScialom,T.",
+      "order": 156,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cuturi,M.2013. SinkhornDistances:LightspeedComputa-"
+      ],
+      "char_start": 36982,
+      "char_end": 37842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:905f54cb10f86dfc3a28dd3b6ea0978e",
+      "kind": "heading",
+      "text": "Gaia: a benchmark for general ai assistants. InInter-",
+      "order": 157,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cuturi,M.2013. SinkhornDistances:LightspeedComputa-",
+        "Gaia: a benchmark for general ai assistants. InInter-"
+      ],
+      "char_start": 37844,
+      "char_end": 37897,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fee5c6caa936be3cded5afd7bfb6c61f",
+      "kind": "paragraph",
+      "text": "national Conference on Learning Representations, volume 2024, 9025–9049. Peyré, G.; and Cuturi, M. 2019. Computational Optimal Transport.Foundations and Trends in Machine Learning, 11(5–6): 355–607. Qin, Y.; Liang, S.; Ye, Y.; Zhu, K.; Yan, L.; Lu, Y.; Lin, Y.;",
+      "order": 158,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cuturi,M.2013. SinkhornDistances:LightspeedComputa-",
+        "Gaia: a benchmark for general ai assistants. InInter-"
+      ],
+      "char_start": 37899,
+      "char_end": 38160,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08607dcfe34a215060694a673cc80c5f",
+      "kind": "heading",
+      "text": "Cong,X.;Tang,X.; Qian,B.;etal.2024. Toolllm:Facilitat-",
+      "order": 159,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cong,X.;Tang,X.; Qian,B.;etal.2024. Toolllm:Facilitat-"
+      ],
+      "char_start": 38162,
+      "char_end": 38216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3a052f66651c3783d8a567ae381b175",
+      "kind": "paragraph",
+      "text": "inglargelanguagemodelstomaster16000+real-worldapis. InInternational Conference on Learning Representations, volume 2024, 9695–9717. Raj, H.; Orkat, N.; Mukherjee, S.; Guha, A.; Flynn, C.; and Majumdar, S. 2026. Consistency as a Testable Property: Statistical Methods to Evaluate AI Agent Reliability. arXiv:2605.10516.",
+      "order": 160,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cong,X.;Tang,X.; Qian,B.;etal.2024. Toolllm:Facilitat-"
+      ],
+      "char_start": 38218,
+      "char_end": 38536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a1e18fa7b5fa62e5137805696cbe1c8",
+      "kind": "heading",
+      "text": "Raj, H.; Rosati, D.; and Majumdar, S. 2023. Measuring Re-",
+      "order": 161,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Raj, H.; Rosati, D.; and Majumdar, S. 2023. Measuring Re-"
+      ],
+      "char_start": 38538,
+      "char_end": 38595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbbfd06eed0b023fa82fc309578a282e",
+      "kind": "paragraph",
+      "text": "liability of Large Language Models through Semantic Consistency. arXiv:2211.05853.",
+      "order": 162,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Raj, H.; Rosati, D.; and Majumdar, S. 2023. Measuring Re-"
+      ],
+      "char_start": 38597,
+      "char_end": 38679,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82395ffd41d88b775c889509186fe016",
+      "kind": "heading",
+      "text": "Sanfeliu, A.; and Fu, K.-S. 1983. A Distance Measure Be-",
+      "order": 163,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Sanfeliu, A.; and Fu, K.-S. 1983. A Distance Measure Be-"
+      ],
+      "char_start": 38681,
+      "char_end": 38737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8768a93c6628aa37b35259f0c02935af",
+      "kind": "paragraph",
+      "text": "tweenAttributedRelational GraphsforPatternRecognition.",
+      "order": 164,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Sanfeliu, A.; and Fu, K.-S. 1983. A Distance Measure Be-"
+      ],
+      "char_start": 38739,
+      "char_end": 38793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06c9e74e212d47eee4668cffa5b6c5dc",
+      "kind": "heading",
+      "text": "IEEETransactionsonSystems,Man,andCybernetics,13(3)",
+      "order": 165,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "IEEETransactionsonSystems,Man,andCybernetics,13(3)"
+      ],
+      "char_start": 38795,
+      "char_end": 38845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4e18f2f64eb563b9a46331e7cd96d93",
+      "kind": "paragraph",
+      "text": "353–362. Tayebati, S.; Kumar, D.; Darabi, N.; Ettori, D.; Krishnan, R.; and Trivedi, A. R. 2026. TRACER: Trajectory Risk Aggregation for Critical Episodes in Agentic Reasoning. arXiv:2602.11409.",
+      "order": 166,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "IEEETransactionsonSystems,Man,andCybernetics,13(3)"
+      ],
+      "char_start": 38847,
+      "char_end": 39041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fb68c4178dd550674ff91ea61bc6bae",
+      "kind": "heading",
+      "text": "Titouan, V.; Courty, N.; Tavenard, R.; Chapel, L.; and Fla-",
+      "order": 167,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Titouan, V.; Courty, N.; Tavenard, R.; Chapel, L.; and Fla-"
+      ],
+      "char_start": 39043,
+      "char_end": 39102,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba3d5db255f5d1a3eacf257a55b1e7e1",
+      "kind": "paragraph",
+      "text": "mary, R. 2019. Optimal Transport for structured data with application on graphs. InInternational Conference on Machine Learning (ICML), 6275–6284. Valmeekam, K.; et al. 2023. PlanBench: An Extensible",
+      "order": 168,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Titouan, V.; Courty, N.; Tavenard, R.; Chapel, L.; and Fla-"
+      ],
+      "char_start": 39104,
+      "char_end": 39303,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ebb760572aad34b77cbd6f7a1dae1d9",
+      "kind": "heading",
+      "text": "BenchmarkforEvaluatingLargeLanguageModelsonPlan-",
+      "order": 169,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BenchmarkforEvaluatingLargeLanguageModelsonPlan-"
+      ],
+      "char_start": 39305,
+      "char_end": 39353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1d5efe19bdf1323a62d3813ca034fc2",
+      "kind": "paragraph",
+      "text": "ningandReasoningAboutChange. InNeurIPSDatasetsand Benchmarks Track.",
+      "order": 170,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "BenchmarkforEvaluatingLargeLanguageModelsonPlan-"
+      ],
+      "char_start": 39355,
+      "char_end": 39422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26eba43339bb53682a52f60d253526e6",
+      "kind": "heading",
+      "text": "Vayer,T.;etal.2019. OptimalTransportforStructuredData",
+      "order": 171,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Vayer,T.;etal.2019. OptimalTransportforStructuredData"
+      ],
+      "char_start": 39424,
+      "char_end": 39477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9115d438c1795adaf5bedb521d722b3a",
+      "kind": "paragraph",
+      "text": "withApplicationonGraphs. InInternationalConferenceon Machine Learning (ICML). Wright, M. B. 1990. Speeding up the Hungarian algorithm. Computers & Operations Research, 17(1): 95–96. Yao, S.; et al. 2023a. ReAct: Synergizing Reasoning and",
+      "order": 172,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Vayer,T.;etal.2019. OptimalTransportforStructuredData"
+      ],
+      "char_start": 39479,
+      "char_end": 39716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a21f0c05d3928f197fb8221fc96780b",
+      "kind": "heading",
+      "text": "ActinginLanguageModels. InInternationalConferenceon",
+      "order": 173,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ActinginLanguageModels. InInternationalConferenceon"
+      ],
+      "char_start": 39718,
+      "char_end": 39769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b7ebe3abb6ea2567b5bd7f8a4883a42",
+      "kind": "paragraph",
+      "text": "Learning Representations (ICLR). Yao, S.; et al. 2023b. Tree of Thoughts: Deliberate Problem",
+      "order": 174,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "ActinginLanguageModels. InInternationalConferenceon"
+      ],
+      "char_start": 39771,
+      "char_end": 39863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d30d022799dacb86309c3f487f0e83be",
+      "kind": "heading",
+      "text": "SolvingwithLargeLanguageModels.InAdvancesinNeural",
+      "order": 175,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "SolvingwithLargeLanguageModels.InAdvancesinNeural"
+      ],
+      "char_start": 39865,
+      "char_end": 39914,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7b9b55e0729ba657fa1008465daecc9",
+      "kind": "paragraph",
+      "text": "Information Processing Systems (NeurIPS). Yao, S.; et al. 2024.τ-bench: A Benchmark for Tool-Agent- User Interaction in Real-World Domains.arXiv preprint arXiv:2406.12045.",
+      "order": 176,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "SolvingwithLargeLanguageModels.InAdvancesinNeural"
+      ],
+      "char_start": 39916,
+      "char_end": 40087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d472f770fa53082482dd68263ae3629",
+      "kind": "heading",
+      "text": "Zhang, J.; Xiong, C.; and Wu, C.-S. 2026. Agentic Confi-",
+      "order": 177,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Zhang, J.; Xiong, C.; and Wu, C.-S. 2026. Agentic Confi-"
+      ],
+      "char_start": 40089,
+      "char_end": 40145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:148fe18693b2dcb41bc6fabaf3ff3827",
+      "kind": "paragraph",
+      "text": "dence Calibration. arXiv:2601.15778.",
+      "order": 178,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Zhang, J.; Xiong, C.; and Wu, C.-S. 2026. Agentic Confi-"
+      ],
+      "char_start": 40147,
+      "char_end": 40183,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e18ec1f6ce2b176b0d69d2c9208ffcf4",
+      "kind": "heading",
+      "text": "Zhang, T.; Kishore, V.; Wu, F.; Weinberger, K. Q.; and",
+      "order": 179,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Zhang, T.; Kishore, V.; Wu, F.; Weinberger, K. Q.; and"
+      ],
+      "char_start": 40185,
+      "char_end": 40239,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d6a860ab6e983a858a629530ecd6b58",
+      "kind": "heading",
+      "text": "Artzi, Y. 2020. BERTScore: Evaluating Text Generation",
+      "order": 180,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Artzi, Y. 2020. BERTScore: Evaluating Text Generation"
+      ],
+      "char_start": 40241,
+      "char_end": 40294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:89a771a7e7f2b5362f0894cb735b0c2d",
+      "kind": "paragraph",
+      "text": "with BERT. InInternational Conference on Learning Representations (ICLR). Zhao, W.; et al. 2019. MoverScore: Text Generation Evaluating with Contextualized Embeddings and Earth Mover Distance. InConference on Empirical Methods in Natural Language Processing (EMNLP). Zheng, L.; et al. 2023. Judging LLM-as-a-Judge with MT- Bench and Chatbot Arena. InAdvances in Neural Information Processing Systems (NeurIPS). Zhou, S.; Xu, F. F.; Zhu, H.; Zhou, X.; Lo, R.; Sridhar, A.;",
+      "order": 181,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Artzi, Y. 2020. BERTScore: Evaluating Text Generation"
+      ],
+      "char_start": 40296,
+      "char_end": 40767,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53a10000e7da9a812a3ff2e8508bc932",
+      "kind": "heading",
+      "text": "Cheng,X.;Ou,T.;Bisk,Y.;Fried,D.;etal.2024. Webarena",
+      "order": 182,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cheng,X.;Ou,T.;Bisk,Y.;Fried,D.;etal.2024. Webarena"
+      ],
+      "char_start": 40769,
+      "char_end": 40820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81f1553a325f8db0fd248579c5e8d31f",
+      "kind": "paragraph",
+      "text": "Arealisticwebenvironmentforbuildingautonomousagents. InInternational Conference on Learning Representations, volume 2024, 15585–15606.",
+      "order": 183,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Otap: Structure-Aware Optimal Transport for",
+        "Cheng,X.;Ou,T.;Bisk,Y.;Fried,D.;etal.2024. Webarena"
+      ],
+      "char_start": 40822,
+      "char_end": 40956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 8,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 8
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.17082",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 8,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

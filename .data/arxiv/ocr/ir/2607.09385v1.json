@@ -1,0 +1,3635 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "fb5120afcd1c4f2ffe52f16122c96431fef7b7514284c19bf2ae5e38943b8187",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:6746332d0b2b5b3e640fef5ec86659a1",
+      "kind": "heading",
+      "text": "STEEL: Sparsity-Aware Fused Attention for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for"
+      ],
+      "char_start": 0,
+      "char_end": 41,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37ea97ff3dc46776996bcbffcafa68b5",
+      "kind": "heading",
+      "text": "Energy-Efficient Long-Sequence Inference",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference"
+      ],
+      "char_start": 43,
+      "char_end": 83,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff9ed224bf8a3075cf94fd4ec91aca6e",
+      "kind": "paragraph",
+      "text": "on AMD’s XDNA™ NPU Victor J.B. Jung †∗, Gagandeep Singh ∗, Joseph Melber ∗, Kristof Denolf ∗, Francesco Conti ‡, Luca Benini †‡ ∗AMD Research and Advanced Development (RAD). †Integrated Systems Laboratory (IIS), ETH Z ¨urich, Switzerland. ‡ Department of Electrical, Electronic and Information Engineering (DEI), University of Bologna, Italy. Abstract—The growing adoption of large language model (LLM)-based agents within operating system workflows has increased the importance of energy-efficient inference on laptopclass systems-on-chip (SoCs). While cloud offloading remains common, it introduces reliability and privacy concerns that are particularly problematic for agentic workloads. Recent laptop SoCs, therefore, incorporate neural processing units (NPUs) optimized for energy efficiency; however, effectively mapping attention mechanisms onto NPUs remains challenging due to architectural diversity and explicit data-movement programming models. In this work, we present STEEL, the first open-source implementation of FlashAttention targeting XDNA-like NPUs. STEEL introduces a dataflow formulation of prefill attention, enabling efficient exploitation of spatial parallelism and on-chip memory. Furthermore, STEEL addresses the load imbalance induced by the causal mask by leveraging a sparsity-aware pipeline placement onto the NPU array, reducing synchronization overhead and improving utilization. We evaluate STEEL on the AMD Ryzen™ AI 9 HX 370 SoC and compare its performance against optimized central processing unit (CPU) and graphics",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference"
+      ],
+      "char_start": 85,
+      "char_end": 1637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8f6ef50451466d4667e27453c1dc957",
+      "kind": "paragraph",
+      "text": "processing unit (GPU) implementations. Experimental results show that STEEL reduces energy consumption by an average of 9.17×and 1.75×relative to CPU and GPU baselines, respectively. On XDNA™ 1, STEEL achieves an average 9.6× latency reduction over the prior state of the art (SotA), and delivers a 22.8×speedup on average compared to a layer-bylayer attention implementation on XDNA™ 2.",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference"
+      ],
+      "char_start": 1639,
+      "char_end": 2026,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5122ffdb767d7555be684970e069c227",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 2028,
+      "char_end": 2040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:deea1b461497650f50d2e6589632bf34",
+      "kind": "paragraph",
+      "text": "T HEincreasing integration of artificial intelligence (AI) agents into core operating system functions is a key driver in the design of modern laptop systems-on-chip (SoCs) [1]. These agents are typically implemented as large Transformerbased deep neural networks (DNNs) with several billion parameters [2]. While such models enable powerful capabilities, their inference demands impose substantial computational and data-movement overhead, making them inherently energyintensive. This energy cost has emerged as a fundamental bottleneck for embedded mobile platforms, where power and thermal budgets are tightly constrained [2]. As a result, most large language model (LLM) inference is currently offloaded to data-center graphics processing units (GPUs). Although effective from a performance standpoint, this centralized approach introduces challenges in agentic workflows, including increased latency, reduced reliability, and heightened privacy risks [3]. To unlock the full potential of AI agents at the edge, recent laptop SoCs integrate neural processing units (NPUs) designed specifically for energy-efficient inference [4], [5], [6]. NPUs target the most computationally and energy expensive components of Transformer models, most notably the attention mechanism [7]. The prefill stage of Attention is a major contributor to inference latency and energy consumption at long-sequence length, a regime that is increasingly common in practical LLM deployments [7]. As a result, substantial effort has been made to optimize attention on both commercial [8]",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 2042,
+      "char_end": 3604,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b05684811e66928f9dabaadb5590c9c",
+      "kind": "paragraph",
+      "text": "and academic hardware platforms [9]. The range of attention optimizations is broad, from algorithmic improvements like FlashAttention [8] to hardware enhancements including specialized non-linear units [10]. NPUs achieve high energy efficiency through spatial dataflow architectures and explicit data-movement programming models, which expose fine-grained control over computation and memory transfers [11]. Typical NPU architectures, such as AMD’s XDNA™, are particularly well-suited for executing the prefill stage of language generation, as the prefill stage is primarily composed of matrix-to-matrix multiplication. Additionally, the prefill stage is a significant contributor to latency for large context requests [12], as is the case in agentic systems. While extensive prior work has focused on optimizing attention for GPUs, comparatively few efforts target attention on NPUs [5]. Moreover, the substantial diversity among NPUs architectures and programming models severely limits the portability of existing solutions. In this work, we present STEEL, the first open-source implementation of FlashAttention on XDNA™ 2 NPUs. STEEL proposes a dataflow formulation of the prefill attention distributed onto a three-stage pipeline of artificial intelligence engine (AIE) tiles. Through a careful distribution of work over the pipeline, optimized data-layout handling, and sparsityaware pipeline placement, STEEL enhances the energy efficiency of the attention mechanism on edge platforms. This work makes the following key contributions:",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 3606,
+      "char_end": 5147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90b9e72ca6b8a09794c8e45cec7f0d69",
+      "kind": "paragraph",
+      "text": "•We propose STEEL, a dataflow formulation of FlashAttention for XDNA™-like architectures. STEEL decomposes the FlashAttention algorithm to enable efficient distribution across the processing element (PE) array. •We introduce a novel sparsity-aware pipeline placement",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 5149,
+      "char_end": 5415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:23a5e531a499444670d15a810eeade98",
+      "kind": "table",
+      "text": "arXiv:2607.09385v1  [cs.DC]  10 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 5417,
+      "char_end": 5457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:575746a07c8334cce57414b0efce21e8",
+      "kind": "paragraph",
+      "text": "technique that mitigates workload distribution imbalance caused by the causal masking, hence reducing synchronization overhead. This placement achieves a 38 % latency reduction compared to uniform placement. •We perform an in-depth comparison of attention execution on the AMD Ryzen™ AI 9 HX 370 SoC across its NPU, central processing unit (CPU), and GPU. In detail, we benchmark STEEL on the XDNA™ 2 NPU and compare it against FlashAttention on 12 Zen5 CPUs cores and the RDNA 3.5 GPU. •We demonstrate STEEL’s portability across multiple XDNA™-like architectures showing that it outperforms the state of the art (SotA) FlashAttention implementation from DATO [13]. Experimental evaluations of STEEL on AMD Ryzen™ AI 9 HX 370 demonstrate an average energy consumption reduction of9.17×and 1.75×compared to the CPU and GPU, respectively. On XDNA™ 1, STEEL outperforms the previous SotA implementation of flash-attention on XDNA™ 1 [13] by reducing the latency by9.6×on average. Additionally, compared to a layer-by-layer implementation of attention on XDNA™ 2, STEEL provides an average 22.8×speedup. The STEEL algorithm is open-source at https://github.com/amd/ iron.",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "INTRODUCTION"
+      ],
+      "char_start": 5459,
+      "char_end": 6626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:680c25f6e194f59dc40a8ccc0d127671",
+      "kind": "heading",
+      "text": "BACKGROUND",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Energy-Efficient Long-Sequence Inference",
+        "BACKGROUND"
+      ],
+      "char_start": 6628,
+      "char_end": 6638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b8eea55ab1bbfe8b5f1aa7176cfe27c",
+      "kind": "heading",
+      "text": "A. Fused Attention Algorithms",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Fused Attention Algorithms"
+      ],
+      "char_start": 6640,
+      "char_end": 6669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d2642e9a85801bb9fae1b84152b1488",
+      "kind": "paragraph",
+      "text": "Transformer blocks form the computational backbone of essentially all LLMs and are used in a large fraction of modern large-scale DNNs [14]. Within each transformer block, theattention mechanism[15] is responsible for much of the computational cost, memory footprint, and performance complexity. As sequence lengths grow, attention often becomes the dominant contributor to inference latency and memory bottlenecks [7]. The attention mechanism operates on three input tensors: queriesQ∈R Sq×d keysK∈R Skv ×d, and valuesV∈ RSkv ×d, and produces an output tensorO∈R Sq×d:",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Fused Attention Algorithms"
+      ],
+      "char_start": 6671,
+      "char_end": 7240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:013d72543d2ccc6a61ca76545d8b1c87",
+      "kind": "heading",
+      "text": "A= QK T",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A= QK T"
+      ],
+      "char_start": 7242,
+      "char_end": 7249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24b4b4f2ae194e4cee3123f90484d26e",
+      "kind": "paragraph",
+      "text": "√ d , O=sof tmax(A)VwhereA∈R Sq×Skv (1) WhereS q andS kv denote the query and key/value sequence lengths, respectively, andddenotes the head dimension. The softmax function is applied independently across each row of A. FlashAttention [8] was introduced to eliminate the storage and latency overheads incurred by materializingAand sof tmax(A)in memory. Its key insight is to restructure the attention computation to eliminate explicit materialization of these intermediates entirely. FlashAttention achieves this by leveraging online softmax techniques [16] and tiling the attention computation, allowing the attention score to be computed, normalized, and consumed incrementally. To preserve the correct normalization statistics across tiles, FlashAttention maintains two per-row statistics vectors,ℓ m∈R Bq, where Bq is the user-selected block size forQ.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A= QK T"
+      ],
+      "char_start": 7251,
+      "char_end": 8107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2d930002350fc9446c557ef3b5fd2dc7",
+      "kind": "heading",
+      "text": "Python Binding",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Python Binding"
+      ],
+      "char_start": 8109,
+      "char_end": 8123,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c5a15bf582a2f421791d065f88e5bd9",
+      "kind": "heading",
+      "text": "LLVM Peano",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "LLVM Peano"
+      ],
+      "char_start": 8125,
+      "char_end": 8135,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1ecb4014210a2100381f2398874767c",
+      "kind": "heading",
+      "text": "IRON Operator Library",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "IRON Operator Library"
+      ],
+      "char_start": 8137,
+      "char_end": 8158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8467e29fb37def6de616eed094676e1",
+      "kind": "heading",
+      "text": "XRT Runtime",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "XRT Runtime"
+      ],
+      "char_start": 8160,
+      "char_end": 8171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:302f0155dcfde73431e76c293e9dda02",
+      "kind": "heading",
+      "text": "MLIR AIE",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "MLIR AIE"
+      ],
+      "char_start": 8173,
+      "char_end": 8181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99ad17fd1a18bde2337a108ec46a49ab",
+      "kind": "caption",
+      "text": "Fig. 1. Overview of the software stack used to program the XDNA™ 2",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "MLIR AIE"
+      ],
+      "char_start": 8183,
+      "char_end": 8249,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:565318203832accd18ef19f815ad4e9b",
+      "kind": "paragraph",
+      "text": "NPU. The IRON library contains efficient ML operators written in Python and using C++ kernels. The Python bindings are lowered to LLVM IR by the MLIR-AIE compiler. The LLVM-AIE compiler generates binaries to run on the NPU; the host-to-NPU interactions are handled by the XRT runtime. The entire stack is composed of open-source tools.",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "MLIR AIE"
+      ],
+      "char_start": 8251,
+      "char_end": 8586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b964cd34389872d4e1b296bdf324c5b",
+      "kind": "heading",
+      "text": "B. XDNA™ Software Stack",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. XDNA™ Software Stack"
+      ],
+      "char_start": 8588,
+      "char_end": 8611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ffca2edceaec345ac23a7199973b23f",
+      "kind": "paragraph",
+      "text": "To program the XDNA™ 2 NPU, we use AMD’s opensource software stack (Fig. 1). IRON provides compute primitives targeting both individual AIE cores and the full NPU. Single-core primitives (kernels) are implemented in C++ using the AIE API, while full-NPU primitives (designs) are implemented in Python via MLIR-AIE bindings. Designs compose kernels and orchestrate data movement across AIE cores, Mem tiles, and dynamic random-access memory (DRAM). For instance, the IRON general matrix multiplication (GEMM) design distributes tiles across the array while invoking a C++ kernel for local computation. The Python bindings define the dataflow over the PE array and are lowered to the MLIR-AIE dialect, optimized through transformation passes, and translated to LLVM IR. This IR is compiled by LLVM-AIE into binaries for the AIE cores. Execution is managed by a C++ or Python runtime built on XRT or PyXRT, which either runs the operator on the NPU and returns output tensors or executes validation test benches.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. XDNA™ Software Stack"
+      ],
+      "char_start": 8613,
+      "char_end": 9622,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64a9e02cc7eed210a5d6cb8128dc8983",
+      "kind": "heading",
+      "text": "XDNA™ 2 NPU Architecture",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. XDNA™ Software Stack",
+        "XDNA™ 2 NPU Architecture"
+      ],
+      "char_start": 9624,
+      "char_end": 9648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:156c89e84ff78c7429eeebf180183928",
+      "kind": "paragraph",
+      "text": "The XDNA™ 2 NPU[4] adopts a two-dimensional spatial architecture composed of VLIW processing units interconnected via a NoC (Fig. 2). It operates between1.3 GHz and1.8 GHzdepending on power mode. The architecture is",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. XDNA™ Software Stack",
+        "XDNA™ 2 NPU Architecture"
+      ],
+      "char_start": 9650,
+      "char_end": 9865,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a01e559c8d0a5441134240aeccbf8ef",
+      "kind": "heading",
+      "text": "Shim Tile",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim Tile"
+      ],
+      "char_start": 9867,
+      "char_end": 9876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5aa538200881782b6e98a1d19325647e",
+      "kind": "heading",
+      "text": "Shim DMA",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 9878,
+      "char_end": 9886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c82ec4f7dd1c990b4f732ccb3996a81",
+      "kind": "paragraph",
+      "text": "256b",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 9888,
+      "char_end": 9892,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e5277d71484129b9ce3bc4cdc6bf8ce",
+      "kind": "heading",
+      "text": "Mem Tile",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 9894,
+      "char_end": 9902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24e1672d4ef0fec9b66f04284242cfff",
+      "kind": "heading",
+      "text": "AIE Tile",
+      "order": 30,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 9904,
+      "char_end": 9912,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5131d297be4f0baf8222fd028b374238",
+      "kind": "paragraph",
+      "text": "L2",
+      "order": 31,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 9914,
+      "char_end": 9916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf4bee3498102e2f0cb4f9402a736e77",
+      "kind": "heading",
+      "text": "KB DMA32b",
+      "order": 32,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB DMA32b"
+      ],
+      "char_start": 9918,
+      "char_end": 9927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56569d96c9c4177592dca5d437864d5a",
+      "kind": "paragraph",
+      "text": "32b L1",
+      "order": 33,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB DMA32b"
+      ],
+      "char_start": 9929,
+      "char_end": 9935,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0c5ddbebd92c04eb2470f128f453dcf",
+      "kind": "heading",
+      "text": "KB",
+      "order": 34,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 9937,
+      "char_end": 9939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2ed09d80355ffd5d50080988d174e89",
+      "kind": "paragraph",
+      "text": "AIE",
+      "order": 35,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 9941,
+      "char_end": 9944,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a7f4ed80bce7406d976ff045495a684",
+      "kind": "heading",
+      "text": "Core",
+      "order": 36,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Core"
+      ],
+      "char_start": 9946,
+      "char_end": 9950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd98ddfd125bac4e03a3c66f0f288a0d",
+      "kind": "paragraph",
+      "text": "256b",
+      "order": 37,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Core"
+      ],
+      "char_start": 9952,
+      "char_end": 9956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b1326e1f17661bc8435c005a70eb1a3",
+      "kind": "heading",
+      "text": "Shim DMA",
+      "order": 38,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 9958,
+      "char_end": 9966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:724ef2710d391c9b5acb5291a6d74930",
+      "kind": "paragraph",
+      "text": "256b 32b 32b 256b",
+      "order": 39,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 9968,
+      "char_end": 9985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43ad8a522c57e6d7c9eee1a7fdf8aa9e",
+      "kind": "heading",
+      "text": "Shim Tile",
+      "order": 40,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim Tile"
+      ],
+      "char_start": 9987,
+      "char_end": 9996,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:766813932f73055975091269577c6bf3",
+      "kind": "heading",
+      "text": "L3 : DRAM",
+      "order": 41,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "L3 : DRAM"
+      ],
+      "char_start": 9998,
+      "char_end": 10007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e28f478fdab5cbcb850126f07216c1c",
+      "kind": "heading",
+      "text": "Shim DMA",
+      "order": 42,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 10009,
+      "char_end": 10017,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9d09d8b66800a315b58ec5daccd13b9a",
+      "kind": "paragraph",
+      "text": "256b 32b 32b 256b",
+      "order": 43,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim DMA"
+      ],
+      "char_start": 10019,
+      "char_end": 10036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea2bdae0643a3b174c40e7b2b2bb850c",
+      "kind": "heading",
+      "text": "Shim Tile",
+      "order": 44,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim Tile"
+      ],
+      "char_start": 10038,
+      "char_end": 10047,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c04aa46f28437820eea4397e445e29a2",
+      "kind": "heading",
+      "text": "Mem Tile",
+      "order": 45,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 10049,
+      "char_end": 10057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07555918715b983a7717d9ca17e5afb3",
+      "kind": "paragraph",
+      "text": "L2",
+      "order": 46,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 10059,
+      "char_end": 10061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0827070697578524937867f9a58fef94",
+      "kind": "heading",
+      "text": "KB DMA",
+      "order": 47,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB DMA"
+      ],
+      "char_start": 10063,
+      "char_end": 10069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0713585ee7f06bc3daefee277de15b7a",
+      "kind": "heading",
+      "text": "Mem Tile",
+      "order": 48,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 10071,
+      "char_end": 10079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5843b7d2d453ec081ed6ace0dd3a055b",
+      "kind": "paragraph",
+      "text": "L2",
+      "order": 49,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 10081,
+      "char_end": 10083,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73329294acd0afd025d104da99131802",
+      "kind": "heading",
+      "text": "KB DMA",
+      "order": 50,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB DMA"
+      ],
+      "char_start": 10085,
+      "char_end": 10091,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c88639b7c3b2e09d08c3bf28c00f250f",
+      "kind": "heading",
+      "text": "AIE Tile",
+      "order": 51,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 10093,
+      "char_end": 10101,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:096cc373efdd52c5f1417d156b513329",
+      "kind": "paragraph",
+      "text": "L1",
+      "order": 52,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 10103,
+      "char_end": 10105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32946d2a091d78fe7222f3c9fa063c5c",
+      "kind": "heading",
+      "text": "KB",
+      "order": 53,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 10107,
+      "char_end": 10109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af3abf0c1e57803d8d1d3733211d5d22",
+      "kind": "paragraph",
+      "text": "AIE",
+      "order": 54,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 10111,
+      "char_end": 10114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c8e39f965279df4c4aa71bbde7ac811",
+      "kind": "heading",
+      "text": "Core",
+      "order": 55,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Core"
+      ],
+      "char_start": 10116,
+      "char_end": 10120,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6cc86006ab36746be56047eee0b1ccd",
+      "kind": "heading",
+      "text": "AIE Tile",
+      "order": 56,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 10122,
+      "char_end": 10130,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84c8deaa3e0163742958f2ded39ef0da",
+      "kind": "paragraph",
+      "text": "L1",
+      "order": 57,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 10132,
+      "char_end": 10134,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3953b5dff105fb0a28a21276d4e0e898",
+      "kind": "heading",
+      "text": "KB",
+      "order": 58,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 10136,
+      "char_end": 10138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:429c8f8731bdade951b50009921907c0",
+      "kind": "paragraph",
+      "text": "AIE",
+      "order": 59,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB"
+      ],
+      "char_start": 10140,
+      "char_end": 10143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3450e6d73ad32e95632de722572fc6e",
+      "kind": "heading",
+      "text": "Core",
+      "order": 60,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Core"
+      ],
+      "char_start": 10145,
+      "char_end": 10149,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:695f5f913459917b5c3cfdd6f988357f",
+      "kind": "heading",
+      "text": "KB Program",
+      "order": 61,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB Program"
+      ],
+      "char_start": 10151,
+      "char_end": 10161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f5a55ac3094fb824617435df71f99b7",
+      "kind": "heading",
+      "text": "Memory",
+      "order": 62,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Memory"
+      ],
+      "char_start": 10163,
+      "char_end": 10169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15a214fc9d20ede285b25bbf04ba8666",
+      "kind": "heading",
+      "text": "KB Multi-Bank",
+      "order": 63,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "KB Multi-Bank"
+      ],
+      "char_start": 10171,
+      "char_end": 10184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3dd5c70ed302009e841f427f1ad70ec",
+      "kind": "heading",
+      "text": "Data Memory",
+      "order": 64,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Data Memory"
+      ],
+      "char_start": 10186,
+      "char_end": 10197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9c3cabd4dc4c0a3fe08cae6763d817d",
+      "kind": "heading",
+      "text": "Vector Unit",
+      "order": 65,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Vector Unit"
+      ],
+      "char_start": 10199,
+      "char_end": 10210,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94dacd7f6f5e29512ecdf51bdd75d5e9",
+      "kind": "heading",
+      "text": "Locks",
+      "order": 66,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Locks"
+      ],
+      "char_start": 10212,
+      "char_end": 10217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17203c5b8af456548ace91d35c480198",
+      "kind": "heading",
+      "text": "Scalar Unit",
+      "order": 67,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Scalar Unit"
+      ],
+      "char_start": 10219,
+      "char_end": 10230,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6286e1f5d0913472e58e470ccf1cca6b",
+      "kind": "paragraph",
+      "text": "DMA",
+      "order": 68,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Scalar Unit"
+      ],
+      "char_start": 10232,
+      "char_end": 10235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e312e3e6ea0114ea1563fa19323bb66",
+      "kind": "caption",
+      "text": "Fig. 2. Overview of the XDNA™ 2 NPU. XDNA™ 2 features three types",
+      "order": 69,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Scalar Unit"
+      ],
+      "char_start": 10237,
+      "char_end": 10302,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20944d9cc9fcdb3739e4752997219d51",
+      "kind": "paragraph",
+      "text": "of tiles interconnected via a NoC. The Shim tiles feature high bandwidth DMAs to move data in and out of the NPU. The Mem tiles are intermediate large512 kBbuffers coupled with a DMA engine. The AIE tiles are VLIW processors with a scalar and vector datapath; each AIE core runs an independent program.",
+      "order": 70,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Scalar Unit"
+      ],
+      "char_start": 10304,
+      "char_end": 10606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c5c44a024ad976555bcdd200eb8ec59",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 71,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "TABLE I"
+      ],
+      "char_start": 10608,
+      "char_end": 10615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:348b47fe3074428cfcebcc17dad1abc7",
+      "kind": "paragraph",
+      "text": "COMPARISON OF COMMERCIALNPUS FOR LAPTOPSOCS.",
+      "order": 72,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "TABLE I"
+      ],
+      "char_start": 10617,
+      "char_end": 10661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92a9632242ceb9b76b2f23a27d30cc7b",
+      "kind": "heading",
+      "text": "Intel’s",
+      "order": 73,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Intel’s"
+      ],
+      "char_start": 10663,
+      "char_end": 10670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:93abaf4530e132933288742700d6e999",
+      "kind": "paragraph",
+      "text": "AI Boost [6]",
+      "order": 74,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Intel’s"
+      ],
+      "char_start": 10672,
+      "char_end": 10684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:feaec0493c8fee6b02c942a1748f444b",
+      "kind": "heading",
+      "text": "Qualcomm’s",
+      "order": 75,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Qualcomm’s"
+      ],
+      "char_start": 10686,
+      "char_end": 10696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:658246d2cf7e1e8ec1dc8b25c450eeb1",
+      "kind": "paragraph",
+      "text": "Hexagon [17]",
+      "order": 76,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Qualcomm’s"
+      ],
+      "char_start": 10698,
+      "char_end": 10710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d34cc3e0c1555088b35333a4c1a9a1f2",
+      "kind": "heading",
+      "text": "Huawei’s",
+      "order": 77,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Huawei’s"
+      ],
+      "char_start": 10712,
+      "char_end": 10720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bed51266e8f1c538e6f242e074429f80",
+      "kind": "paragraph",
+      "text": "Ascend 310 [18]",
+      "order": 78,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Huawei’s"
+      ],
+      "char_start": 10722,
+      "char_end": 10737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5a64e40a517bd005a21a397d7fac4da",
+      "kind": "heading",
+      "text": "AMD’s",
+      "order": 79,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AMD’s"
+      ],
+      "char_start": 10739,
+      "char_end": 10744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7c853777306df7e4094a96598564ae8",
+      "kind": "heading",
+      "text": "XDNA™2 [19]",
+      "order": 80,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "XDNA™2 [19]"
+      ],
+      "char_start": 10746,
+      "char_end": 10757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a137c41101f85661e562333434bc06cf",
+      "kind": "heading",
+      "text": "Open-Source",
+      "order": 81,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Open-Source"
+      ],
+      "char_start": 10759,
+      "char_end": 10770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6498a17bdc4d7d8eca30645f611eb98f",
+      "kind": "heading",
+      "text": "Software Stack Yes No Yes Yes",
+      "order": 82,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Software Stack Yes No Yes Yes"
+      ],
+      "char_start": 10772,
+      "char_end": 10801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e59398af18e71c66f12b0a670ad9e578",
+      "kind": "heading",
+      "text": "Spatial Dataflow",
+      "order": 83,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Spatial Dataflow"
+      ],
+      "char_start": 10803,
+      "char_end": 10819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5e368b919dc29ce0207007171e57e96",
+      "kind": "heading",
+      "text": "Architecture No No No Yes",
+      "order": 84,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Architecture No No No Yes"
+      ],
+      "char_start": 10821,
+      "char_end": 10846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5190928507edbbcbf79e2ef0b830b4dc",
+      "kind": "heading",
+      "text": "Peak Throughput",
+      "order": 85,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Peak Throughput"
+      ],
+      "char_start": 10848,
+      "char_end": 10863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:218d7068ac28e6106ce294b765549f5c",
+      "kind": "heading",
+      "text": "(TOPS) 48 45 16 50",
+      "order": 86,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "(TOPS) 48 45 16 50"
+      ],
+      "char_start": 10865,
+      "char_end": 10883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b65cb420ab30c88632a150e547c0202c",
+      "kind": "paragraph",
+      "text": "organized into eight columns, each comprising a Shim tile, a Mem tile, and four AIE tiles. The Shim tile connects the NoC to DRAM and provides a high-throughput DMA engine supporting 4-D transfers over two 256-bit channels. The Mem tile integrates512 kBof multi-bank interleaved memory and a DMA engine with 4-D transfer support. Computation is performed on AIE tiles. Each AIE core is a VLIW processor issuing up to seven instructions across scalar and vector datapaths, enabling overlap of control and compute. The vector unit sustains 64 multiply-accumulate (MAC) operations per cycle for bfloat16 inputs with fp32 accumulation. Each tile includes64 kBof banked data memory,16 kBof program memory, and an on-tile DMA engine supporting 3-D transfers.",
+      "order": 87,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "(TOPS) 48 45 16 50"
+      ],
+      "char_start": 10885,
+      "char_end": 11637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b95252d39f54321de1fe1d8ced07ddb5",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 88,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "(TOPS) 48 45 16 50",
+        "RELATEDWORK"
+      ],
+      "char_start": 11639,
+      "char_end": 11650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0fdafee806f83abb1e0cd99ee0c67d1",
+      "kind": "heading",
+      "text": "A. Commercial NPUs",
+      "order": 89,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Commercial NPUs"
+      ],
+      "char_start": 11652,
+      "char_end": 11670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f8df5ecc2d1050a58129100b6128364",
+      "kind": "paragraph",
+      "text": "With the rise of early DNNs for vision tasks such as convolutional neural networks (CNNs) [20], specialized accelerators were integrated into edge processors to improve energy efficiency [21]. A similar trend is now emerging with the integration of NPUs into portable SoCs to accelerate LLMs [2]. However, commercially available NPUs exhibit significant architectural diversity, making it important to contextualize the design space targeted by STEEL. A primary comparison metric is peak throughput, typically reported in tera operations per second (TOPS). Table I highlights large variation across platforms, reflecting differences in both scale and target workloads. The spatial dataflow architecture of XDNA™ 2 (Sec. II-C) differs fundamentally from other NPUs. Its 32 AIE cores execute independent programs and communicate through the NoC, enabling fine-grained, operator-specific mappings across diverse ML workloads. This flexibility expands the mapping design space, increasing the complexity of achieving efficient implementations. Finally, practical deployment depends heavily on the maturity and accessibility of the software stack. Open-source stacks improve usability for both researchers and developers; Table I shows that Hexagon remains the only platform relying on a closed software stack.",
+      "order": 90,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Commercial NPUs"
+      ],
+      "char_start": 11672,
+      "char_end": 12977,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48f91e523aee0c4d3e13b16dbc36338f",
+      "kind": "heading",
+      "text": "B. Attention Mapping on NPUs",
+      "order": 91,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Mapping on NPUs"
+      ],
+      "char_start": 12979,
+      "char_end": 13007,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6fa20059b012253debc8777cc44ba49",
+      "kind": "paragraph",
+      "text": "Optimizing the mapping of complex ML operators, such as the attention mechanism, for a specific NPU can lead to greatly improved performance compared to a naive approach [5]. Efficient mappings still heavily rely on expert knowledge and are very time-consuming. Companies usually provide a library of hand-tuned mappings for their custom processors, the most well-known being BLAS [22], CUDA, or ROCm. Several attempts have been made to optimize operator libraries [23]; however, due to the vast differences among hardware platforms, no uniform approach for automatically generating operator libraries has emerged yet. Optimized mappings of the attention mechanism to NPUs have recently been proposed. FastAttention [5] maps attention onto the Ascend 310 NPU. It introduces a multi-level tiling strategy and generates the causal mask on the fly, avoiding the need to store the mask and move it through the memory hierarchy. STEEL shares some similarities with FastAttention in its masking strategy: we also find that generating the mask directly on the AIE core is more efficient than fetching it from DRAM. However, the Ascend NPU architecture differs substantially. In FastAttention, the AI cores do not communicate directly, and the attention computation is not distributed across multiple cores to form a balanced pipeline, unlike in STEEL. Moreover, FastAttention does not address the workload imbalance induced by the causal mask. DATO [13] presents a task-based programming model for executing several ML operators on the XDNA™ 1 NPU, including attention.",
+      "order": 92,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Mapping on NPUs"
+      ],
+      "char_start": 13009,
+      "char_end": 14571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2000dfc3672228c1c9b68377ccfb1cfd",
+      "kind": "paragraph",
+      "text": "Although DATO implements a FlashAttention kernel, it does not discuss pipeline balancing nor the handling of sparsity induced by the attention mask.",
+      "order": 93,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Mapping on NPUs"
+      ],
+      "char_start": 14573,
+      "char_end": 14721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64592943ed48af19b179a6c22965a3ad",
+      "kind": "heading",
+      "text": "METHODS",
+      "order": 94,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Mapping on NPUs",
+        "METHODS"
+      ],
+      "char_start": 14723,
+      "char_end": 14730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3c52192c5f4c4fb3a4886c33db62085",
+      "kind": "heading",
+      "text": "A. The STEEL Pipeline",
+      "order": 95,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. The STEEL Pipeline"
+      ],
+      "char_start": 14732,
+      "char_end": 14753,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2b2a64adc00d56c62787c86a0e139ff",
+      "kind": "paragraph",
+      "text": "We design STEEL starting from a three-stage formulation of FlashAttention-2, where stages compute attention scores Aij, apply online softmax, and update themandℓstatistics while accumulatingP ijVj intoO i. Profiling this baseline reveals load imbalance across stages; we iteratively refine the decomposition to obtain a balanced pipeline.",
+      "order": 96,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. The STEEL Pipeline"
+      ],
+      "char_start": 14755,
+      "char_end": 15093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43ab057a9569389d5a0619f8592b6f0e",
+      "kind": "caption",
+      "text": "Algorithm 1 shows the final formulation, where each pro-",
+      "order": 97,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. The STEEL Pipeline"
+      ],
+      "char_start": 15095,
+      "char_end": 15151,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce4ea35b307c648c7e5d53dc60deb8dc",
+      "kind": "paragraph",
+      "text": "cedure maps to one stage executed on a dedicated AIE core. STEEL is implemented using the IRON Python Bindings API, which maps applications to the XDNA™ 2 NPU and expresses inter-PE communication via ObjectFIFO [11]. TheFirst Stage usesmatmul b transposed unswizzleto computeA ij, while theThird Stageusesmatmulto accumulate intoO i. Efficient execution on AIE cores requires tiles to match the vector-unit layout. Layout transformations can be performed either by the vector unit or via DMA. Since matrix multiplication requires 4-D transfers and AIE-local DMA supports only 3-D, we use the Mem tile DMA, which provides full 4-D support. In theThird Stage,O i is scaled bye m−m′ andl −1 using scale swizzle. Each row is scaled independently while stored in a swizzled layout. To maximize vector utilization, we broadcast each scaling factor across 8 elements, concatenate them into a 64-element vector, and apply element-wise multiplication across 8 rows. This fully utilizes the512 bitvector registers (64×16 bitelements). To handle sparsity induced by the causal mask, each AIE tile tracks the coordinates(i, j)of tileA ij, enabling three",
+      "order": 98,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. The STEEL Pipeline"
+      ],
+      "char_start": 15153,
+      "char_end": 16294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab3938ea78f9d86b980afd0c45a88b6a",
+      "kind": "paragraph",
+      "text": "Algorithm 1STEEL Algorithm",
+      "order": 99,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. The STEEL Pipeline"
+      ],
+      "char_start": 16296,
+      "char_end": 16322,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46b0614e498b4a76de422d4719d60937",
+      "kind": "heading",
+      "text": "procedureFIRSTSTAGE(Q,K)→(A, m, m‘)",
+      "order": 100,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "procedureFIRSTSTAGE(Q,K)→(A, m, m‘)"
+      ],
+      "char_start": 16324,
+      "char_end": 16359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fb023f5e7b92550e5ead92cf4b0362c",
+      "kind": "heading",
+      "text": "for0≤i < T q do",
+      "order": 101,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤i < T q do"
+      ],
+      "char_start": 16361,
+      "char_end": 16376,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1797032d3dbbb13c8558548ea9272116",
+      "kind": "heading",
+      "text": "AcquireQ i,m,m‘",
+      "order": 102,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AcquireQ i,m,m‘"
+      ],
+      "char_start": 16378,
+      "char_end": 16393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:578068747fd0df552d3b2249e8b49de4",
+      "kind": "heading",
+      "text": "for0≤j < T kv do",
+      "order": 103,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤j < T kv do"
+      ],
+      "char_start": 16395,
+      "char_end": 16411,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27851e0fc8ba1ee7c7086b2b36227583",
+      "kind": "heading",
+      "text": "AcquireK j,A ij",
+      "order": 104,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AcquireK j,A ij"
+      ],
+      "char_start": 16413,
+      "char_end": 16428,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b13c7ea3a271a1e86f1da0747a96d6a",
+      "kind": "heading",
+      "text": "A ij ←matmul b transposed unswizzle(Qi, Kj)",
+      "order": 105,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A ij ←matmul b transposed unswizzle(Qi, Kj)"
+      ],
+      "char_start": 16430,
+      "char_end": 16473,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a28f647c14405e727bdd9da37f645e4f",
+      "kind": "heading",
+      "text": "A ij ←scale and mask(Aij, log2e√",
+      "order": 106,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A ij ←scale and mask(Aij, log2e√"
+      ],
+      "char_start": 16475,
+      "char_end": 16507,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ccea51cbede278f53f6bfea1a5e7191",
+      "kind": "paragraph",
+      "text": "d )",
+      "order": 107,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A ij ←scale and mask(Aij, log2e√"
+      ],
+      "char_start": 16509,
+      "char_end": 16512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c966041b4ad62c8c1b1db08c7d1361fe",
+      "kind": "heading",
+      "text": "m‘←max(m,rowmax(A ij))",
+      "order": 108,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "m‘←max(m,rowmax(A ij))"
+      ],
+      "char_start": 16514,
+      "char_end": 16536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a384f1ebeb366c507aae6d659b17bcc4",
+      "kind": "heading",
+      "text": "ReleaseK j,A ij,m,m‘",
+      "order": 109,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseK j,A ij,m,m‘"
+      ],
+      "char_start": 16538,
+      "char_end": 16558,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d70f92447880c085394acc43f51771f0",
+      "kind": "heading",
+      "text": "ReleaseQ i",
+      "order": 110,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseQ i"
+      ],
+      "char_start": 16560,
+      "char_end": 16570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a546ce3f55d6e7889c37b09f2c86df52",
+      "kind": "heading",
+      "text": "procedureSECONDSTAGE(A,m,m‘)→(P, l, v)",
+      "order": 111,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "procedureSECONDSTAGE(A,m,m‘)→(P, l, v)"
+      ],
+      "char_start": 16572,
+      "char_end": 16610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e1de1ff3b7e89d62d627866d655b41e",
+      "kind": "heading",
+      "text": "for0≤i < T q do",
+      "order": 112,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤i < T q do"
+      ],
+      "char_start": 16612,
+      "char_end": 16627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11d0bba85ff8e47273508ed856a01b09",
+      "kind": "heading",
+      "text": "for0≤j < T kv do",
+      "order": 113,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤j < T kv do"
+      ],
+      "char_start": 16629,
+      "char_end": 16645,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f38f79367c2193d8789714a5a0bfaf33",
+      "kind": "heading",
+      "text": "AcquireA ij,P ij,m,m‘,l,l‘,v",
+      "order": 114,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AcquireA ij,P ij,m,m‘,l,l‘,v"
+      ],
+      "char_start": 16647,
+      "char_end": 16675,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:190c78abc911f6e8980d812d0bdea719",
+      "kind": "heading",
+      "text": "P ij ←e Aij −m‘",
+      "order": 115,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "P ij ←e Aij −m‘"
+      ],
+      "char_start": 16677,
+      "char_end": 16692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a598895ee554a7da0a71a7f63d4006f",
+      "kind": "heading",
+      "text": "v←e m−m‘",
+      "order": 116,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "v←e m−m‘"
+      ],
+      "char_start": 16694,
+      "char_end": 16702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:315627a021570378321aad7a19b06640",
+      "kind": "heading",
+      "text": "ℓ←vℓ+rowsum(P ij)",
+      "order": 117,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ℓ←vℓ+rowsum(P ij)"
+      ],
+      "char_start": 16704,
+      "char_end": 16721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cee34ba2845537b89e1edb736191eac",
+      "kind": "heading",
+      "text": "m←m‘andl←l‘",
+      "order": 118,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "m←m‘andl←l‘"
+      ],
+      "char_start": 16723,
+      "char_end": 16734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6df4ea0dbb5a5666217d4c8f4e226e89",
+      "kind": "heading",
+      "text": "ReleaseA ij,P ij,m,m‘,l,v",
+      "order": 119,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseA ij,P ij,m,m‘,l,v"
+      ],
+      "char_start": 16736,
+      "char_end": 16761,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed0bc9544a65c96f4ad2f5f25de15ac5",
+      "kind": "heading",
+      "text": "procedureTHIRDSTAGE(P,V,l,v)→(O)",
+      "order": 120,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "procedureTHIRDSTAGE(P,V,l,v)→(O)"
+      ],
+      "char_start": 16763,
+      "char_end": 16795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:042f324f747b3da54681de4c6bb0d27b",
+      "kind": "heading",
+      "text": "for0≤i < T q do",
+      "order": 121,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤i < T q do"
+      ],
+      "char_start": 16797,
+      "char_end": 16812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0f618bd92e8e1a6142d562509bc92ec",
+      "kind": "heading",
+      "text": "AcquireO i",
+      "order": 122,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AcquireO i"
+      ],
+      "char_start": 16814,
+      "char_end": 16824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd373107894e3137155704813f5e25e6",
+      "kind": "heading",
+      "text": "for0≤j < T kv do",
+      "order": 123,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "for0≤j < T kv do"
+      ],
+      "char_start": 16826,
+      "char_end": 16842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:861385343a0fa4ae891b415f6895b68c",
+      "kind": "heading",
+      "text": "AcquireP ij,V j,l,v",
+      "order": 124,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AcquireP ij,V j,l,v"
+      ],
+      "char_start": 16844,
+      "char_end": 16863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a57c70a9224a57524b7d10b0ab8b4a0",
+      "kind": "heading",
+      "text": "O i ←scale swizzle(Oi, v)",
+      "order": 125,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "O i ←scale swizzle(Oi, v)"
+      ],
+      "char_start": 16865,
+      "char_end": 16890,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5492e2abedbf8b45078df5da7c90f699",
+      "kind": "heading",
+      "text": "O i ←matmul(P ij, Vj)",
+      "order": 126,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "O i ←matmul(P ij, Vj)"
+      ],
+      "char_start": 16892,
+      "char_end": 16913,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2382e145aff8fcd3855bb30a18551b94",
+      "kind": "heading",
+      "text": "ReleaseP ij,V j,θ 1",
+      "order": 127,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseP ij,V j,θ 1"
+      ],
+      "char_start": 16915,
+      "char_end": 16934,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e42f90bcc2b7dc2e6ed218eafb24bfa",
+      "kind": "heading",
+      "text": "O i ←scale swizzle(O i, l−1)",
+      "order": 128,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "O i ←scale swizzle(O i, l−1)"
+      ],
+      "char_start": 16936,
+      "char_end": 16964,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:304e7313ebc36ef44f2ad4342365be62",
+      "kind": "heading",
+      "text": "ReleaseO i",
+      "order": 129,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseO i"
+      ],
+      "char_start": 16966,
+      "char_end": 16976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ecd9dc196988ad5666805c990ed0a51",
+      "kind": "paragraph",
+      "text": "cases: (i) fully masked tiles are skipped, (ii) unmasked tiles are processed normally, and (iii) partially masked tiles apply the mask locally in theSecond Stage. This approach generalizes to other masking schemes, such as windowed attention in timeseries models.",
+      "order": 130,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ReleaseO i"
+      ],
+      "char_start": 16978,
+      "char_end": 17241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73eaeb7ea44046186d52e60d61acf878",
+      "kind": "heading",
+      "text": "B. Macroscale Data Movement",
+      "order": 131,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Macroscale Data Movement"
+      ],
+      "char_start": 17243,
+      "char_end": 17270,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9cf720d9f85d9a8ef25d9e95b990460",
+      "kind": "paragraph",
+      "text": "Subsection IV-A describes the intra-pipeline algorithm and data movement; mapping STEEL to hardware additionally requires placing pipelines on the PE array and orchestrating data transfers between DRAM and the NPU. Figure 3 shows the pipeline placement and the movement ofQ,K, andV tiles. We use the IRONdistributeprimitive to assign oneQ tile per pipeline,jointo collectOtiles, and broadcastKand Vto all pipelines. Memory port availability is a key constraint on XDNA™ 2. Each Mem tile provides six ports, limiting the number of concurrent ObjectFIFOs per tile. With 10 pipelines, we therefore use two Mem tiles to distribute each wave of 10Qtiles. To swizzle theP ij tiles between the second and third stages of the STEEL pipeline, we use the Mem tile DMA engine. Consequently, each STEEL pipeline consumes four Mem tile ports: one forQ, one forO, and two for swizzlingP. In",
+      "order": 132,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Macroscale Data Movement"
+      ],
+      "char_start": 17272,
+      "char_end": 18148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88678a13aa3e1438120662715c782f7e",
+      "kind": "heading",
+      "text": "AIE Tile",
+      "order": 133,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "AIE Tile"
+      ],
+      "char_start": 18150,
+      "char_end": 18158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ad99dc420e06129074c0df4ad55d4f6",
+      "kind": "heading",
+      "text": "Mem Tile",
+      "order": 134,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Mem Tile"
+      ],
+      "char_start": 18160,
+      "char_end": 18168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ecd9bb1fe74be4a11e3ff81d8a35d27",
+      "kind": "heading",
+      "text": "Shim Tile",
+      "order": 135,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Shim Tile"
+      ],
+      "char_start": 18170,
+      "char_end": 18179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d454a48844315007bd6c5c0a3b842b25",
+      "kind": "heading",
+      "text": "STEEL",
+      "order": 136,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "STEEL"
+      ],
+      "char_start": 18181,
+      "char_end": 18186,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1ae01d85770400348d0dd02a1887008",
+      "kind": "heading",
+      "text": "Pipeline",
+      "order": 137,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Pipeline"
+      ],
+      "char_start": 18188,
+      "char_end": 18196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71a18f6cbb05c05d332b5e6592ec5679",
+      "kind": "heading",
+      "text": "Q0 Q1 Q2 Q6 Q7 Q8Q3",
+      "order": 138,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3"
+      ],
+      "char_start": 18198,
+      "char_end": 18217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cb1cb6f1db809bfc562e680f17b525b",
+      "kind": "paragraph",
+      "text": "Q4 Q9 Q0:5 Q0:5 Q5 Q5:10 Q5:10 K K V V",
+      "order": 139,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3"
+      ],
+      "char_start": 18219,
+      "char_end": 18257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f38149abc76616003cb4acde8be28be0",
+      "kind": "caption",
+      "text": "Fig. 3. Overview of the data movement between DRAM and the STEEL",
+      "order": 140,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3"
+      ],
+      "char_start": 18259,
+      "char_end": 18323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32d450dba2aaaafdeae7ccca00d56efe",
+      "kind": "paragraph",
+      "text": "pipelines. A chunk of 5Qtiles is brought down to the Mem tile, and then dispatched between 5 STEEL pipelines. Tiles ofKandVare broadcast to each STEEL pipeline. Once a complete head ofKandVhas been broadcast, output tiles are sent back through the leftover Mem and Shim tiles. addition, the pipelines collectively share two Mem tile ports for broadcastingKandV. Overall, the 10 STEEL pipelines use 42 Mem tile ports out of 48.",
+      "order": 141,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3"
+      ],
+      "char_start": 18325,
+      "char_end": 18751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7515332b15738525619ca220e95d7f79",
+      "kind": "heading",
+      "text": "Sparsity-Aware Pipeline Placement",
+      "order": 142,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3",
+        "Sparsity-Aware Pipeline Placement"
+      ],
+      "char_start": 18753,
+      "char_end": 18786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e46c9dc2331d71163a552281592a9f1",
+      "kind": "paragraph",
+      "text": "BroadcastingKandVis required to stay within the Mem tile port budget (Subsection IV-B), but introduces a synchronization constraint: a broadcast can start only when all consumers are ready. While this is trivial under uniform workloads, the causal mask in language models (LMs) creates load imbalance across STEEL pipelines. Although double buffering mitigates this effect, we find that explicitly balancing sparsity across pipeline groups significantly improves runtime.",
+      "order": 143,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3",
+        "Sparsity-Aware Pipeline Placement"
+      ],
+      "char_start": 18788,
+      "char_end": 19259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b48fcd6bcb46751a8b18b9f50daacb0",
+      "kind": "caption",
+      "text": "Figure 4 compares two placement strategies over the at-",
+      "order": 144,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3",
+        "Sparsity-Aware Pipeline Placement"
+      ],
+      "char_start": 19261,
+      "char_end": 19316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:719960a0fa9cb6487febb6c65bd87b12",
+      "kind": "paragraph",
+      "text": "tention matrixA. Uniform placement assigns contiguousT q chunks to pipelines, resulting in uneven sparsity within a group. We instead propose a sparsity-aware placement that distributes consecutive rows across pipelines to equalize sparsity, yielding a 38,% speedup.",
+      "order": 145,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Q0 Q1 Q2 Q6 Q7 Q8Q3",
+        "Sparsity-Aware Pipeline Placement"
+      ],
+      "char_start": 19318,
+      "char_end": 19584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6cd1e632589e7c17aea99a307fd36e9e",
+      "kind": "heading",
+      "text": "K0 K1 K2 K3 K4 K5 K6 K7",
+      "order": 146,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "K0 K1 K2 K3 K4 K5 K6 K7"
+      ],
+      "char_start": 19586,
+      "char_end": 19609,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bef4b83e1107bd1f69638132129846b5",
+      "kind": "paragraph",
+      "text": "Q0 Q1 Q2 Q03 Q4 Q5 Q6 Q7 STEEL Pipeline 0 STEEL Pipeline 2 STEEL Pipeline 3 STEEL Pipeline 1",
+      "order": 147,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "K0 K1 K2 K3 K4 K5 K6 K7"
+      ],
+      "char_start": 19611,
+      "char_end": 19703,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aee791a67bd6362a614fa4378f88d047",
+      "kind": "heading",
+      "text": "K0 K1 K2 K3 K4 K5 K6 K7",
+      "order": 148,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "K0 K1 K2 K3 K4 K5 K6 K7"
+      ],
+      "char_start": 19705,
+      "char_end": 19728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f54edf37a8cdedbcccde12747ce17b57",
+      "kind": "paragraph",
+      "text": "Q0 Q1 Q2 Q03 Q4 Q5 Q6 Q7 STEEL Pipeline 0 STEEL Pipeline 2 STEEL Pipeline 3 STEEL Pipeline 1",
+      "order": 149,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "K0 K1 K2 K3 K4 K5 K6 K7"
+      ],
+      "char_start": 19730,
+      "char_end": 19822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57244bbcf14706d84d877c5379c31c28",
+      "kind": "heading",
+      "text": "Uniform Pipeline",
+      "order": 150,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Uniform Pipeline"
+      ],
+      "char_start": 19824,
+      "char_end": 19840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5561c58dfe18eb787457a16641a90cff",
+      "kind": "heading",
+      "text": "Placement",
+      "order": 151,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Placement"
+      ],
+      "char_start": 19842,
+      "char_end": 19851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b9b76a54b086e5b51479a7ca79c10c5",
+      "kind": "heading",
+      "text": "Sparsity-Aware Pipeline",
+      "order": 152,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Sparsity-Aware Pipeline"
+      ],
+      "char_start": 19853,
+      "char_end": 19876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4becaca7ecb3b1fc6772feff1dc3be1c",
+      "kind": "heading",
+      "text": "Placement",
+      "order": 153,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Placement"
+      ],
+      "char_start": 19878,
+      "char_end": 19887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86fb6c188bde3bbbc870079c53c9bedd",
+      "kind": "heading",
+      "text": "Balanced Sparsity",
+      "order": 154,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Balanced Sparsity"
+      ],
+      "char_start": 19889,
+      "char_end": 19906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92e73b571d1c7c2f998fee1ed527dc19",
+      "kind": "heading",
+      "text": "Among Workers",
+      "order": 155,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers"
+      ],
+      "char_start": 19908,
+      "char_end": 19921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca1beaabe82abcc77258f98d8a31e263",
+      "kind": "caption",
+      "text": "Fig. 4. Description of two pipeline placement strategies over the attention",
+      "order": 156,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers"
+      ],
+      "char_start": 19923,
+      "char_end": 19998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:723a79dd86b8836c061af2e9408d4670",
+      "kind": "paragraph",
+      "text": "matrixA. On the left side, the STEEL pipelines are placed uniformly on A, resulting in an imbalance of the sparsity amount in the pipeline group and causing stalls. On the right side, we show our sparsity-aware pipeline placement where the sparsity between STEEL pipelines within a group is close.",
+      "order": 157,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers"
+      ],
+      "char_start": 20000,
+      "char_end": 20297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34e851727fc477c36748c8bfaeed8a0c",
+      "kind": "caption",
+      "text": "Fig. 5. Benchmark of the layer-by-layer attention against the STEEL’s fused-",
+      "order": 158,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers"
+      ],
+      "char_start": 20299,
+      "char_end": 20375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16b56ac2b21fe508af6a682a543350c7",
+      "kind": "paragraph",
+      "text": "attention on XDNA™ 1. The attention configuration is from BERT, with 12 heads and a head dimension of 64.",
+      "order": 159,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers"
+      ],
+      "char_start": 20377,
+      "char_end": 20482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d603c1a3ed5120b98f37e71de12b1a04",
+      "kind": "heading",
+      "text": "RESULTS",
+      "order": 160,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers",
+        "RESULTS"
+      ],
+      "char_start": 20484,
+      "char_end": 20491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:130cf4ae3f7217c8a21e3973850ea370",
+      "kind": "paragraph",
+      "text": "In this section, we describe our evaluation setup and present an extensive benchmark of STEEL. We begin by comparing STEEL against a standard layer-by-layer attention implementation on XDNA™ 1. We then benchmark STEEL against the SotA FlashAttention implementation provided by DATO [13], also on XDNA™ 1. Finally, in subsection V-D, we benchmark the fused attention across the processing units available in the AMD Ryzen™ AI 9 HX 370 SoC. AMD Ryzen™ AI 9 HX",
+      "order": 161,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "Among Workers",
+        "RESULTS"
+      ],
+      "char_start": 20493,
+      "char_end": 20950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1723ac157eb5666b2a4d4c8eaae8e62",
+      "kind": "heading",
+      "text": "integrates 16 Zen5 CPUs, an RDNA 3.5 GPU, and the",
+      "order": 162,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "integrates 16 Zen5 CPUs, an RDNA 3.5 GPU, and the"
+      ],
+      "char_start": 20952,
+      "char_end": 21001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d35a2c5c2233bd3fda08b43d6cb2736",
+      "kind": "paragraph",
+      "text": "XDNA™ 2 NPU.",
+      "order": 163,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "integrates 16 Zen5 CPUs, an RDNA 3.5 GPU, and the"
+      ],
+      "char_start": 21003,
+      "char_end": 21015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2d4ed565179fa78503941a87d7d2af0",
+      "kind": "heading",
+      "text": "A. Evaluation Setup",
+      "order": 164,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Evaluation Setup"
+      ],
+      "char_start": 21017,
+      "char_end": 21036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88faf8f91328614d1cfc616286cce352",
+      "kind": "paragraph",
+      "text": "Results from subsections V-B and V-D were collected on the AMD Ryzen™ AI 9 HX 370 SoC, a TSMC4 nmsingledie platform with 12 Zen5 cores (24 threads) up to5.1 GHz. The RDNA 3.5 GPU comprises 16 compute units (CUs) (1024 shaders at2900 MHz, GFX1150 ISA) and shares32 GB DRAM with the CPU and NPU. The system also integrates the XDNA™ 2 NPU (see Subsection II-C). CPU and GPU benchmarks use the TorchLib C++ frontend from PyTorch 2.1 [24], leveraging ROCm 6.4 and the HIP runtime, withscaled dot product attentionexecuted via the FlashAttention backend. The NPU is configured in turbo mode using XRT (1.8 GHz). Latency results are averaged over",
+      "order": 165,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "A. Evaluation Setup"
+      ],
+      "char_start": 21038,
+      "char_end": 21678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:153a295a47b3e5802728039702bbf1ea",
+      "kind": "heading",
+      "text": "iterations after 25 warm-ups. Power is measured using",
+      "order": 166,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "iterations after 25 warm-ups. Power is measured using"
+      ],
+      "char_start": 21680,
+      "char_end": 21733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c7325251a8b41315b45d2d0e998c9d4",
+      "kind": "paragraph",
+      "text": "AMD’s AGT tool at a50 mssampling rate over 100 iterations, reporting average consumption.",
+      "order": 167,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "iterations after 25 warm-ups. Power is measured using"
+      ],
+      "char_start": 21735,
+      "char_end": 21824,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f0040cdc968ea290f29ab88c38cffde",
+      "kind": "heading",
+      "text": "B. Attention Implementation Benchmark",
+      "order": 168,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark"
+      ],
+      "char_start": 21826,
+      "char_end": 21863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7c6a8839356e282fe5f1353d34ebb26",
+      "kind": "caption",
+      "text": "Figure 5 compares STEEL with a layer-by-layer attention",
+      "order": 169,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark"
+      ],
+      "char_start": 21865,
+      "char_end": 21920,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddb6f73978951e96d562a88165b2b9f8",
+      "kind": "paragraph",
+      "text": "implementation built from IRON operators. STEEL achieves a",
+      "order": 170,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark"
+      ],
+      "char_start": 21922,
+      "char_end": 21980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0d7207475c64b5752c6146a36a087d1",
+      "kind": "heading",
+      "text": "8×speedup on average, demonstrating the benefit of fused",
+      "order": 171,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 21982,
+      "char_end": 22038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b318711403596b43291a2b8b853c7fb",
+      "kind": "paragraph",
+      "text": "attention. This gain stems from reduced overhead: STEEL loads a single design onto the NPU, whereas the baseline requires separate GEMM, Softmax, and Scale kernels, incurring context-switch costs. Additionally, the baseline transfers intermediate tensorsAandPbetween the NPU and DRAM, while STEEL avoids this by not materializing them off-chip.",
+      "order": 172,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 22040,
+      "char_end": 22384,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f29a90f5bfa6f5020190bddb4aa03258",
+      "kind": "caption",
+      "text": "Figure 6 compares off-chip data movement for layer-by-",
+      "order": 173,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 22386,
+      "char_end": 22440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:034411dd87d837773c862031e9d79c83",
+      "kind": "paragraph",
+      "text": "layer (standard) and fused attention across sequence lengths. While individual IRON operators are optimized for locality, fusion further improves it. The model accounts for the IRON GEMM dataflow and STEEL’s dataflow to estimate transfer volume. Blue curves indicate the theoretical lower bound; in practice, limited on-chip buffering leads to higher realized",
+      "order": 174,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 22442,
+      "char_end": 22801,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5d5b8f84350be08c9a3fea1731a6ae6",
+      "kind": "caption",
+      "text": "Fig. 6. Off-chip transfer volume required to execute attention on XDNA™ 2",
+      "order": 175,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 22803,
+      "char_end": 22876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdca43a0cd29babc3e02b2b753ef6bf2",
+      "kind": "paragraph",
+      "text": "across several implementations as a function of sequence length. Dashed curves denote standard layer-by-layer attention implementations, whereas solid curves correspond to STEEL. Blue curves indicate the theoretical lower bound for each implementation and assume an infinite on-chip buffer capacity. Single-coreuses one AIE core, whilemulti-coreuses the full XDNA™ 2 array. traffic. Figure 6 also shows how off-chip traffic scales with core count. Multi-core execution on the full XDNA™ 2 NPU reduces transfers due to increased on-chip buffering and broadcast reuse. For a sequence length of 4096, STEEL achieves a 19.4×reduction, from9.7 GBto0.5 GB.",
+      "order": 176,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "8×speedup on average, demonstrating the benefit of fused"
+      ],
+      "char_start": 22878,
+      "char_end": 23528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13677a40875bf23d39aa9d754f40c300",
+      "kind": "heading",
+      "text": "Comparison with State-of-the-Art on NPU",
+      "order": 177,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 23530,
+      "char_end": 23569,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4a84ba9717c87c265fe9e87d9185668",
+      "kind": "paragraph",
+      "text": "To the best of the authors’ knowledge, DATO [13] is the only published work that reports FlashAttention latency on XDNA™ NPUs. However, DATO targets the XDNA™ 1 NPU. To show that STEEL’s performance is not specific to a single NPU generation, we port STEEL to XDNA™ 1. Whereas XDNA™ 2 provides eight columns of PEs, XDNA™ 1 provides five. Accordingly, we deploy one STEEL pipeline per column on the first three AIE cores. We then place an additional STEEL pipeline on the last AIE core of each of the first three columns, as illustrated in Figure 3. Finally, XDNA™ 1 AIE cores do not include a dedicated exponentiation unit; instead, we implement exponentiation via a lookup table. We benchmark against DATO in an application-relevant setting by selecting the BERT attention configuration, which uses 12 heads with a head dimension of 64. In Figure 7, we observe that STEEL consistently outperforms DATO across all sequence lengths. On average, STEEL accelerates attention by 9.6×relative to DATO. This speedup primarily stems from how DATO partitions FlashAttention into four stages, which introduces a fundamental load imbalance in the pipeline. In particular, DATO performs output rescaling in the final stage. This rescaling is an element-wise multiplication between the precomputed factore mj−1 −mj and the current output tile Oj. Consequently, the fourth stage performs onlyB q ·B kv MACs, which is substantially less than theB q ·B kv ·dwork required for the GEMM in the first stage. For the BERT head dimensiond= 64, the last stage therefore performs 64×",
+      "order": 178,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 23571,
+      "char_end": 25133,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16c279c34dfcc634dc56742daab25c39",
+      "kind": "paragraph",
+      "text": "less computation than the first stage, resulting in a suboptimal mapping. Additionally, we were unable to benchmark DATO for sequence lengths greater than 4096 due to what appears to be an exponential increase in compilation time. D. Attention Benchmark on AMD Ryzen™ AI 9 HX 370 AMD Ryzen™ AI 9 HX 370 is a heterogeneous SoC in which the XDNA™ 2 NPU is the preferred compute engine",
+      "order": 179,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 25135,
+      "char_end": 25517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ed880f7a6c1cb5c715e7240dbaa8c34",
+      "kind": "caption",
+      "text": "Fig. 7. Benchmark of STEEL against DATO [13] on XDNA™ 1 for several",
+      "order": 180,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 25519,
+      "char_end": 25586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc8d87a7d47f7d2d2489defbf2231045",
+      "kind": "paragraph",
+      "text": "sequence lengths. The attention configuration is from BERT, with 12 heads and a head dimension of 64.",
+      "order": 181,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 25588,
+      "char_end": 25689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:90ff436a12ad94e16391c3556da41eda",
+      "kind": "caption",
+      "text": "Fig. 8. Benchmark of the attention energy efficiency on AMD Ryzen™ AI",
+      "order": 182,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "B. Attention Implementation Benchmark",
+        "Comparison with State-of-the-Art on NPU"
+      ],
+      "char_start": 25691,
+      "char_end": 25760,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aabed848ea60fd5b623928520a2378ce",
+      "kind": "heading",
+      "text": "HX 370 for various sequence lengths. The attention’s configuration is from",
+      "order": 183,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from"
+      ],
+      "char_start": 25762,
+      "char_end": 25836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c451504fe0d5b2a6840d546a5e0a6c0",
+      "kind": "paragraph",
+      "text": "Llama3.1-1B [14] with 32 heads and a head dimension of 64. for low-power DNN inference. To verify that the NPU is the most appropriate engine for attention inference, we benchmark optimized attention kernels across the three compute engines available in AMD Ryzen™ AI 9 HX 370, as shown in",
+      "order": 184,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from"
+      ],
+      "char_start": 25838,
+      "char_end": 26127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04c14ff926a6b0ea21ff691ab51801f2",
+      "kind": "caption",
+      "text": "Figure 8: the XDNA™ 2 NPU, the RDNA 3.5 GPU, and the",
+      "order": 185,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from"
+      ],
+      "char_start": 26129,
+      "char_end": 26181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c20619f0a7c76be75fc34399de0178ef",
+      "kind": "paragraph",
+      "text": "Zen5 CPU. To emulate an application-representative workload, we adopt the attention dimensions of Llama3.1-1B [14]. In this model, attention uses 32 heads with a head dimension of 64, and the maximum supported context length is 128k tokens. We sweep the sequence length from 2048 to 32768 to capture a common usage regime in which the model processes substantial contextual information (e.g., a codebase). On average, STEEL reduces energy consumption by 9.17× and 1.75×relative to the CPU and GPU, respectively. We further observe that STEEL’s energy-efficiency advantage over both the CPU and the GPU grows with sequence length, most notably between 2048 and 8192. This trend shows that the STEEL pipeline reaches a warmer steady state and attains near-peak throughput at approximately a sequence length of 8192.",
+      "order": 186,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from"
+      ],
+      "char_start": 26183,
+      "char_end": 26996,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:521b8410882c0dcdec77ee104d104463",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 187,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from",
+        "CONCLUSION"
+      ],
+      "char_start": 26998,
+      "char_end": 27008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03c22d6f1202c51d630939cf22161b5a",
+      "kind": "paragraph",
+      "text": "We presented STEEL, a dataflow formulation of the FlashAttention algorithm targeting the XDNA™ NPU family. STEEL carefully balances the workload across a three-stage pipeline of AIE cores and uses a sparsity-aware pipeline placement to mitigate the workload distribution imbalance induced by causal masking. On XDNA™ 1, STEEL outperforms the previous SotA implementation of flash-attention on XDNA™ 1 [13] by reducing the latency by 9.6×on average. On the AMD Ryzen™ AI 9 HX 370 SoC, STEEL reduces energy consumption by 9.17×and 1.75×relative to the CPU and GPU, respectively.",
+      "order": 188,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "HX 370 for various sequence lengths. The attention’s configuration is from",
+        "CONCLUSION"
+      ],
+      "char_start": 27010,
+      "char_end": 27586,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5f95031671ce240e4e8919770c956ad",
+      "kind": "heading",
+      "text": "ACKNOWLEDGMENT",
+      "order": 189,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 27588,
+      "char_end": 27602,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc38a9263741dd829d02aeaba8d9ba20",
+      "kind": "paragraph",
+      "text": "This work has received funding from the Swiss State Secretariat for Education, Research, and Innovation (SERI) under the SwissChips initiative.",
+      "order": 190,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 27604,
+      "char_end": 27747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2faad5a2d99812390f3d44b6d0d3c224",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 191,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "REFERENCES"
+      ],
+      "char_start": 27749,
+      "char_end": 27759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db33739ab9025619dd1f5c82dbc225fe",
+      "kind": "reference",
+      "text": "[1] K. Meiet al., “AIOS: LLM Agent Operating System,” Aug. 2025. [2] J. Saad-Falconet al., “Intelligence per Watt: Measuring Intelligence Efficiency of Local AI,” Nov. 2025, arXiv:2511.07885 [cs]. [3] K. Chenet al., “A survey on privacy risks and protection in large language models,”Journal of King Saud University Computer and Information Sciences, vol. 37, no. 7, p. 163, Aug. 2025. [4] A. Ricoet al., “AMD XDNA NPU in Ryzen AI Processors,”IEEE Micro, vol. 44, no. 6, pp. 73–82, Nov. 2024. [5] H. Linet al., “FastAttention: Extend FlashAttention2 to NPUs and Low-resource GPUs,” Oct. 2024, arXiv:2410.16663 [cs]. [6] A. Fei and M. S. Abdelfattah, “NITRO: LLM Inference on Intel Laptop NPUs,” Dec. 2024, arXiv:2412.11053 [cs]. [7] S. Yanget al., “LServe: Efficient Long-sequence LLM Serving with Unified Sparse Attention,” May 2025. [8] T. Dao, “FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning,” Oct. 2023. [9] G. Islamogluet al., “ITA: An Energy-Efficient Attention and Softmax Accelerator for Quantized Transformers,” in2023 IEEE/ACM International Symposium on Low Power Electronics and Design (ISLPED), Aug. 2023, pp. 1–6. [10] A. S. Prasadet al., “PACE: An Optimal Piecewise Polynomial Approximation Unit for Flexible and Efficient Transformer Nonlinearity Acceleration.” IEEE Computer Society, Jul. 2025, pp. 1–6. [11] E. Hunhoffet al., “Efficiency, Expressivity, and Extensibility in a Closeto-Metal NPU Programming Interface,” in2025 IEEE 33rd Annual",
+      "order": 192,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "REFERENCES"
+      ],
+      "char_start": 27761,
+      "char_end": 29253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b6144b32bbb6fcb25a11a92f585c067",
+      "kind": "heading",
+      "text": "International Symposium on Field-Programmable Custom Computing",
+      "order": 193,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "International Symposium on Field-Programmable Custom Computing"
+      ],
+      "char_start": 29255,
+      "char_end": 29317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53bfd79cf841ccd6280fb90c29a5ca70",
+      "kind": "paragraph",
+      "text": "Machines (FCCM), May 2025, pp. 85–94, iSSN: 2576-2621. [12] A. Agrawalet al., “Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve,” 2024, pp. 117–134. [13] S. Fanget al., “Dato: A Task-Based Programming Model for Dataflow Accelerators,” Sep. 2025, arXiv:2509.06794 [cs]. [14] A. Grattafioriet al., “The Llama 3 Herd of Models,” Nov. 2024, arXiv:2407.21783 [cs]. [15] A. Vaswaniet al., “Attention is All you Need,” inAdvances in Neural Information Processing Systems, vol. 30. Curran Associates, Inc., 2017. [16] M. Milakov and N. Gimelshein, “Online normalizer calculation for softmax,” Jul. 2018, arXiv:1805.02867 [cs]. [17] L. Codrescu, “Qualcomm Hexagon DSP: An architecture optimized for mobile multimedia and communications,” in2013 IEEE Hot Chips 25 Symposium (HCS), Aug. 2013, pp. 1–23. [18] A. Dharet al., “ASCEND-CC: Confidential Computing on Heterogeneous NPU for Emerging Generative AI Workloads,” Jun. 2024. [19] G. Singhet al., “SPARTA: Spatial Acceleration for Efficient",
+      "order": 194,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "International Symposium on Field-Programmable Custom Computing"
+      ],
+      "char_start": 29319,
+      "char_end": 30323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:144262f27c5b22cc1a8cebbb9335d7b6",
+      "kind": "heading",
+      "text": "and Scalable Horizontal Diffusion Weather Stencil Computation,”",
+      "order": 195,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "and Scalable Horizontal Diffusion Weather Stencil Computation,”"
+      ],
+      "char_start": 30325,
+      "char_end": 30388,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8ac0191085096e724a65d8396fc677d",
+      "kind": "paragraph",
+      "text": "inProceedings of the 37th ACM International Conference on Supercomputing, ser. ICS ’23. New York, NY , USA: Association for Computing Machinery, Jun. 2023, pp. 463–476. [20] J. Redmonet al., “You Only Look Once: Unified, Real-Time Object Detection,” 2016, pp. 779–788. [21] B. Moonset al., “14.5 Envision: A 0.26-to-10TOPS/W subwordparallel dynamic-voltage-accuracy-frequency-scalable Convolutional Neural Network processor in 28nm FDSOI,” in2017 IEEE International Solid-State Circuits Conference (ISSCC), Feb. 2017, pp. 246–247, iSSN: 2376-8606. [22] C. L. Lawsonet al., “Basic Linear Algebra Subprograms for Fortran Usage,”ACM Trans. Math. Softw., vol. 5, no. 3, pp. 308–323, Sep. 1979. [23] J. Zhaoet al., “AKG: automatic kernel generation for neural processing units using polyhedral transformations,” inProceedings of the 42nd",
+      "order": 196,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "and Scalable Horizontal Diffusion Weather Stencil Computation,”"
+      ],
+      "char_start": 30390,
+      "char_end": 31222,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f86a63e734233957881db2be6e373c2",
+      "kind": "heading",
+      "text": "ACM SIGPLAN International Conference on Programming Language",
+      "order": 197,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ACM SIGPLAN International Conference on Programming Language"
+      ],
+      "char_start": 31224,
+      "char_end": 31284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6397a1901f581d6cfec1bb05817a65c",
+      "kind": "paragraph",
+      "text": "Design and Implementation, ser. PLDI 2021. New York, NY , USA: Association for Computing Machinery, Jun. 2021, pp. 1233–1248. [24] A. Paszkeet al., “PyTorch: An Imperative Style, High-Performance Deep Learning Library,” inAdvances in Neural Information Processing Systems, vol. 32. Curran Associates, Inc., 2019.",
+      "order": 198,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "STEEL: Sparsity-Aware Fused Attention for",
+        "ACM SIGPLAN International Conference on Programming Language"
+      ],
+      "char_start": 31286,
+      "char_end": 31598,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 6,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 6
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.09385",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 6,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,3801 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "e2166511a8ebb3fe527f665906ed1587d8dca28b13903a95210435b8fed7c3f1",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:9d05db4fc88fc14a7d3bd2b56907ada0",
+      "kind": "heading",
+      "text": "RSPO: Reward-Swap Policy Optimization for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for"
+      ],
+      "char_start": 0,
+      "char_end": 41,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:259df0848987d13dd961b3b819caf12b",
+      "kind": "heading",
+      "text": "Multi-Turn LLM Agents",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Multi-Turn LLM Agents"
+      ],
+      "char_start": 43,
+      "char_end": 64,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a40453e727cdb91727ecba1af50a9a0",
+      "kind": "heading",
+      "text": "Qiang Liu∗ Taian Guo∗ Ruizhi Qiao† Xing Sun",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Qiang Liu∗ Taian Guo∗ Ruizhi Qiao† Xing Sun"
+      ],
+      "char_start": 66,
+      "char_end": 109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81b5e944262ff772e2378ca1b578232d",
+      "kind": "heading",
+      "text": "Tencent YouTu Lab",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Tencent YouTu Lab"
+      ],
+      "char_start": 111,
+      "char_end": 128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ed3eeef1d9af7de4fb3182cc0507f73",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Abstract"
+      ],
+      "char_start": 130,
+      "char_end": 138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e21aed6f5ef48eeecbbeaaaba001c783",
+      "kind": "paragraph",
+      "text": "Reinforcement learning holds significant potential for training large language models (LLMs) to handle multi-turn interactive tasks. However, in long-horizon, multi-turn tasks characterized by sparse outcome rewards, directly training with outcome rewards often results in slow convergence due to the sparsity of signals and the lack of fine-grained feedback. Furthermore, the model may fail to learn successful trajectories that are not sampled during training, thereby limiting its performance. Conversely, while employing customized dense process rewards provides richer signals and accelerates convergence, these surrogate rewards may exhibit potential misalignment with the ground-truth outcome rewards. This inconsistency can bias the training direction and ultimately degrade the model’s final performance. In this work, we propose Reward-Swap Policy Optimization (RSPO), a method designed to leverage the rich information from dense process rewards to facilitate training with outcome rewards. By utilizing a reward-swap mechanism, RSPO ensures the diversity of sampled trajectories while guaranteeing consistency between the optimization objective and the true outcome rewards, thereby elevating the performance ceiling of the model. We conduct extensive experiments on two challenging agent benchmarks, WebShop and ALFWorld. By applying our method to various reinforcement learning algorithms, including GRPO, PPO, and GiGPO, we demonstrate that RSPO achieves consistent performance improvements across different baselines and benchmarks.",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Abstract"
+      ],
+      "char_start": 140,
+      "char_end": 1688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70ba7f160835b552a1a456a0d75fb228",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Introduction"
+      ],
+      "char_start": 1690,
+      "char_end": 1702,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:431061d22a5cca698c24c714c4a7e3ec",
+      "kind": "paragraph",
+      "text": "In recent years, Large Language Models (LLMs) have demonstrated remarkable generalization capabilities across various domains, achieving breakthrough progress particularly in complex tasks such as mathematical problem solving, code generation, and logical reasoning [ 1–4]. To further elicit the deep reasoning capabilities of these models, Reinforcement Learning (RL) has been widely employed to fine-tune LLMs, optimizing the model policy by maximizing the expected reward of the generated content [5, 6]. Within this mainstream paradigm, researchers typically model reasoning tasks as a single-turn interaction process: the model receives a specific question or instruction as input and generates a Chain-of-Thought (CoT) or final answer in a single pass, after which the environment provides reward feedback based on the quality of the output [7, 8]. However, the aforementioned tasks are predominantly single-turn. In contrast, LLM agents frequently encounter multi-turn tasks characterized by outcome-only rewards [9]. When addressing such tasks, directly employing outcome rewards for reinforcement learning often leads to slow convergence due to the sparsity of reward signals and the absence of fine-grained feedback. Moreover, for algorithms ∗ Equal Contribution † Correspondence: Ruizhi.Qiao@tencent.com Preprint.",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Introduction"
+      ],
+      "char_start": 1704,
+      "char_end": 3028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f3ebf816a6e37404659737118cc6655",
+      "kind": "table",
+      "text": "arXiv:2607.04713v1  [cs.LG]  6 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Introduction"
+      ],
+      "char_start": 3030,
+      "char_end": 3069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d7cf188e0229bd36dda04728e2ee7b8",
+      "kind": "heading",
+      "text": "BehavioralSpace Guided by Outcome RewardsUseDense Process Rewards",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "BehavioralSpace Guided by Outcome RewardsUseDense Process Rewards"
+      ],
+      "char_start": 3071,
+      "char_end": 3136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:507ab06590a14479bfb736631cc0feea",
+      "kind": "heading",
+      "text": "Use Outcome RewardsUseDense Process Rewards",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Use Outcome RewardsUseDense Process Rewards"
+      ],
+      "char_start": 3138,
+      "char_end": 3181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00df2e6e27d4256d53db806336babeba",
+      "kind": "caption",
+      "text": "Figure 1: Schematic illustration of the difference between RSPO and baselines. When training with",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Use Outcome RewardsUseDense Process Rewards"
+      ],
+      "char_start": 3183,
+      "char_end": 3280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a95479353e8fb84f06634e9fd33b093",
+      "kind": "paragraph",
+      "text": "outcome rewards, the trajectories sampled by the model are confined within the behavioral space guided by outcome rewards. In contrast, when training with dense rewards, the interaction-generated trajectories can break out of this space, yielding more diverse trajectories to facilitate model training. like GRPO [ 10], the model may fail to learn successful trajectories that are not sampled during training, thereby limiting its performance. To mitigate these challenges, several approaches, such as [11, 12], utilize manually crafted dense process rewards to alleviate the reward sparsity problem. By assigning an intermediate reward to each step of the trajectory, these methods provide richer reward signals, resulting in faster model convergence. However, methods relying on customized dense process rewards face a potential problem: if the dense rewards are not perfectly accurate, they may be inconsistent with the task’s outcome rewards. This inconsistency can bias the training direction and ultimately degrade the model’s final performance. In this work, we introduce Reward-Swap Policy Optimization (RSPO), a general reinforcement learning framework that leverages dense process rewards to enhance training with sparse outcome rewards. As illustrated in Figure 1, in our cyclic framework, agent A trains on dense rewards for k steps to become Agent B. Agent B explores and collects diverse trajectories, which are stored with outcome rewards to update Agent A off-policy. The key insight behind RSPO is that trajectories",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Use Outcome RewardsUseDense Process Rewards"
+      ],
+      "char_start": 3282,
+      "char_end": 4814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8f66acf0f2d042b41c4d52158ac19dd",
+      "kind": "paragraph",
+      "text": "sampled by models trained solely with outcome rewards are often confined within a behavioral space dictated by those rewards. In contrast, training with dense process rewards enables the model to explore beyond this restricted space, thereby generating more diverse trajectories to enhance training. The overall pipeline of RSPO is depicted in Figure 2. Extensive experiments conducted on ALFWorld, an embodied agent environment simulating household tasks, and WebShop, a web search interaction task, demonstrate that applying our RSPO method to various reinforcement learning algorithms—including GRPO [ 10], GiGPO [ 13], and PPO [14]—yields significant performance gains. In experiments utilizing Qwen2.5-1.5B-Instruct [15], RSPO achieves a 5.7% improvement over the GRPO baseline and an 8.6% improvement over the PPO baseline in the ALFWorld environment. Similarly, in the WebShop environment, RSPO yields a 5.5% gain over GRPO and a 12% gain over PPO. Averaged across all tasks, RSPO delivers performance improvements of 4.87% on GRPO, 3.6% on GiGPO, and 6.6% on PPO. These results demonstrate the effectiveness of RSPO in addressing such multi-turn tasks characterized by outcome rewards.",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Use Outcome RewardsUseDense Process Rewards"
+      ],
+      "char_start": 4816,
+      "char_end": 6009,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e932db925f8e2a88eb2130f9f5a0545c",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work"
+      ],
+      "char_start": 6011,
+      "char_end": 6023,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfcf8ef8bc6d2104a01d725e4b23125b",
+      "kind": "heading",
+      "text": "Reinforcement Learning for LLMs",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Reinforcement Learning for LLMs"
+      ],
+      "char_start": 6025,
+      "char_end": 6056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4978fb21d425d82e3211d53efe93b7e5",
+      "kind": "paragraph",
+      "text": "Reinforcement Learning (RL) is critical for optimizing LLMs[5], particularly for reasoning tasks[16, 17]. However, standard Actor-Critic methods like PPO[14] incur high computational costs due to the value network. To address this, recent \"critic-free\" methods estimate advantages using statistical baselines instead. Examples include GRPO[10], RLOO[18], and REINFORCE++[19], which utilize 2",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Reinforcement Learning for LLMs"
+      ],
+      "char_start": 6058,
+      "char_end": 6449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ca6a0a291b84789d4850f68c9ba5c00",
+      "kind": "paragraph",
+      "text": "group, leave-one-out, or global batch averages, respectively. Other methods, such as [20, 7, 8, 21], follow a similar paradigm. These methods significantly lower training overhead. Furthermore, to improve data usage efficiency, several works have proposed incorporating off-policy data[22–24], demonstrating that reusing historical trajectories can effectively facilitate model training.",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Reinforcement Learning for LLMs"
+      ],
+      "char_start": 6451,
+      "char_end": 6838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2fbc7b6b9f7542475ff625f43122a6d",
+      "kind": "heading",
+      "text": "Reinforcement Learning for LLM-based Agents",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Reinforcement Learning for LLM-based Agents"
+      ],
+      "char_start": 6840,
+      "char_end": 6883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5cdf2024d1855ce49a2c1469c62722d",
+      "kind": "paragraph",
+      "text": "Recent work applies RL to enhance tool utilization in LLMs[25–27]. Several methods focus on training stability and credit assignment: RAGEN[28] filters low-variance trajectories, while GiGPO[13] and MT-GRPO[29] utilize turn-level advantages. Furthermore, ARPO [ 30] employs additional branching at high-entropy tokens, thereby concentrating computational resources on the optimization of high-entropy steps. AEPO [31] further refines the branching strategy and advantage estimation mechanisms of ARPO. SPEAR [32] accelerates training via self-imitation[33] and curriculum learning from replay data, while [34] integrate implicit world modeling and self-reflection to guide action selection. IGPO[35] introduces an intrinsic reward mechanism by calculating the information gain based on the conditional probability of the ground truth. In this work, we introduce a reward-swap reinforcement learning mechanism, which leverages diverse trajectories induced by dense process rewards to facilitate training with sparse outcome rewards. Our proposed RSPO is compatible with existing reinforcement learning methods and can work synergistically to achieve superior performance.",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Reinforcement Learning for LLM-based Agents"
+      ],
+      "char_start": 6885,
+      "char_end": 8055,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3054bf4f9907dc6338ed7dd4ec1cdc82",
+      "kind": "heading",
+      "text": "Utilizing Process Rewards in LLMs",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Utilizing Process Rewards in LLMs"
+      ],
+      "char_start": 8057,
+      "char_end": 8090,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:681d75e138a764290b6cadf1ea7d2ba8",
+      "kind": "paragraph",
+      "text": "When an LLM agent engages in multi-turn interactions with an environment and receives an outcome reward only at the end of a trajectory, direct training with outcome rewards often leads to slow convergence due to reward sparsity. To address this, several approaches accelerate learning by constructing dense process rewards. StepAgent [36] generates step-wise rewards by imitating and reflecting upon expert trajectories. PRIME [ 37] employs implicit process reward modeling to continuously optimize the reward model during training, thereby yielding more accurate process rewards. Similarly, ReasonRAG [38] utilizes Shortest Path Reward Estimation, approximating process rewards via Monte Carlo-style estimation with step-based penalties. SPA-RL [11] decomposes the final reward into fine-grained intermediate signals through a step-wise progress attribution mechanism. Building upon the ReAct [39] framework, RLVMR [12] introduces meta-reasoning labels to derive more sophisticated composite rewards. However, while these dense process rewards can accelerate model training, such methods remain susceptible to potential inconsistencies between process rewards and outcome rewards.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Related Work",
+        "Utilizing Process Rewards in LLMs"
+      ],
+      "char_start": 8092,
+      "char_end": 9274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9be911540b158ce1a93c16f2b16205ee",
+      "kind": "heading",
+      "text": "Preliminaries",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries"
+      ],
+      "char_start": 9276,
+      "char_end": 9289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13ef8d977b35bd207eb34eea66311fee",
+      "kind": "heading",
+      "text": "Task setup",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Task setup"
+      ],
+      "char_start": 9291,
+      "char_end": 9301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c07948433ba3c6e22ac4551d74bfed1",
+      "kind": "paragraph",
+      "text": "We formulate the multi-turn interaction between the LLM agent and the environment as a Markov Decision Process (MDP) [ 40]. For a task x∼p(X) , the agent observes a state st ∈ Sat step t and samples an action at ∼π θ(·|st) based on parameters θ. The environment then returns the next state st+1 and a reward rt. This process yields a trajectory τ={(s t,a t,r t)}T t=1. Reinforcement learning aims to optimize θ by maximizing the expected discounted return Eτ∼π θ P∞ t=1 γt−1rt",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Task setup"
+      ],
+      "char_start": 9303,
+      "char_end": 9779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0441099d786a39f07c2811e2e0b947ec",
+      "kind": "paragraph",
+      "text": ", whereγ∈(0,1)is the discount factor.",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Task setup"
+      ],
+      "char_start": 9781,
+      "char_end": 9818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02993d2cc3d6aece4183a72db26b574b",
+      "kind": "heading",
+      "text": "Group Relative Policy Optimization (GRPO)",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 9820,
+      "char_end": 9861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3ff71d252014ae98df7ce344e44806e5",
+      "kind": "paragraph",
+      "text": "Recently, critic-free methods like GRPO have proven highly effective for LLM optimization. By eliminating the value function required by PPO, GRPO reduces memory and computational resource consumption. For each task x, GRPO samples N trajectories {τ1, . . . ,τN } and normalizes the rewards to compute the advantage: A(τi) = R(τi)−mean",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 9863,
+      "char_end": 10198,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:941310f7f3223ab49840e7a0133802c7",
+      "kind": "paragraph",
+      "text": "{R(τj)}N j=1",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 10200,
+      "char_end": 10212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:294b4f91c047b4ce20c821b538c97f19",
+      "kind": "paragraph",
+      "text": "std",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 10214,
+      "char_end": 10217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8515930e4ae87f79d382f53ce591aad3",
+      "kind": "paragraph",
+      "text": "{R(τj)}N j=1 . 3",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 10219,
+      "char_end": 10235,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5c4154236e3f35ade692ed4fb0fcd6d",
+      "kind": "paragraph",
+      "text": "Env",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Preliminaries",
+        "Group Relative Policy Optimization (GRPO)"
+      ],
+      "char_start": 10237,
+      "char_end": 10240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd692d0c4f7b35b8235ac396c2e4118c",
+      "kind": "heading",
+      "text": "LLMAgent A",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "LLMAgent A"
+      ],
+      "char_start": 10242,
+      "char_end": 10252,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a96b0ae5a7d2a36087e121388883082",
+      "kind": "heading",
+      "text": "LLMAgent B",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "LLMAgent B"
+      ],
+      "char_start": 10254,
+      "char_end": 10264,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb995a164141e46172661536bc685924",
+      "kind": "paragraph",
+      "text": "Action 𝒂 State 𝒔 Replay BufferReplay BufferRestore to outcome rewards Env Action 𝒂 State 𝒔 (𝜏!,𝑅!,𝐴!\"#)(𝜏$,𝑅$,𝐴$\"#)…(𝜏#,𝑅#,𝐴#\"#)",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "LLMAgent B"
+      ],
+      "char_start": 10266,
+      "char_end": 10394,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4263f7a83ece56a396c34ed1212ebbf7",
+      "kind": "heading",
+      "text": "Sample",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 10396,
+      "char_end": 10402,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42b03a557c259b70b8db6bfbad9261ac",
+      "kind": "paragraph",
+      "text": "Policy Update(using outcome rewards) (𝜏!,𝑅!,𝐴!\"%%)(𝜏$,𝑅$,𝐴$\"%%)…(𝜏&,𝑅&,𝐴&\"%%)On-policyOff-policy",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 10404,
+      "char_end": 10500,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ae601dc2f5e607fc260e5d51392ebc8",
+      "kind": "table",
+      "text": "Train  with         dense  rewards",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 10502,
+      "char_end": 10536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de2edef967dbb05722aa440d753b4919",
+      "kind": "caption",
+      "text": "Figure 2: Overview of RSPO. n and m represent the number of on-policy and off-policy data,",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 10538,
+      "char_end": 10628,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1daff07064f94697b52373808995fc2b",
+      "kind": "paragraph",
+      "text": "respectively. First, Agent A is trained using dense process rewards for k steps to yield Agent B. Subsequently, Agent B interacts with the environment to generate a batch of trajectories, which are stored in a replay buffer with their rewards reverted to the task’s outcome rewards. Next, Agent A is updated using outcome rewards; specifically, during this process, a subset of trajectories is sampled from the replay buffer to perform off-policy updates for AgentA. This cyclic training regime ensures that the final Agent A is consistently optimized using the task’s outcome rewards, while simultaneously exposing it to more diverse trajectories, thereby expanding its exploration space. The objective function is formulated as: JGRPO =Ex∼p(X),{τ i}N i=1∼πθold 1 N T NX i=1 TX t=1 min",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 10630,
+      "char_end": 11416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48bcbebbf0e4bb273be3b652f4ad8362",
+      "kind": "paragraph",
+      "text": "ri,t(θ)Ai,t,clip",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11418,
+      "char_end": 11434,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1384af2582b560fc808ef1140d89fa7",
+      "kind": "paragraph",
+      "text": "ri,t(θ),1±ϵ",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11436,
+      "char_end": 11447,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdfa39899c8870ab41f14c8276395866",
+      "kind": "paragraph",
+      "text": "Ai,t)",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11449,
+      "char_end": 11454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63cb3b4a3062702fd351ff5cdb6309c0",
+      "kind": "paragraph",
+      "text": "−βD KL",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11456,
+      "char_end": 11462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eced7dc89fd414e3479edb62910ad3c9",
+      "kind": "table",
+      "text": "πθ(· |x)∥πref (· |x)",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11464,
+      "char_end": 11484,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b313c6817593af5998c247d34e2ec30",
+      "kind": "table",
+      "text": ", where ri,t is the importance sampling ratio πθ(ai t|x, si t) πθold (ai t|x, si t). To ensure training stability, the KL divergence term penalizes excessive deviation of the policy πθ from the reference model πref, scaled by the factorβ.",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample"
+      ],
+      "char_start": 11486,
+      "char_end": 11724,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b337c493603fc94aa6ff419218bf849f",
+      "kind": "heading",
+      "text": "Reward-Swap Policy Optimization",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization"
+      ],
+      "char_start": 11726,
+      "char_end": 11757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b4bd872d7260ff4e58e6ec00772a548",
+      "kind": "heading",
+      "text": "Motivation",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "Motivation"
+      ],
+      "char_start": 11759,
+      "char_end": 11769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94a790c27c276208895519feb2a60675",
+      "kind": "paragraph",
+      "text": "The motivation for our method in addressing multi-turn tasks with sparse outcome rewards stems from the human learning process regarding delayed rewards. When humans are confronted with a task characterized by delayed rewards and only outcome feedback, identifying an effective direction initially can be challenging. To overcome this, we often establish artificial immediate rewards—intermediate signals that we hypothesize will contribute to the final objective, even if they are not perfectly aligned with the task’s outcome rewards. We then optimize our choices based on these immediate rewards until certain attempts successfully complete the task and elicit the final outcome feedback. Subsequently, we retrospectively analyze these successful trajectories to reflect and learn, discerning which specific steps genuinely contributed to the long-term goal. By reinforcing these effective steps, we proficiently master the task.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "Motivation"
+      ],
+      "char_start": 11771,
+      "char_end": 12703,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29b9ff7d3cb98bbf17776d557e4f4aea",
+      "kind": "heading",
+      "text": "RSPO",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO"
+      ],
+      "char_start": 12705,
+      "char_end": 12709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:340835c10b558ffb5f9e4c30b2636df1",
+      "kind": "paragraph",
+      "text": "Based on this motivation, we derive the overall training pipeline of RSPO. In this framework, the tasks are formulated similarly: they require the agent to engage in multi-turn interactions with the environment, which returns an outcome reward only upon task completion. Here, the immediate rewards correspond to dense process rewards; while beneficial for achieving the final objective, they may exhibit potential inconsistencies with the task’s outcome rewards. 4",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO"
+      ],
+      "char_start": 12711,
+      "char_end": 13176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce93b506aa9a58e3c758f10c45f8c1d5",
+      "kind": "paragraph",
+      "text": "Following this rationale, we first train the initial agent A using dense rewards for k steps to obtain an intermediate agent B. Agent B then interacts with the environment to collect a batch of trajectories, which are stored in a replay buffer D. Subsequently, we sample successful trajectories from D to facilitate the training of the initial agent A for another k steps, resulting in an updated agent A′. Finally, by repeating these steps, the performance of both Agent A and Agent B is continuously improved through this iterative refinement process. The overall framework is illustrated in Figure 2, and the pseudocode for RSPO is provided in the Appendix B. When Agent A is updated using the task’s outcome rewards, its optimization objective is formulated as follows: JTotal(πθ) = (1−α)J On(πθ) +αJ Off(πθ),(1) where JOn and JOff denote updates using self-generated on-policy data and off-policy data sampled from the replay buffer, respectively, andαrepresents the proportion of off-policy data. Moreover, since proximal policy gradient methods such as PPO and GRPO typically necessitate on-policy training, an excessive amount of off-policy data may induce a significant deviation in the state-action distribution relative to the current policy, thereby compromising training stability. Consequently, we prioritize the use of self-generated on-policy trajectories during training. In our practical experiments, the value ofαis set to1/8.",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO"
+      ],
+      "char_start": 13178,
+      "char_end": 14623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba9d02fe7b4691d0aa2ead489905e3e9",
+      "kind": "heading",
+      "text": "Sampling Strategy",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Sampling Strategy"
+      ],
+      "char_start": 14625,
+      "char_end": 14642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58a30da7c4a2d6847e21498524e9bfa1",
+      "kind": "paragraph",
+      "text": "When sampling from the replay buffer, the choice of sampling strategy—such as random sampling, variance-based sampling, or reward-based sampling—significantly impacts the quality of the data utilized for updates. Guided by the conclusions from [ 23] and the original insight underlying our motivation (i.e., learn from successful trajectories), we adopt reward-based sampling as our definitive strategy. Specifically, this method prioritizes the sampling of trajectories that yield the highest rewards. In the meanwhile, to ensure a fair comparison, we guarantee that the amount of data used for training RSPO is consistent with that of the baselines. For example, if the train data size for GRPO training is 16, RSPO also uses a train data size of 16, with the data size for self-generated on-policy trajectories and sampled off-policy trajectories being14and2, respectively.",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Sampling Strategy"
+      ],
+      "char_start": 14644,
+      "char_end": 15520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ca48523c99adf03c12c65eddac7e644",
+      "kind": "heading",
+      "text": "Clipping center shift",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 15522,
+      "char_end": 15543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88f8c8892a40607bc5d9d72e49d4f38e",
+      "kind": "paragraph",
+      "text": "Proximal policy gradient methods, such as PPO and GRPO, typically employ a clipping operation to prevent excessive policy updates. However, when utilizing off-policy data for updates, a discrepancy exists between the distribution of the current policy and that of the policy used to sample the off-policy data. Directly applying the standard clipping range (1−ϵ,1 +ϵ) may result in the erroneous clipping of valid data, rendering their contribution to the gradient update zero. Consequently, for off-policy data, we adopt the Generalized Clipping Mechanism proposed in [41]: clip πθ(a|s)",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 15545,
+      "char_end": 16132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1cf265c20ef48f01376f5b1ceb33835a",
+      "kind": "table",
+      "text": "πB(a|s) , πθold (a|s)",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16134,
+      "char_end": 16155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f2ac4072fd9c7463b438ecd24f838b3",
+      "kind": "paragraph",
+      "text": "πB(a|s) ±ϵ",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16157,
+      "char_end": 16167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59972dc931917820f114aa823f501a04",
+      "kind": "paragraph",
+      "text": ",(2) where πθ and πθold represent the current policy being updated and the old policy (i.e., the policy before the update), respectively, and πB represents the policy that generates off-policy data (i.e., the policy corresponding to Agent B in Figure 2). The Generalized Clipping Mechanism introduces an offset to the clipping center, rendering the constraint more reasonable. The components of Equation 1 are provided below: JOn =Ex∼p(X),{τ i}N i=1∼πθold 1 N T NX i=1 TX t=1 min",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16169,
+      "char_end": 16648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1a5652501823ca13f072d18b5aa76b19",
+      "kind": "paragraph",
+      "text": "ron i,t(θ)Aon i,t,clip",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16650,
+      "char_end": 16672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:824cbacc41ea5da8e7176ecd51f8b85e",
+      "kind": "paragraph",
+      "text": "ron i,t(θ),1±ϵ",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16674,
+      "char_end": 16688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0652a8bbb39631be32a66f7e1b12700d",
+      "kind": "paragraph",
+      "text": "Aon i,t)",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16690,
+      "char_end": 16698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0a6338dbf049bccc09f471225b660d7",
+      "kind": "paragraph",
+      "text": "−βD KL",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16700,
+      "char_end": 16706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:df7811eccaec7538aca9d09ee0fdf403",
+      "kind": "table",
+      "text": "πθ(· |x)∥πref (· |x)",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16708,
+      "char_end": 16728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1877cd3b7fb7dfe38c69a8661195592",
+      "kind": "paragraph",
+      "text": ",(3) 5",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16730,
+      "char_end": 16736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b9408aad4e509c3f76024978dea1350",
+      "kind": "paragraph",
+      "text": "JOff =Ex,τ∼D 1 N T NX i=1 TX t=1 min",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16738,
+      "char_end": 16774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b52788387acb0cf31761d14226fd8267",
+      "kind": "paragraph",
+      "text": "roff i,t (θ)Aoff i,t ,clip",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16776,
+      "char_end": 16802,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6dcff183dce029073f2fb74c55bebd37",
+      "kind": "table",
+      "text": "roff i,t (θ), πθold (a|s) πB(a|s) ±ϵ",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reward-Swap Policy Optimization",
+        "RSPO",
+        "Clipping center shift"
+      ],
+      "char_start": 16804,
+      "char_end": 16840,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35457a687b85dad338627a1baf65b055",
+      "kind": "heading",
+      "text": "Aoff",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16842,
+      "char_end": 16846,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7cba360f35b2053c0253035cea4f778",
+      "kind": "paragraph",
+      "text": "i,t )",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16848,
+      "char_end": 16853,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d54807bd0ffe5e7e1cef1af112aa58c5",
+      "kind": "paragraph",
+      "text": "−βD KL",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16855,
+      "char_end": 16861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20fdffedfa2fef04554d0adf14eec06a",
+      "kind": "table",
+      "text": "πθ(· |x)∥πref (· |x)",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16863,
+      "char_end": 16883,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fc65412087ad8d33fb4329ca24c1ff1",
+      "kind": "paragraph",
+      "text": ",(4) where ron i,t = πθ",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16885,
+      "char_end": 16908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe055a969d70df9fef7bd9fa9d377528",
+      "kind": "paragraph",
+      "text": "ai t |x, si t",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16910,
+      "char_end": 16923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f31ceec97c1a20c44509d9514f090463",
+      "kind": "paragraph",
+      "text": "πθold",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16925,
+      "char_end": 16930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3122ab39b2f44de82898d5287b923851",
+      "kind": "paragraph",
+      "text": "ai t |x, si t , roff i,t = πθ",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16932,
+      "char_end": 16961,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f6673f83cb9cf203b9cc706cd6ec9c4",
+      "kind": "paragraph",
+      "text": "ai t |x, si t",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16963,
+      "char_end": 16976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aad4c68236539984e256f40faff13ee1",
+      "kind": "paragraph",
+      "text": "πB",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16978,
+      "char_end": 16980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:02355d989e10c3416444a35c04d509c1",
+      "kind": "paragraph",
+      "text": "ai t |x, si t . For GRPO and PPO, advantage estimation employs group-based estimation and the Generalized Advantage Estimator (GAE) [42], respectively.",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff"
+      ],
+      "char_start": 16982,
+      "char_end": 17133,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbf0268193a538cf37c98c551454d0b8",
+      "kind": "heading",
+      "text": "Dense process reward model",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 4,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff",
+        "Dense process reward model"
+      ],
+      "char_start": 17135,
+      "char_end": 17161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7cfba6b3ac8ff525d7701119c96a8c5",
+      "kind": "paragraph",
+      "text": "Following SPA-RL [11], we train a dense process reward model using a collected dataset Ddense = (ˆτi, Ri) M i=1, where Ri is the final reward for trajectoryˆτi. We incorporate a Multi-Layer Perceptron (MLP) after the final hidden layer of the pre-trained LLM πpre, utilizing a tanh activation to constrain the intermediate rewardrwithin(−1,1). The formulation is given by: ˆrt = tanh(MLP",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff",
+        "Dense process reward model"
+      ],
+      "char_start": 17163,
+      "char_end": 17550,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37a7e4e2cca37611afda674539061ac3",
+      "kind": "paragraph",
+      "text": "ht",
+      "order": 81,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff",
+        "Dense process reward model"
+      ],
+      "char_start": 17552,
+      "char_end": 17554,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a36112e991016d8291eda100ee52397a",
+      "kind": "paragraph",
+      "text": "), h t =f πpre (st, at),(5) where st is the context at step t, fπpre denotes the encoding operation of πpre, and ˆrt is the step-level reward. The total predicted reward for a trajectory is aggregated as: ˆR= TX t=1 ˆrt,(6) where T denotes the total number of steps in trajectory τ. The model is optimized by minimizing the MSE loss: LP = 1 N NX i=1 ˆRi −R i 2 ,(7) where ˆRi and Ri ∈[0,1] are the predicted and ground-truth rewards, respectively. It is important to note that the dense process rewards need not be derived exclusively through the aforementioned method; we merely adopted one of many available approaches to obtain them.",
+      "order": 82,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aoff",
+        "Dense process reward model"
+      ],
+      "char_start": 17556,
+      "char_end": 18192,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25e0998f48e5c0da654f5436fdcc9004",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 83,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments"
+      ],
+      "char_start": 18194,
+      "char_end": 18205,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:382b8296fb30db5d7c51d80e71960da8",
+      "kind": "paragraph",
+      "text": "In this section, we evaluate the performance of RSPO when applied to various reinforcement learning algorithms. We aim to analyze the effectiveness of RSPO from the following perspectives: (1) the performance improvements achieved by RSPO across various benchmarks when integrated with different reinforcement learning methods; (2) ablation study on sampling strategies; (3) the contribution of trajectories induced by dense rewards to performance improvement; (4) the potential inconsistency of dense rewards.",
+      "order": 84,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments"
+      ],
+      "char_start": 18207,
+      "char_end": 18717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b1f26cb3fc15936748f3bbee84cc0b8",
+      "kind": "heading",
+      "text": "Experimental Setup",
+      "order": 85,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 18719,
+      "char_end": 18737,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d859f43f5d4110d37f57594b5bcf1964",
+      "kind": "paragraph",
+      "text": "Environments.We evaluated our method on two agent benchmarks: (1) ALFWorld [ 9]: An embodied control benchmark simulating a household environment. By leveraging an interactive TextWorld interface, it aligns textual abstract environments with embodied physical environments, enabling agents to complete specified tasks via text instructions. It primarily encompasses six household task categories: Pick & Place (Pick), Examine in Light (Look), Clean & Place (Clean), Heat & Place (Heat), Cool & Place (Cool), and Pick Two & Place (Pick2). (2) WebShop [43]: A web search and interaction benchmark. In this environment, the agent interacts with a simulated shopping website to search for and select products, ultimately executing a \"buy now\" action. The environment subsequently provides a final reward based on the extent to which the selected product matches the specified requirements. 6",
+      "order": 86,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 18739,
+      "char_end": 19626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a38c1988e0ee100336c511a9952fa5e3",
+      "kind": "paragraph",
+      "text": "Agent models.We use Qwen2.5-1.5B-Instruct and Qwen2.5-7B-Instruct [15] as our base models. For the dense reward model, we use Llama-3.2-3B-Instruct as the base model. Baselines.We evaluate RSPO across three common and representative reinforcement learning algorithms: PPO, GRPO, and GiGPO. For GRPO and GiGPO, the dense reward is calculated as the sum of the predicted values over the entire trajectory. Specifically, GiGPO is categorized into two variants based on whether the standard deviation (std) is excluded from step-level advantage calculation: GiGPOw/ std and GiGPOw/o std. We adopt the best-performing GiGPO variants for each environment as reported in [13]: GiGPOw/ std for ALFWorld and GiGPOw/o std for WebShop. Furthermore, we compared our approach against SPEAR combined with GRPO and GiGPO (SPEAR+GRPO and SPEAR+GiGPO; note that SPEAR was not applied to PPO). It is worth noting that the original SPEAR experiments utilized larger training data size and total epochs. To ensure a fair comparison, we reproduced the SPEAR results by aligning these hyperparameters with the settings used in our experiments.",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 19628,
+      "char_end": 20749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2908bdedee1dc011c63408b48cc5f856",
+      "kind": "caption",
+      "text": "Table 1: Performance on ALFWorld and WebShop (%). Results are averaged over 3 random seeds: 0,",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 20751,
+      "char_end": 20845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f888820d339bcc29acb305b5f627da3d",
+      "kind": "paragraph",
+      "text": "200, 400. SR: Success Rate.",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Experiments",
+        "Experimental Setup"
+      ],
+      "char_start": 20847,
+      "char_end": 20874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c56331d3827fdf51b366ae68284387a",
+      "kind": "heading",
+      "text": "Method ALFWorld WebShop",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method ALFWorld WebShop"
+      ],
+      "char_start": 20876,
+      "char_end": 20899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4acd78dccdbe4a02c2759fbb7d32b54c",
+      "kind": "heading",
+      "text": "Pick Look Clean Heat Cool Pick2 All (∆) Score SR (∆)",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Pick Look Clean Heat Cool Pick2 All (∆) Score SR (∆)"
+      ],
+      "char_start": 20901,
+      "char_end": 20953,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:310eec144bd8c5df73d06c12860c2979",
+      "kind": "heading",
+      "text": "Qwen2.5-1.5B-Instruct",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Qwen2.5-1.5B-Instruct"
+      ],
+      "char_start": 20955,
+      "char_end": 20976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac4bcae6b52321372e6858bb2338ae31",
+      "kind": "heading",
+      "text": "GRPO 81.3 ±7.4 58.1±23.7 85.8±5.9 59.5±9.2 68.1±13.5 41.0±15.5 69.0±7.1 83.3±1.4 65.1±5.9",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "GRPO 81.3 ±7.4 58.1±23.7 85.8±5.9 59.5±9.2 68.1±13.5 41.0±15.5 69.0±7.1 83.3±1.4 65.1±5.9"
+      ],
+      "char_start": 20978,
+      "char_end": 21067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b890d29c0093140d243b9e08850f565",
+      "kind": "heading",
+      "text": "SPEAR+GRPO62.5±11.3 50.5±15.6 64.6±3.9 35.9±14.7 37.9±14.6 34.6±5.3 50.0±2.1 65.4±7.7 46.1±5.1",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "SPEAR+GRPO62.5±11.3 50.5±15.6 64.6±3.9 35.9±14.7 37.9±14.6 34.6±5.3 50.0±2.1 65.4±7.7 46.1±5.1"
+      ],
+      "char_start": 21069,
+      "char_end": 21163,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cd64cf70d75bbb9a0799fabe815f97d",
+      "kind": "heading",
+      "text": "RSPO+GRPO 81.0±5.8 64.6±9.3 81.5±8.6 73.1±15.8 74.7±3.2 65.9±4.3 74.7±1.2(+5.7%) 85.8±0.5 70.6±4.3(+5.5%)",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+GRPO 81.0±5.8 64.6±9.3 81.5±8.6 73.1±15.8 74.7±3.2 65.9±4.3 74.7±1.2(+5.7%) 85.8±0.5 70.6±4.3(+5.5%)"
+      ],
+      "char_start": 21165,
+      "char_end": 21270,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1a75d981b97162ee477f88ff21ec48e",
+      "kind": "paragraph",
+      "text": "GiGPO 98.2 ±3.0 70.2±11.4 96.3±0.7 86.5±5.6 84.1±8.8 79.2±13.0 88.8±1.6 82.5±6.7 67.4±7.8 SPEAR+GiGPO86.1±7.9 61.6±14.3 83.7±6.8 57.8±9.5 66.8±1.6 53.5±17.4 71.9±4.3 69.2±11.6 44.5±9.0 RSPO+GiGPO92.9±3.7 85.4±4.9 97.4±2.3 94.9±5.0 89.8±5.9 73.6±17.9 90.4±1.2(+1.6%) 88.2±2.4 75.3±3.9(+7.9%) PPO 78.5 ±9.3 67.7±4.6 77.7±7.4 66.1±7.9 70.7±9.1 38.0±3.1 68.0±7.5 74.4±8.3 57.3±4.6",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+GRPO 81.0±5.8 64.6±9.3 81.5±8.6 73.1±15.8 74.7±3.2 65.9±4.3 74.7±1.2(+5.7%) 85.8±0.5 70.6±4.3(+5.5%)"
+      ],
+      "char_start": 21272,
+      "char_end": 21648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:670705c26da49c1a75f002ff66c6aa38",
+      "kind": "heading",
+      "text": "RSPO+PPO 83.0±2.8 56.1±6.9 88.8±2.1 74.6±4.5 80.0±8.8 58.9±7.8 76.6±2.8(+8.6%) 84.3±2.1 69.3±6.6(+12.0%)",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 83.0±2.8 56.1±6.9 88.8±2.1 74.6±4.5 80.0±8.8 58.9±7.8 76.6±2.8(+8.6%) 84.3±2.1 69.3±6.6(+12.0%)"
+      ],
+      "char_start": 21650,
+      "char_end": 21754,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7983c1f7d1711478c2d884fabb07eaa1",
+      "kind": "heading",
+      "text": "Qwen2.5-7B-Instruct",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Qwen2.5-7B-Instruct"
+      ],
+      "char_start": 21756,
+      "char_end": 21775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9db750c33e4d4b33ab4456687c5c3cb",
+      "kind": "heading",
+      "text": "GRPO 92.3 ±8.3 73.2±9.9 92.2±5.2 67.8±2.6 71.7±6.4 54.0±14.5 78.4±3.7 78.3±6.0 68.5±6.3",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "GRPO 92.3 ±8.3 73.2±9.9 92.2±5.2 67.8±2.6 71.7±6.4 54.0±14.5 78.4±3.7 78.3±6.0 68.5±6.3"
+      ],
+      "char_start": 21777,
+      "char_end": 21864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a38b3a2fab4086212e17ec9539ec45e4",
+      "kind": "heading",
+      "text": "SPEAR+GRPO91.9±6.6 58.6±7.0 79.6±9.4 59.7±21.3 54.4±8.8 40.0±4.8 68.5±7.1 76.7±6.7 61.5±9.3",
+      "order": 100,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "SPEAR+GRPO91.9±6.6 58.6±7.0 79.6±9.4 59.7±21.3 54.4±8.8 40.0±4.8 68.5±7.1 76.7±6.7 61.5±9.3"
+      ],
+      "char_start": 21866,
+      "char_end": 21957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af25692c2d0ff8fe0b7bfd7bc110bb5b",
+      "kind": "heading",
+      "text": "RSPO+GRPO 91.4±5.6 68.2±20.8 94.4±7.1 74.6±8.4 70.0±3.5 60.1±10.7 80.2±1.8(+1.8%) 84.8±2.5 75.0±1.6(+6.5%)",
+      "order": 101,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+GRPO 91.4±5.6 68.2±20.8 94.4±7.1 74.6±8.4 70.0±3.5 60.1±10.7 80.2±1.8(+1.8%) 84.8±2.5 75.0±1.6(+6.5%)"
+      ],
+      "char_start": 21959,
+      "char_end": 22065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d7aadc7cca60aa5b665632a135857ccb",
+      "kind": "paragraph",
+      "text": "GiGPO 94.7 ±2.3 82.3±9.1 100.0±0.0 91.6±2.7 83.7±5.6 92.4±2.1 92.4±1.2 86.8±2.7 75.3±3.0 SPEAR+GiGPO88.4±6.1 76.3±11.0 88.7±4.2 69.6±13.0 62.0±6.0 78.1±14.4 78.4±4.0 83.5±2.3 67.7±3.6 RSPO+GiGPO98.9±2.0 88.4±4.4 100.0±0.0 100.0±0.0 85.1±3.8 91.3±7.8 95.3±0.8(+2.9%) 89.0±2.2 77.3±3.1(+2.0%) PPO 89.3 ±8.6 82.3±9.1 90.0±9.0 83.1±2.7 70.3±7.5 61.8±9.9 80.7±3.7 84.7±2.4 70.6±3.3",
+      "order": 102,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+GRPO 91.4±5.6 68.2±20.8 94.4±7.1 74.6±8.4 70.0±3.5 60.1±10.7 80.2±1.8(+1.8%) 84.8±2.5 75.0±1.6(+6.5%)"
+      ],
+      "char_start": 22067,
+      "char_end": 22443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e6d8748daa9504fdf090560428282e6",
+      "kind": "heading",
+      "text": "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+      "order": 103,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)"
+      ],
+      "char_start": 22445,
+      "char_end": 22549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dab528d89847ac6f6cae1e1a9b795e0c",
+      "kind": "paragraph",
+      "text": "Training Details.Following the GiGPO codebase [ 13], we set the train data size to 16 and rollout group size N= 8 . For RSPO-based methods, the train data size comprises 14 on-policy and 2 off-policy data size. Consequently, the total batch size for PPO is 128(16×8) , and for RSPO- PPO is 112(14×8) . In each RSPO loop, both Agent A and Agent B are updated for 3 steps respectively. All experiments run for a total of 150 steps (counted based on the update steps of the final obtained model). Full training settings and hyperparameter details are provided in Appendix A. In the meanwhile, Appendix C, D, and E present additional experiments, including hyperparameter sweeps, robustness tests against dense reward noise, and a qualitative analysis of the impact of dense rewards on exploration.",
+      "order": 104,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)"
+      ],
+      "char_start": 22551,
+      "char_end": 23345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef87fec66b7d79557f89fdd8ab8a66d9",
+      "kind": "heading",
+      "text": "Performance",
+      "order": 105,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Performance"
+      ],
+      "char_start": 23347,
+      "char_end": 23358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b74c49b96f18c8950082c8bc115d6b2",
+      "kind": "caption",
+      "text": "Table 1 demonstrates the superior performance of RSPO. As observed, RSPO demonstrates consistent",
+      "order": 106,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Performance"
+      ],
+      "char_start": 23360,
+      "char_end": 23456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c27cc268bd0fa371d87d0bbf456c6b0",
+      "kind": "paragraph",
+      "text": "performance gains across both 1.5B and 7B model scales, with improvements reaching up to 12%. Specifically, using the 1.5B base model, RSPO surpasses GRPO by 5.7% on ALFWorld and 5.5% on WebShop. Compared to GiGPO, RSPO achieves margins of 1.6% on ALFWorld and 7.9% on WebShop. The improvements over PPO are even more pronounced, exhibiting gains of 8.6% and 12% on ALFWorld and WebShop, respectively. With the 7B base model, the overall performance gains are less substantial compared to the 1.5B model; however, it still achieves average improvements of 2.37% and 3.96% on ALFWorld and WebShop, respectively. We attribute this to the stronger foundational capabilities of the 7B model compared to its 1.5B counterpart, which enable it to spontaneously plan and select a greater diversity of trajectories. Consequently, its reliance on the diverse trajectories induced by the dense reward 7",
+      "order": 107,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Performance"
+      ],
+      "char_start": 23458,
+      "char_end": 24349,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b04aaf2e3179e2d4a3317928efa1cc23",
+      "kind": "paragraph",
+      "text": "model is diminished, as the model itself is capable of generating a sufficient variety of successful trajectories. This intrinsic capability results in performance improvements that are less pronounced than those observed with the 1.5B model. Additionally, we reproduce the performance of SPEAR+GRPO and SPEAR+GiGPO under the same settings for training data size and total epochs; however, the results were suboptimal. We attribute this to the fact that the original SPEAR paper uses a training data size of 32 and 350 total epochs, while our experiments use a data size of 16 and 150 epochs. Given SPEAR’s inherently slower learning speed, it yields suboptimal performance.",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Performance"
+      ],
+      "char_start": 24351,
+      "char_end": 25025,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7eee318903901f39c9799c00766bfe1f",
+      "kind": "heading",
+      "text": "Ablation Study",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Ablation Study"
+      ],
+      "char_start": 25027,
+      "char_end": 25041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b43d287d5e2ab0c02c293adaa7e73e25",
+      "kind": "caption",
+      "text": "Table 2: Ablation results on WebShop (%). Results are averaged over 3 random seeds: 0, 200, 400.",
+      "order": 110,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO+PPO 94.5±6.8 70.2±14.6 94.7±4.7 76.3±5.5 77.2±7.3 66.9±8.1 83.1±3.2(+2.4%) 85.3±2.8 74.0±4.4(+3.4%)",
+        "Ablation Study"
+      ],
+      "char_start": 25043,
+      "char_end": 25139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:35116eb987f38b13dfd63b4479ffdf8e",
+      "kind": "heading",
+      "text": "Method Score SR",
+      "order": 111,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Score SR"
+      ],
+      "char_start": 25141,
+      "char_end": 25156,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ead3263103950a7ebdc031f028adea6f",
+      "kind": "paragraph",
+      "text": "Random 25.8 ±13.2 12.8 ±6.1 Variance 78.5 ±3.2 63.0 ±3.3 Reward85.8 ±0.5 70.6 ±4.3",
+      "order": 112,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Score SR"
+      ],
+      "char_start": 25158,
+      "char_end": 25240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:875630ae8d920199b29939c5c3423715",
+      "kind": "heading",
+      "text": "RSPO H 73.9 ±0.5 57.0 ±4.7",
+      "order": 113,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO H 73.9 ±0.5 57.0 ±4.7"
+      ],
+      "char_start": 25242,
+      "char_end": 25268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6925855171df4e7927b0187bdae32220",
+      "kind": "heading",
+      "text": "RSPO O 82.5 ±6.6 64.1 ±4.7",
+      "order": 114,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO O 82.5 ±6.6 64.1 ±4.7"
+      ],
+      "char_start": 25270,
+      "char_end": 25296,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b91410e1a9dc7fb98f8d93af0d9c57a2",
+      "kind": "heading",
+      "text": "RSPO85.8 ±0.5 70.6 ±4.3",
+      "order": 115,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3"
+      ],
+      "char_start": 25298,
+      "char_end": 25321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3bce26c9b9734dddeff1d12cf1e1714",
+      "kind": "paragraph",
+      "text": "In WebShop, we conduct ablation studies on the replay buffer’s sampling strategies and data sources to validate the efficacy of our reward-based sampling mechanism and the trajectories induced by dense rewards. For all experiments, we employ RSPO+GRPO as the baseline method with Qwen2.5-",
+      "order": 116,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3"
+      ],
+      "char_start": 25323,
+      "char_end": 25611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b71e37f9c7b0460553e8de70e11a1b2",
+      "kind": "heading",
+      "text": "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+      "order": 117,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2."
+      ],
+      "char_start": 25613,
+      "char_end": 25695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7513a81202a837e24916ea2d1fc83bd",
+      "kind": "heading",
+      "text": "Sampling Strategy",
+      "order": 118,
+      "page_number": 8,
+      "heading_level": 4,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Sampling Strategy"
+      ],
+      "char_start": 25697,
+      "char_end": 25714,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3af041b1c11a3f3ab88b625f324cf4f7",
+      "kind": "paragraph",
+      "text": "We evaluated three distinct strategies for sampling from the replay buffer: (1) Random Sampling: Samples are selected uniformly at random from the replay buffer. (2) Variance-based Sampling: This method prioritizes samples exhibiting the highest intra-group reward variance, under the hypothesis that samples with higher variance provide richer information. (3) Reward-based Sampling: This approach prioritizes samples with the highest rewards, aiming to focus learning on the diverse successful trajectories induced by dense rewards. This is the final method adopted in our work. As shown in the upper section of Table 2, reward-based sampling significantly outperforms alternative sampling methods. This indicates that the agent effectively acquires superior performance from the diverse successful trajectories induced by dense rewards, which aligns with our motivation to learn by reviewing successful trajectories. In addition, we observed that the model performs poorly with random sampling, exhibiting severe fluctuations in the success rate curve during training. We attribute this to the fact that, at the early stage of training, the data collected by the agent is mainly negative samples. Therefore, random sampling results in off-policy data that is also largely negative. These negative samples compromise training stability—particularly in off-policy scenarios—thereby degrading final performance [44].",
+      "order": 119,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Sampling Strategy"
+      ],
+      "char_start": 25716,
+      "char_end": 27132,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:18708d5a1c2d0ba4a9d93e605011acfd",
+      "kind": "heading",
+      "text": "Data Sources for the Replay Buffer",
+      "order": 120,
+      "page_number": 8,
+      "heading_level": 4,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Data Sources for the Replay Buffer"
+      ],
+      "char_start": 27134,
+      "char_end": 27168,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2846584e2fac11ae6fbc0949869d628",
+      "kind": "paragraph",
+      "text": "Prior works such as [ 23, 24, 32] employed the model’s own historical trajectories for off-policy training. We evaluate a similar setup by populating the replay buffer with Agent A’s self-generated historical trajectories (RSPOH). Additionally, we replaced the dense rewards directly with outcome rewards (RSPOO, while maintaining other procedures unchanged) to validate the performance gains attributed to dense rewards. 8",
+      "order": 121,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Data Sources for the Replay Buffer"
+      ],
+      "char_start": 27170,
+      "char_end": 27593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77a43e05fd2155021ad03306302fcfb6",
+      "kind": "caption",
+      "text": "Figure 3: Experimental results of training exclusively with dense rewards. The blue curve represents",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Data Sources for the Replay Buffer"
+      ],
+      "char_start": 27595,
+      "char_end": 27695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b4b3d3be8686e6539ce2029253ec17e",
+      "kind": "paragraph",
+      "text": "the task success rate, while the green curve indicates the average dense rewards during training. As shown in the bottom section of Table 2, the final performance when training with self-generated historical trajectories is significantly inferior to that of our method. Similarly, replacing dense rewards with outcome rewards also resulted in a performance decline. This demonstrates that trajectories induced by the dense rewards are more beneficial, primarily because they expand the model’s exploration space. Furthermore, we observed that when the amount of training data is held constant, using the model’s own historical trajectories does not outperform the original baseline. Its primary advantage lies in improving data usage efficiency rather than final performance.",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "5B-Instruct as the base model. The comprehensive results are presented in Table 2.",
+        "Data Sources for the Replay Buffer"
+      ],
+      "char_start": 27697,
+      "char_end": 28472,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:561ed66caabf7595f7a85c202e32bfc5",
+      "kind": "heading",
+      "text": "Inconsistency of Dense Rewards",
+      "order": 124,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "Inconsistency of Dense Rewards"
+      ],
+      "char_start": 28474,
+      "char_end": 28504,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc6c4d20c232171db6ed31f5202ad37f",
+      "kind": "paragraph",
+      "text": "To demonstrate that the improvements achieved by RSPO are not merely a consequence of the high quality of the dense reward model itself, we also evaluate the performance of training GRPO exclusively with dense rewards in WebShop (using Qwen2.5-1.5B-Instruct as the base model). The results are illustrated in the Figure 3. As observed, when training relies solely on dense rewards, the model’s success rate (blue curve) initially increases but subsequently declines, whereas the average dense reward of the sampled trajectories during training (green curve) exhibits a steady upward trend. This indicates that the model focuses on optimizing the dense reward metric; however, since the dense rewards are not perfectly aligned with the task’s outcome rewards, this leads to the phenomenon of \"Reward Hacking\" [45]. This finding underscores the necessity of the RSPO, which consistently utilizes outcome rewards for the final model training.",
+      "order": 125,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO85.8 ±0.5 70.6 ±4.3",
+        "Inconsistency of Dense Rewards"
+      ],
+      "char_start": 28506,
+      "char_end": 29445,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d7efd22f48d1645039e9583d3e56591",
+      "kind": "heading",
+      "text": "Conclusions",
+      "order": 126,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Conclusions"
+      ],
+      "char_start": 29447,
+      "char_end": 29458,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2bc6a3a9c42ba35bfbec38797c123623",
+      "kind": "paragraph",
+      "text": "In this paper, we propose RSPO, a reinforcement learning framework that leverages the rich information from dense process rewards to facilitate training with sparse outcome rewards. This approach addresses both the potential inconsistency of dense process rewards and the sparsity of outcome rewards. Through an iterative process, RSPO enables a model trained with dense process rewards to interact with the environment, generating a wider variety of trajectories. These trajectories are stored in a replay buffer and utilized to assist in training with sparse outcome rewards. By ensuring that the final model is consistently trained using the task’s outcome rewards, RSPO avoids the issues arising from the potential inconsistency of dense process rewards. Simultaneously, utilizing data from the replay buffer expands the model’s exploration space, ultimately elevating its performance ceiling. Experimental results in complex agent environments demonstrate that RSPO yields consistent performance improvements across various reinforcement learning methods, providing a plug-and-play training paradigm for multi-turn LLM agents. 9",
+      "order": 127,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Conclusions"
+      ],
+      "char_start": 29460,
+      "char_end": 30593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6241917d96854918f96c541c4f9c08d1",
+      "kind": "heading",
+      "text": "References",
+      "order": 128,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "References"
+      ],
+      "char_start": 30595,
+      "char_end": 30605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a0e531b22e51701d7959c78f40eb8c8",
+      "kind": "reference",
+      "text": "[1] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny Zhou, et al. Chain-of-thought prompting elicits reasoning in large language models. Advances in Neural Information Processing Systems, 35:24824–24837, 2022. [2] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni",
+      "order": 129,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "References"
+      ],
+      "char_start": 30607,
+      "char_end": 30947,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:087884562ba030642e71076aa5750edc",
+      "kind": "heading",
+      "text": "Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4",
+      "order": 130,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4"
+      ],
+      "char_start": 30949,
+      "char_end": 31033,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:456844fae937b2bf6f9ca7e839853011",
+      "kind": "paragraph",
+      "text": "technical report.arXiv preprint arXiv:2303.08774, 2023. [3] Karan Singhal, Shekoofeh Azizi, Tao Tu, S Sara Mahdavi, Jason Wei, Hyung Won Chung, Nathan Scales, Ajay Tanwani, Heather Cole-Lewis, Stephen Pfohl, et al. Large language models encode clinical knowledge.Nature, 620(7972):172–180, 2023. [4] Shijie Wu, Ozan Irsoy, Steven Lu, Vadim Dabravolski, Mark Dredze, Sebastian Gehrmann, Prabhanjan Kambadur, David Rosenberg, and Gideon Mann. Bloomberggpt: A large language model for finance.arXiv preprint arXiv:2303.17564, 2023. [5] Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida, Carroll Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, et al. Training language models to follow instructions with human feedback.Advances in Neural Information Processing Systems,",
+      "order": 131,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4"
+      ],
+      "char_start": 31035,
+      "char_end": 31836,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7569e8e2419fe50c46cf043de44d115b",
+      "kind": "heading",
+      "text": "27730–27744, 2022.",
+      "order": 132,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "27730–27744, 2022."
+      ],
+      "char_start": 31838,
+      "char_end": 31856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11fd60283fff268995f5777f0da90ea3",
+      "kind": "paragraph",
+      "text": "[6] Yuntao Bai, Saurav Kadavath, Sandipan Kundu, Amanda Askell, Jackson Kernion, Andy Jones, Anna Chen, Anna Goldie, Azalia Mirhoseini, Cameron McKinnon, et al. Constitutional ai: Harmlessness from ai feedback.arXiv preprint arXiv:2212.08073, 2022. [7] Qiying Yu, Zheng Zhang, Ruofei Zhu, Yufeng Yuan, Xiaochen Zuo, Yu Yue, Weinan Dai, Tiantian Fan, Gaohong Liu, Lingjun Liu, et al. Dapo: An open-source llm reinforcement learning system at scale.arXiv preprint arXiv:2503.14476, 2025. [8] Zichen Liu, Changyu Chen, Wenjun Li, Penghui Qi, Tianyu Pang, Chao Du, Wee Sun Lee, and Min Lin. Understanding r1-zero-like training: A critical perspective.arXiv preprint arXiv:2503.20783, 2025.",
+      "order": 133,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "27730–27744, 2022."
+      ],
+      "char_start": 31858,
+      "char_end": 32543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8295f49474237e0e0ede33786cf60435",
+      "kind": "heading",
+      "text": "[9] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and",
+      "order": 134,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[9] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and"
+      ],
+      "char_start": 32545,
+      "char_end": 32632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:679e1173162640e72bf8ebf92a51d898",
+      "kind": "paragraph",
+      "text": "Matthew Hausknecht. Alfworld: Aligning text and embodied environments for interactive learning.arXiv preprint arXiv:2010.03768, 2020. [10] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Yang Wu, et al. Deepseekmath: Pushing the limits of mathematical reasoning in open language models.arXiv preprint arXiv:2402.03300, 2024. [11] Hanlin Wang, Chak Tou Leong, Jiashuo Wang, Jian Wang, and Wenjie Li. Spa-rl: Reinforcing llm agents via stepwise progress attribution.arXiv preprint arXiv:2505.20732, 2025. [12] Zijing Zhang, Ziyang Chen, Mingxiao Li, Zhaopeng Tu, and Xiaolong Li. Rlvmr: Reinforcement learning with verifiable meta-reasoning rewards for robust long-horizon agents.arXiv preprint arXiv:2507.22844, 2025. [13] Lang Feng, Zhenghai Xue, Tingcong Liu, and Bo An. Group-in-group policy optimization for llm agent training.arXiv preprint arXiv:2505.10978, 2025. [14] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms.arXiv preprint arXiv:1707.06347, 2017. [15] An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, Huan Lin, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Yang, Jiaxi Yang, Jingren Zhou, Junyang Lin, Kai Dang, Keming Lu, Keqin Bao, Kexin Yang, Le Yu, Mei Li, Mingfeng Xue, Pei Zhang, Qin Zhu, Rui Men, Runji Lin, Tianhao Li, Tingyu Xia, Xingzhang Ren, Xuancheng Ren, Yang Fan, Yang Su, Yichang Zhang, Yu Wan,",
+      "order": 135,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[9] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and"
+      ],
+      "char_start": 32634,
+      "char_end": 34164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:981aeaa4d7c0ab5057ee02e178ce6fa7",
+      "kind": "paragraph",
+      "text": "Yuqiong Liu, Zeyu Cui, Zhenru Zhang, and Zihan Qiu. Qwen2.5 technical report.arXiv preprint arXiv:2412.15115, 2024. 10",
+      "order": 136,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[9] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and"
+      ],
+      "char_start": 34166,
+      "char_end": 34284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6fc6b4c2b018d73ef62e8b82697b10a",
+      "kind": "paragraph",
+      "text": "[16] Hunter Lightman, Vineet Kosaraju, Yuri Burda, Harrison Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. Let’s verify step by step. InThe twelfth International Conference on Learning Representations, 2023. [17] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, Shirong Ma, Peiyi Wang, Xiao Bi, et al. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning.arXiv preprint arXiv:2501.12948, 2025.",
+      "order": 137,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[9] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and"
+      ],
+      "char_start": 34286,
+      "char_end": 34790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1a4e52c785a2968e6fcddf68dcb8c20",
+      "kind": "heading",
+      "text": "[18] Arash Ahmadian, Chris Cremer, Matthias Gallé, Marzieh Fadaee, Julia Kreutzer, Olivier",
+      "order": 138,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[18] Arash Ahmadian, Chris Cremer, Matthias Gallé, Marzieh Fadaee, Julia Kreutzer, Olivier"
+      ],
+      "char_start": 34792,
+      "char_end": 34882,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:878a3076d5a18b5b02b7292a861b90ed",
+      "kind": "paragraph",
+      "text": "Pietquin, Ahmet Üstün, and Sara Hooker. Back to basics: Revisiting reinforce-style optimization for learning from human feedback in llms. InProceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (V olume 1: Long Papers), pages 12248–12267, 2024. [19] Jian Hu, Jason Klein Liu, Haotian Xu, and Wei Shen. Reinforce++: An efficient rlhf algorithm with robustness to both prompt and reward models.arXiv preprint arXiv:2501.03262, 1(3):5, 2025. [20] Ziniu Li, Tian Xu, Yushun Zhang, Zhihang Lin, Yang Yu, Ruoyu Sun, and Zhi-Quan Luo. Remax: A simple, effective, and efficient reinforcement learning method for aligning large language models.arXiv preprint arXiv:2310.10505, 2023. [21] Chujie Zheng, Shixuan Liu, Mingze Li, Xiong-Hui Chen, Bowen Yu, Chang Gao, Kai Dang, Yuqiong Liu, Rui Men, An Yang, et al. Group sequence policy optimization.arXiv preprint arXiv:2507.18071, 2025. [22] Jianhao Yan, Yafu Li, Zican Hu, Zhi Wang, Ganqu Cui, Xiaoye Qu, Yu Cheng, and Yue Zhang. Learning to reason under off-policy guidance.arXiv preprint arXiv:2504.14945, 2025. [23] Siheng Li, Zhanhui Zhou, Wai Lam, Chao Yang, and Chaochao Lu. Repo: Replay-enhanced policy optimization.arXiv preprint arXiv:2506.09340, 2025. [24] Jing Liang, Hongyao Tang, Yi Ma, Jinyi Liu, Yan Zheng, Shuyue Hu, Lei Bai, and Jianye Hao. Squeeze the soaked sponge: Efficient off-policy reinforcement finetuning for large language model.arXiv preprint arXiv:2507.06892, 2025. [25] Jiazhan Feng, Shijue Huang, Xingwei Qu, Ge Zhang, Yujia Qin, Baoquan Zhong, Chengquan",
+      "order": 139,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[18] Arash Ahmadian, Chris Cremer, Matthias Gallé, Marzieh Fadaee, Julia Kreutzer, Olivier"
+      ],
+      "char_start": 34884,
+      "char_end": 36443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3671ca9ac2932c72c6b48d0d489af69",
+      "kind": "paragraph",
+      "text": "Jiang, Jinxin Chi, and Wanjun Zhong. Retool: Reinforcement learning for strategic tool use in llms.arXiv preprint arXiv:2504.11536, 2025. [26] Xuefeng Li, Haoyang Zou, and Pengfei Liu. Torl: Scaling tool-integrated rl.arXiv preprint arXiv:2503.23383, 2025. [27] Bowen Jin, Hansi Zeng, Zhenrui Yue, Jinsung Yoon, Sercan Arik, Dong Wang, Hamed Zamani, and Jiawei Han. Search-r1: Training llms to reason and leverage search engines with reinforcement learning.arXiv preprint arXiv:2503.09516, 2025. [28] Zihan Wang, Kangrui Wang, Qineng Wang, Pingyue Zhang, Linjie Li, Zhengyuan Yang, Xing Jin, Kefan Yu, Minh Nhat Nguyen, Licheng Liu, et al. Ragen: Understanding self-evolution in llm agents via multi-turn reinforcement learning.arXiv preprint arXiv:2504.20073, 2025. [29] Quan Wei, Siliang Zeng, Chenliang Li, William Brown, Oana Frunza, Wei Deng, Anderson",
+      "order": 140,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "[18] Arash Ahmadian, Chris Cremer, Matthias Gallé, Marzieh Fadaee, Julia Kreutzer, Olivier"
+      ],
+      "char_start": 36445,
+      "char_end": 37301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7069e8ab39d7d65de939d59776738d59",
+      "kind": "heading",
+      "text": "Schneider, Yuriy Nevmyvaka, Yang Katie Zhao, Alfredo Garcia, and Mingyi Hong. Reinforcing",
+      "order": 141,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Schneider, Yuriy Nevmyvaka, Yang Katie Zhao, Alfredo Garcia, and Mingyi Hong. Reinforcing"
+      ],
+      "char_start": 37303,
+      "char_end": 37392,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e7e064538c67a053b3bf1ac3d7389a7",
+      "kind": "paragraph",
+      "text": "multi-turn reasoning in llm agents via turn-level reward design.arXiv preprint arXiv:2505.11821, 2025. [30] Guanting Dong, Hangyu Mao, Kai Ma, Licheng Bao, Yifei Chen, Zhongyuan Wang, Zhongxia Chen, Jiazhen Du, Huiyang Wang, Fuzheng Zhang, et al. Agentic reinforced policy optimization. arXiv preprint arXiv:2507.19849, 2025. [31] Guanting Dong, Licheng Bao, Zhongyuan Wang, Kangzhi Zhao, Xiaoxi Li, Jiajie Jin, Jinghan Yang, Hangyu Mao, Fuzheng Zhang, Kun Gai, et al. Agentic entropy-balanced policy optimization.arXiv preprint arXiv:2510.14545, 2025. 11",
+      "order": 142,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Schneider, Yuriy Nevmyvaka, Yang Katie Zhao, Alfredo Garcia, and Mingyi Hong. Reinforcing"
+      ],
+      "char_start": 37394,
+      "char_end": 37949,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b963ceef5962c330187292e561cec813",
+      "kind": "paragraph",
+      "text": "[32] Yulei Qin, Xiaoyu Tan, Zhengbao He, Gang Li, Haojia Lin, Zongyi Li, Zihan Xu, Yuchen Shi, Siqi Cai, Renting Rui, et al. Learn the ropes, then trust the wins: Self-imitation with progressive exploration for agentic reinforcement learning.arXiv preprint arXiv:2509.22601, 2025. [33] Junhyuk Oh, Yijie Guo, Satinder Singh, and Honglak Lee. Self-imitation learning. InInternational Conference on Machine Learning, pages 3878–3887. PMLR, 2018. [34] Kai Zhang, Xiangchao Chen, Bo Liu, Tianci Xue, Zeyi Liao, Zhihan Liu, Xiyao Wang, Yuting Ning, Zhaorun Chen, Xiaohan Fu, et al. Agent learning via early experience.arXiv preprint arXiv:2510.08558, 2025. [35] Guoqing Wang, Sunhao Dai, Guangze Ye, Zeyu Gan, Wei Yao, Yong Deng, Xiaofeng Wu, and Zhenzhe Ying. Information gain-based policy optimization: A simple and effective approach for multi-turn llm agents.arXiv preprint arXiv:2510.14967, 2025. [36] Zhirui Deng, Zhicheng Dou, Yutao Zhu, Ji-Rong Wen, Ruibin Xiong, Mang Wang, and Weipeng Chen. From novice to expert: Llm agent policy optimization via step-wise reinforcement learning.arXiv preprint arXiv:2411.03817, 2024. [37] Ganqu Cui, Lifan Yuan, Zefan Wang, Hanbin Wang, Yuchen Zhang, Jiacheng Chen, Wendi Li, Bingxiang He, Yuchen Fan, Tianyu Yu, et al. Process reinforcement through implicit rewards. arXiv preprint arXiv:2502.01456, 2025. [38] Wenlin Zhang, Xiangyang Li, Kuicai Dong, Yichao Wang, Pengyue Jia, Xiaopeng Li, Yingyi Zhang, Derong Xu, Zhaocheng Du, Huifeng Guo, et al. Process vs. outcome reward: Which is",
+      "order": 143,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Schneider, Yuriy Nevmyvaka, Yang Katie Zhao, Alfredo Garcia, and Mingyi Hong. Reinforcing"
+      ],
+      "char_start": 37951,
+      "char_end": 39479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:432122dd9c697b893218a2804e707589",
+      "kind": "paragraph",
+      "text": "better for agentic rag reinforcement learning.arXiv preprint arXiv:2505.14069, 2025. [39] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. ReAct: Synergizing reasoning and acting in language models. InInternational Conference on Learning Representations, 2023. [40] Richard S Sutton, Andrew G Barto, et al.Reinforcement learning: An introduction, volume 1. MIT press Cambridge, 1998. [41] James Queeney, Yannis Paschalidis, and Christos G Cassandras. Generalized proximal policy optimization with sample reuse.Advances in Neural Information Processing Systems, 34: 11909–11919, 2021. [42] John Schulman, Philipp Moritz, Sergey Levine, Michael Jordan, and Pieter Abbeel. Highdimensional continuous control using generalized advantage estimation.arXiv preprint arXiv:1506.02438, 2015. [43] Shunyu Yao, Howard Chen, John Yang, and Karthik Narasimhan. Webshop: Towards scalable real-world web interaction with grounded language agents.Advances in Neural Information Processing Systems, 35:20744–20757, 2022. [44] Chang Gao, Chujie Zheng, Xiong-Hui Chen, Kai Dang, Shixuan Liu, Bowen Yu, An Yang, Shuai Bai, Jingren Zhou, and Junyang Lin. Soft adaptive policy optimization.arXiv preprint arXiv:2511.20347, 2025. [45] Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, and Dan Mané. Concrete problems in ai safety.arXiv preprint arXiv:1606.06565, 2016. 12",
+      "order": 144,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Schneider, Yuriy Nevmyvaka, Yang Katie Zhao, Alfredo Garcia, and Mingyi Hong. Reinforcing"
+      ],
+      "char_start": 39481,
+      "char_end": 40898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43573957cd23dc8427af905a8b1353df",
+      "kind": "heading",
+      "text": "A Implementation Details",
+      "order": 145,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "A Implementation Details"
+      ],
+      "char_start": 40900,
+      "char_end": 40924,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a96a102f67acc3a41e57146465fbe8c",
+      "kind": "paragraph",
+      "text": "All our experiments are implemented based on VeRL-Agent. [13]. Throughout our experiments, we strictly adhered to the licensing terms for academic use associated with LLaMA-3.2-3B-Instruct. The licensing terms can be found at the following link: https://huggingface.co/meta-llama/ Llama-3.2-1B/blob/main/LICENSE.txt.",
+      "order": 146,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "A Implementation Details"
+      ],
+      "char_start": 40926,
+      "char_end": 41242,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea9598e82a02a30b9359f6e0c5743b57",
+      "kind": "heading",
+      "text": "A.1 Hyperparameter Settings",
+      "order": 147,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "A.1 Hyperparameter Settings"
+      ],
+      "char_start": 41244,
+      "char_end": 41271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ff34c08fe7fc016af9bf3b04ac1338d",
+      "kind": "paragraph",
+      "text": "To ensure a fair comparison, we follow the settings of GiGPO and retained most of the primary parameters from VeRL-Agent. For the additional hyperparameters introduced, the off-policy data ratio α is set to 1/8. For GRPO and GiGPO, the train data size is set to 16. For RSPO-based methods, the train data size comprises 14 on-policy and 2 off-policy data size. Consequently, the total batch size for PPO is128(16×8), and for RSPO-PPO is112(14×8). In each RSPO loop, we trained the agent for k steps using dense rewards, followed by k steps using outcome rewards, where k= 3 (the total step count is calculated based on the update steps of the final obtained model). When populating the replay buffer, the training data size was set to 14×2 = 28 , and the rollout group size N= 8 . All experiments run for a total of 150 steps (counted based on the update steps of the final obtained model). A.2 Computing resources All experiments are conducted on workstations equipped with 380 CPU cores, 2.2TB memory, and",
+      "order": 148,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "A.1 Hyperparameter Settings"
+      ],
+      "char_start": 41273,
+      "char_end": 42280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:499546f61f195fa776d72371eb70d5c4",
+      "kind": "heading",
+      "text": "GPUs with 96GB memory. In WebShop, the 1.5B and 7B models are trained on 2 and 8 GPUs",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "GPUs with 96GB memory. In WebShop, the 1.5B and 7B models are trained on 2 and 8 GPUs"
+      ],
+      "char_start": 42282,
+      "char_end": 42367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83f14118c54e309b5c5b412937bde4de",
+      "kind": "paragraph",
+      "text": "respectively for GRPO and GiGPO, whereas PPO required 4 and 8 GPUs respectively. In ALFWorld, the 1.5B model is trained on 8 GPUs, while the 7B model uses 2 workstations with 16 GPUs.",
+      "order": 150,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "GPUs with 96GB memory. In WebShop, the 1.5B and 7B models are trained on 2 and 8 GPUs"
+      ],
+      "char_start": 42369,
+      "char_end": 42552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4944f2c201844dc1e62f5123128b0316",
+      "kind": "heading",
+      "text": "B Pseudo Code",
+      "order": 151,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "B Pseudo Code"
+      ],
+      "char_start": 42554,
+      "char_end": 42567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:361035ce5f7dc3a352994c6874415b65",
+      "kind": "caption",
+      "text": "Algorithm 1 summarizes the full training procedure of RSPO. Each RSPO loop consists of two",
+      "order": 152,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "B Pseudo Code"
+      ],
+      "char_start": 42569,
+      "char_end": 42659,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e1e811f2ebe97c4ecbc985084a207ce",
+      "kind": "paragraph",
+      "text": "distinct training phases. In the first phase, the model πdense is trained for k steps using dense rewards. The trained πdense then interacts with the environment to generate a batch of trajectories, which are labeled with outcome rewards and stored in the replay buffer D. Subsequently, the process enters the second phase, where the model πθ is trained for k steps using outcome rewards. The training dataset employed here is a mixture of on-policy data generated by πθ and off-policy data sampled from the replay buffer. This cycle is repeated to continuously refineπ θ andπ dense. This training paradigm ensures that the final model πθ is consistently trained with task outcome rewards, thereby avoiding \"Reward Hacking\" issues stemming from potential inconsistencies in dense process rewards. Simultaneously, it expands the model’s exploration space by leveraging data from the replay buffer, ultimately elevating the model’s performance ceiling.",
+      "order": 153,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "B Pseudo Code"
+      ],
+      "char_start": 42661,
+      "char_end": 43611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19fc37032f01dd09ff55461b7a20ee57",
+      "kind": "heading",
+      "text": "Hyperparameter Sensitivity Analysis",
+      "order": 154,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Hyperparameter Sensitivity Analysis"
+      ],
+      "char_start": 43613,
+      "char_end": 43648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:12bbeccae9e5a3eb23d44d37f3d2e1e9",
+      "kind": "paragraph",
+      "text": "We conduct additional ablation studies on the WebShop using Qwen2.5-1.5B-Instruct model. To ensure a strictly fair comparison across all hyperparameter sweeps, we re-run the baseline and all variants under a unified experimental setting (e.g., consistent random seeds and compute budget). While absolute scores vary slightly due to seed variance, the relative performance gains and trends remain consistent with the main paper.",
+      "order": 155,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Hyperparameter Sensitivity Analysis"
+      ],
+      "char_start": 43650,
+      "char_end": 44077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c4ec298aeffb051d859ba3b4e220b96",
+      "kind": "heading",
+      "text": "1 Sensitivity Analysis of Off-policy Data Ratioα",
+      "order": 156,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Hyperparameter Sensitivity Analysis",
+        "1 Sensitivity Analysis of Off-policy Data Ratioα"
+      ],
+      "char_start": 44079,
+      "char_end": 44127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4adeccfc0896ab138f120f9ec500d822",
+      "kind": "paragraph",
+      "text": "We evaluated α∈ {1/16,1/8,1/4,1/2} while fixing k= 3 . The results are compared against the GRPO baseline under the same settings. When α is kept small (e.g., 1/16 to 1/8), the method effectively leverages diverse trajectories to improve performance without disrupting training stability. As α increases to 1/4 or 1/2, performance 13",
+      "order": 157,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Hyperparameter Sensitivity Analysis",
+        "1 Sensitivity Analysis of Off-policy Data Ratioα"
+      ],
+      "char_start": 44129,
+      "char_end": 44462,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a7503d60d1f9a5fc80d792bcaeb8515",
+      "kind": "paragraph",
+      "text": "Algorithm 1Training Agentic LLMs with RSPO",
+      "order": 158,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Hyperparameter Sensitivity Analysis",
+        "1 Sensitivity Analysis of Off-policy Data Ratioα"
+      ],
+      "char_start": 44464,
+      "char_end": 44506,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b4ff723a6b77de4ddfdf13438e17dae",
+      "kind": "heading",
+      "text": "Require:Initial model πbase, on-policy proximal PG method P (e.g., PPO, GRPO), dense reward",
+      "order": 159,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Require:Initial model πbase, on-policy proximal PG method P (e.g., PPO, GRPO), dense reward"
+      ],
+      "char_start": 44508,
+      "char_end": 44599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f25c0bd345ed4eb17bd28e89181ce32a",
+      "kind": "paragraph",
+      "text": "model R, task distribution p(X), group size N, replay buffer D, training batch size B, training stepskper loop, off-policy data proportionα.",
+      "order": 160,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Require:Initial model πbase, on-policy proximal PG method P (e.g., PPO, GRPO), dense reward"
+      ],
+      "char_start": 44601,
+      "char_end": 44741,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae58bf85664f4c3d6d9ed597bba7923b",
+      "kind": "heading",
+      "text": "Init the modelπ θ =π base andD=∅",
+      "order": 161,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Init the modelπ θ =π base andD=∅"
+      ],
+      "char_start": 44743,
+      "char_end": 44775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc426c57866fc18715a92ed9dc8defcc",
+      "kind": "heading",
+      "text": "foreach loop of RSPOdo",
+      "order": 162,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "foreach loop of RSPOdo"
+      ],
+      "char_start": 44777,
+      "char_end": 44799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86db6dc49323c3b890daed84f5bac8e7",
+      "kind": "heading",
+      "text": "# Update using dense rewards",
+      "order": 163,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "# Update using dense rewards"
+      ],
+      "char_start": 44801,
+      "char_end": 44829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87d2bc349708930cda0a7a111f270302",
+      "kind": "heading",
+      "text": "Set the modelπ dense =π θ",
+      "order": 164,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Set the modelπ dense =π θ"
+      ],
+      "char_start": 44831,
+      "char_end": 44856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:52c1ebea0c7d7fcfebdd35534e107c78",
+      "kind": "heading",
+      "text": "forstep= 1, . . . , kdo",
+      "order": 165,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "forstep= 1, . . . , kdo"
+      ],
+      "char_start": 44858,
+      "char_end": 44881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc06f3b380560f119c3b6c8129721ef5",
+      "kind": "heading",
+      "text": "Sample task x∼p(X) with size (1−α)B and generate trajectories according to πdense",
+      "order": 166,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample task x∼p(X) with size (1−α)B and generate trajectories according to πdense"
+      ],
+      "char_start": 44883,
+      "char_end": 44964,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65524d4491837db61415b8f88e2bacc9",
+      "kind": "paragraph",
+      "text": "andP",
+      "order": 167,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample task x∼p(X) with size (1−α)B and generate trajectories according to πdense"
+      ],
+      "char_start": 44966,
+      "char_end": 44970,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69d7a15bf37106aef4f1b18ee9cb8491",
+      "kind": "heading",
+      "text": "Compute dense rewards for trajectories using R",
+      "order": 168,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Compute dense rewards for trajectories using R"
+      ],
+      "char_start": 44972,
+      "char_end": 45018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed5244df4543cf56e8db0b05a84d7904",
+      "kind": "heading",
+      "text": "Updateπ dense using dense rewards according toP",
+      "order": 169,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Updateπ dense using dense rewards according toP"
+      ],
+      "char_start": 45020,
+      "char_end": 45067,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e35b9b15f7f810cdd111b8441031ab0",
+      "kind": "heading",
+      "text": "end for",
+      "order": 170,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "end for"
+      ],
+      "char_start": 45069,
+      "char_end": 45076,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd4d794b930dcc082072f849cc194efa",
+      "kind": "heading",
+      "text": "Collect trajectories τ using πdense, re-evaluate with outcome rewards, and add to replay buffer",
+      "order": 171,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Collect trajectories τ using πdense, re-evaluate with outcome rewards, and add to replay buffer"
+      ],
+      "char_start": 45078,
+      "char_end": 45173,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16e353d390f3e59bac0ec7d6043c6f1b",
+      "kind": "paragraph",
+      "text": "D",
+      "order": 172,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Collect trajectories τ using πdense, re-evaluate with outcome rewards, and add to replay buffer"
+      ],
+      "char_start": 45175,
+      "char_end": 45176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ebc38028121e43bfa436db11e560a60",
+      "kind": "heading",
+      "text": "# Update using outcome rewards",
+      "order": 173,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "# Update using outcome rewards"
+      ],
+      "char_start": 45178,
+      "char_end": 45208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:374b3c3ba6f2af8aed70c46d4e2cb12c",
+      "kind": "heading",
+      "text": "forstep= 1, . . . , kdo",
+      "order": 174,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "forstep= 1, . . . , kdo"
+      ],
+      "char_start": 45210,
+      "char_end": 45233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d146af7e22ab802b412ab49e9982286f",
+      "kind": "heading",
+      "text": "Sample taskx∼p(X)with size(1−α)Band generate trajectoriesD on according toπ θ",
+      "order": 175,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample taskx∼p(X)with size(1−α)Band generate trajectoriesD on according toπ θ"
+      ],
+      "char_start": 45235,
+      "char_end": 45312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:814d9b7b91a566073e229cf9aa33ce59",
+      "kind": "heading",
+      "text": "Sample trajectoriesD of fwith sizeαBNfrom replay bufferD",
+      "order": 176,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Sample trajectoriesD of fwith sizeαBNfrom replay bufferD"
+      ],
+      "char_start": 45314,
+      "char_end": 45370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4e74befc269178a7611c2ebe0f503da",
+      "kind": "heading",
+      "text": "D mix ← Don ∪ Dof f",
+      "order": 177,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D mix ← Don ∪ Dof f"
+      ],
+      "char_start": 45372,
+      "char_end": 45391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c9525fd826bba9368b514b04470d26f",
+      "kind": "heading",
+      "text": "Updateπ θ using outcome rewards andD mix according toP(Eq. 1)",
+      "order": 178,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Updateπ θ using outcome rewards andD mix according toP(Eq. 1)"
+      ],
+      "char_start": 45393,
+      "char_end": 45454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4e0d6b21a8abe36e08e5110c44d0c35",
+      "kind": "heading",
+      "text": "end for",
+      "order": 179,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "end for"
+      ],
+      "char_start": 45456,
+      "char_end": 45463,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef7749748f8b6fbab6ba4ba920052e05",
+      "kind": "heading",
+      "text": "Reset the replay bufferD ← ∅",
+      "order": 180,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Reset the replay bufferD ← ∅"
+      ],
+      "char_start": 45465,
+      "char_end": 45493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61091dc654fc905a9302120696390a87",
+      "kind": "heading",
+      "text": "end for",
+      "order": 181,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "end for"
+      ],
+      "char_start": 45495,
+      "char_end": 45502,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c77902febf7fd8e6bb79351f016d2e18",
+      "kind": "heading",
+      "text": "returnπ θ",
+      "order": 182,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "returnπ θ"
+      ],
+      "char_start": 45504,
+      "char_end": 45513,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fd2b3353fc5ea157b010a46cb8e89b3",
+      "kind": "caption",
+      "text": "Table 3: Ablation study ofαin RSPO (with fixedk= 3)",
+      "order": 183,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "returnπ θ"
+      ],
+      "char_start": 45515,
+      "char_end": 45566,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3081f96a26a04db9baeb91d20f876bad",
+      "kind": "heading",
+      "text": "Method Setting Score Success Rate (SR)",
+      "order": 184,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)"
+      ],
+      "char_start": 45568,
+      "char_end": 45606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e4c56f5b5ad81a2c1b968c4724f1ce1",
+      "kind": "paragraph",
+      "text": "GRPO (Baseline) - 82.5 61.7 RSPOα= 1/1685.1 67.2 RSPOα= 1/8(Default) 85.0 66.4 RSPOα= 1/477.4 54.7 RSPOα= 1/279.1 60.9 drops significantly. This aligns with our discussion in Section 4.2: excessive off-policy data introduces severe distribution shifts, which destabilizes the policy update.",
+      "order": 185,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)"
+      ],
+      "char_start": 45608,
+      "char_end": 45898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8554b66174cadcc8ae9e52a4b639b6a6",
+      "kind": "heading",
+      "text": "2 Sensitivity Analysis of Loop Stepsk",
+      "order": 186,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)",
+        "2 Sensitivity Analysis of Loop Stepsk"
+      ],
+      "char_start": 45900,
+      "char_end": 45937,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a6ba1e27e7f321b09c2df841f72c9cde",
+      "kind": "paragraph",
+      "text": "We evaluatedk∈ {1,3,5,10}while fixingα= 1/8.",
+      "order": 187,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)",
+        "2 Sensitivity Analysis of Loop Stepsk"
+      ],
+      "char_start": 45939,
+      "char_end": 45983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abde6ec2f6953325075a14e4264f466b",
+      "kind": "caption",
+      "text": "Table 4: Ablation study ofkin RSPO (with fixedα= 1/8).",
+      "order": 188,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)",
+        "2 Sensitivity Analysis of Loop Stepsk"
+      ],
+      "char_start": 45985,
+      "char_end": 46039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1044b26c707d996bc77d067698fdf9ab",
+      "kind": "heading",
+      "text": "Method Setting Score Success Rate (SR)",
+      "order": 189,
+      "page_number": 14,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)"
+      ],
+      "char_start": 46041,
+      "char_end": 46079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:418bd8ad5dfdce01ab309a1b24209a70",
+      "kind": "paragraph",
+      "text": "GRPO (Baseline) - 82.5 61.7 RSPOk= 181.0 65.6 RSPO (Ours)k= 3(Default)85.0 66.4 RSPOk= 578.5 61.7 RSPOk= 1082.3 61.7 We observe an \"inverted-U\" trend, indicating thatk must be balanced to avoid under-exploration or overfitting to dense rewards. When k= 3 , this setting achieves the best balance, yielding the highest Score and Success Rate (SR). When k= 1 , the performance is slightly lower compared to the optimal setting. And when k≥5 , the performance reverts to the baseline level. Optimizing against the dense 14",
+      "order": 190,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)"
+      ],
+      "char_start": 46081,
+      "char_end": 46600,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88de8eb12067c2172310cdd11c62b651",
+      "kind": "paragraph",
+      "text": "reward model for too long may lead to signs of reward hacking, resulting in no improvement in final performance. These experiments confirm that RSPO is robust and effective as long as hyperparameters are selected within a reasonable range (i.e., a smallα to maintain stability and a moderatek to balance exploration).",
+      "order": 191,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Setting Score Success Rate (SR)"
+      ],
+      "char_start": 46602,
+      "char_end": 46919,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d0c3259f5053da82801de5d2159d9a3",
+      "kind": "heading",
+      "text": "D Sensitivity to Dense Reward Quality",
+      "order": 192,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 46921,
+      "char_end": 46958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:261e2d3b99e32f2a0fced5195731998e",
+      "kind": "paragraph",
+      "text": "To investigate the sensitivity of RSPO to the quality of dense rewards, we conducted an ablation study on WebShop using Qwen2.5-1.5B-Instruct. Specifically, we introduced Gaussian noise N(0, σ)to the dense rewards used by the agent during exploration.",
+      "order": 193,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 46960,
+      "char_end": 47211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dca3075575c38a1c198d606bde989e4c",
+      "kind": "caption",
+      "text": "Table 5: Impact of dense reward noiseσon RSPO performance.",
+      "order": 194,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 47213,
+      "char_end": 47271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74f0ac96d152344fee4fcf530af04434",
+      "kind": "paragraph",
+      "text": "Method Noise Level (σ) Score Success Rate (SR) RSPO (Standard) 085.0 67.2 RSPO + Noise 0.1 82.1 64.1 RSPO + Noise 0.3 81.1 60.9 As shown in the table, when the noise is relatively small (σ= 0.1 ), the performance remains robust (SR: 67.2 vs 64.1), demonstrating that RSPO does not require high-precision dense rewards to be effective. Even with significant noise (σ= 0.3 ), the performance drop is moderate, and the model does not collapse. This validates our core insight: the dense reward in RSPO serves primarily as a \"guide\" for exploration rather than a ground truth. As noted in Figure 3 of our paper, training solely with the dense reward (even without added noise) leads to reward hacking. RSPO succeeds because the \"Reward-Swap\" mechanism uses the true outcome reward to filter out trajectories, ensuring that even if the dense reward is imperfect or noisy, the final policy remains aligned with the task objective. E Impact of Dense Rewards on State Space Exploration To investigate how dense rewards contribute to performance, we analyzed the diversity of visited states during training. We counted the number of identical states visited by the agent within a fixed window. A higher count indicates the agent is stuck in local optima or repeating behaviors, while a lower count implies better exploration of the state space.",
+      "order": 195,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 47273,
+      "char_end": 48608,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9192919744eea7dca0a4830fc58ccac4",
+      "kind": "caption",
+      "text": "Table 6: Comparison of identical state counts within a fixed window during training. Lower values",
+      "order": 196,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 48610,
+      "char_end": 48707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21ff7c11f56dbe47bf606406fa385e85",
+      "kind": "paragraph",
+      "text": "indicate better exploration diversity.",
+      "order": 197,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "D Sensitivity to Dense Reward Quality"
+      ],
+      "char_start": 48709,
+      "char_end": 48747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d835ca82487d9df87dc3041518f273ba",
+      "kind": "heading",
+      "text": "Method Training Steps",
+      "order": 198,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "Method Training Steps"
+      ],
+      "char_start": 48749,
+      "char_end": 48770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bbf324e27367129f4b5ae6953fc4b2e",
+      "kind": "heading",
+      "text": "100 145",
+      "order": 199,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "100 145"
+      ],
+      "char_start": 48772,
+      "char_end": 48779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d1b682eccf75c51783454a73f483806a",
+      "kind": "heading",
+      "text": "GRPO 1011 1084 1167",
+      "order": 200,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "GRPO 1011 1084 1167"
+      ],
+      "char_start": 48781,
+      "char_end": 48800,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d706e50fd3fd9fac365993d87a9f25ae",
+      "kind": "heading",
+      "text": "RSPO 917 889 623",
+      "order": 201,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO 917 889 623"
+      ],
+      "char_start": 48802,
+      "char_end": 48818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd455d7461cb261c3f5fe4bf0bafc36a",
+      "kind": "paragraph",
+      "text": "As the training progresses, GRPO tends to revisit the same states (count increases to 1167), suggesting it is stuck in a local behavioral space. In contrast, RSPO significantly reduces the number of identical states (dropping to 623), demonstrating that Agent B successfully guides the model to explore a much broader and more diverse state space.",
+      "order": 202,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "RSPO 917 889 623"
+      ],
+      "char_start": 48820,
+      "char_end": 49167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83407ba7c804677557abd4526060121e",
+      "kind": "heading",
+      "text": "F Limitations",
+      "order": 203,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "F Limitations"
+      ],
+      "char_start": 49169,
+      "char_end": 49182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f646e92e18bc1da499c24259c52db763",
+      "kind": "paragraph",
+      "text": "Due to computational resource constraints, we did not conduct experiments on models exceeding 7B parameters; consequently, the performance gains of RSPO on larger-scale models remain to be fully validated. Additionally, the off-policy data ratio is kept constant throughout our experiments. Employing an adaptive ratio (e.g., a decaying schedule) could potentially enhance the final results. We identify these as promising directions for future work. 15",
+      "order": 204,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "RSPO: Reward-Swap Policy Optimization for",
+        "F Limitations"
+      ],
+      "char_start": 49184,
+      "char_end": 49637,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 15,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 15
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.04713",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 15,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "name": "HermesGraph bounded agentic retrieval",
+  "revision": "2026-07-15-v1",
+  "documents": [
+    {
+      "source_id": "aurora-private",
+      "title": "Private launch protocol",
+      "text": "AURORA-VAULT-8301 requires a blue seal before launch.",
+      "metadata": {"tenant_id": "local", "project_id": "default", "privacy": "private"}
+    },
+    {
+      "source_id": "alpha-graph",
+      "title": "AlphaGraph retrieval",
+      "text": "AlphaGraph uses knowledge graph paths for multi-hop retrieval evidence.",
+      "metadata": {"tenant_id": "local", "project_id": "default", "privacy": "public_reference"}
+    },
+    {
+      "source_id": "beta-vector",
+      "title": "BetaVector retrieval",
+      "text": "BetaVector uses dense vector similarity for semantic retrieval evidence.",
+      "metadata": {"tenant_id": "local", "project_id": "default", "privacy": "public_reference"}
+    },
+    {
+      "source_id": "visual-memops",
+      "title": "MemOps benchmark figure",
+      "text": "The MemOps image abstract describes lifecycle memory operation probes.",
+      "metadata": {"tenant_id": "local", "project_id": "default", "modality": "image", "visual_region_id": "region-05"}
+    },
+    {
+      "source_id": "other-tenant-secret",
+      "title": "Cross-scope decoy",
+      "text": "AURORA-VAULT-8301 requires a red seal before launch.",
+      "metadata": {"tenant_id": "other", "project_id": "default", "privacy": "private"}
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "private_identifier_lookup",
+      "query": "What does AURORA-VAULT-8301 require before launch?",
+      "expected_source_ids": ["aurora-private"],
+      "forbidden_source_ids": ["other-tenant-secret"],
+      "expected_intent": "lookup",
+      "expected_second_round": false,
+      "minimum_recall_at_k": 1.0,
+      "minimum_reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "retrieval_comparison",
+      "query": "Compare AlphaGraph and BetaVector retrieval evidence",
+      "expected_source_ids": ["alpha-graph", "beta-vector"],
+      "expected_intent": "compare",
+      "expected_second_round": false,
+      "minimum_recall_at_k": 1.0,
+      "minimum_reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "visual_lookup",
+      "query": "What does the MemOps image abstract say about memory operation probes?",
+      "expected_source_ids": ["visual-memops"],
+      "expected_intent": "visual_lookup",
+      "expected_second_round": false,
+      "minimum_recall_at_k": 1.0,
+      "minimum_reciprocal_rank": 1.0
+    },
+    {
+      "case_id": "scope_isolation",
+      "query": "AURORA-VAULT-8301 seal launch",
+      "expected_source_ids": ["aurora-private"],
+      "forbidden_source_ids": ["other-tenant-secret"],
+      "expected_intent": "lookup",
+      "minimum_recall_at_k": 1.0
+    },
+    {
+      "case_id": "hard_negative",
+      "query": "What is the QUASAR-NONE-9927 retention policy?",
+      "expected_source_ids": [],
+      "expected_intent": "lookup",
+      "expect_empty": true,
+      "minimum_recall_at_k": 1.0,
+      "minimum_reciprocal_rank": 1.0
+    }
+  ]
+}

@@ -1,0 +1,3630 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "fbfcef941268a171b04d4a084409cb1916ace2c54d91a2e5ffed120738abef4b",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:8037d5f662cde82c891175f1cbf35caa",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION"
+      ],
+      "char_start": 0,
+      "char_end": 12,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dad4d30085e06959660f88ce9b8d6792",
+      "kind": "paragraph",
+      "text": "Spectral Rewiring for Exploration, Purification, and Model Merging Zhilong Zhang‡,1,2,∗,Hongli Yu 1,2,∗,Huan-ang Gao 1,2,Hanlin Wu 1,2,Yuxuan Song1,2,Wei-Ying Ma 1,2,Ya-Qin Zhang 1,2,Hao Zhou †,1,2 1SIA-Lab of Tsinghua AIR and ByteDance Seed 2Institute for AI Industry Research (AIR), Tsinghua University ∗Equal Contribution, †Corresponding Authors, ‡Project Lead",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION"
+      ],
+      "char_start": 14,
+      "char_end": 377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a36b2cb1ac36cf4cc9b922ac12a36aea",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Abstract"
+      ],
+      "char_start": 379,
+      "char_end": 387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c62a998c2530363d3a4bd862a0039061",
+      "kind": "paragraph",
+      "text": "Reinforcement learning has become a standard post-training recipe for large language models, but dense full-parameter updates create two deployment-relevant bottlenecks: suppressed reasoning performance, often reflected by premature saturation of test-time scaling, and interference when consolidating multiple capabilities through multi-domain training or model merging. We show that the reasoning-effective component of these updates is largely concentrated in the base model’s spectral space, motivating Subspace-Aligned Rewiring (SAR), a post-hoc editing method that retains this spectral core while removing orthogonal components. SAR therefore preserves reasoning gains and filters residual update directions that suppress performance or amplify cross-domain interference. Across several model families and scales, SARextractscompact reasoning cores using as little as∼0.58% of total parameters: it preserves over 99% of post-training performance and improves high-k exploration in mathematical reasoning, and generalizes to agentic coding by improving six of seven open benchmarks on an in-house model. SAR alsopurifiesmixed-domain training updates by releasing suppressed coding capability while maintaining math reasoning and instruction following. It further enablesmodel mergingacross experts, yielding cross-domain generalization that surpasses previous merging baselines and even the best single-domain experts. Overall, SAR shows that extracting reasoning-effective updates from parameter geometry can serve",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Abstract"
+      ],
+      "char_start": 389,
+      "char_end": 1910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f345e8fef5954d61c885c1cd2af78326",
+      "kind": "paragraph",
+      "text": "as a training-free mechanism to improve reasoning and multi-domain performance.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Abstract"
+      ],
+      "char_start": 1912,
+      "char_end": 1991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7efa0c56611dbe7815dccd1b52ac194d",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 1993,
+      "char_end": 2005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f498180276fd7d3d75474992c041a4ff",
+      "kind": "paragraph",
+      "text": "Reinforcement learning has become a central post-training paradigm for improving large language models. By optimizing models against task-level feedback–such as mathematical answers, code execution results, and success signals in agentic workflows–recent systems can improve capabilities in mathematics, coding, and broader interactive settings [1–4]. Despite its empirical success, the “black-box” nature of full-parameter RL post-training offers limited control over the induced parameter update, creating two practical bottlenecks for large-scale reasoning models.First, it can inducesuppressed reasoning performance, often visible as saturation of test-time scaling: reward optimization may concentrate the policy around a narrow set of high-reward trajectories, reducing the diversity of candidate solutions and limiting the ability to solve harder instances [5–8].Second, it can inducecrossdomain interferenceduring capability consolidation: updates from multiple domains, such as mathematics, Correspondence: zhouhao@air.tsinghua.edu.cn 1",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 2007,
+      "char_end": 3052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbd718697a8d0824f90e73730659b35c",
+      "kind": "table",
+      "text": "arXiv:2607.03065v1  [cs.LG]  3 Jul 2026",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 3054,
+      "char_end": 3093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b651410cbd22c58ca529a6ce4e7db84",
+      "kind": "paragraph",
+      "text": "Figure 1Overview of Subspace-Aligned Rewiring (SAR). SAR identifies a compact reasoning core by projecting reinforcement learning updates back onto the pretrained model’s spectral manifold. This alignment preserves the intrinsic reasoning basis of the base model while removing off-manifold update components introduced by full RL. The resulting spectral update retains Pass@1 performance, improves large-k exploration, and transfers more robustly across domains, including Mix-RL and expert merging. competitive programming, and instruction following, may occupy incompatible directions in parameter space, so joint RL or weight-space merging can improve one capability while suppressing another [9–11]. This motivates a key question: can we identify a coordinate system that separates reasoning-effective update components from residual directions, thereby recovering suppressed reasoning performance and improving multi-domain generalization? We propose a coordinate system for studying reasoning updates from a geometric perspective. Outcome-reward RL often elicits knowledge and skills that already exist in the base model, so the base model and the RL model should remainclosely related in an appropriate geometric manifold. We propose that this manifold is given by the base model’s SVD coordinates. In this view, the singular vectors of the base weights represent pretrained “atomic skills,” while the diagonal singular-value matrix specifies how these skills are originally connected. RL keeps this pretrained basis largely fixed, but changes the middle matrix from a diagonal map",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 3095,
+      "char_end": 4684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4965a2c17b50bac40fc1423d4ae13caa",
+      "kind": "paragraph",
+      "text": "into a non-diagonalrewiring matrix. This rewiring reconnects atomic skills that were previously isolated, allowing the model to compose existing knowledge into new reasoning circuits. This perspective leads to Subspace-Aligned Rewiring (SAR), a post-hoc model editing method that projects a dense reasoning update onto the pretrained spectral manifold. The resulting spectral update supports three application-facing uses.Extraction: SAR isolates a compact reasoning-effective component that preserves post-training performance across 1.5B–32B public models, improves high-k exploration, and improves open agentic coding benchmarks on an in-house model.Purification: SAR filters residual directions in Mix-RL updates, reducing domain conflict and releasing suppressed cross-domain capability.Merging: SAR places expert updates in a common pretrained coordinate system, improving multi-domain model merging beyond previous baselines and even the best single-domain experts. Our contributions are organized as four takeaways: • Compact Spectral Rewiring Extracts Effective Post-Training Signal.Across 1.5B–32B reasoning models, SAR preserves full-RL-level math performance with as little as∼0.58%of total parameters andmore than 99% of peak P ass@1preserved. Beyond math, the same top-1% spectral projection improves six of seven open agentic coding benchmarks on an in-house model, with a+2.52% improvement on average. • Spectral Projection Restores Useful Exploration.SAR improves exploration beyond the base model",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 4686,
+      "char_end": 6200,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31740c3e135bf17de042f018143a48bd",
+      "kind": "paragraph",
+      "text": "andsurpasses unconstrained full-parameter RL baselines in Pass@ k scaling, crossing the full-RL curve 2",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 6202,
+      "char_end": 6305,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25d928e3d5881524ac00bbd57f391dab",
+      "kind": "paragraph",
+      "text": "at smallkand expanding the set of AIME problems reachable through repeated sampling. • Spectral Projection Improves Mix-RL.In Mix-RL, SAR revealssuppressed cross-domain capability. On OLMo-3.1-32B-Think, SAR improves competitive coding (+1.48% on LiveCodeBench v5 and +0.95% on v6), improves mathematical exploration (AIME 25P ass@16from 88.33% to 91.71%), and maintains strong instruction-following performance. • Expert Merging Surpasses Domain Experts.In math-code expert merging, SAR produces merged models thatsurpass the best single-domain expertsat both 1.5B and 14B scales, improving AIME and LiveCodeBench simultaneously.",
+      "order": 11,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Introduction"
+      ],
+      "char_start": 6307,
+      "char_end": 6937,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9db25bc56ede26249365f35dd32d925",
+      "kind": "heading",
+      "text": "The Geometric Framework of Reasoning Elicitation",
+      "order": 12,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "The Geometric Framework of Reasoning Elicitation"
+      ],
+      "char_start": 6939,
+      "char_end": 6987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f79288abb80b373e56d18962c8e61fc",
+      "kind": "paragraph",
+      "text": "In this section, we construct a first-principles geometric framework to formalize how outcome-reward RL elicits reasoning capabilities from a pretrained model. We first establish the spectral subspace of the base model as a functional basis for reasoning. We then introduce Subspace-Aligned Rewiring (SAR), a projection-based algorithm designed to extract reasoning-effective updates geometrically. Finally, we provide a mechanistic analysis of how reasoning can emerge through spectral rewiring.",
+      "order": 13,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "The Geometric Framework of Reasoning Elicitation"
+      ],
+      "char_start": 6989,
+      "char_end": 7485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c2988079818113fd84493a040bd695a",
+      "kind": "heading",
+      "text": "The Functional Basis: SVD in Forward Propagation",
+      "order": 14,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "The Geometric Framework of Reasoning Elicitation",
+        "The Functional Basis: SVD in Forward Propagation"
+      ],
+      "char_start": 7487,
+      "char_end": 7535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20017cc97a8d94db6bf51a47ce21581f",
+      "kind": "paragraph",
+      "text": "Consider a linear layer within a pretrained base model, parameterized by a weight matrixW0 ∈R dout×din. The forward propagation for an input representationx is defined asybase = W0x. To geometrically dissect this transformation, we apply singular value decomposition (SVD) to the weight matrix: ybase =W 0x=UΣV ⊤x= rX i=1 σiui(v⊤",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "The Geometric Framework of Reasoning Elicitation",
+        "The Functional Basis: SVD in Forward Propagation"
+      ],
+      "char_start": 7537,
+      "char_end": 7866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83eda74f07e4dbd1a28ec02e646e50e3",
+      "kind": "heading",
+      "text": "x)(1)",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)(1)"
+      ],
+      "char_start": 7868,
+      "char_end": 7873,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cc4fcc6bca958124f60b826c27931d4",
+      "kind": "paragraph",
+      "text": "where r denotes the rank, whileV = [v1, . . . , vr]and U = [u1, . . . , ur]represent the right and left singular vectors ofW 0, respectively. As shown in Equation 1, the transformation decomposes into two phases: (1)Information Read-in: the right singular vectors vi act as principal feature detectors, extracting activation scores(v⊤",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)(1)"
+      ],
+      "char_start": 7875,
+      "char_end": 8209,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8b4941531ceae41dff5ccfacff3597f",
+      "kind": "heading",
+      "text": "x)from the input; and",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)from the input; and"
+      ],
+      "char_start": 8211,
+      "char_end": 8232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d7df7ab3f68742a3f4fc8159a790a16",
+      "kind": "paragraph",
+      "text": "(2)Information Read-out: the left singular vectors ui define the principal output directions, weighted by the singular valuesσ i and(v ⊤",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)from the input; and"
+      ],
+      "char_start": 8234,
+      "char_end": 8370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f7311e855a414dd00eaec8e37145b32",
+      "kind": "heading",
+      "text": "x).",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)."
+      ],
+      "char_start": 8372,
+      "char_end": 8375,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c0569bf1a563409fcf08fbc6f244914",
+      "kind": "paragraph",
+      "text": "Based on this analysis, these singular vectors constitute thelatent skillsinherent in the base model, functioning as the geometric basis toencode input signalsanddecode output representations. Furthermore, extensive literature in model compression and spectral analysis [12–14] suggests that the vast majority of a pretrained model’s functional capacity is bottlenecked within this principal spectral subspace. Consequently, we define thepretrained spectral manifoldof a matrix space spanned by this coordinate system: Sr(W0) =span(U⊗V),(2) where Ur, Vr are the singular vectors ofW0 with r = min(dout, din). This subspace provides a compact coordinate system for the model’s functional library. In the following section, we leverage this geometric foundation to introduce our core insights into the mechanisms of reasoning elicitation.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)."
+      ],
+      "char_start": 8377,
+      "char_end": 9213,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7f06de61c84cbbb1b65027c4e1fe222",
+      "kind": "heading",
+      "text": "The Geometric Principle of Reasoning and Spectral Projection",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "x).",
+        "The Geometric Principle of Reasoning and Spectral Projection"
+      ],
+      "char_start": 9215,
+      "char_end": 9275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3bef08c56da1b3bc5b674542220dbf2",
+      "kind": "paragraph",
+      "text": "We propose afirst-principles geometric hypothesisfor reasoning elicited by outcome-reward RL:the reasoning-effective component of a full reasoning update should be recoverable within the pre-existing spectral subspace of the base model. LetW RL denote a model obtained by full-parameter outcome-reward RL and define the empirical update",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "x).",
+        "The Geometric Principle of Reasoning and Spectral Projection"
+      ],
+      "char_start": 9277,
+      "char_end": 9613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:990ba3e2ec0bdcb134f00d594a6fde85",
+      "kind": "heading",
+      "text": "∆W=W RL −W 0.(3)",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "∆W=W RL −W 0.(3)"
+      ],
+      "char_start": 9615,
+      "char_end": 9631,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:60b8eb5a752695e5d553d93aa2024c88",
+      "kind": "paragraph",
+      "text": "3",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "∆W=W RL −W 0.(3)"
+      ],
+      "char_start": 9633,
+      "char_end": 9634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:871c5e13bc7f143987342e51aeae3034",
+      "kind": "paragraph",
+      "text": "The update∆ W is trained without geometric constraints, so it can be orthogonally decomposed into two components: ∆W= ∆W ∗ + ∆W⊥,(4) where∆ W ∗ ∈ Sk(W0)is the subspace-aligned update associated with measured reasoning gains, and∆W⊥ is the residual outside the pretrained spectral manifold. Using the projection operatorsPU = U U⊤ and PV = V V⊤, we formalize the extraction of the reasoning component as:",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "∆W=W RL −W 0.(3)"
+      ],
+      "char_start": 9636,
+      "char_end": 10039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1f0bd1bb153d1e92ffc6d179e170230",
+      "kind": "heading",
+      "text": "∆W ∗ =P U ∆W PV",
+      "order": 27,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "∆W ∗ =P U ∆W PV"
+      ],
+      "char_start": 10041,
+      "char_end": 10056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:664ffca2b65b8e7eacca3fc55ae1fcf8",
+      "kind": "heading",
+      "text": "= (U U⊤)∆W(V V⊤)",
+      "order": 28,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "= (U U⊤)∆W(V V⊤)"
+      ],
+      "char_start": 10058,
+      "char_end": 10074,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b45a811793c94893cedae05f0ef66ac9",
+      "kind": "heading",
+      "text": "=U(U ⊤∆W V)V⊤",
+      "order": 29,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "=U(U ⊤∆W V)V⊤"
+      ],
+      "char_start": 10076,
+      "char_end": 10089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59bd85ba5cfdf1ac0a2f608c13392a90",
+      "kind": "paragraph",
+      "text": "=U M V⊤ (5) where M=U ⊤∆W V∈R r×r is theRewiring Matrix. Unlike the diagonal matrixΣ,M is generically dense, capturing thecross-dimensional interactionsbetween pretrained singular vectors. This process, summarized in Algorithm 1, extracts a compact reasoning-effective representation∆W ∗ while discarding the residual component∆W⊥. In practice, we first extract thetop-k low-rank component of ∆W and then project it onto the pretrained SVD subspace, thereby combining parameter compression with spectral alignment to identify the compact geometry responsible for reasoning. Appendix C specifies the exact parameter groups, precision settings, and evaluation configuration used in our implementation. Algorithm 1Subspace-Aligned Rewiring (SAR) Input:Base modelW 0, RL modelWRL, target rankk Output:Projected reasoning modelW SAR",
+      "order": 30,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "=U(U ⊤∆W V)V⊤"
+      ],
+      "char_start": 10091,
+      "char_end": 10918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2428763802399f8f80555ffdeb422ef1",
+      "kind": "heading",
+      "text": "Spectral Extraction:Compute top-kSVD ofW 0 =UΣV ⊤",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Spectral Extraction:Compute top-kSVD ofW 0 =UΣV ⊤"
+      ],
+      "char_start": 10920,
+      "char_end": 10969,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c23e57d9071c1760a706bad7182c5eb9",
+      "kind": "heading",
+      "text": "Isolate Update:∆W←W RL −W 0",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Isolate Update:∆W←W RL −W 0"
+      ],
+      "char_start": 10971,
+      "char_end": 10998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca9e7f6235d558b5b09fc493a4b61abb",
+      "kind": "heading",
+      "text": "Low-Rank Extraction:Extract the top-kcomponent∆W k from∆W",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Low-Rank Extraction:Extract the top-kcomponent∆W k from∆W"
+      ],
+      "char_start": 11000,
+      "char_end": 11057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43ce2b1a5578ad1ce06e5f69c7194269",
+      "kind": "heading",
+      "text": "Geometric Projection:Extract rewiring matrixM←U ⊤∆WkV",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Geometric Projection:Extract rewiring matrixM←U ⊤∆WkV"
+      ],
+      "char_start": 11059,
+      "char_end": 11112,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c39c8bf4d21d061e9b4bbc2096c7e5ca",
+      "kind": "heading",
+      "text": "Reconstruction:∆W ∗ ←U M V⊤ {Aligns the compact update with the pretrained spectral subspace}",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Reconstruction:∆W ∗ ←U M V⊤ {Aligns the compact update with the pretrained spectral subspace}"
+      ],
+      "char_start": 11114,
+      "char_end": 11207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a3c99bbb681b6b5bdf15bfc02fcf3c5",
+      "kind": "heading",
+      "text": "returnW SAR ←W 0 + ∆W ∗",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "returnW SAR ←W 0 + ∆W ∗"
+      ],
+      "char_start": 11209,
+      "char_end": 11232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a9197395edb091ad1d027249325a29f",
+      "kind": "heading",
+      "text": "Mechanistic View: Reasoning as Rewiring",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "returnW SAR ←W 0 + ∆W ∗",
+        "Mechanistic View: Reasoning as Rewiring"
+      ],
+      "char_start": 11234,
+      "char_end": 11273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7613f0e5f7a109fcab82fcae40ba69bd",
+      "kind": "paragraph",
+      "text": "To analyze how the extracted rewiring matrixM can capture complex reasoning behavior, we examine the forward propagation of the SAR-projected model:",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "returnW SAR ←W 0 + ∆W ∗",
+        "Mechanistic View: Reasoning as Rewiring"
+      ],
+      "char_start": 11275,
+      "char_end": 11423,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de15a46e20b121c325a94ce6453ee252",
+      "kind": "heading",
+      "text": "W ∗ =W 0 + ∆W ∗ =U(Σ +M)V ⊤",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "W ∗ =W 0 + ∆W ∗ =U(Σ +M)V ⊤"
+      ],
+      "char_start": 11425,
+      "char_end": 11452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10447d000e5ac5b4a3d031216eba57ed",
+      "kind": "paragraph",
+      "text": "For an inputx, the rewired forward pass is: yrewired =U(Σ +M)V ⊤x = rX i=1   (σi +M ii)(v⊤",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "W ∗ =W 0 + ∆W ∗ =U(Σ +M)V ⊤"
+      ],
+      "char_start": 11454,
+      "char_end": 11551,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b30639e0399e756aaf1ecfc42e2f103",
+      "kind": "heading",
+      "text": "x)| {z }",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "x)| {z }"
+      ],
+      "char_start": 11553,
+      "char_end": 11561,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2de56c362111bd6df770e44bef309301",
+      "kind": "heading",
+      "text": "Rescaling",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Rescaling"
+      ],
+      "char_start": 11563,
+      "char_end": 11572,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f1dd258a0fd7b766c52aab230d7d044",
+      "kind": "equation",
+      "text": "+ X j̸=i",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Rescaling"
+      ],
+      "char_start": 11574,
+      "char_end": 11582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ac228c71aad49b9c2567065b61dcca4",
+      "kind": "heading",
+      "text": "Mij(v⊤",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Mij(v⊤"
+      ],
+      "char_start": 11584,
+      "char_end": 11590,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2ad2e7bbc54155a38e5f932f29b3edb",
+      "kind": "paragraph",
+      "text": "j x) | {z }",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Mij(v⊤"
+      ],
+      "char_start": 11592,
+      "char_end": 11603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8767e7d92bed97d52bced3d1f2c1a41",
+      "kind": "heading",
+      "text": "Rewiring",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Rewiring"
+      ],
+      "char_start": 11605,
+      "char_end": 11613,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:54d8b86a6ebecb4682c79ced8219afe0",
+      "kind": "paragraph",
+      "text": "  ui (6) Equation 6 reveals the dual nature of RL updates within the spectral subspace: 4",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Rewiring"
+      ],
+      "char_start": 11615,
+      "char_end": 11711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8a5bc27f07d9c19e6c69ed9c00620b9",
+      "kind": "paragraph",
+      "text": "• Diagonal Elements (Mii):These represent the rescaling of isolated, pre-existing capabilities. While they amplify certain skills, they do not establish new logical connections. • Off-Diagonal Elements ( Mij):These provide a geometric mechanism for reasoning. They enable an output direction ui to be synthesized bymultiple, distinct input features vj (j̸ = i). This transition fromone-to-one associative mapping to many-to-one logical synthesisallows the model to perform multi-conditional deductions. The algebraic distinction between diagonal and off-diagonal dynamics inM provides a structural analogy to relational reasoning [15–17]. Diagonal scaling Mii resembles unary associative memory: a single latent cue v⊤",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Rewiring"
+      ],
+      "char_start": 11713,
+      "char_end": 12431,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b226382036867ee963f6e6177c350f27",
+      "kind": "heading",
+      "text": "x activates an isolated output concept alongui. Off-diagonal entriesMij, by contrast, instantiate cross-",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "x activates an isolated output concept alongui. Off-diagonal entriesMij, by contrast, instantiate cross-"
+      ],
+      "char_start": 12433,
+      "char_end": 12537,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44b62ee8460f307ca73bf7475c86da6c",
+      "kind": "paragraph",
+      "text": "component integration, routing evidence from one latent premise directionvj toward a different conclusion direction ui. When multiple such terms are active, the network no longer performs simple point-to-point retrieval; itcomposes independent latent premises into a shared output representation. This offers a mechanistic interpretation of why off-diagonal spectral rewiring can support reasoning elicitation:∆W ∗ preserves the geometric structure associated with relational integration, while removing update components outside this spectral computation. Appendix B provides an illustrative example. Takeaway. • The pretrained SVD basis provides a functional coordinate system for reasoning updates, turning a dense weight change into an editable spectral object. • In this coordinate system, post-training can be viewed as changing how pretrained skill directions are connected, rather than replacing the model’s learned basis. • This perspective gives a practical interface for downstream operations: compression, filtering, and merging can be applied to the rewiring matrix instead of the full parameter update. In the subsequent sections, we empirically validate these theoretical insights through extensive experiments, demonstrating that SAR preserves peak reasoning performance, improves useful exploration and open agentic coding performance on an in-house model, and strengthens cross-domain generalization.",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "x activates an isolated output concept alongui. Off-diagonal entriesMij, by contrast, instantiate cross-"
+      ],
+      "char_start": 12539,
+      "char_end": 13957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:035dd703273d9c4d30d4aa7ff4b91fba",
+      "kind": "heading",
+      "text": "Extracting the Reasoning Core: Single-Domain Validation",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Extracting the Reasoning Core: Single-Domain Validation"
+      ],
+      "char_start": 13959,
+      "char_end": 14014,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef8eb0153eaf22163073b6847fb8d098",
+      "kind": "paragraph",
+      "text": "In this section, we demonstrate that SAR can extract a compact spectral update that preserves full posttraining performance on mathematical reasoning tasks, improves high-k exploration, and boosts open agentic coding benchmark performance on an in-house model. Together, these results show that extraction is not merely a compression result, but a practical post-hoc editing operation for improving downstream utility.",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Extracting the Reasoning Core: Single-Domain Validation"
+      ],
+      "char_start": 14016,
+      "char_end": 14434,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ef9fa177d2965cec34c6bc27841260c",
+      "kind": "heading",
+      "text": "Spectral Rewiring Preserves Reasoning Gains",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "Extracting the Reasoning Core: Single-Domain Validation",
+        "Spectral Rewiring Preserves Reasoning Gains"
+      ],
+      "char_start": 14436,
+      "char_end": 14479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09bc9a009695e267129a9ef735bba65b",
+      "kind": "paragraph",
+      "text": "To assess the compactness of spectral rewiring, we apply SAR to extract the reasoning-effective component ∆W ∗ from open-source RL models and compare the projected models with their full RL counterparts. We perform a rank sweep and report the smallest retained spectral rank that preserves full-RL performance within evaluation variance. Appendix E and Appendix F further compare SAR with no-projection and alternative projection controls. Experimental Setup.We evaluate a diverse set of model families and scales, ranging from 1.5B to 32B parameters. Specifically, we consider DeepScaleR (1.5B) [18], POLARIS (4B) [19], and OLMo-3.1-32B-Think [20] as representative strong RL reasoning models. We also evaluate OLMo-3-7B-Base and its RL-trained counterpart to study reasoning elicitation from a base model not explicitly specialized for mathematical reasoning [20]. We use AIME 2024 and AIME 2025 as challenging mathematical reasoning benchmarks, following common practice in recent reasoning-model evaluations [2, 18, 21]. For each prompt, we sample 32 responses and report AVG@32 and Pass@32 [22]. Additional evaluation details are provided in Appendix C. 5",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Extracting the Reasoning Core: Single-Domain Validation",
+        "Spectral Rewiring Preserves Reasoning Gains"
+      ],
+      "char_start": 14481,
+      "char_end": 15641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f2527b1dc3cc5f40002a4867fe74f70",
+      "kind": "paragraph",
+      "text": "Table 1Reasoning performance on AIME 2024 and AIME 2025 across different model scales and training recipes. SAR reports the smallest retained spectral rank found by rank sweep that preserves full-RL-level performance within evaluation variance.",
+      "order": 55,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Extracting the Reasoning Core: Single-Domain Validation",
+        "Spectral Rewiring Preserves Reasoning Gains"
+      ],
+      "char_start": 15643,
+      "char_end": 15887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6001651de84d6ef84974d7b1ae4c279",
+      "kind": "heading",
+      "text": "Model Size Method",
+      "order": 56,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Model Size Method"
+      ],
+      "char_start": 15889,
+      "char_end": 15906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:900b7b8426d747ea66bdb493177ae187",
+      "kind": "heading",
+      "text": "AIME 24 AIME 25",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 24 AIME 25"
+      ],
+      "char_start": 15908,
+      "char_end": 15923,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e24d8133216cb118c16b0ed04b60aec",
+      "kind": "heading",
+      "text": "AVG@32 Pass@32 AVG@32 Pass@32",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@32 Pass@32"
+      ],
+      "char_start": 15925,
+      "char_end": 15954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2db01fd03139d98e44db9436bd3991a",
+      "kind": "heading",
+      "text": "The SOTA Training Recipes",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "The SOTA Training Recipes"
+      ],
+      "char_start": 15956,
+      "char_end": 15981,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8618755e54383b9dcfb6474d58ff5cc1",
+      "kind": "paragraph",
+      "text": "Base: Deepseek-distill-qwen2.5 31.67% 80.00% 23.96% 53.33% RL: DeepscaleR40.31% 76.67% 29.58% 60.00%1.5B Projected (Ours): 1% 40.21% 76.67% 28.96% 60.00% Base: Qwen3 4B 72.50% 90.00% 63.44% 86.67% RL: Polaris78.75% 93.33% 75.21%90.00%4B Projected (Ours): 10% 78.02% 93.33% 72.21% 93.33% Base: OLMo3-32B-think-dpo 74.48% 93.33% 70.83% 90.00% RL: OLMo-3.1-32B-Think79.56% 93.33% 75.76%90.00%32B Projected (Ours): 1% 78.88% 93.33% 75.12% 93.33% Emergent Reasoning Ability from the Base Model Base: OLMo3-7B-Base 22.08% 70.00% 19.58% 60.00% RL: OLMo-3.1-7B-RL-Zero-Math50.21%76.67%36.88% 76.67%7B Projected (Ours): 30% 49.02% 80.00% 36.56% 76.67% Results.As detailed in Table 1, SAR preserves nearly all of the measured reasoning gains obtained by full RL across model families and scales. Across AIME 2024 and AIME 2025, the projected models match their corresponding full RL models within a small margin under AVG@32, while often matching or slightly improving Pass@32. These results suggest that the evaluated RL-induced reasoning improvements arelargely concentrated in the pretrained spectral subspace, rather than requiring the full unconstrained parameter update. The required rank also reflects the role of the starting model: strong post-trained or distilled reasoning recipes require only a small retained rank, whereas eliciting reasoning directly from OLMo3-7B-Base requires a larger 30% rank, suggesting that RL must modify a broader portion of the pretrained spectral coordinates when the starting model is less specialized for reasoning.",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "The SOTA Training Recipes"
+      ],
+      "char_start": 15983,
+      "char_end": 17531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3baba386a9fa3d302190c30f6155506",
+      "kind": "paragraph",
+      "text": "The Density of Reasoning-Effective Parameters.The rank sweep identifies a small saturation point for the strong reasoning recipes: retaining only 1% to 10% of the pretrained spectral rank recovers full-RL-level reasoning performance for the evaluated models. As shown in Table 2, the corresponding rewiring matrixM is much smaller than both the full model and the reconstructed update∆W ∗, with storage ratios as low as ∼0.58% and ∼0.64% of total parameters for the 1.5B and 32B models, respectively. This indicates that the reasoning-effective part of the RL update is highly concentrated in a compact spectral representation. Rather than suggesting that all discarded parameters are useless in general, these results show that a large fraction of 6",
+      "order": 61,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "The SOTA Training Recipes"
+      ],
+      "char_start": 17533,
+      "char_end": 18283,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e389a8cff003937792eb11daa05485b9",
+      "kind": "paragraph",
+      "text": "the unconstrained RL update is unnecessary for preserving the measured AIME reasoning gains. Table 2Parameter efficiency and compression ratios of SAR across different model scales. The intrinsic rewiring matrixMis highly compact relative to the total parameter count.",
+      "order": 62,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "The SOTA Training Recipes"
+      ],
+      "char_start": 18285,
+      "char_end": 18553,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db6bec38116fa21e22a231a517cc2d76",
+      "kind": "heading",
+      "text": "Model Name Total Projected Parameter Update Rewiring Matrix Compression Ratio",
+      "order": 63,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Model Name Total Projected Parameter Update Rewiring Matrix Compression Ratio"
+      ],
+      "char_start": 18555,
+      "char_end": 18632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb2718915530adda8914ac27f0cffa5b",
+      "kind": "paragraph",
+      "text": "Params Rank (∆W ∗) (M) (M/ Total) DeepScaleR 1.54B 1% 16.1M 9.0M∼0.58%",
+      "order": 64,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Model Name Total Projected Parameter Update Rewiring Matrix Compression Ratio"
+      ],
+      "char_start": 18634,
+      "char_end": 18704,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ac0c4c1558a972741b8a44b546bd768c",
+      "kind": "heading",
+      "text": "POLARIS 4.00B 10% 552.0M 310.0M∼7.75%",
+      "order": 65,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "POLARIS 4.00B 10% 552.0M 310.0M∼7.75%"
+      ],
+      "char_start": 18706,
+      "char_end": 18743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aad5b41996d5c2224fe6204134601bc7",
+      "kind": "equation",
+      "text": "OLMo-3.1-32B-Think 32.00B 1% 311.0M 204.0M∼0.64%",
+      "order": 66,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "POLARIS 4.00B 10% 552.0M 310.0M∼7.75%"
+      ],
+      "char_start": 18745,
+      "char_end": 18793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:897dcc3d438ee822904b17d637bf8140",
+      "kind": "heading",
+      "text": "Spectral Rewiring Improves High-kExploration",
+      "order": 67,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "POLARIS 4.00B 10% 552.0M 310.0M∼7.75%",
+        "Spectral Rewiring Improves High-kExploration"
+      ],
+      "char_start": 18795,
+      "char_end": 18839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56f50fe3b4767de5b37995c1d72ee160",
+      "kind": "heading",
+      "text": "2 4 8 16 32 64 128 256",
+      "order": 68,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32 64 128 256"
+      ],
+      "char_start": 18841,
+      "char_end": 18863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4e6860fd8a31386dbab4888ff846695e",
+      "kind": "paragraph",
+      "text": "Number of Samples (k) 20 30 40 50 60 70 80 90 Pass@k Accuracy (%) Pass@k Accuracy Curves at 1.5B",
+      "order": 69,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32 64 128 256"
+      ],
+      "char_start": 18865,
+      "char_end": 18961,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3285e6d6c6a466c3016d8bb201356e59",
+      "kind": "heading",
+      "text": "Base: Deepseek-distill-qwen-1.5B",
+      "order": 70,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Base: Deepseek-distill-qwen-1.5B"
+      ],
+      "char_start": 18963,
+      "char_end": 18995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:531c93fe51db5504a05ad2adc7878755",
+      "kind": "heading",
+      "text": "Full RL: DeepScaler",
+      "order": 71,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: DeepScaler"
+      ],
+      "char_start": 18997,
+      "char_end": 19016,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fda4fc7d0e405185211106f8387c0a98",
+      "kind": "paragraph",
+      "text": "SAR (Ours): Projected 1% (a)DeepScaleR-1.5B",
+      "order": 72,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: DeepScaler"
+      ],
+      "char_start": 19018,
+      "char_end": 19061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d17d968883e45eded0232a8c80dce64d",
+      "kind": "heading",
+      "text": "2 4 8 16 32",
+      "order": 73,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32"
+      ],
+      "char_start": 19063,
+      "char_end": 19074,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b311832a65bb988f1986f6cf58b5b75",
+      "kind": "paragraph",
+      "text": "Number of Samples (k) 70 75 80 85 90 95 Pass@k Accuracy (%) Pass@k Accuracy Curves at 32B",
+      "order": 74,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32"
+      ],
+      "char_start": 19076,
+      "char_end": 19165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cad2a7ff9428520f474628c67b68c796",
+      "kind": "heading",
+      "text": "Base: OLMo-3-32B-DPO",
+      "order": 75,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Base: OLMo-3-32B-DPO"
+      ],
+      "char_start": 19167,
+      "char_end": 19187,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3570f1fcd8c2663d6ff5a45ccfaa814",
+      "kind": "heading",
+      "text": "Full RL: OLMo-3.1-32B-Think",
+      "order": 76,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think"
+      ],
+      "char_start": 19189,
+      "char_end": 19216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bdb9e6d0332bd216be87624d3a7ad700",
+      "kind": "paragraph",
+      "text": "SAR (Ours): Projected 1% (b)OLMo-3.1-32B-Think Figure 2Pass@ k scaling curves on AIME 2024. Unconstrained RL baselines exhibit early saturation. In contrast, SAR models extract a compact reasoning-effective update, improving useful exploration and scaling momentum. RL post-training often improves Pass@1 but can saturate under larger sampling budgets, limiting the benefit of test-time scaling. Under our spectral view, this suggests that the full RL update may contain both reasoning-effective directions and residual directions that narrow useful exploration. SAR tests this hypothesis by retaining the compact spectral rewiring component while removing the orthogonal residual update. Experimental Setup.We evaluate this effect on two model families: DeepScaleR (1.5B) and OLMo-3.1-32B- Think. For each AIME 2024 problem, we generate 256 rollouts and compute Pass@k for k∈ [1, 128]using the same decoding configuration across all compared models [7, 22]. To complement the Pass@k curves, we also report a coverage-based metric following prior reasoning-RL analyses: a problem is counted as covered if at least one rollout among a fixed sampling budget produces the correct final answer. This metric measures useful exploration, since it counts only diversity that leads to a verified solution [23]. Results.Figure 2 shows the Pass@ k scaling curves on AIME 2024. The full RL baselines exhibit early saturation: their performance improves at smallk but gains diminish at larger sampling budgets. In contrast, SAR-projected models continue to benefit from additional samples and overtake the corresponding full RL",
+      "order": 77,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think"
+      ],
+      "char_start": 19218,
+      "char_end": 20833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:294abe470988850b03797755fca7bcfd",
+      "kind": "paragraph",
+      "text": "baselines at small-to-moderatek values. For DeepScaleR and OLMo-3.1-32B-Think, SAR crosses the full RL curve atk= 2andk= 4, respectively, and remains better at largerk. Importantly, SAR preserves the average reasoning gains of RL while achievingstronger large-k scaling. The same trend appears at the problem-coverage level: with 256 rollouts on AIME 2024, SAR covers 26/30 problems, compared with 25/30 for the full RL model (Appendix Table 5). Diagnostic controls further show that this gain is not explained by low-rank extraction alone, as no-projection, random, diagonal-only, and off-diagonal-only variants perform worse than SAR (Appendix E and Appendix F). 7",
+      "order": 78,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think"
+      ],
+      "char_start": 20835,
+      "char_end": 21501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57e1785f0dbf2a4294770ba65cf9d12d",
+      "kind": "heading",
+      "text": "Additional In-House Agentic Coding Validation",
+      "order": 79,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think",
+        "Additional In-House Agentic Coding Validation"
+      ],
+      "char_start": 21503,
+      "char_end": 21548,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f391c0d0d8fa03ad2c8a38bc1073c09",
+      "kind": "paragraph",
+      "text": "To evaluate SAR as an application-oriented editing method beyond public mathematical reasoning benchmarks, we further test it on the in-house model using open agentic coding benchmarks, as shown in Table 3. Starting from the same coding post-training delta, the top-1% spectral-rank projection improves six of seven open agentic coding benchmarks, with a+2.52% improvement on averageand gains up to 25.10%. This result shows that spectral rewiring can extract useful post-training signal and transfer to applied coding workflows. Table 3Additional single-domain validation on the in-house model using open agentic coding benchmarks. SAR uses a top-1% spectral-rank projection of the coding post-training delta. Benchmark Agent Baseline (In-house) SAR (1% Rank) Relative Change SWE-Bench-Pro[24] CodeAct[25] 0.2970.327 +10.21% SWE-Bench[26] ClaudeCode 0.5800.590 +1.72% SWE-Bench[26] CodeAct[25] 0.5660.574 +1.41% MSWE-Bench[27] ClaudeCode 0.2550.313 +22.86% MSWE-Bench[27] CodeAct[25] 0.271 0.270 -0.33% TerminalBench 2.0[28] Terminus[28] 0.1940.243 +25.10% TerminalBench 1.0[28] Terminus[28] 0.3230.344 +6.73% Takeaway. • SAR preserves full-RL-level math reasoning across model scales using a highly compact spectral update, showing that the reasoning-effective component of RL is strongly concentrated in the pretrained spectral geometry. • The same compact update also improves high-k reasoning behavior without retraining the model, changing the reward objective, or adding new rollouts. • The validation on the in-house model shows that SAR can also improve applied coding performance",
+      "order": 80,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think",
+        "Additional In-House Agentic Coding Validation"
+      ],
+      "char_start": 21550,
+      "char_end": 23139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cd2ddf4427d61633b8621d8ce032b7c",
+      "kind": "paragraph",
+      "text": "beyond public math benchmarks. • The main results and ablations show that the reasoning-effective parameters primarily rewire the pretrained spectral space, providing parameter-level geometric evidence that RL incentivizes capabilities already latent in the base model. • These results suggest a training-free route to improve useful exploration after RL, and point toward future training recipes that optimize directly within the reasoning-effective spectral geometry.",
+      "order": 81,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think",
+        "Additional In-House Agentic Coding Validation"
+      ],
+      "char_start": 23141,
+      "char_end": 23610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:040fc8ccbc64eaabf5baba9b48d59d63",
+      "kind": "heading",
+      "text": "Cross-Domain Generalization via Spectral Reasoning Rewiring",
+      "order": 82,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Generalization via Spectral Reasoning Rewiring"
+      ],
+      "char_start": 23612,
+      "char_end": 23671,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5926af2deb1a4b08c1615624044e81a",
+      "kind": "paragraph",
+      "text": "Having shown that SAR preserves single-domain reasoning gains and improves large-k exploration, we next study cross-domain generalization. Training or merging models across mathematics, coding, and instruction following can introduce domain-specific update components that interfere with each other. Under our geometric view, the fundamental reasoning component should lie in the base spectral manifold; SAR therefore projects reasoning updates onto this manifold to retain shared structure and filter incompatible residual directions. We evaluate this principle in two settings: jointly trained multi-domain RL models (§4.1) and post-hoc merging of independently trained domain experts (§4.2).",
+      "order": 83,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Generalization via Spectral Reasoning Rewiring"
+      ],
+      "char_start": 23673,
+      "char_end": 24367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e1e8914e609de56b5e92f25d9661bd9",
+      "kind": "heading",
+      "text": "Purification: Reducing Domain Interference in Mix-RL",
+      "order": 84,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Generalization via Spectral Reasoning Rewiring",
+        "Purification: Reducing Domain Interference in Mix-RL"
+      ],
+      "char_start": 24369,
+      "char_end": 24421,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de36ceb6165a340318b0663d18bb8eba",
+      "kind": "paragraph",
+      "text": "We first evaluate this projection principle in a jointly trained Mix-RL model, where multiple capabilities are optimized within the same full-parameter update. 8",
+      "order": 85,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Generalization via Spectral Reasoning Rewiring",
+        "Purification: Reducing Domain Interference in Mix-RL"
+      ],
+      "char_start": 24423,
+      "char_end": 24584,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b3c522c3e864a469d73e300762c95b6",
+      "kind": "heading",
+      "text": "AIME 24",
+      "order": 86,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 24"
+      ],
+      "char_start": 24586,
+      "char_end": 24593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0e7fb6ae01b27298fc39c27019144459",
+      "kind": "paragraph",
+      "text": "(AVG@32)",
+      "order": 87,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 24"
+      ],
+      "char_start": 24595,
+      "char_end": 24603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba2137744167d4b14fa94477b192dcbb",
+      "kind": "heading",
+      "text": "AIME 24",
+      "order": 88,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 24"
+      ],
+      "char_start": 24605,
+      "char_end": 24612,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c822b27d9e699286e2e08681dd04c75",
+      "kind": "paragraph",
+      "text": "(Pass@16)",
+      "order": 89,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 24"
+      ],
+      "char_start": 24614,
+      "char_end": 24623,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da76503d103392a5536fa75de86a102b",
+      "kind": "heading",
+      "text": "AIME 25",
+      "order": 90,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 25"
+      ],
+      "char_start": 24625,
+      "char_end": 24632,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80371a3891be56bb4cf1f2c1f289994e",
+      "kind": "paragraph",
+      "text": "(AVG@32)",
+      "order": 91,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 25"
+      ],
+      "char_start": 24634,
+      "char_end": 24642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:416af5f9dfdcc85fbf12bc72a4ed62f5",
+      "kind": "heading",
+      "text": "AIME 25",
+      "order": 92,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 25"
+      ],
+      "char_start": 24644,
+      "char_end": 24651,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40ded12f93a9ac2761445c5518c3f788",
+      "kind": "paragraph",
+      "text": "(Pass@16) LCB v5 (AVG@10) LCB v6 (AVG@10)",
+      "order": 93,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "AIME 25"
+      ],
+      "char_start": 24653,
+      "char_end": 24694,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0fa977dd2b1bb516d84183ac57c2a262",
+      "kind": "heading",
+      "text": "IFEval40",
+      "order": 94,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40"
+      ],
+      "char_start": 24696,
+      "char_end": 24704,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f69e2fc6874d86d227be539a31c18a1f",
+      "kind": "paragraph",
+      "text": "50 60 70 80 90 100Performance (%)",
+      "order": 95,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40"
+      ],
+      "char_start": 24706,
+      "char_end": 24739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0db00cc1e8423bfdefffb525ca1227a2",
+      "kind": "heading",
+      "text": "48",
+      "order": 96,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "48"
+      ],
+      "char_start": 24741,
+      "char_end": 24743,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc600ece468c7bcb3fa4294f48cb37c0",
+      "kind": "heading",
+      "text": "11",
+      "order": 97,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "11"
+      ],
+      "char_start": 24745,
+      "char_end": 24747,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a22cc42fb5f1b4764e7a06e2ce9a65d",
+      "kind": "heading",
+      "text": "83",
+      "order": 98,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "83"
+      ],
+      "char_start": 24749,
+      "char_end": 24751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:696ce336a4849ca21a095f4707767324",
+      "kind": "heading",
+      "text": "96",
+      "order": 99,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "96"
+      ],
+      "char_start": 24753,
+      "char_end": 24755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae1473c1c73f611e99f6bb7b9299da31",
+      "kind": "heading",
+      "text": "81",
+      "order": 100,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "81"
+      ],
+      "char_start": 24757,
+      "char_end": 24759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c8a929484cc20c1ca5f83288ff5182c",
+      "kind": "heading",
+      "text": "97",
+      "order": 101,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "97"
+      ],
+      "char_start": 24761,
+      "char_end": 24763,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4dfa3979c490ffb644f5508dbe0d406",
+      "kind": "heading",
+      "text": "62",
+      "order": 102,
+      "page_number": 9,
+      "heading_level": 4,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "97",
+        "62"
+      ],
+      "char_start": 24765,
+      "char_end": 24767,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af7014037b31f6fd2206598f1b399768",
+      "kind": "heading",
+      "text": "52",
+      "order": 103,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "52"
+      ],
+      "char_start": 24769,
+      "char_end": 24771,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2dde6427b2b5ace397b0ea7b3c152b2d",
+      "kind": "heading",
+      "text": "76",
+      "order": 104,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "76"
+      ],
+      "char_start": 24773,
+      "char_end": 24775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a9a1dc801a3633b030abadc7d5c66fb",
+      "kind": "heading",
+      "text": "33",
+      "order": 105,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "33"
+      ],
+      "char_start": 24777,
+      "char_end": 24779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:276d9af4a615b0e486054dadb65f9693",
+      "kind": "heading",
+      "text": "61",
+      "order": 106,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "61"
+      ],
+      "char_start": 24781,
+      "char_end": 24783,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30f6891e25af1258afb22d33e90e5d26",
+      "kind": "heading",
+      "text": "30",
+      "order": 107,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "30"
+      ],
+      "char_start": 24785,
+      "char_end": 24787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79a577bf71acd95bbf02ff27e12f7a32",
+      "kind": "heading",
+      "text": "42",
+      "order": 108,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "42"
+      ],
+      "char_start": 24789,
+      "char_end": 24791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28e599f95b16f2d1b7446521cb97908f",
+      "kind": "heading",
+      "text": "88",
+      "order": 109,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "88"
+      ],
+      "char_start": 24793,
+      "char_end": 24795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:158a76891facb58a2747e368ecd04529",
+      "kind": "heading",
+      "text": "26",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "26"
+      ],
+      "char_start": 24797,
+      "char_end": 24799,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef0b0f7dadbb96b585b6d7e44675c37b",
+      "kind": "heading",
+      "text": "12",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "12"
+      ],
+      "char_start": 24801,
+      "char_end": 24803,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64ba180f6c625fe42c33b2229a543035",
+      "kind": "heading",
+      "text": "71",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "71"
+      ],
+      "char_start": 24805,
+      "char_end": 24807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5633a1864615b84a55b668cf4bd55328",
+      "kind": "heading",
+      "text": "09",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "09"
+      ],
+      "char_start": 24809,
+      "char_end": 24811,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e1431795d7664fff589678aa424bd38",
+      "kind": "heading",
+      "text": "25",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "25"
+      ],
+      "char_start": 24813,
+      "char_end": 24815,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62b93e1b0b9cf08c4f98984d36b2b405",
+      "kind": "heading",
+      "text": "05",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "IFEval40",
+        "05"
+      ],
+      "char_start": 24817,
+      "char_end": 24819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9308ecd3006820d60e41b6fca53f153d",
+      "kind": "heading",
+      "text": "Math Domain Code Domain Alignment",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Math Domain Code Domain Alignment"
+      ],
+      "char_start": 24821,
+      "char_end": 24854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33f3e454b229c499c792e60bd302eb88",
+      "kind": "paragraph",
+      "text": "Mix-Trained RL Performance vs. SAR (32B Model)",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Math Domain Code Domain Alignment"
+      ],
+      "char_start": 24856,
+      "char_end": 24902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27a2eb1541bbcf391ac9ba20db0c26b6",
+      "kind": "heading",
+      "text": "Base: OLMo-3-32B-Think-DPO",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Base: OLMo-3-32B-Think-DPO"
+      ],
+      "char_start": 24904,
+      "char_end": 24930,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c43fe9c1abb4a53d2d7dd88247d751df",
+      "kind": "heading",
+      "text": "Full RL: OLMo-3.1-32B-Think",
+      "order": 119,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think"
+      ],
+      "char_start": 24932,
+      "char_end": 24959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75d1c55c0ca8ea1003ed3fcbdd9ffc96",
+      "kind": "paragraph",
+      "text": "SAR (Ours): Projected 1% Figure 3Cross-domain performance evaluation on the OLMo-3-32B scale. By extracting reasoning-effective parameters, SAR reduces cross-domain interference, improves LiveCodeBench v5/v6, maintains instruction following (IFEval) and math reasoning (AIME 24), and enhances exploration capability. Experimental Setup.We evaluate the OLMo-3-32B series, which achieves state-of-the-art open-source performance. We use OLMo-3-32B-DPO as the base model and OLMo-3.1-32B-Think as the Mix-RL baseline, which is jointly trained on math, coding, instruction following, and chat. We apply SAR with the same top-1% spectral-rank setting used in the single-domain experiments. Evaluation spans rigorous mathematical reasoning (AIME 24/25), algorithmic coding (LiveCodeBench v5/v6) [29], and general instruction following (IFEval) [30]. Results.As illustrated in Figure 3, extracting the reasoning-effective parameters via SAR improves performance on competitive coding while maintaining capacity in math and instruction following. • Coding:The projected model outperforms the full RL baseline on LCB v5 (from 67.61% to 69.09%) and v6 (from 64.30% to 65.25%). We observe consistent improvements in Pass@k on LCB v5 and v6; Appendix E provides an additional multi-domain control on LCB v5. •Math:The peak math reasoning performance is preserved with a marginal variance of less than 1% in AVG@32, while exploration capability is significantly improved (e.g., from 88.33% to 91.71% on AIME",
+      "order": 120,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: OLMo-3.1-32B-Think"
+      ],
+      "char_start": 24961,
+      "char_end": 26455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dea4430b1d3b24850c6794c111221cca",
+      "kind": "heading",
+      "text": "Pass@16).",
+      "order": 121,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16)."
+      ],
+      "char_start": 26457,
+      "char_end": 26466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d807cfea42fa48723194683a82cccac1",
+      "kind": "paragraph",
+      "text": "• Instruction Following:General instruction-following capability is also retained, with IFEval changed only slightly from 92.42% to 92.05%. With less than 1% of the model parameters represented in the rewiring matrixM, SAR improves Live- CodeBench, an execution-sensitive coding benchmark, while preserving instruction following and mathematical reasoning. SAR also improves math and coding Pass@k at larger sampling budgets, indicating that the projected model retains the accuracy gains of RL while recovering additional exploration capacity. These improvements are difficult to explain as lossy compression alone: reducing the update would typically be expected to preserve or degrade downstream performance, rather than improve a challenging held-out domain. We therefore interpret the LiveCodeBench gain as evidence that the full Mix-RL update contains domainspecific residual directions that interfere across tasks, while SAR exposes a compact spectral rewiring that is more compatible across domains. 9",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16)."
+      ],
+      "char_start": 26468,
+      "char_end": 27477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c95a4deca6de76a153f776f05ba8fe87",
+      "kind": "heading",
+      "text": "Merging: Improving Cross-Domain Expert Merging",
+      "order": 123,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16).",
+        "Merging: Improving Cross-Domain Expert Merging"
+      ],
+      "char_start": 27479,
+      "char_end": 27525,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:762ca6aaa046638d6a1a27fb254724cb",
+      "kind": "paragraph",
+      "text": "We next evaluate whether spectral rewiring can improve cross-domain model merging, focusing on math and code experts. Directly merging independently trained domain experts often degrades performance because their raw task deltas contain incompatible residual directions. SAR instead filters one expert through the pretrained spectral geometry before merging it with another. Experimental Setup.We consider a scenario involving two domain experts independently derived via RL from the same base model. At the 1.5B scale (Base: DeepSeek-Distill-Qwen-1.5B) [31,32], we use DeepScaleR (Math) and Archer-Code (Code) [33]. At the 14B scale (Base: DeepSeek-Distill-Qwen-14B), we pair OpenReasoner (Math) [21] with DeepCoder (Code) [34]. We use SAR to extract a compact mathematical reasoning rewiring from the math expert and merge these reasoning-effective parameters with the code expert. We benchmark against established weight interpolation methods including Task Arithmetic (TA), TIES, and DARE+TIES. Results.Table 4 reports zero-shot math-code merging results. Task Arithmetic directly averages the full math and code RL updates, and therefore serves as a simple averaging baseline. Its degradation, especially on the reasoning metric, suggests that naively merging full RL updates can introduce cross-domain interference. At both 1.5B and 14B scales, SAR produces merged models thatexceed the best single-domain experts on the primary math and code AVG metrics. At 1.5B, SAR improves AIME AVG@32 to 43.44% and LCB AVG@8 to 32.25%, surpassing the best math expert (40.31%) and code expert (31.80%) simultaneously. At",
+      "order": 124,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16).",
+        "Merging: Improving Cross-Domain Expert Merging"
+      ],
+      "char_start": 27527,
+      "char_end": 29142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f9076075bbb6c3369554b44bf8eee84",
+      "kind": "paragraph",
+      "text": "14B, SAR again surpasses the best math expert on AIME AVG@32 (74.38% vs. 74.27%) and improves beyond the code expert on LCB AVG@8 (63.40% vs. 61.00%), while matching the best AIME Pass@32. Although DARE+TIES obtains a slightly higher LCB score, SAR provides stronger balanced transfer in this setting by improving coding performance while preserving the math expert’s advantage. These results indicate that the reasoning rewiring extracted by SAR is more compatible for merging than the full RL update. In contrast to magnitude-based merging methods, SAR filters the update through the pretrained spectral geometry before merging, reducing interference with the code expert. Takeaway. • In Mix-RL, SAR releases suppressed cross-domain capability, improving coding and large-k exploration while preserving math reasoning and instruction following. • In expert merging, SAR produces merged models that surpass the best single-domain experts on the primary math and code AVG metrics at both 1.5B and 14B scales. • These gains are consistent with our core view: the transferable reasoning component is concentrated in the pretrained spectral manifold, while residual directions outside this geometry can amplify domain interference. • Spectral projection therefore makes reasoning updates more compatible across domains by retaining the shared rewiring component and filtering less compatible task-specific directions. • This suggests a practical path for building stronger multi-domain reasoning models: post-training updates can be purified before deployment or merged across experts without directly combining all",
+      "order": 125,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16).",
+        "Merging: Improving Cross-Domain Expert Merging"
+      ],
+      "char_start": 29144,
+      "char_end": 30756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57519941560901e38ee4752c64497217",
+      "kind": "paragraph",
+      "text": "dense task deltas.",
+      "order": 126,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Pass@16).",
+        "Merging: Improving Cross-Domain Expert Merging"
+      ],
+      "char_start": 30758,
+      "char_end": 30776,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c675ebac5c381eb2233ddb3d7ca0bf8c",
+      "kind": "heading",
+      "text": "Discussion",
+      "order": 127,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Discussion"
+      ],
+      "char_start": 30778,
+      "char_end": 30788,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a49539d9a2cadb8419c734e978b4edcc",
+      "kind": "paragraph",
+      "text": "Across single-domain extraction, Mix-RL purification, and expert merging, SAR preserves or improves key downstream performance after projecting dense RL updates into the pretrained spectral coordinates. These results support our central insight: a large part of the reasoning-effective change induced by RL is not arbitrary parameter drift, but compact rewiring of capabilities already represented in the reference model’s spectral geometry. This insight also defines the scope of the method. SAR is expected to be most effective when the 10",
+      "order": 128,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Discussion"
+      ],
+      "char_start": 30790,
+      "char_end": 31331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb40446b791ce950d8929bc02360aae3",
+      "kind": "paragraph",
+      "text": "Table 4Cross-Domain Generalization via Model Merging. By extracting and integrating compact reasoning-effective parameters, SAR outperforms naive interpolation and improves cross-domain transfer. Scale Model / Method Math (AIME 24) Code (LCB)",
+      "order": 129,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Discussion"
+      ],
+      "char_start": 31333,
+      "char_end": 31575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3c214133321b83e66b85c517be00aee",
+      "kind": "heading",
+      "text": "AVG@32 Pass@32 AVG@8",
+      "order": 130,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@8"
+      ],
+      "char_start": 31577,
+      "char_end": 31597,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:de0a1e4f28aa285efc69566b32da4f61",
+      "kind": "heading",
+      "text": "5B",
+      "order": 131,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@8",
+        "5B"
+      ],
+      "char_start": 31599,
+      "char_end": 31601,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0775ea3910619c12a74735dec71dc95",
+      "kind": "heading",
+      "text": "Single-Domain References",
+      "order": 132,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 31603,
+      "char_end": 31627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9b77485cbf0a2c67b740b9530c67e04",
+      "kind": "paragraph",
+      "text": "Base: Distill-Qwen-1.5B 31.67% 76.67% 23.00% Math Expert: DeepScaleR40.31% 76.67%27.20% Code Expert: Archer-Code 39.48% 76.67%31.80% Best Single-Domain Expert 40.31% 76.67% 31.80%",
+      "order": 133,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 31629,
+      "char_end": 31808,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3656bc14de234dc412e6ca0cdf098f5a",
+      "kind": "heading",
+      "text": "Cross-Domain Merging",
+      "order": 134,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 31810,
+      "char_end": 31830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76edae8044bb5898a8ce72cb124c1841",
+      "kind": "paragraph",
+      "text": "Task Arithmetic 36.25% 63.33% 31.80% TIES Merging 42.08% 73.33% 31.40%",
+      "order": 135,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 31832,
+      "char_end": 31902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d0802a7bbccfb0b649027795c97bd47",
+      "kind": "heading",
+      "text": "DARE + TIES 40.05% 73.33% 31.70%",
+      "order": 136,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "DARE + TIES 40.05% 73.33% 31.70%"
+      ],
+      "char_start": 31904,
+      "char_end": 31936,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c559937a8eda55d6b87210921f0a6b0",
+      "kind": "paragraph",
+      "text": "Projected (Ours) 43.44% 76.67% 32.25% 14B",
+      "order": 137,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "DARE + TIES 40.05% 73.33% 31.70%"
+      ],
+      "char_start": 31938,
+      "char_end": 31979,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f537932381a4dc11b6a05636017e323",
+      "kind": "heading",
+      "text": "Single-Domain References",
+      "order": 138,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 31981,
+      "char_end": 32005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:187802f88c92adefae448dda2a6db0f0",
+      "kind": "paragraph",
+      "text": "Base: Distill-Qwen-14B 67.71% 90.00% 54.20% Math Expert: OR-Zero74.27% 93.33%56.70% Code Expert: DeepCoder 71.04% 86.67%61.00% Best Single-Domain Expert 74.27% 93.33% 61.00%",
+      "order": 139,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 32007,
+      "char_end": 32180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34a8637cc5a93d27a805d2bb15a4f131",
+      "kind": "heading",
+      "text": "Cross-Domain Merging",
+      "order": 140,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 32182,
+      "char_end": 32202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2046439c1173741c780ab069863c1ae",
+      "kind": "paragraph",
+      "text": "Task Arithmetic 71.04% 93.33% 54.60% TIES Merging 73.54% 93.33% 63.30%",
+      "order": 141,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 32204,
+      "char_end": 32274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d978446cac3c2272ac219f76bb75905",
+      "kind": "heading",
+      "text": "DARE + TIES 73.06% 90.00%64.30%",
+      "order": 142,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "DARE + TIES 73.06% 90.00%64.30%"
+      ],
+      "char_start": 32276,
+      "char_end": 32307,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa69622fa5f33bf979ca4d56b3115668",
+      "kind": "paragraph",
+      "text": "Projected (Ours) 74.38% 93.33% 63.40% reference model already contains the relevant reasoning ability or domain knowledge and RL primarily elicits or reorganizes it. The main boundary of SAR is projection compatibility: how much of an RL update can be represented as a reorganization of knowledge already encoded in the reference model. Appendix D analyzes three representative cases. In heavily optimized reasoning RL, projecting JustRL after more than 4000 training steps still recovers a strong AIME 2024 score of about 43%, comparable to DeepScaleR-level reasoning, but does not match the final RL model. This suggests that the spectral component captures substantial elicitation, while the remaining gap may reflect task-specific rewriting outside the reference manifold. In code RL, direct RL from a base model is less projection-compatible because the update may learn code formatting, tool-interface behavior, and execution-oriented conventions, rather than only recombining existing knowledge and skills. After code SFT establishes this domain knowledge, the subsequent RL update becomes more compatible with spectral projection. PPO-style training with an external critic creates a related boundary: distribution shift between the critic and actor can induce preferences that are not well aligned with the reference model’s spectral manifold. Thus, projection compatibility provides a diagnostic for whether RL primarily reorganizes latent capabilities within the reference manifold or acquires behavior beyond it.",
+      "order": 143,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "DARE + TIES 73.06% 90.00%64.30%"
+      ],
+      "char_start": 32309,
+      "char_end": 33833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bea265002f348730596b7aa2563dbda",
+      "kind": "paragraph",
+      "text": "11",
+      "order": 144,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "DARE + TIES 73.06% 90.00%64.30%"
+      ],
+      "char_start": 33835,
+      "char_end": 33837,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8de9dc57b10f173800b9f7501f52ab1c",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 145,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Conclusion"
+      ],
+      "char_start": 33839,
+      "char_end": 33849,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dda3aa69becc3066d71f19961773a449",
+      "kind": "paragraph",
+      "text": "We presented a first-principles geometric view of RL post-training in large language models. By analyzing updates in the pretrained singular-vector coordinates, we show that much of the reasoning-effective change is captured by compact spectral rewiring, consistent with the view that RL reorganizes latent capabilities already represented in the base model. Subspace-Aligned Rewiring (SAR) turns this insight into a post-hoc editing method that preserves full-RL-level reasoning, improves high-k exploration, reduces multi-domain interference, and strengthens expert model merging. These results position spectral rewiring as both a lens for understanding post-training updates and a practical tool for improving their downstream utility. 12",
+      "order": 146,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Conclusion"
+      ],
+      "char_start": 33851,
+      "char_end": 34593,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cda3cc5496700a328fd41502ad7289f",
+      "kind": "heading",
+      "text": "References",
+      "order": 147,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 34595,
+      "char_end": 34605,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:894d26477357dd0d6af32c7562cf4a47",
+      "kind": "reference",
+      "text": "[1] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, YK Li, Y Wu, et al. Deepseekmath: Pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300, 2024. [2] Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Ruoyu Zhang, Runxin Xu, Qihao Zhu, Shirong Ma, Peiyi Wang, Xiao Bi, et al. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning.arXiv preprint arXiv:2501.12948, 2025. [3] Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, et al. Training verifiers to solve math word problems.arXiv preprint arXiv:2110.14168, 2021. [4] Hunter Lightman, Vineet Kosaraju, Yura Burda, Harrison Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. Let’s verify step by step.arXiv preprint arXiv:2305.20050, 2023. [5] Hannah Rose Kirk, Bertie Vidgen, Paul Rottger, and Scott A. Hale. Understanding the effects of rlhf on llm generalisation and diversity.arXiv preprint arXiv:2310.06452, 2023. [6] Ted Moskovitz, Archit Singh, DJ Strouse, Tuomas Sandholm, Ruslan Salakhutdinov, Anca Dragan, and Stephen McAleer. Confronting reward model overoptimization with constrained rlhf.arXiv preprint arXiv:2310.04373, 2023. [7] Bradley C. A. Brown, Jordan Juravsky, Ryan Ehrlich, Ronald Clark, Quoc V. Le, Christopher Re, and Azalia Mirhoseini. Large language monkeys: Scaling inference compute with repeated sampling. arXiv preprint",
+      "order": 148,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 34607,
+      "char_end": 36180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dfaf18aa39ec6f06133499782088a18",
+      "kind": "paragraph",
+      "text": "arXiv:2407.21787, 2024. [8] Charlie Snell, Jaehoon Lee, Kelvin Xu, and Aviral Kumar. Scaling llm test-time compute optimally can be more effective than scaling model parameters.arXiv preprint arXiv:2408.03314, 2024. [9] Gabriel Ilharco, Marco Tulio Ribeiro, Mitchell Wortsman, Suchin Gururangan, Ludwig Schmidt, Hannaneh Hajishirzi, and Ali Farhadi. Editing models with task arithmetic.arXiv preprint arXiv:2212.04089, 2022. [10] Prateek Yadav, Derek Tam, Leshem Choshen, Colin Raffel, and Mohit Bansal. Ties-merging: Resolving interference when merging models.arXiv preprint arXiv:2306.01708, 2023. [11] Le Yu, Bowen Yu, Haiyang Yu, Fei Huang, and Yongbin Li. Language models are super mario: Absorbing abilities from homologous models as a free lunch.arXiv preprint arXiv:2311.03099, 2023. [12] Song Han, Huizi Mao, and William J. Dally. Deep compression: Compressing deep neural networks with pruning, trained quantization and huffman coding.arXiv preprint arXiv:1510.00149, 2015. [13] Zhihang Yuan, Yuzhang Shang, Yue Song, Qiang Wu, Yan Yan, and Guangyu Sun. Asvd: Activation-aware singular value decomposition for compressing large language models.arXiv preprint arXiv:2312.05821, 2023. [14] Xin Wang, Yu Zheng, Zhongwei Wan, and Mi Zhang. Svd-llm: Truncation-aware singular value decomposition for large language model compression.arXiv preprint arXiv:2403.07378, 2024. [15] Graeme S. Halford, William H. Wilson, and Steven Phillips. Processing capacity defined by relational complexity: Implications for comparative, developmental, and cognitive psychology.Behavioral and Brain Sciences, 21(6):",
+      "order": 149,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 36182,
+      "char_end": 37784,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65b818f4c80900790761f86e4765525e",
+      "kind": "paragraph",
+      "text": "803–831, 1998. [16] Adam Santoro, David Raposo, David G. T. Barrett, Mateusz Malinowski, Razvan Pascanu, Peter Battaglia, and Timothy Lillicrap. A simple neural network module for relational reasoning.arXiv preprint arXiv:1706.01427, 2017. [17] Peter W. Battaglia, Jessica B. Hamrick, Victor Bapst, Alvaro Sanchez-Gonzalez, Vinicius Zambaldi, Mateusz Malinowski, Andrea Tacchetti, David Raposo, Adam Santoro, Ryan Faulkner, et al. Relational inductive biases, deep learning, and graph networks.arXiv preprint arXiv:1806.01261, 2018. [18] Michael Luo, Sijun Tan, Justin Wong, Xiaoxiang Shi, William Y. Tang, Manan Roongta, Colin Cai, Jeffrey Luo, Tianjun Li, Li Erran Yang, et al. Deepscaler: Surpassing o1-preview with a 1.5b model by scaling rl.arXiv preprint arXiv:2502.01682, 2025. 13",
+      "order": 150,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 37786,
+      "char_end": 38573,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a295fb3748e9329ad994ae189da53fb6",
+      "kind": "reference",
+      "text": "[19] POLARIS Project. POLARIS: A post-training recipe for scaling reinforcement learning on advanced reasoning models.https://hkunlp.github.io/blog/2025/Polaris/, 2025. Accessed 2026-05-15. [20] AI2. OLMo 3: A family of open language models.arXiv preprint arXiv:2512.13961, 2025. [21] Jian Hu, Xibin Wu, Weixun Fu, Xinyu Chen, Chen Xu, Weizhi Zhu, Jiaxin Pei, Zixuan Zhong, Jiawei Zheng, Zheng Chen, et al. Open-reasoner-zero: An open source approach to scaling reinforcement learning on the base model. arXiv preprint arXiv:2503.24290, 2025. [22] Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde de Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, et al. Evaluating large language models trained on code. arXiv preprint arXiv:2107.03374, 2021. [23] Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc Le, Ed Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. Self-consistency improves chain of thought reasoning in language models.arXiv preprint arXiv:2203.11171, 2022. [24] Xiang Deng, Jeff Da, Edwin Pan, Yan He, Charles Ide, Kanak Garg, Niklas Lauffer, Andrew Park, Nitin Pasari, Chetan Rane, Karmini Sampath, Maya Krishnan, Srivatsa Kundurthy, Sean M. Hendryx, Zifan Wang, Chen Bo Calvin Zhang, Noah Jacobson, Bing Liu, and Brad Kenstler. Swe-bench pro: Can ai agents solve long-horizon software engineering tasks? 2025. URLhttps://api.semanticscholar.org/CorpusID:281421060. [25] Xingyao Wang, Boxuan Li, Yufan Song, Frank F Xu, Xiangru Tang, Mingchen Zhuge, Jiayi Pan, Yueqi",
+      "order": 151,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 38575,
+      "char_end": 40112,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48d73133dc932ccc31525db8804b2447",
+      "kind": "reference",
+      "text": "Song, Bowen Li, Jaskirat Singh, Hoang Tran, Fuqiang Li, Ren Ma, Mingzhang Zheng, Bill Qian, Daniel Shao, Niklas Muennighoff, Yizhe Zhang, Binyuan Hui, Junyang Lin, Robert Brennan, Hao Peng, Heng Ji, and Graham Neubig. Openhands: An open platform for ai software developers as generalist agents. In Y. Yue, A. Garg, N. Peng, F. Sha, and R. Yu, editors,International Conference on Learning Representations, volume 2025, pages 65882–65919, 2025. URLhttps://proceedings.iclr.cc/paper_files/paper/2025/file/ a4b6ad6b48850c0c331d1259fc66a69c-Paper-Conference.pdf. [26] Carlos E Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik R Narasimhan. Swe-bench: Can language models resolve real-world github issues? InThe TwelfthInternational Conference on Learning Representations, 2024. URLhttps://openreview.net/forum?id=VTF8yNQM66. [27] Daoguang Zan, Zhirong Huang, Wei Liu, Hanwu Chen, Linhao Zhang, Shulin Xin, Lu Chen, Qi Liu, Xiaojian Zhong, Aoyan Li, Siyao Liu, Yongsheng Xiao, Liangqiang Chen, Yuyu Zhang, Jing Su, Tianyu Liu, Rui Long, Kai Shen, and Liang Xiang. Multi-swe-bench: A multilingual benchmark for issue resolving, 2025. URL https://arxiv.org/abs/2504.02605. [28] Mike A. Merrill, Alexander G. Shaw, Nicholas Carlini, Boxuan Li, Harsh Raj, Ivan Bercovich, Lin Shi, Jeong Yeon Shin, Thomas Walshe, E. Kelly Buchanan, Junhong Shen, Guanghao Ye, Haowei Lin, Jason Poulos, Maoyu Wang, Marianna Nezhurina, Jenia Jitsev, Di Lu, Orfeas Menis Mastromichalakis, Zhiwei Xu, Zizhao Chen, Yue Liu,",
+      "order": 152,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 40114,
+      "char_end": 41641,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7b38937aec64d581ef161a72ab59b3d",
+      "kind": "paragraph",
+      "text": "Robert Zhang, Leon Liangyu Chen, Anurag Kashyap, Jan-Lucas Uslu, Jeffrey Li, Jianbo Wu, Minghao Yan, Song Bian, Vedang Sharma, Ke Sun, Steven Dillmann, Akshay Anand, Andrew Lanpouthakoun, Bardia Koopah, Changran Hu, Etash Guha, Gabriel H. S. Dreiman, Jiacheng Zhu, Karl Krauth, Li Zhong, Niklas Muennighoff, Robert Amanfu, Shangyin Tan, Shreyas Pimpalgaonkar, Tushar Aggarwal, Xiangning Lin, Xin Lan, Xuandong Zhao, Yiqing Liang, Yuanli Wang, Zilong Wang, Changzhi Zhou, David Heineman, Hange Liu, Harsh Trivedi, John Yang, Junhong Lin, Manish Shetty, Michael Yang, Nabil Omi, Negin Raoof, Shanda Li, Terry Yue Zhuo, Wuwei Lin, Yiwei Dai, Yuxin Wang, Wenhao Chai, Shang Zhou, Dariush Wahdany, Ziyu She, Jiaming Hu, Zhikang Dong, Yuxuan Zhu, Sasha Cui, Ahson Saiyed, Arinbjörn Kolbeinsson, Jesse Hu, Christopher Michael Rytting, Ryan Marten, Yixin Wang, Alex Dimakis, Andy Konwinski, and Ludwig Schmidt. Terminal-bench: Benchmarking agents on hard, realistic tasks in command line interfaces, 2026. URLhttps://arxiv.org/abs/2601.11868. [29] Naman Jain, King Han, Alex Gu, Wen-Ding Li, Fanjia Yan, Tianjun Zhang, Sida Wang, Armando Solar-Lezama, Koushik Sen, and Ion Stoica. Livecodebench: Holistic and contamination free evaluation of large language models for code. arXiv preprint arXiv:2403.07974, 2024. [30] Jeffrey Zhou, Tianjian Lu, Swaroop Mishra, Siddhartha Brahma, Sujoy Basu, Yi Luan, Denny Zhou, and Le Hou. Instruction-following evaluation for large language models.arXiv preprint arXiv:2311.07911, 2023.",
+      "order": 153,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 41643,
+      "char_end": 43157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f6873dab9ed71988667fcaf76ba805db",
+      "kind": "reference",
+      "text": "[31] Qwen Team. Qwen2.5 technical report.arXiv preprint arXiv:2412.15115, 2024. 14",
+      "order": 154,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 43159,
+      "char_end": 43241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8cabea1f1f266a733b7a59d516758f4",
+      "kind": "reference",
+      "text": "[32] An Yang, Beichen Zhang, Binyuan Hui, Bofei Gao, Bowei Yu, Chengpeng Li, Dayiheng Liu, Jianhong Tu, Jingren Zhou, Junyang Lin, et al. Qwen2.5-math technical report: Toward mathematical expert model via self-improvement. arXiv preprint arXiv:2409.12122, 2024. [33] Jiakang Wang, Runze Liu, Fuzheng Zhang, Xiu Li, and Guorui Zhou. Stabilizing knowledge, promoting reasoning: Dual-token constraints for rlvr, 2025. URLhttps://arxiv.org/abs/2507.15778. [34] Together AI. Deepcoder: A fully open-source 14b coder at o3-mini level. https://www.together.ai/blog/ deepcoder, 2025. Accessed 2026-05-15. [35] Xiang Yue, Zhuo Chen, and Wenhu Chen. Does reinforcement learning really incentivize reasoning capacity in llms beyond the base model?arXiv preprint arXiv:2504.13837, 2025. [36] Christian Walder and Deep Karkhanis. Pass@k policy optimization: Solving harder reinforcement learning problems. arXiv preprint arXiv:2505.15201, 2025. [37] Zhipeng Chen, Xiaobo Qin, Youbin Wu, Yue Ling, Qinghao Ye, Wayne Xin Zhao, and Guang Shi. Pass@k training for adaptively balancing exploration and exploitation of large reasoning models.arXiv preprint arXiv:2508.10751, 2025. [38] Fahim Tajwar, Guanning Zeng, Yueer Zhou, Yuda Song, Daman Arora, Yiding Jiang, Jeff Schneider, Ruslan Salakhutdinov, Haiwen Feng, and Andrea Zanette. Maximum likelihood reinforcement learning.arXiv preprint arXiv:2602.02710, 2026. [39] Ruotian Peng, Yi Ren, Zhouliang Yu, Weiyang Liu, and Yandong Wen. Simko: Simple pass@k policy optimization. arXiv preprint arXiv:2510.14807, 2025.",
+      "order": 155,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 43243,
+      "char_end": 44793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b41f45a38cad678c9b0cd699db76cb39",
+      "kind": "reference",
+      "text": "[40] Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. Lora: Low-rank adaptation of large language models.arXiv preprint arXiv:2106.09685, 2021. [41] Shih-Yang Liu, Chien-Yi Wang, Hongxu Yin, Pavlo Molchanov, Yu-Chiang Frank Wang, Kwang-Ting Cheng, and Min-Hung Chen. Dora: Weight-decomposed low-rank adaptation.arXiv preprint arXiv:2402.09353, 2024. [42] Fanxu Meng, Zhaohui Wang, and Muhan Zhang. Pissa: Principal singular values and singular vectors adaptation of large language models.arXiv preprint arXiv:2404.02948, 2024. [43] Klaudia Balazy, Mohammadreza Banaei, Karl Aberer, and Jacek Tabor. Lora-xs: Low-rank adaptation with extremely small number of parameters.arXiv preprint arXiv:2405.17604, 2024. [44] Yuchen Cai, Ding Cao, Xin Xu, Zijun Yao, Yuqing Huang, Zhenyu Tan, Benyi Zhang, Guiquan Liu, and Junfeng Fang. On predictability of reinforcement learning dynamics for large language models.arXiv preprint arXiv:2510.00553, 2025. [45] John X. Morris, Niloofar Mireshghallah, Mark Ibrahim, and Saeed Mahloujifar. Learning to reason in 13 parameters. arXiv preprint arXiv:2602.04118, 2026. [46] Zixuan Ren, Jinliang Lu, Junhong Wu, Yang Zhao, Dai Dai, Hua Wu, Haifeng Wang, and Chengqing Zong. Enough is as good as a feast: A comprehensive analysis of how reinforcement learning mitigates task conflicts in llms. InInternational Conference on Learning Representations, 2026. URL https://openreview.net/forum? id=N4l4Jp50R4. [47] JustRL Team. JustRL: Scaling a 1.5b llm with a simple rl recipe.https://iclr-blogposts.github.io/2026/",
+      "order": 156,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 44795,
+      "char_end": 46399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b5e938063739db77793c5edeaaa4799",
+      "kind": "paragraph",
+      "text": "blog/2026/justrl/, 2026. ICLR Blogposts 2026. [48] Jie Wu, Haoling Li, Xin Zhang, Jiani Guo, Jane Luo, Steven Liu, Yangyu Huang, Ruihang Chu, Scarlett Li, and Yujiu Yang. X-Coder: Advancing competitive programming with fully synthetic tasks, solutions, and tests.arXiv preprint arXiv:2601.06953, 2026. 15",
+      "order": 157,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "References"
+      ],
+      "char_start": 46401,
+      "char_end": 46705,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22d1306de74635164fff226a646aa21a",
+      "kind": "heading",
+      "text": "Appendix",
+      "order": 158,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Appendix"
+      ],
+      "char_start": 46707,
+      "char_end": 46715,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2af5caf812a9693f8be7cc31b743503",
+      "kind": "heading",
+      "text": "A Related Work",
+      "order": 159,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "A Related Work"
+      ],
+      "char_start": 46717,
+      "char_end": 46731,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f507314dc0e3109c46343eb1da99200a",
+      "kind": "paragraph",
+      "text": "Exploration and exploitation in outcome-reward RL.Recent work studies reasoning RL not only as a way to improve Pass@1, but also as a process that reshapes the exploration–exploitation trade-off of reasoning models [35]. A related line of methods redesigns the RL objective to better optimize Pass@k-style behavior or test-time scaling efficiency [36–39]. These approaches treat exploration primarily as a training-time objective design problem. SAR takes adifferent view: a completed RL update can already contain a compact high-keffective component, but this component is entangled with residual off-manifold drift. By separating them in pretrained spectral coordinates, SAR improves Pass@k through post-hoc model editing, without changing the RL objective, collecting new rollouts, or retraining the model. LoRA and low-dimensional RL updates.Parameter-efficient adaptation and recent analyses of RL dynamics both suggest that LLM adaptation can be highly low-dimensional [40–45]. These works use low dimensionality as a training parameterization, compression principle, or predictability property. SAR instead identifies a more specific mechanism: the reasoning-effective component of a full RL update is not merely low-rank, but aligned with the pretrained model’s spectral coordinates and structured as a compact rewiring matrix among pretrained components. This distinction enables post-hoc editing of a completed full-RL model and can surpass the RL baseline in high-kexploration and multi-domain transfer, including at the 32B scale.",
+      "order": 160,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "A Related Work"
+      ],
+      "char_start": 46733,
+      "char_end": 48275,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87a936d7a81dc13682506e48277efcfe",
+      "kind": "paragraph",
+      "text": "Model merging and interference.Model merging methods combine separately trained models by operating on weight-space task deltas, typically using arithmetic, magnitude, sign, or sparsity-based rules to reduce interference [9–11]. Recent analysis further shows that RL-trained models are more mergeable than SFTtrained models, but merged models can still degrade relative to their corresponding experts [46]. These works establish task conflict as a central obstacle in model composition. SAR addresses this conflict at a different level: before composition, it filters each RL update through the pretrained spectral manifold, extracting reasoning-effective rewiring while removing off-manifold residual drift. This enables positive-sum cross-domain composition where the merged model can surpass the best single-domain experts.",
+      "order": 161,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "A Related Work"
+      ],
+      "char_start": 48277,
+      "char_end": 49103,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2ae12f8941850ee0edc2b040c79e8bb",
+      "kind": "heading",
+      "text": "B Illustrative Example of Spectral Rewiring",
+      "order": 162,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "B Illustrative Example of Spectral Rewiring"
+      ],
+      "char_start": 49105,
+      "char_end": 49148,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53c47b0a8582fb7fd9b276732a56ce0d",
+      "kind": "paragraph",
+      "text": "Triangle area calculation.Consider a geometric reasoning task that requires computing the area of a triangle from two side lengths and the included angle. In the pretrained base model, the relevant capabilities may be represented in separated spectral components: a right singular directionv1 detects side-length information, another direction v2 detects angle information, and an output directionu3 corresponds to applying the sine-area formula. Under the original diagonal mappingΣ, neitherv1 nor v2 alone is sufficient to activateu3. SAR isolates the RL-induced off-diagonal entriesM3,1 and M3,2, which route both premise directions into the same output direction. Thus, when the model detects both required premises, Equation 6 combines their signals to activate the appropriate multi-condition deduction.",
+      "order": 163,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "B Illustrative Example of Spectral Rewiring"
+      ],
+      "char_start": 49150,
+      "char_end": 49959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a994fa4b62d0eee8e9da97228356691e",
+      "kind": "heading",
+      "text": "Implementation Details",
+      "order": 164,
+      "page_number": 16,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Implementation Details"
+      ],
+      "char_start": 49961,
+      "char_end": 49983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb90c6d7615a88d9504d34a80d02cbfd",
+      "kind": "paragraph",
+      "text": "Algorithmic Scope.For each Transformer block, SAR is applied only to the attention linear weights (Wq, Wk, Wv, Wo) and MLP linear weights (Wgate, Wup, Wdown). We do not modify biases, normalization parameters, token embeddings, or the language-modeling head; these parameters are kept from the base model. Empirically, projecting both attention and MLP weights is necessary to recover the full effect: projecting only attention or only MLP degrades relative to the full-RL model, while using the base or RL versions of the embeddings and lm_head has little effect on the final results. Evaluation Configuration.Unless otherwise specified, we use the same decoding configuration for all reasoning and coding evaluations. We sample with temperatureT = 0.6, top-p = 0.95, and a maximum generation 16",
+      "order": 165,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Implementation Details"
+      ],
+      "char_start": 49985,
+      "char_end": 50781,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c78e565a0a798a9d074ec3ef438c5007",
+      "kind": "paragraph",
+      "text": "Figure 4Illustration of spectral rewiring. The base model primarily performs point-to-point associations between isolated spectral components. RL-induced rewiring introduces many-to-one routing, allowing multiple premise directions to jointly activate an output direction associated with a compositional reasoning step. Table 5Coverage analysis on AIME 2024 with 256 rollouts. A problem is counted as covered if any rollout produces the correct final answer.",
+      "order": 166,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Implementation Details"
+      ],
+      "char_start": 50783,
+      "char_end": 51241,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:662f75661ef210ba2ea5e5da9a16a4c7",
+      "kind": "heading",
+      "text": "Model Coverage@256 Solved / Total Gain",
+      "order": 167,
+      "page_number": 17,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Model Coverage@256 Solved / Total Gain"
+      ],
+      "char_start": 51243,
+      "char_end": 51281,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9ef45db2de93e05f474cc3568f612cb",
+      "kind": "paragraph",
+      "text": "DeepScaleR full RL 83.33% 25 / 30 – SAR, 1% rank 86.66% 26 / 30 +1 problem length of32 ,768tokens. For POLARIS, we follow its longer-generation setting and use a maximum generation length of96 ,000tokens. All compared models within the same experiment use identical sampling parameters to ensure a fair comparison between the base model, full RL model, SAR-projected model, and no-projection control. Numerical Precision.All SVD decompositions and SAR projections are computed in FP32. Since the reconstructed SAR update is compact and sensitive to rounding, directly storing the projected weights in low precision can perturb the intended spectral geometry, especially for smaller models. We therefore store and evaluate the 1.5B, 4B, and 7B models in FP16, which better preserves fine-grained updates than BF16. For the 32B OLMo-3 models, we store the projected weights in FP16 and evaluate with BF16 computation, as they are empirically less sensitive to floating-point perturbations. Unless otherwise stated, all compared models within the same experiment use the same runtime precision. Coverage analysis.We report a coverage-based view of the large-k improvement in Table 5. A problem is counted as covered if any of 256 rollouts produces the correct final answer. Under this metric, SAR solves one additional AIME 2024 problem beyond the full RL model, indicating that the projected model expands the set of reachable correct solutions rather than merely changing single-sample accuracy. 17",
+      "order": 168,
+      "page_number": 17,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Model Coverage@256 Solved / Total Gain"
+      ],
+      "char_start": 51283,
+      "char_end": 52780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43aea2dee96ae2d28a3b83df37efc34a",
+      "kind": "heading",
+      "text": "D Boundary Cases of Spectral Rewiring",
+      "order": 169,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "D Boundary Cases of Spectral Rewiring"
+      ],
+      "char_start": 52782,
+      "char_end": 52819,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e25012deb51105e163f9c5f8f2653250",
+      "kind": "paragraph",
+      "text": "SAR is most effective when RL remains in an elicitation regime, where sparse verifiable rewards and tokenaveraged updates produce relatively small per-step changes that reorganize capabilities already encoded in the reference model. We observe several boundary cases where this assumption does not fully hold. Heavily trained reasoning RL.For reasoning models trained with many RL steps, the accumulated update can move beyond compact spectral elicitation. In our JustRL case study, which is trained for over 4000 steps [47], projecting the RL update into the base spectral space recovers a non-trivial AIME 2024 score of roughly 43%. This is comparable to the earlier DeepScaleR-level result, but remains below the final RL model (∼ 52%). The result suggests that the base spectral manifold still contains meaningful recoverable reasoning capacity, while the remaining gain may come from stronger task-specific parameter rewriting induced by extended optimization. We therefore interpret this case as a boundary between elicitation and rewriting, rather than as evidence that spectral structure is absent. Direct code RL from a base model.Code RL introduces domain requirements beyond abstract reasoning. The model must satisfy an execution protocol: syntactically valid code, function-completion or stdin/stdout conventions, exact input-output formatting, unit-test behavior, and edge-case handling. These behaviors can require adapting programming knowledge and interface behavior that are not sufficiently established",
+      "order": 170,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "D Boundary Cases of Spectral Rewiring"
+      ],
+      "char_start": 52821,
+      "char_end": 54342,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16081e405c3494edabf949da87f305b1",
+      "kind": "paragraph",
+      "text": "in the base model’s spectral geometry. Consistent with this interpretation, direct code RL from the base model is less projection-compatible in our experiments, as in the DeepCoder case [34]. However, once code SFT establishes the relevant programming interface, the subsequent RL update becomes more compatible with spectral projection onto the SFT model’s spectral space. For example, projecting X-coder-RL onto",
+      "order": 171,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "D Boundary Cases of Spectral Rewiring"
+      ],
+      "char_start": 54344,
+      "char_end": 54757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0545cf13f1b4d7392c95367fddc90fb0",
+      "kind": "heading",
+      "text": "coder-SFT recovers the full RL performance [48]. Our OLMo-3 experiments further support this view: after",
+      "order": 172,
+      "page_number": 18,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "coder-SFT recovers the full RL performance [48]. Our OLMo-3 experiments further support this view: after"
+      ],
+      "char_start": 54759,
+      "char_end": 54863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ec140502119b0c42978a49ed653c5e9",
+      "kind": "paragraph",
+      "text": "coding-oriented training establishes the relevant domain knowledge, RL primarily elicits reasoning capability already present in the reference model. Dense critic rewards and PPO-style training.PPO-style training with an external critic or dense reward can also reduce projection compatibility. The key factor is not the PPO algorithm itself, but the effective optimization strength: dense token-level rewards and critic-shaped objectives can produce larger and more continuous parameter movement than sparse outcome-reward RL. This can push the update away from compact rewiring in the reference spectral coordinates and toward broader behavioral rewriting. Thus, SAR should be understood as most directly characterizing sparse outcome-reward elicitation, while dense-reward RL may require either a different reference point, intermediate projection during training, or a richer spectral basis. Together, these cases delineate the scope of SAR. The method captures the component of RL that is aligned with the reference model’s spectral manifold. When the reference model already contains the relevant reasoning ability or domain knowledge, this component can account for the dominant effect of RL. When training intensity or missing domain knowledge forces the model to acquire behavior outside that manifold, spectral projection remains informative but becomes an incomplete reconstruction of the full RL update. E Comparison with the No-Projection Control To isolate the effect of spectral alignment, we compare SAR with a no-projection control. This control extracts",
+      "order": 173,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "coder-SFT recovers the full RL performance [48]. Our OLMo-3 experiments further support this view: after"
+      ],
+      "char_start": 54865,
+      "char_end": 56436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21c28a2b956ef3ca5ef102fd72c9f1a1",
+      "kind": "paragraph",
+      "text": "the same top-ranked low-rank component from the RL update∆W, but directly adds it back to the base model without projecting it onto the pretrained SVD subspace. Thus, both methods use the same rank budget, and the only difference is whether the compact update is aligned with the base model’s spectral geometry. Reasoning and Exploration.We first evaluate reasoning and exploration on AIME 2024 using the DeepScaleR models. For each problem, we generate 256 rollouts and report the Pass@k scaling behavior in Figure 5. SAR and the no-projection control achieve similar Pass@1 performance, showing that low-rank extraction alone can preserve the single-sample reasoning gains of RL. However, their large-k behavior differs clearly: 18",
+      "order": 174,
+      "page_number": 18,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "coder-SFT recovers the full RL performance [48]. Our OLMo-3 experiments further support this view: after"
+      ],
+      "char_start": 56438,
+      "char_end": 57171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55bb087504f9ea8a4e1c06a613b46c97",
+      "kind": "heading",
+      "text": "2 4 8 16 32 64 128 256",
+      "order": 175,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32 64 128 256"
+      ],
+      "char_start": 57173,
+      "char_end": 57195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b938e5ce8c465af30f9fb93798068ca4",
+      "kind": "paragraph",
+      "text": "Number of Samples (k) 20 30 40 50 60 70 80 90 Pass@k Accuracy (%) Pass@k Accuracy Curves at 1.5B",
+      "order": 176,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "2 4 8 16 32 64 128 256"
+      ],
+      "char_start": 57197,
+      "char_end": 57293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ddd1164e234e7572402f56141357b9c4",
+      "kind": "heading",
+      "text": "Full RL: DeepScaler",
+      "order": 177,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: DeepScaler"
+      ],
+      "char_start": 57295,
+      "char_end": 57314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9eb7fb5aa35d320d48521a4b20192992",
+      "kind": "paragraph",
+      "text": "1% rank without projection SAR (Ours): Projected 1% Figure 5Pass@kscaling on AIME 24 among full RL, SAR, and the low-rank component without projection. the no-projection control saturates earlier, while SAR continues to improve. At Pass@256, SAR solves one additional problem that neither the full RL model nor the no-projection control solves within 256 attempts. This indicates that the reasoning-effective update is not merely low-rank; aligning it with the base model’s SVD space isimportant for recovering reasoning and exploration capability. Multi-Domain RL.We then evaluate the same control in the multi-domain setting using the OLMo-3-32B models on AIME 2025 and LiveCodeBench v5. Results are shown in Table 6. Consistent with the singledomain results, the no-projection control retains part of the AIME performance, but fails to recover SAR’s exploration benefit. On AIME 2025, the control reaches only 86.67% Pass@32, whereas SAR reaches 93.33%. On LiveCodeBench, the control recovers part of the performance, suggesting that low-rank extraction can remove some redundant update directions. Nevertheless, SAR achieves the strongest coding performance, improving AVG@10 to 69.09%, compared with 68.24% for the control and 67.61% for full RL. Cross-Domain Merging.We also evaluate a no-projection control for math-to-code expert merging. This control extracts the same 1% low-rank component from the math RL update and merges it into the code expert, but does not align the update with the pretrained spectral basis. As shown in Table 7, the no-projection",
+      "order": 178,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: DeepScaler"
+      ],
+      "char_start": 57316,
+      "char_end": 58880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:412fa9ab6292e61337282fed53bb8a2e",
+      "kind": "paragraph",
+      "text": "merge preserves the code-side gain, but substantially weakens math reasoning compared with SAR. This indicates that low-rank extraction alone is insufficient for positive-sum composition; the spectral projection step is what makes the math reasoning update compatible with the code expert. Overall, this comparison supports our central insight: the reasoning-effective parameters are not only compact, but are specificallyexpressed in the base model’s pretrained SVD space. Low-rank extraction explains part of the parameter efficiency, but SAR’s spectral alignment is what yields stronger exploration and cross-domain transfer. In several settings, SAR even outperforms the full RL model, indicating that extracting the compact spectral reasoning core is not merely a compression technique, but a useful model-editing operation in its own right.",
+      "order": 179,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL: DeepScaler"
+      ],
+      "char_start": 58882,
+      "char_end": 59728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8ca57a9e2296a4fe85107cfddbd8775c",
+      "kind": "heading",
+      "text": "F Method Ablations",
+      "order": 180,
+      "page_number": 19,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "F Method Ablations"
+      ],
+      "char_start": 59730,
+      "char_end": 59748,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6bcc1a8727d0894d3363557fae44cbc",
+      "kind": "paragraph",
+      "text": "We further ablate the structure of SAR on DeepScaleR-1.5B using the same 1% spectral budget on AIME",
+      "order": 181,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "F Method Ablations"
+      ],
+      "char_start": 59750,
+      "char_end": 59849,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4437fa47877e7ae2c4fcd1a3f42815c",
+      "kind": "heading",
+      "text": "Table 8 compares SAR with three controls: replacing the pretrained spectral basis with a random",
+      "order": 182,
+      "page_number": 19,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "F Method Ablations",
+        "Table 8 compares SAR with three controls: replacing the pretrained spectral basis with a random"
+      ],
+      "char_start": 59851,
+      "char_end": 59946,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:65ca82a03e84f1df2c78528fedd43f12",
+      "kind": "paragraph",
+      "text": "19",
+      "order": 183,
+      "page_number": 19,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "F Method Ablations",
+        "Table 8 compares SAR with three controls: replacing the pretrained spectral basis with a random"
+      ],
+      "char_start": 59948,
+      "char_end": 59950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:724e5a7cafac27f01f56643d6a95aa33",
+      "kind": "paragraph",
+      "text": "Table 6Head-to-head comparison on AIME 2025 and LiveCodeBench v5. The no-projection control keeps the same top-1% low-rank component but removes the projection onto the pretrained SVD subspace. SAR achieves the strongest large-kreasoning coverage and coding performance. Model / Method AIME 2025 LiveCodeBench v5",
+      "order": 184,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "F Method Ablations",
+        "Table 8 compares SAR with three controls: replacing the pretrained spectral basis with a random"
+      ],
+      "char_start": 59952,
+      "char_end": 60264,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2b2402f088f134bef395958022aad35",
+      "kind": "heading",
+      "text": "AVG@32 Pass@32 AVG@10 Pass@10",
+      "order": 185,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@10 Pass@10"
+      ],
+      "char_start": 60266,
+      "char_end": 60295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:260ebd5ba94b7b4a9e2ce00073896e3d",
+      "kind": "paragraph",
+      "text": "Base: OLMo3-32B-Think-DPO 70.83% 90.00% 64.81% 78.07% Full RL: OLMo-3.1-32B-Think75.76%90.00% 67.61% 80.91% No projection, 1% 75.50% 86.67% 68.24% 81.13% SAR projection, 1% 75.16%93.33% 69.09% 81.59% Table 7No-projection control for 1.5B math-code merging. The no-projection merge uses the same 1% low-rank math update budget as SAR but skips alignment to the pretrained spectral basis. It preserves code performance but loses much of the math gain, whereas SAR achieves positive-sum transfer. Scale Model / Method Math (AIME 24) Code (LCB)",
+      "order": 186,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@10 Pass@10"
+      ],
+      "char_start": 60297,
+      "char_end": 60837,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00da442637e8eeb07963eb141030f8f3",
+      "kind": "heading",
+      "text": "AVG@32 Pass@32 AVG@8",
+      "order": 187,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@8"
+      ],
+      "char_start": 60839,
+      "char_end": 60859,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8a74be94bb3e39bbb34b3534934692b6",
+      "kind": "heading",
+      "text": "5B",
+      "order": 188,
+      "page_number": 20,
+      "heading_level": 3,
+      "heading_path": [
+        "INTRODUCTION",
+        "AVG@32 Pass@32 AVG@8",
+        "5B"
+      ],
+      "char_start": 60861,
+      "char_end": 60863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29606fe3bf5c37ba00c9648f351ff781",
+      "kind": "heading",
+      "text": "Single-Domain References",
+      "order": 189,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 60865,
+      "char_end": 60889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b7ecac8ad59e73e1fb6b2e7925e577b7",
+      "kind": "paragraph",
+      "text": "Base: Distill-Qwen-1.5B 31.67% 76.67% 23.00% Math Expert: DeepScaleR40.31% 76.67%27.20% Code Expert: Archer-Code 39.48% 76.67% 31.80% Best Single-Domain Expert 40.31% 76.67% 31.80%",
+      "order": 190,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Single-Domain References"
+      ],
+      "char_start": 60891,
+      "char_end": 61071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e40696f69a159c773138d84418ec9e96",
+      "kind": "heading",
+      "text": "Cross-Domain Merging",
+      "order": 191,
+      "page_number": 20,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 61073,
+      "char_end": 61093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b54c4e92b584562041c126a584ba781",
+      "kind": "paragraph",
+      "text": "No Projection: 1% Math-to-Code 36.25% 63.33% 32.25% Spectral Projection Merge (SAR) 43.44% 76.67% 32.25% projection, retaining only the diagonal entries of the rewiring matrixM, and retaining only its off-diagonal entries. These ablations support three conclusions. First, the random projection baseline improves over the base model in Pass@1 but remains clearly below SAR, showing that the pretrained singular-vector coordinates are important rather than interchangeable with an arbitrary low-dimensional projection. Second, the diagonalonly variant fails to recover the RL gain, suggesting that simply rescaling isolated pretrained components is insufficient for reasoning elicitation. Third, the off-diagonal-only variant recovers most of the Pass@1 gain but loses Pass@32 coverage, indicating that cross-component rewiring carries a large part of the reasoning signal but works best together with the diagonal component. Overall, SAR’s effect comes from the combination of pretrained spectral alignment and the full rewiring matrix, rather than from low-rank structure, random projection, or either matrix component alone. 20",
+      "order": 192,
+      "page_number": 20,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 61095,
+      "char_end": 62224,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07b40a03c1e26f0b8ee78e5092690c7f",
+      "kind": "paragraph",
+      "text": "Table 8Method ablations on DeepScaleR-1.5B with a 1% update budget on AIME 2024. SAR preserves full-RL-level Pass@1 while maintaining Pass@32, whereas random projection and partial rewiring controls lose reliability or coverage.",
+      "order": 193,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Cross-Domain Merging"
+      ],
+      "char_start": 62226,
+      "char_end": 62454,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:163be0ec817066162a5f42b1991978d9",
+      "kind": "heading",
+      "text": "Method Pass@1 Pass@32",
+      "order": 194,
+      "page_number": 21,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Method Pass@1 Pass@32"
+      ],
+      "char_start": 62456,
+      "char_end": 62477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb68e5d6192986837a29aa4fa5106a02",
+      "kind": "paragraph",
+      "text": "Base 31.67% 80.00%",
+      "order": 195,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Method Pass@1 Pass@32"
+      ],
+      "char_start": 62479,
+      "char_end": 62497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86133daf024706515df7738829a77871",
+      "kind": "heading",
+      "text": "Full RL40.31%76.67%",
+      "order": 196,
+      "page_number": 21,
+      "heading_level": 2,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL40.31%76.67%"
+      ],
+      "char_start": 62499,
+      "char_end": 62518,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a4f9fe1d5b3695cef6f35f3322b766a",
+      "kind": "paragraph",
+      "text": "SAR, 1% 40.21% 76.67% Random projection, 1% 36.67% 80.00% Diagonal-only rewiring, 1% 30.73% 80.00% Off-diagonal-only rewiring, 1% 38.54% 73.33% 21",
+      "order": 197,
+      "page_number": 21,
+      "heading_level": null,
+      "heading_path": [
+        "INTRODUCTION",
+        "Full RL40.31%76.67%"
+      ],
+      "char_start": 62520,
+      "char_end": 62666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 21,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 21
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.03065",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 21,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

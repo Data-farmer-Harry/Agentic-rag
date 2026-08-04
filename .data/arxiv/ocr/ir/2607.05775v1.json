@@ -1,0 +1,2792 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "fa4a400e0cd34f4b9c8381f6424dbb641815e6e1cff27c017bc2450c6845daf1",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:c7c4a2f3dc53387248698b59c0b2a64d",
+      "kind": "paragraph",
+      "text": "Beyond the Leaderboard: A Synthesis of Tool-Use, Planning, and",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 62,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:103d722757f0d925670cab6842c892a9",
+      "kind": "heading",
+      "text": "Reasoning Failures in Large Language Model Agents",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents"
+      ],
+      "char_start": 64,
+      "char_end": 113,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:daef4bac99dc01da723a868a821157ba",
+      "kind": "paragraph",
+      "text": "Wael Albayaydh, University of Oxford [wael,albayaydh@cs.ox.ac.uk] Rui Zhao, University of Oxford [rui.zhao@cs.ox.ac.uk] Ivan Flechais, University of Oxford [ivan.flechais@cs.ox.ac.uk]",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents"
+      ],
+      "char_start": 115,
+      "char_end": 298,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d56068dc0fc81e09eb70fb9168c95245",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract"
+      ],
+      "char_start": 300,
+      "char_end": 308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c20e90b47b2027b9a93242f7f4dfe3b8",
+      "kind": "paragraph",
+      "text": "Large language model (LLM) agents are increasingly evaluated on their ability to use tools, plan multi-step tasks, coordinate with other agents, and operate over extended horizons. Reported benchmar k gains often obscure recurring failure modes documented across otherwise unrelated evaluation efforts. This paper synthesizes 27 benchmark, taxonomy, and audit papers (2023-2026), spanning 19 distinct benchmarks, into a cross-cutting taxonomy of agent limitations. To our knowledge, this is the first synthesis that integrates evidence across tool use, planning, long -horizon reasoning, multi -agent coordination, safety, and measurement validity into a single, unified taxonomy of LLM agent limitations. We iden tify six failure clusters: (1) tool invocation and parameter-level errors, (2) planning and constraint-satisfaction failures, (3) long-horizon degradation from context accumulation, (4) multi-agent coordination failures, (5) safety and security failures un der adversarial or underspecified conditions, and (6) measurement validity problems. The taxonomy was built iteratively by grouping independently reported error categories into themes corresponding to distinct stages of an agent's reasoning -to-action pipel ine, and its boundaries are corroborated by several source papers converging on overlapping categories despite unrelated annotation processes. Across clusters we find that failure compounds non -linearly with task length, that sub -skill competence does not reliably compose into end -to-end success, and that additional scaffolding does not",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract"
+      ],
+      "char_start": 310,
+      "char_end": 1880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8606b0a5a7d606c62327c03a609ea70f",
+      "kind": "paragraph",
+      "text": "uniformly improve reliability. We balance this with an explicit account of where agents have measurably improved — single-turn tool selection, short-horizon web navigation, and narrowly scoped coding tasks all show substantial, credible progress. We consolidate quantitative findings into a categorized comparative table, discuss implications for evaluation methodology and deployment, and argue that interpreting agent progress requires distinguishing genuine capability gains from corrections of earlier measurement error. Keywords: AI agents; tool use; LLM planning; multi -agent systems; benchmark evaluation; long-horizon reasoning; agent safety",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract"
+      ],
+      "char_start": 1882,
+      "char_end": 2532,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85695161faef1b8ee32ed24fdfa8e203",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 2534,
+      "char_end": 2546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f7ad49b20f1c901d5a9a50844ce3443",
+      "kind": "paragraph",
+      "text": "The rapid deployment of large language model (LLM) agents — systems that combine LLM reasoning with the ability to call external tools, browse the web, write and execute code, and coordinate with other agents — has been accompanied by an equally rapid proliferation of bench marks designed to measure their competence. GAIA (Mialon et al., 2024), WebArena (Zhou et al., 2024), AgentBench (Liu et al., 2023), TravelPlanner (Xie et al., 2024), the Berkeley Function-Calling Leaderboard (Patil et al., 2025), and SWEbench (Jimenez et al., 2024) are among the most widely cited examples of this evaluation infrastructure. Leaderboards built on these benchmarks show steady, sometimes dramatic, year -over-year improvement. Reported WebArena success rates for frontier agents rose from approx imately 14% at the benchmark's introduction (Zhou et al., 2024) to a reported 61.7% roughly eighteen months later for a specialized enterprise scaffold (Marreed et al., 2025), though even the strongest current agents still trail human performance of approximately 78%. SWE-bench Verified resolution rates for leading coding agents have climbed from approximately 20% in mid -2024 to figures above 50 -60% for top systems by 2026 across independent leaderboard reports. Separately, METR's time-horizon analysis — a rigorous, peer-reviewed-",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 2548,
+      "char_end": 3874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3bd29662a6c646098cf7301df3a365f",
+      "kind": "paragraph",
+      "text": "adjacent measurement effort that times human experts on the same tasks given to models — finds that the length of task frontier agents can complete autonomously with 50% reliability has been doubling approximately every seven months since 2019 (Kwa et al., 2025). These trends might suggest that the core engineering problems of agentic AI are close to being solved. A closer reading of the underlying studies suggests a more mixed picture. Even as aggregate benchmark scores improve, the papers that introduce and stress-test these benchmarks consistently document a recurring set of failure patterns: agents that fabricate tool names and arguments; plans that satisfy individual constraints in isolation but fail when constraints must be join tly satisfied; performance that collapses well before context windows are technically exhausted; multi -agent systems whose coordination overhead frequently erases the benefits of collaboration; and agents that comply with malicious or underspecified instru ctions at rates that would be unacceptable in most safety-critical domains. A separate thread of the literature has begun to question whether reported benchmark scores reliably measure underlying capability at all, given evidence of test -set contamination, insufficiently rigorous test suites, and solution leakage (Aleithan et al., 2024; Yu et al., 2025; Prathifkumar et al., 2025). This paper brings these threads together, while giving explicit weight to genuine progress rather than only to failure. To our knowledge, this is the first synthesis that integrates evidence across tool use, planning, long-horizon",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 3876,
+      "char_end": 5494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0d4558d01516742e5926f6d3f09501b8",
+      "kind": "paragraph",
+      "text": "reasoning, multi -agent coordination, safety, and measurement validity into a unified cross -cutting taxonomy of LLM agent limitations; prior surveys in th is space have generally treated these areas separately. We make four contributions. First, we assemble a cross-cutting taxonomy of agent failure modes spanning six clusters (Figure 1), derived through an explicit, iterative grouping procedure described in Section 3, and grounded in 27 benchmark and audit papers covering 19 distinct benchmarks. Second, we explicitly document where agent capability has measurably and credibly improved, rather than presenting only a catalogue of failures. Third, we compile a c ategorized comparative table of reported quantitative results, making explicit both the scale of recent progress and the scale of the gap that remains. Fourth, we identify a small number of structural patterns — non-linear failure compounding, the non -composability of sub skill competence, and a persistent measurement-validity gap — that recur across clusters. This paper therefore asks: what failure modes consistently recur across contemporary evaluations of LLM agents, which of these are improving over time and which are not, and what does this pattern imply about the current state of agent reliability? We focus on peer-reviewed and pre-print empirical studies that report quantitative failure analyses, rather than product announcements or informal leaderboa rd snapshots, and flag explicitly the very small number of industry -reported or non-peer-reviewed figures we cite, doing so",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 5496,
+      "char_end": 7059,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a5eed020bf17ba7bb34edd5df6ab333",
+      "kind": "paragraph",
+      "text": "only where they corroborate a pattern independently established in the academic literature. The remainder of the paper proceeds as follows. Section 2 briefly situates the literature within the evolution of agent architectures. Section 3 describes our synthesis methodology, including explicit scope and inclusion criteria. Section 4 presents the taxonomy of failure modes. Section 5 discusses where agents have genuinely improved. Section 6 consolidates quantitative findings into a categorized comparative table. Section 7 discusses cross -cutting patterns. Section 8 considers implications for research, practice, and policy. Sections 9 and 10 discuss limitations and conclude.",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Introduction"
+      ],
+      "char_start": 7061,
+      "char_end": 7740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6163e767f71a151fb44e37639fdb1ac4",
+      "kind": "heading",
+      "text": "Background: The Evolution of Agent Architectures",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Background: The Evolution of Agent Architectures"
+      ],
+      "char_start": 7742,
+      "char_end": 7790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19ff33516d9db3b938eb65a9c2ba157a",
+      "kind": "paragraph",
+      "text": "Three architectural developments established the modern LLM agent paradigm. Toolformer (Schick et al.,",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Abstract",
+        "Background: The Evolution of Agent Architectures"
+      ],
+      "char_start": 7792,
+      "char_end": 7894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61a0ac303bf3997f9fc96c01b3efb5b9",
+      "kind": "heading",
+      "text": "showed that language models could learn, largely self -supervised, when and how to call external",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external"
+      ],
+      "char_start": 7896,
+      "char_end": 7992,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b11a39a3ff1fa66a78a936fa13f4aed",
+      "kind": "paragraph",
+      "text": "tools such as calculators and search engines. ReAct (Yao et al., 2023) proposed interleaving explicit reasoning (“Thought”) with concrete actions (“Act”) and environment feedback (“Observation”), a loop",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external"
+      ],
+      "char_start": 7994,
+      "char_end": 8196,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f24c1c4edcb214428cafef25fa7bf183",
+      "kind": "paragraph",
+      "text": "that remains the dominant scaffold underlying most contemporary agents. Reflexion (Shinn et al., 2023) added a verbal reinforcement-learning mechanism in which a failing agent generates a textual self-critique, stored in memory and used to condition subsequent attempts, without gradient-based fine-tuning. This tooluse, reason -act, and self -reflection lineage underlies the great majority of scaffolds evaluated in the benchmarks discussed below. An evaluation lineage developed in parallel. AgentBench (Liu et al., 2023) was among the first attempts to evaluate LLMs as agents across diverse interactive environments rather than a single narrow task, and found that models achieving strong scores on traditional single-turn NLP benchmarks nonetheless struggled with the multi -turn, environment-grounded reasoning agentic tasks demand. The subsequent proliferation of benchmarks can be read as a progressive stress -test of specific components of the reason -act-reflect loop: tool selection and parameterization, multi -step planning under c onstraints, long -horizon state tracking, inter-agent coordination, and robustness to adversarial or ambiguous input. Section 4 organizes the literature along these lines. It is worth noting that many of the coordination failures documented in the LLM multi -agent literature (Section 4.4) are not entirely new problems. Classical multi-agent systems (MAS) theory, predating LLMs by decades, formalized agents as autonomous entities that must coordinate, communicate, and negotiate",
+      "order": 15,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external"
+      ],
+      "char_start": 8198,
+      "char_end": 9726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a594991b0d39c82b2ce7f0277496f973",
+      "kind": "paragraph",
+      "text": "under bounded rationality, and i dentified communication-protocol design and coordination overhead as central, unresolved challenges for any system composed of multiple interacting autonomous components (Wooldridge, 2009). The empirical finding that LLM -based multi -agent systems frequentl y fail due to specification ambiguity and inter-agent misalignment (Section 4.4) is consistent with this older theoretical literature; what is new in the LLM setting is not the existence of these coordination problems but the specific mechanisms — natural-language role specification, implicit rather than formally verified communication protocols — through which they now arise.",
+      "order": 16,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external"
+      ],
+      "char_start": 9728,
+      "char_end": 10399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6632681f74a096177ea19ab7499a7e8d",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 17,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external",
+        "Methodology"
+      ],
+      "char_start": 10401,
+      "char_end": 10412,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cd35250005a99950e8a0e53c9102536",
+      "kind": "paragraph",
+      "text": "This is a narrative synthesis, not a formal systematic review conducted under a pre-registered protocol such as PRISMA; we make this explicit rather than overstating its rigor. We impose an explicit scope, explicit inclusion and exclusion criteria, and an explicit procedure for deriving the taxonomy in Section 4, each detailed below.",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external",
+        "Methodology"
+      ],
+      "char_start": 10414,
+      "char_end": 10749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5f4f0034c6e98eadb15e70b62258f2d",
+      "kind": "heading",
+      "text": "Scope and search process",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external",
+        "Scope and search process"
+      ],
+      "char_start": 10751,
+      "char_end": 10775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d342940098f6f15db6e3c8e758b1ae2",
+      "kind": "paragraph",
+      "text": "We searched for benchmark, taxonomy, and audit papers published between 2023 and 2026 covering five overlapping areas of agent capability: (a) tool use and function calling, (b) web navigation and computer use agents, (c) real-world and multi-constraint planning, (d) multi-agent coordination and long-horizon task execution, and (e) agent safety and security under adversarial or underspecified conditions. In total, 27 papers met our inclusion criteria, collectively covering 19 distinct named benchmarks or evaluation frameworks. Table 1 breaks this down by category.",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "showed that language models could learn, largely self -supervised, when and how to call external",
+        "Scope and search process"
+      ],
+      "char_start": 10777,
+      "char_end": 11347,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1dba5aaa44d8acceb687483ae44e03e7",
+      "kind": "heading",
+      "text": "Category Count",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count"
+      ],
+      "char_start": 11349,
+      "char_end": 11363,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be91d5be82abbca62dd8f623f9dd4c28",
+      "kind": "paragraph",
+      "text": "Total papers included 27 Distinct named benchmarks / frameworks 19 Papers proposing or validating a failure taxonomy 6 Papers primarily focused on planning / constraint satisfaction 5 Papers primarily focused on tool-use / functioncalling errors 6 Papers primarily focused on long-horizon / context degradation 6",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count"
+      ],
+      "char_start": 11365,
+      "char_end": 11677,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:61f18c22b0d7e9b38fa996ae75b8134b",
+      "kind": "paragraph",
+      "text": "Papers primarily focused on multi-agent coordination 2 Papers primarily focused on safety / security 2 Papers primarily focused on measurement validity / contamination 4 Non-peer-reviewed industry or secondary sources cited 2",
+      "order": 23,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count"
+      ],
+      "char_start": 11679,
+      "char_end": 11904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a8d31b753d57c573523255a28ba0d86",
+      "kind": "caption",
+      "text": "Table 1. Scope of the literature synthesized in this paper. Category counts do not sum to 27 because several papers",
+      "order": 24,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count"
+      ],
+      "char_start": 11906,
+      "char_end": 12021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:03328a3dca418c73f41f94371ff072f0",
+      "kind": "paragraph",
+      "text": "span more than one category.",
+      "order": 25,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count"
+      ],
+      "char_start": 12023,
+      "char_end": 12051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f38a7cd89d0a6ec5eae963923d44c94d",
+      "kind": "heading",
+      "text": "Inclusion and exclusion criteria",
+      "order": 26,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Inclusion and exclusion criteria"
+      ],
+      "char_start": 12053,
+      "char_end": 12085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed03d72773870e971d4b3dcbf71b472b",
+      "kind": "table",
+      "text": "A paper was included if it met at least one of the following criteria: •  It introduced a benchmark accompanied by quantitative error analysis, not merely an aggregate accuracy figure. •  It proposed or validated a taxonom y of agent failure modes grounded in manual annotation of execution traces, with a reported inter-annotator agreement statistic. •  It specifically investigated the validity of an existing benchmark's measurements (e.g., contamination, leakage, or test-suite adequacy). A paper was excluded if it reported only a leaderboard accuracy figure without accompanying error analysis, if it was a product announcement without an associated technical report, or if it addressed agent capability in a modality outside the  scope defined above (e.g., purely embodied robotics benchmarks). Where multiple papers reported different results for the same benchmark, we report ranges rather than a single point estimate, and flag where later papers substantially revised earlier repor ted figures. We distinguish throughout between peer -reviewed publications (e.g., conference proceedings such as ICLR, ICML, ACL, NeurIPS), pre -prints that have not yet completed peer review (the majority of arXiv -only citations below), and the two non-peer-reviewed secondary or industry sources we cite, which are labeled explicitly at each point of citation.",
+      "order": 27,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Inclusion and exclusion criteria"
+      ],
+      "char_start": 12087,
+      "char_end": 13443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f1347b310051fecad835b34851c4bb0",
+      "kind": "heading",
+      "text": "Taxonomy derivation",
+      "order": 28,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 13445,
+      "char_end": 13464,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63c1d40a78000f91d326ef96b913bc7e",
+      "kind": "paragraph",
+      "text": "The six-cluster taxonomy presented in Section 4 was not assumed in advance; it was derived iteratively from the included papers' own stated error categories or failure modes. We began by listing every distinct error or failure category named across all 27 papers (for example, ToolScan's seven tool -use error types, MAST's fourteen multi-agent failure modes, and TravelPlanner's constraint-violation categories), yielding an initial list of over sixty named categories. We then grouped conceptually overlapping categories across papers into candidate themes — for instance, ToolScan's “hallucinated function names” and the Berkeley Functio n-Calling Leaderboard's “incorrect function-call counts” were merged, since both describe failures of tool identification rather than parameter specification or planning. Candidate themes were iteratively split or merged until each represented a conceptually distinct stage of the agent's reasoning -to-action pipeline (tool identification and parameterization; multi -step plan construction and constraint tracking; state maintenance over long trajectories; inter -agent communication and verification; safety post ure under ambiguity or adversarial content; and the validity of the measurement itself), while minimizing overlap between clusters. Figure 1 depicts the resulting taxonomy schematically. We take some reassurance from the fact that this six -way split is not  solely our own invention: several source papers independently converge on overlapping distinctions despite using unrelated annotation",
+      "order": 29,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 13466,
+      "char_end": 15015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9930b3d09cf20fecdbbe6c54e6f2114e",
+      "kind": "paragraph",
+      "text": "processes and expert panels. MAST's three top -level categories (specification issues, inter -agent misalignment, and verif ication failures) map closely onto our clusters 4.4 and 4.6; ToolScan's and the",
+      "order": 30,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 15017,
+      "char_end": 15220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09866e307ef6fd24f1895b048d76b803",
+      "kind": "paragraph",
+      "text": "REST-API testing framework's independently developed four - and seven-category tool-error taxonomies overlap substantially with our cluster 4.1; and the long -horizon degradation  literature (Section 4.3) independently converges on context accumulation as a distinct bottleneck from both planning (4.2) and tool use (4.1). This convergence across independently conducted annotation efforts is, we believe, better evidence for the taxon omy's validity than any single research team's internal consistency would be. We nonetheless acknowledge that a different research team performing the same grouping exercise might draw cluster boundaries somewhat differently (see Section 9).",
+      "order": 31,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 15222,
+      "char_end": 15899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:87c6bd31f5e498a08559f16b5181a424",
+      "kind": "caption",
+      "text": "Figure 1. The six failure clusters mapped onto distinct stages of an LLM agent's reasoning -to-action pipeline, as",
+      "order": 32,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 15901,
+      "char_end": 16015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cff9c967fcd5685b1c5dbe5ab71256c8",
+      "kind": "paragraph",
+      "text": "derived in Section 3.3.",
+      "order": 33,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Taxonomy derivation"
+      ],
+      "char_start": 16017,
+      "char_end": 16040,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d979527dd79e9602b24bcf6e967856ed",
+      "kind": "heading",
+      "text": "A Taxonomy of Agent Limitations",
+      "order": 34,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "A Taxonomy of Agent Limitations"
+      ],
+      "char_start": 16042,
+      "char_end": 16073,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:010bea8584f7f100f503b59f37acce94",
+      "kind": "heading",
+      "text": "Tool Invocation and Parameter-Level Failures",
+      "order": 35,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Tool Invocation and Parameter-Level Failures"
+      ],
+      "char_start": 16075,
+      "char_end": 16119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdda367f8d86a2c179fc642236673a46",
+      "kind": "paragraph",
+      "text": "At the most granular level, agent failures originate in the mechanics of tool invocation itself. ToolScan (Kokane et al., 2024, arXiv:2411.13547; ICLR 2025 Workshop) characterizes LLM tool -use errors into seven recurring types: insufficient API calls, inco rrect argument values, incorrect argument names, incorrect argument types, repeated (redundant) API calls, incorrect (hallucinated) function names, and invalid output formatting. A parallel taxonomy developed for REST API tool testing groups failures into four categories — tool invocation errors (wrong tool selected, or unproductive recursive invocation), input specification errors (missing or hallucinated parameters), execution errors, and output -interpretation errors (pre -print, arXiv:2504.15546, 2025). Related work frames these errors as a distinct class of “functional hallucination,” separate from the textual confabulation more commonly discussed in LLM hallucination research, because functional hallucinations manifest as structurally plausible but seman tically incorrect actions rather than false statements (pre-print, arXiv:2601.05214, 2026; pre-print, arXiv:2412.04141, 2024). These errors are far from rare even on relatively controlled tasks. On the Berkeley Function -Calling Leaderboard (Patil et al., 2025, ICML), single-turn function selection is comparatively strong across stateof-the-art models, but performance deteriorates substantially once tasks require maintaining state across multiple turns, deciding whether to invoke a tool at all, or reasoning  over long-horizon multi -step call",
+      "order": 36,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Tool Invocation and Parameter-Level Failures"
+      ],
+      "char_start": 16121,
+      "char_end": 17698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5456bec6d17b3cce740375b39cca5b0c",
+      "kind": "paragraph",
+      "text": "sequences. Notably, models operating in dedicated function -calling modes, which should in principle produce cleaner outputs than free -text prompting, were found in the multiple -function-call category to produce a substant ially higher average number of incorrect function -call counts than prompting -based approaches (approximately 77.5 versus 21 incorrect calls on average), suggesting that structured output modes trade some flexibility for a different profile of errors rather than eliminating errors outright. A study of tool -augmented agents interacting with genuinely ambiguous, real -world user instructions (NoisyToolBench, pre-print, arXiv:2409.00557) found that when required parameters are missing from a query, models tend t o fabricate plausible values rather than asking a clarifying question, a tendency attributed to the next-token prediction objective underlying most LLM training. Its taxonomy of instruction ambiguity offers a complementary lens to ToolScan: where ToolScan characterizes what goes wrong in the agent's output, NoisyToolBench characterizes what was underspecified in the input that made the failure likely. Earlier benchmarks such as API-Bank (Li et al., 2023, arXiv:2304.08244) established a simpler evaluation of planning, retrieving, and calling APIs across 73 tools; later work such as ToolBench and its stabilized successor StableToolBench extended this to thousands of real -world APIs, generally finding that failure rates increase with the size and diversity of the available tool set.",
+      "order": 37,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Tool Invocation and Parameter-Level Failures"
+      ],
+      "char_start": 17700,
+      "char_end": 19233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:765cfb6a9225e1dc35324302370f26e2",
+      "kind": "heading",
+      "text": "Planning and Constraint-Satisfaction Failures",
+      "order": 38,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Planning and Constraint-Satisfaction Failures"
+      ],
+      "char_start": 19235,
+      "char_end": 19280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8810f55626535142c132885cb45fead1",
+      "kind": "paragraph",
+      "text": "Moving from single tool calls to multi -step plans reveals a more severe category of failure: even strong models struggle to satisfy multiple constraints jointly, as opposed to individually. TravelPlanner (Xie et al., 2024, ICML) found that GPT-4 achieved only a 0.6% final-plan success rate on multi-day travel itineraries with numerous simultaneous constraints, despite far higher rates of satisfying any single constraint in isolation. Subsequent work applying stronger reasoning models raised this to approximately 10%, and combining reasoning models with external formal verifiers and critics raised it further, to approximately 65% in the best reported configuration (pre-print, arXiv:2404.11891, 2024) — still leaving a substantial share of plans unresolved even with heavy scaffolding. The benchmark's own error analysis attributes failures to three overlapping causes: agents losing focus on the overall task while pursuing a sub-goal, failing to invoke the correct information-gathering tool at the correct step, and losing track of previously satisfied or violated constraints as the number of simultaneous constraints grows. This pattern echoes the “compositionality gap” documented in the broade r reasoning literature: the empirically observed discrepancy between a model's success rate on sub -tasks in isolation and its success rate on the composed, multi-step task built from those same sub-tasks (Press et al., 2023). This gap has been shown not to close simply with model scale, suggesting constraint satisfaction over multiple simultaneous",
+      "order": 39,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Planning and Constraint-Satisfaction Failures"
+      ],
+      "char_start": 19282,
+      "char_end": 20841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21d30954828c5ff6fcaeef3d7dc39891",
+      "kind": "paragraph",
+      "text": "requirements is a distinct capability from single -step reasoning accuracy (pre -print, arXiv:2603.06870,",
+      "order": 40,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Category Count",
+        "Planning and Constraint-Satisfaction Failures"
+      ],
+      "char_start": 20843,
+      "char_end": 20948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d3fe20bee291ba87ff37577caab40883",
+      "kind": "heading",
+      "text": ".",
+      "order": 41,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "."
+      ],
+      "char_start": 20950,
+      "char_end": 20951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fa74c1627d527a59ccda6306979d22f",
+      "kind": "paragraph",
+      "text": "A related finding concerns test-time scaling. One might expect that giving an agent more computation — more reasoning tokens per step (sequential scaling) or more sampled trajectories to select from (parallel scaling) — should reliably improve planning success. A large -scale study evaluating ten leading LL M agents on a general -purpose agent benchmark found that neither scaling approach reliably improved performance (pre -print, arXiv:2602.18998, 2026), attributing this to a “context ceiling” that limits the benefit of additional sequential reasoning once working memory saturates, and a “verification gap” in which the agent cannot reliably identify which of several sampled candidate trajectories actually solved the task. This is echoed by the Holistic Agent Leaderboard's finding, discussed in Section 4.6, that higher reasoning effort settings reduced accuracy in the majority of evaluated runs.",
+      "order": 42,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "."
+      ],
+      "char_start": 20953,
+      "char_end": 21861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7adf7cfef80a3943a16e0a66685d1d0",
+      "kind": "heading",
+      "text": "Long-Horizon Degradation and Context Management",
+      "order": 43,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ".",
+        "Long-Horizon Degradation and Context Management"
+      ],
+      "char_start": 21863,
+      "char_end": 21910,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef94c3d4078e586272476039979daa58",
+      "kind": "paragraph",
+      "text": "A third cluster of failures emerges specifically as tasks lengthen. METR's time -horizon analysis, which times human domain experts on the same multi -step software and research tasks given to models, found that current frontier models achieve near -100% success on tasks that take skilled humans under approximately four minutes, but succeed less than 10% of the time on tasks  taking humans more than approximately four hours (Kwa et al., 2025, pre -print arXiv:2503.14499), with the length of task completable at 50% reliability doubling roughly every seven months since 2019. Consistent with this, studies of long-context web agents report that success rates reaching 40-50% on shorthorizon variants of a task can fall to below 10% once the same task is embedded in a longer interaction history, even when the relevant information remains technically present within the model's context window (pre-print, arXiv:2512.04307, 2025). Detailed trace analysis attributes this primarily to agents losing track of the original task objective and becoming stuck in repetitive, unproductive loops, rather than to outright retrieval failure. Related ben chmarking of software -engineering agents over long conversations found that performance degradation accelerates non -linearly as conversation length grows, with tool logs showing agents increasingly re -reading already -processed files, repeating previously f ailed tool calls, and generating redundant summaries that further dilute the effective context available for decision -making (pre -print,",
+      "order": 44,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ".",
+        "Long-Horizon Degradation and Context Management"
+      ],
+      "char_start": 21912,
+      "char_end": 23458,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f33583e945f60687806f386026d93271",
+      "kind": "paragraph",
+      "text": "arXiv:2511.13998, 2025). Architectural proposals such as Context -Folding (pre-print, arXiv:2510.11967,",
+      "order": 45,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ".",
+        "Long-Horizon Degradation and Context Management"
+      ],
+      "char_start": 23460,
+      "char_end": 23563,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d224a85f4708e9af7a110186653290e",
+      "kind": "heading",
+      "text": ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+      "order": 46,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into"
+      ],
+      "char_start": 23565,
+      "char_end": 23668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9c85ddca5a5810d7171824437b634c0",
+      "kind": "paragraph",
+      "text": "a concise summary upon completion, indicate that the field increasingly treats context management, rather than raw context length, as the binding constraint on long-horizon reliability. Complementary work on long -horizon reasoning situates this within a broader “no -recovery bottleneck” (pre-print, arXiv:2603.06870, 2026): once an agent commits to an incorrect intermediate state deep into a long trajectory, most current architectures have limited ability to detect and roll back the error, so a single early mistake propagates through the remainder of the trajectory. METR's own analysis attributes the steady increase in time horizon primarily to improvements in reliabil ity and error recovery rather than to raw reasoning or tool-use ability alone, which is directly consistent with this mechanism.",
+      "order": 47,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into"
+      ],
+      "char_start": 23670,
+      "char_end": 24476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62b53b59ffda74603ab5ffa58905af21",
+      "kind": "heading",
+      "text": "Multi-Agent Coordination Failures",
+      "order": 48,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Multi-Agent Coordination Failures"
+      ],
+      "char_start": 24478,
+      "char_end": 24511,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed998da9868f4472f947a1fafe431c3d",
+      "kind": "paragraph",
+      "text": "A fourth cluster concerns systems that distribute a task across multiple cooperating LLM agents. Despite the intuitive appeal of decomposing complex work across specialized agents, empirical analysis of seven popular multi-agent frameworks across more than 200 tasks found that performance gains from multi-agent coordination over single -agent b aselines are frequently minimal (Cemri et al., 2025, pre -print arXiv:2503.13657). Through manual annotation of agent traces (Cohen's Kappa of 0.88), this work identified fourteen distinct failure modes across three categories: specification and system desi gn issues (ambiguous role definitions or absent termination criteria), inter -agent misalignment (breakdowns in information flow, conflicting assumptions, incomplete context propagation), and task verification and termination failures (incorrect acceptance criteria, or premature termination by the wrong agent). The authors found that fixing these failures required deeper structural interventions, such as improved interagent “social reasoning,” rather than simple prompt or protocol adjustments. Specification issues and interagent misalignment together accounted for the substantial majority of observed failures (approximately 42% and 37% respectively in one reported breakdown, with the remainder attributed to verification and termination failures). This is consistent with a broader observation that coordination overhead scales with the number of interacting agents in a way that can offset, and in some configurations exceed, the benefits",
+      "order": 49,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Multi-Agent Coordination Failures"
+      ],
+      "char_start": 24513,
+      "char_end": 26066,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b948487187c9da58d32e7d4080507e8",
+      "kind": "paragraph",
+      "text": "of task decomposition and specialization.",
+      "order": 50,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Multi-Agent Coordination Failures"
+      ],
+      "char_start": 26068,
+      "char_end": 26109,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43062aa77f39be381e31c1713d1dabe8",
+      "kind": "heading",
+      "text": "Safety and Security Failures",
+      "order": 51,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety and Security Failures"
+      ],
+      "char_start": 26111,
+      "char_end": 26139,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:591b8743753fe9dfe3ac9f8e0bdb7c9f",
+      "kind": "paragraph",
+      "text": "A fifth cluster, distinct from pure capability failures, concerns the safety and security properties of tool using agents: cases where an agent takes an action that is technically well -formed and executable, but harmful, either because it misjudged an ambiguous instruction or because it was manipulated by adversarial content. ToolEmu (Ruan et al., 2023, ICLR 2024 Spotlight, arXiv:2309.15817) introduced a language model-emulated sandbox to surface these risks at scale, covering 36 high -stakes toolkits (bank ing, healthcare records, smart-home/IoT) and 144 test cases, with an automatic safety evaluator validated against human review (68.8% of identified failures confirmed as valid by human annotators). Even the safest evaluated agent in that study exhibited failures with potentially severe outcomes in 23.9% of test cases, frequently triggered by underspecified instructions in which the agent proceeded on an unwarranted assumption rather than seeking clarification. A related but distinct threat model concerns adversarial manipulation rather than benign underspecification. InjecAgent (Zhan et al., 2024, ACL Findings, arXiv:2403.02691) benchmarks the vulnerability of tool integrated agents to indirect prompt injection, in which malicious instructions are embedded within external content the agent processes while completing a legitimate task. Across 1,054 test cases, a standard ReActprompted GPT-4 agent was vulnerable approximately 24% of the time, rising to approximately 47% with a reinforced attack prompt; open -source models without safety fine -tuning showed vulnerability rates",
+      "order": 52,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety and Security Failures"
+      ],
+      "char_start": 26141,
+      "char_end": 27745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07721af2172245cc88c2a14fb5a175ff",
+      "kind": "paragraph",
+      "text": "exceeding 80% in some configurations, while safety-fine-tuned model variants showed substantially lower, though still non-trivial, vulnerability rates. Taken together, these two studies indi cate that tool -using agents face a compound risk surface, largely orthogonal to the capability failures discussed in Sections 4.1-4.4: an agent can be highly capable at parsing tool schemas and satisfying planning constraints while remaining highly vulnerable to either failure mode, since neither depends primarily on reasoning accuracy so much as on the agent's default posture toward ambiguity and untrusted content. The ToolEmu benchmark's inclusion of smart-home and IoT toolkits (e.g., smart locks and home assistants) as high -stakes test cases is notable in light of a separate, non -agentic line of human -centered privacy research on exactly this domain. Field studies of smart home deployments in non -Western household contexts have repeatedly found that the p rimary privacy harms fall not on the device owner but on bystanders — family members, guests, and particularly domestic workers — who are monitored by devices they neither chose nor control, and who have limited power to contest or opt out of that monitori ng (Albayaydh & Flechais, 2022; Albayaydh & Flechais, 2023). Subsequent work in the same research program found that even purpose-built privacy-protection tools struggle to address this imbalance, because the underlying power asymmetry between device owners and bystanders is a social and economic condition",
+      "order": 53,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety and Security Failures"
+      ],
+      "char_start": 27747,
+      "char_end": 29276,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:620d071a467c6fb32e276ca98e0a4c9d",
+      "kind": "paragraph",
+      "text": "that a technical intervention alone cannot fully resolve (Albayaydh & Flechais, 2024). This human-centered literature did not evaluate LLM agents specifically, and we do not treat it as direct evidence about agentic tool use. We include it here because it identifies a bystander-harm pattern in exactly the toolkit category (smart-home and IoT devices) that ToolEmu and similar agent-safety benchmarks are only beginning to probe, and because current agent -safety evaluations, including ToolEmu, are generally structured around harms to the instructing user rather than to non-consenting third parties who are affected by the agent's actions but never interact with it directly. Extending agent -safety benchmarks to explicitly evaluate bystander impact, rather than only user-facing or owner-facing harm, is a concrete gap this adjacent literature helps surface.",
+      "order": 54,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety and Security Failures"
+      ],
+      "char_start": 29278,
+      "char_end": 30142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a234e30cc7cee0ad71ff0165a763fe4",
+      "kind": "heading",
+      "text": "Measurement Validity: What Benchmark Scores Actually Capture",
+      "order": 55,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Measurement Validity: What Benchmark Scores Actually Capture"
+      ],
+      "char_start": 30144,
+      "char_end": 30204,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69f8230f90ca1d386404b9795cd179d1",
+      "kind": "paragraph",
+      "text": "The final cluster concerns whether widely ci ted benchmark scores reliably measure the capability they claim to measure. Re-analysis of SWE-bench found that a substantial share of previously reported successes",
+      "order": 56,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Measurement Validity: What Benchmark Scores Actually Capture"
+      ],
+      "char_start": 30206,
+      "char_end": 30415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec5800b16f5816f5e1c3e73f3e697692",
+      "kind": "paragraph",
+      "text": "were attributable to solution leakage or weak underlying test suites; after correction, one  study found the reported success rate of a representative SWE -agent configuration fall from approximately 12.5% to approximately 4% (Aleithan et al., 2024). A separate test -augmentation effort found that adding stronger, automatically generated unit tests changed leaderboard rankings in approximately 25-41% of cases across SWE-bench Lite and Verified (Yu et al., 2025, pre-print arXiv:2506.09289), and further work has directly asked whether SWE-bench Verified measures genuine problem-solving ability or partial memorization of training data (Prathifkumar et al., 2025, pre-print arXiv:2512.10218). Parallel critiques have emerged around GAIA and other general-assistant benchmarks. The Holistic Agent Leaderboard (Kapoor et al., 2025, pre-print arXiv:2510.11977; accepted ICLR 2026) evaluated over 21,000 agent rollouts across nine models and nine benchmarks at a cost of approximately $40,000, and proposed cost-adjusted comparisons because headline accuracy alone does not account for the substantial variation in compute or dollar cost required to achieve it; the same analysis found that higher reasoning effort reduced accuracy in the majority of runs studied. A complementary reliability framework has argued that a single aggregate metric obscures whether agents behave consistently across runs, degrade gracefully under perturbation, or have bounded error severity, and found that recent capability gains have translated into only small reliability improvements (pre -print,",
+      "order": 57,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Measurement Validity: What Benchmark Scores Actually Capture"
+      ],
+      "char_start": 30417,
+      "char_end": 31998,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ca7a16fea123a72e1b715d6b3daa4ca8",
+      "kind": "paragraph",
+      "text": "“Towards a Science of AI Agent Reliability,”  2026). Taken together, these findings suggest that at least part of the apparent year -over-year improvement in agent benchmark scores reflects tightening of evaluation methodology and correction of earlier measurement error, alongside a genuine rise in underlying capability, rather than one or the other in isolation. Section 5 discusses where the genuine -improvement component of this picture is strongest.",
+      "order": 58,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Measurement Validity: What Benchmark Scores Actually Capture"
+      ],
+      "char_start": 32000,
+      "char_end": 32456,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b66dba012905cafcccd6c0ce49fd487e",
+      "kind": "heading",
+      "text": "Where Agents Have Genuinely Improved",
+      "order": 59,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Where Agents Have Genuinely Improved"
+      ],
+      "char_start": 32458,
+      "char_end": 32494,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e05b89cb56b303add59ca51fabd7f05",
+      "kind": "paragraph",
+      "text": "A synthesis organized around failure modes risks leaving the impression that agent capability is stagnant or illusory. That would overstate the case. Several specific capabilities show credible, substantial improvement that is not primarily attributable to measurement correction, and it is worth being explicit about which these are.",
+      "order": 60,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Where Agents Have Genuinely Improved"
+      ],
+      "char_start": 32496,
+      "char_end": 32830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fde782584a1d383ef999ccd65f6a8fdb",
+      "kind": "heading",
+      "text": "Single-turn tool selection and parameterization",
+      "order": 61,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Single-turn tool selection and parameterization"
+      ],
+      "char_start": 32832,
+      "char_end": 32879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8eb02af8ab537c4cb65db6f1f8c3739d",
+      "kind": "paragraph",
+      "text": "On the Berkeley Function-Calling Leaderboard, single-turn function selection and parameter accuracy for frontier models is consistently strong and has improved steadily across model gene rations (Patil et al.,",
+      "order": 62,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Single-turn tool selection and parameterization"
+      ],
+      "char_start": 32881,
+      "char_end": 33090,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e45d0d0d38d8d64ac6f85663e368470a",
+      "kind": "heading",
+      "text": "This is the capability level at which the field's investment in structured output modes, function -",
+      "order": 63,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "This is the capability level at which the field's investment in structured output modes, function -"
+      ],
+      "char_start": 33092,
+      "char_end": 33191,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c705a8de0797836f4fdc203a980c5bb",
+      "kind": "paragraph",
+      "text": "calling fine-tuning, and schema-grounded generation has been most directly targeted, and the improvement tracks that investment plausibly. The gap identified in Section 4.1 is concentrated in multi -turn, stateful, and abstention settings, not in basic single-call tool selection, which should be read as a genuinely different and harder problem rather than evidence that single-turn tool use remains unsolved.",
+      "order": 64,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "This is the capability level at which the field's investment in structured output modes, function -"
+      ],
+      "char_start": 33193,
+      "char_end": 33603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d30a76660d8432774c811d76735adccf",
+      "kind": "heading",
+      "text": "Short-horizon web navigation",
+      "order": 65,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Short-horizon web navigation"
+      ],
+      "char_start": 33605,
+      "char_end": 33633,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11f845515023c34ffb396a684831ee24",
+      "kind": "paragraph",
+      "text": "WebVoyager success rates for several current commercial and open web -agent scaffolds now reach approximately 85-90% on filtered, still-viable task subsets, up from success rates well under 50% for early GPT-4-based agents. On the harder WebArena benchmark, reported success rates rose from approximately 14% to a reported 61.7% for one specialized enterprise scaffold within roughly eighteen months (Marreed et al., 2025), and independent analysis attri butes this progress to a genuine architectural convergence — modular planner -executor-memory designs — corroborated across multiple independent scaffolds and models rather than a single submission gaming one leaderboard.",
+      "order": 66,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Short-horizon web navigation"
+      ],
+      "char_start": 33635,
+      "char_end": 34311,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8817283a3da000f2729be267236e7b9",
+      "kind": "heading",
+      "text": "Narrowly scoped, well-specified coding tasks",
+      "order": 67,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Narrowly scoped, well-specified coding tasks"
+      ],
+      "char_start": 34313,
+      "char_end": 34357,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4c6b032007719d58c25c604ffe9ac9d",
+      "kind": "paragraph",
+      "text": "Even after the substantial downward corrections for contamination and weak test suites discussed in Section",
+      "order": 68,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Narrowly scoped, well-specified coding tasks"
+      ],
+      "char_start": 34359,
+      "char_end": 34466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14452f9df9581060db1529d8e0b1b6be",
+      "kind": "heading",
+      "text": "6, corrected SWE-bench Verified resolution rates for leading coding agents in 2026 remain meaningfully",
+      "order": 69,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "6, corrected SWE-bench Verified resolution rates for leading coding agents in 2026 remain meaningfully"
+      ],
+      "char_start": 34468,
+      "char_end": 34570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a5cd8878b1be73dbb20ea6ca4e694b7",
+      "kind": "paragraph",
+      "text": "higher than corrected 2024 ba selines, and the improvement is corroborated by convergent evidence from multiple independent scaffolds (OpenHands, Agentless, and various commercial coding agents) rather than resting on any single leaderboard submission. This suggests that for well-specified, single-repository, testcovered coding tasks — arguably the best -specified planning problems examined in this synthesis — genuine progress has occurred alongside the measurement corrections, even if the absolute level of reliability required for fully autonomous deployment is not yet reached.",
+      "order": 70,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "6, corrected SWE-bench Verified resolution rates for leading coding agents in 2026 remain meaningfully"
+      ],
+      "char_start": 34572,
+      "char_end": 35157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:19793c0cd22b2e6093fb75ba702baf88",
+      "kind": "heading",
+      "text": "Safety fine-tuning as a distinct, effective lever",
+      "order": 71,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety fine-tuning as a distinct, effective lever"
+      ],
+      "char_start": 35159,
+      "char_end": 35208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:405ec3ab8b99a28cdeb685391d94667e",
+      "kind": "paragraph",
+      "text": "InjecAgent's finding that safety -fine-tuned model variants show substantially lower indirect -promptinjection vulnerability than prompted-only agents of comparable general capability (Section 4.5) is itself a genuine improvement story: it demonstrates that a specific, targeted intervention can measurably reduce a specific class of failure, even though it does not eliminate it. This is a useful counterpoint to t he more general finding in Section 7.5 that capability and safety are only partially correlated — the correlation can be made much tighter through deliberate intervention, even if it does not arise automatically. Taken together, the clearest pattern in thi s section is that improvement has been most credible and least contested precisely where tasks are best-specified, shortest in horizon, and narrowest in scope — and least credible, or most fragile, precisely where tasks require joint constraint satisfactio n, long -horizon state tracking, or coordination among multiple agents. This is itself consistent with, rather than contradictory to, the taxonomy in Section 4: it suggests the field has made the most progress on exactly the failure clusters (4.1, and the easier end of 4.3) that are most tractable to address with current scaffolding techniques, and comparatively less progress on the clusters (4.2, 4.4, and the harder end of 4.3) that require qualitatively different architectural solutions.",
+      "order": 72,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Safety fine-tuning as a distinct, effective lever"
+      ],
+      "char_start": 35210,
+      "char_end": 36634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:352b51fa8570581abef0ec8f97935c10",
+      "kind": "heading",
+      "text": "Findings: A Quantitative Synthesis Across Benchmarks",
+      "order": 73,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Findings: A Quantitative Synthesis Across Benchmarks"
+      ],
+      "char_start": 36636,
+      "char_end": 36688,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7719eb2ade7b7e3678976ad78322772b",
+      "kind": "caption",
+      "text": "Table 2 consolidates representative quantitative findings across the benchmarks discussed in Section 4,",
+      "order": 74,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Findings: A Quantitative Synthesis Across Benchmarks"
+      ],
+      "char_start": 36690,
+      "char_end": 36793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb8c54fd2a9b79afb0ea2bc1891ab11d",
+      "kind": "paragraph",
+      "text": "grouped by the taxonomy category each primarily addresses. Figures are drawn from the specific studies cited and a re not independently re -verified by the present authors; where a range is reported, it reflects variation across models, scaffolds, or subsequent corrective re -analysis rather than measurement uncertainty in a statistical sense.",
+      "order": 75,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        ", which allows an agent to branch into a bounded sub-trajectory for a subtask and then collapse it into",
+        "Findings: A Quantitative Synthesis Across Benchmarks"
+      ],
+      "char_start": 36795,
+      "char_end": 37140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f59c202b1481c1d4f4d33adeea924747",
+      "kind": "heading",
+      "text": "Tool Use",
+      "order": 76,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Tool Use"
+      ],
+      "char_start": 37142,
+      "char_end": 37150,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73dc5447cdf63effb05d9e6ea5cef8dc",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 77,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 37152,
+      "char_end": 37226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79cb6eef8dfaddb087d2cbcb1f862fc3",
+      "kind": "heading",
+      "text": "Berkeley Function-Calling",
+      "order": 78,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Berkeley Function-Calling"
+      ],
+      "char_start": 37228,
+      "char_end": 37253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8bd1bc6aaebc50db9ceae1791bd78e4",
+      "kind": "paragraph",
+      "text": "Leaderboard (BFCL) Serial/parallel function calling, multi-turn state tracking Strong single-turn accuracy; substantial drop in multi-turn, stateful, and abstention settings Patil et al., 2025 (ICML) ToolScan Tool-use error characterization (7 error types) All evaluated LLMs exhibit multiple error types; no model error-free Kokane et al., 2024 (workshop) NoisyToolBench Robustness to ambiguous instructions Models fabricate missing parameters rather than asking clarifying questions arXiv:2409.00557 (pre-print)",
+      "order": 79,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Berkeley Function-Calling"
+      ],
+      "char_start": 37255,
+      "char_end": 37768,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b433e7493ed97e045523e89fe71783c9",
+      "kind": "heading",
+      "text": "Planning",
+      "order": 80,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Planning"
+      ],
+      "char_start": 37770,
+      "char_end": 37778,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07d88a41f693e4b9e18cff9017d5caae",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 81,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 37780,
+      "char_end": 37854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bae39028f2ac0da73f13eab3f6a6e9c6",
+      "kind": "paragraph",
+      "text": "TravelPlanner Multi-constraint real-world planning",
+      "order": 82,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 37856,
+      "char_end": 37906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5dd6bca9db7b44e9f64fbc4dd2759126",
+      "kind": "heading",
+      "text": "6% (GPT-4); ~10% (o1-preview);",
+      "order": 83,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source",
+        "6% (GPT-4); ~10% (o1-preview);"
+      ],
+      "char_start": 37908,
+      "char_end": 37938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b434fad73711e6fc059656d9bb3778b9",
+      "kind": "paragraph",
+      "text": "~65% (best verifier-augmented configuration) Xie et al., 2024 (ICML); arXiv:2404.11891 (pre-print)",
+      "order": 84,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source",
+        "6% (GPT-4); ~10% (o1-preview);"
+      ],
+      "char_start": 37940,
+      "char_end": 38038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:027e543ff2e469f67a045a662ea11e5b",
+      "kind": "paragraph",
+      "text": "General AgentBench (testtime scaling) Sequential and parallel testtime scaling Neither scaling approach reliably improves performance; context ceiling and verification gap identified arXiv:2602.18998 (pre-print) Long-Horizon and Web Navigation",
+      "order": 85,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source",
+        "6% (GPT-4); ~10% (o1-preview);"
+      ],
+      "char_start": 38040,
+      "char_end": 38283,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7c56e846a8e815503b84a831df6958a",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 86,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 38285,
+      "char_end": 38359,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cda0d996590361730c8c0cec1447b50",
+      "kind": "heading",
+      "text": "METR Time Horizons Long-horizon task",
+      "order": 87,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "METR Time Horizons Long-horizon task"
+      ],
+      "char_start": 38361,
+      "char_end": 38397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73cc1e649723933fef13f7a3634d8e4f",
+      "kind": "paragraph",
+      "text": "completion vs. human expert time Near-100% success under ~4 min human-equivalent tasks; <10% success above ~4 hrs; horizon doubling ~every 7 months Kwa et al., 2025 (pre-print) WebArena End-to-end web task completion ~14% (initial); 61.7% (best specialized scaffold, ~18 months later); human performance ~78% Zhou et al., 2024 (ICLR); Marreed et al., 2025 (preprint) VisualWebArena Multimodal web task completion All evaluated models significantly below human performance Koh et al., 2024 (pre-print) WebVoyager (filtered) Real-world web navigation 57-90% success rate across commercial and open agent scaffolds Skyvern filtered benchmark, 2025",
+      "order": 88,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "METR Time Horizons Long-horizon task"
+      ],
+      "char_start": 38399,
+      "char_end": 39043,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53afc469d0e59dc179f1032bc7f67469",
+      "kind": "heading",
+      "text": "Long-context WebAgent",
+      "order": 89,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Long-context WebAgent"
+      ],
+      "char_start": 39045,
+      "char_end": 39066,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:313b3045a6ee87fb85779e12d4d1b610",
+      "kind": "heading",
+      "text": "evaluation",
+      "order": 90,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "evaluation"
+      ],
+      "char_start": 39068,
+      "char_end": 39078,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2084db4d487d3b93eec59e9f13041845",
+      "kind": "paragraph",
+      "text": "Long-horizon web task degradation Success falls from 40-50% (short horizon) to <10% (long horizon) arXiv:2512.04307 (pre-print) LoCoBench-Agent Long-context software engineering Non-linear efficiency loss as conversation length grows (~3-5% loss per 50% length increase) arXiv:2511.13998 (pre-print)",
+      "order": 91,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "evaluation"
+      ],
+      "char_start": 39080,
+      "char_end": 39379,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c00285559a11c71d60e623d3d0c83e01",
+      "kind": "heading",
+      "text": "Multi-Agent Coordination",
+      "order": 92,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Multi-Agent Coordination"
+      ],
+      "char_start": 39381,
+      "char_end": 39405,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e5955e69b4c57fb379ad4a662e019c4",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 93,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 39407,
+      "char_end": 39481,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3277a4f9595b0a81c4396ec6551aae7e",
+      "kind": "paragraph",
+      "text": "MAST (Multi-Agent",
+      "order": 94,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 39483,
+      "char_end": 39500,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecfa83ac92aa7a7e677afa99d362afe2",
+      "kind": "heading",
+      "text": "System Failure Taxonomy)",
+      "order": 95,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "System Failure Taxonomy)"
+      ],
+      "char_start": 39502,
+      "char_end": 39526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab64f7b7c991ab06ae5a686803204af2",
+      "kind": "paragraph",
+      "text": "Multi-agent coordination 14 failure modes across 3 categories; ~42% specification, ~37% misalignment, ~21% verification Cemri et al., 2025 (pre-print) Safety and Security",
+      "order": 96,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "System Failure Taxonomy)"
+      ],
+      "char_start": 39528,
+      "char_end": 39698,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ed2329f0652e8c08c5cfeb2b98fd886",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 97,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 39700,
+      "char_end": 39774,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:858171f203693f9d8e67fc2194f12716",
+      "kind": "paragraph",
+      "text": "ToolEmu Agent safety under underspecified instructions Safest evaluated agent still fails with severe outcomes in 23.9% of cases Ruan et al., 2023 (ICLR",
+      "order": 98,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 39776,
+      "char_end": 39928,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6018b24e743e3ff02e4e444314278bd3",
+      "kind": "heading",
+      "text": "Spotlight)",
+      "order": 99,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Spotlight)"
+      ],
+      "char_start": 39930,
+      "char_end": 39940,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34775c4d12d4a03d236f4cd4e59e3cee",
+      "kind": "paragraph",
+      "text": "InjecAgent Robustness to indirect prompt injection ~24% attack success (standard); ~47% (enhanced attack); 80%+ for some open models Zhan et al., 2024 (ACL",
+      "order": 100,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Spotlight)"
+      ],
+      "char_start": 39942,
+      "char_end": 40097,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f00868493168b18a6503f719108f93ad",
+      "kind": "heading",
+      "text": "Findings)",
+      "order": 101,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Findings)"
+      ],
+      "char_start": 40099,
+      "char_end": 40108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:43e1cf1267a59bf9184060bb5168b425",
+      "kind": "heading",
+      "text": "Evaluation Infrastructure / Measurement Validity",
+      "order": 102,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Evaluation Infrastructure / Measurement Validity"
+      ],
+      "char_start": 40110,
+      "char_end": 40158,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc71006fb08e13620cc60d3562ae7355",
+      "kind": "heading",
+      "text": "Benchmark / Study Capability Assessed Representative Result Primary Source",
+      "order": 103,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 40160,
+      "char_end": 40234,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a34e8ddfc41a8013da5bd95efcc0d81d",
+      "kind": "paragraph",
+      "text": "GAIA / Holistic Agent Leaderboard (HAL) General assistant reasoning; cross-benchmark, costadjusted evaluation Best reported accuracy 64.8-93% depending on scaffold and cost; higher reasoning effort reduced accuracy in majority of runs Mialon et al., 2024 (ICLR); Kapoor et al., 2025 (pre-print) SWE-bench / SWE-bench",
+      "order": 104,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Benchmark / Study Capability Assessed Representative Result Primary Source"
+      ],
+      "char_start": 40236,
+      "char_end": 40552,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b0d86fb063d04639db7613f3d42a34c",
+      "kind": "heading",
+      "text": "Verified",
+      "order": 105,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified"
+      ],
+      "char_start": 40554,
+      "char_end": 40562,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6097a7f5172b369b2c0e9c28fb9ac9a",
+      "kind": "paragraph",
+      "text": "Autonomous softwareengineering issue resolution ~20% (2024) to 50-60%+ (2026) on raw leaderboards; falls to ~4% for one configuration after leakage correction Jimenez et al., 2024 (preprint); Aleithan et al., 2024; Yu et al., 2025 (pre-print)",
+      "order": 106,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified"
+      ],
+      "char_start": 40564,
+      "char_end": 40806,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef5df7cc2dcf7d9a4d312ae4c1d3f3b2",
+      "kind": "caption",
+      "text": "Table 2. Representative quantitative findings across agent benchmarks, grouped by taxonomy category.",
+      "order": 107,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified"
+      ],
+      "char_start": 40808,
+      "char_end": 40908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c99b136be152dba91ed6687a996e7eb",
+      "kind": "paragraph",
+      "text": "Parenthetical notes indicate peer-reviewed venue, workshop, or pre-print status at time of writing. Read within groups, Table 2 illustrates the central tension motivating this paper: benchmarks measuring narrower, more mechanical capabilities (single -turn function calling, short -horizon web tasks) report comparatively high and steadily improving success rates, consistent with Section 5's account of genuine progress. Benchmarks measuring composed, long-horizon, or jointly-constrained capabilities report success rates that remain low in absolute terms even a fter substantial scaffolding, or that degrade sharply as task length increases. Benchmarks measuring safety and security properties occupy an intermediate position: failure rates are lower than for the hardest planning benchmarks, but remain far from zero, and improve at a pace that appears to depend on dedicated safety interventions rather than general capability scaling alone.",
+      "order": 108,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified"
+      ],
+      "char_start": 40910,
+      "char_end": 41856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c6e7096de659a76b81fe35d83d2ea416",
+      "kind": "heading",
+      "text": "Cross-Cutting Patterns",
+      "order": 109,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Cross-Cutting Patterns"
+      ],
+      "char_start": 41858,
+      "char_end": 41880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b49c01445181ff98aef0e05dde609229",
+      "kind": "paragraph",
+      "text": "Several patterns recur across the six failure clusters in Section 4, tempered by the genuine progress documented in Section 5. We present these as candidate structural properties of current LLM agents, rather than as a claim that no real progress has occurred.",
+      "order": 110,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Cross-Cutting Patterns"
+      ],
+      "char_start": 41882,
+      "char_end": 42142,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2737650cee5d642b2ca63c21281c6b0",
+      "kind": "heading",
+      "text": "Non-linear compounding of failure with task length and complexity",
+      "order": 111,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Non-linear compounding of failure with task length and complexity"
+      ],
+      "char_start": 42144,
+      "char_end": 42209,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8901fcf2d339a4f9bda7f59f1d730a25",
+      "kind": "paragraph",
+      "text": "This is visible in METR's time-horizon findings and the long-horizon degradation literature (Section 4.3), and in the collapse of plan -level success rates relative to constraint -level success rates in TravelPlanner (Section 4.2). The “no-recovery bottleneck” framing (Section 4.3) offers one candidate mechanism: because most current agent architectures have limited ability to detect and roll back an early error, the probability that a long trajectory remains error-free falls off faster than a constant-hazard model would predict.",
+      "order": 112,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Non-linear compounding of failure with task length and complexity"
+      ],
+      "char_start": 42211,
+      "char_end": 42746,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3c12847a3a99bac744b4d123259d8ae",
+      "kind": "heading",
+      "text": "Non-composability of sub-skill competence",
+      "order": 113,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Non-composability of sub-skill competence"
+      ],
+      "char_start": 42748,
+      "char_end": 42789,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:396a1865a2eb6a097887abc195bd46f8",
+      "kind": "paragraph",
+      "text": "Sub-skill competence does not reliably compose into end-to-end task success. Agents that correctly execute the large majority of individual tool calls, or that satisfy most individual planning constraints, frequently fail the composed task as a whole. This is the central finding of the compositionality-gap literature (Section",
+      "order": 114,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Non-composability of sub-skill competence"
+      ],
+      "char_start": 42791,
+      "char_end": 43118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b4524656c284f14155d44309752b20e7",
+      "kind": "heading",
+      "text": "and is echoed in the BFCL finding that strong single -turn function-calling accuracy does not predict",
+      "order": 115,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "and is echoed in the BFCL finding that strong single -turn function-calling accuracy does not predict"
+      ],
+      "char_start": 43120,
+      "char_end": 43221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e9ba317666a179071d622fa866d8bec4",
+      "kind": "paragraph",
+      "text": "success on stateful, multi-turn tool-use tasks (Section 4.1).",
+      "order": 116,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "and is echoed in the BFCL finding that strong single -turn function-calling accuracy does not predict"
+      ],
+      "char_start": 43223,
+      "char_end": 43284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:669639ceee32e1b18a9cedbb249254e1",
+      "kind": "heading",
+      "text": "Brittleness at the reasoning-action interface",
+      "order": 117,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Brittleness at the reasoning-action interface"
+      ],
+      "char_start": 43286,
+      "char_end": 43331,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1814b03b63ad6c43c9e94cac0dbf1103",
+      "kind": "paragraph",
+      "text": "Tool-calling errors are disproportionately concentrated in parameter specification and function naming rather than in higher -level task understanding, suggesting the translation step from intent to executable action is a distinct source of failure, separable from planning or reasoning failures per se (Section 4.1).",
+      "order": 118,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Brittleness at the reasoning-action interface"
+      ],
+      "char_start": 43333,
+      "char_end": 43650,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c19373119bd887296ea353a4f17bde0",
+      "kind": "heading",
+      "text": "Uneven returns to additional scaffolding",
+      "order": 119,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Uneven returns to additional scaffolding"
+      ],
+      "char_start": 43652,
+      "char_end": 43692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56e9055782423588df845a1254b3c907",
+      "kind": "paragraph",
+      "text": "Adding more agents, more tools, more reasoning effort, or more context does not uniformly improve reliability, and can sometimes reduce it. Multi -agent systems introduce coordination failure modes not present in single-agent systems (Section 4.4); longer context windows introduce accumulation effects that can dilute decision-making (Section 4.3); and both sequential and parallel test-time scaling have been found in at least one general-purpose agent study to fail to reliably improve performance, with higher  reasoning effort reducing accuracy in the majority of evaluated runs on the Holistic Agent Leaderboard (Sections 4.2 and 4.6). We phrase this as “uneven” rather than uniformly negative, since Section 5 documents cases (safety fine tuning, narrowly scoped coding tasks) where targeted additional investment did produce clear gains. The pattern appears to be that undirected scaling of scaffolding surface area is unreliable, while targeted architectural or training investment aimed at a specific, well-diagnosed failure mode is considerably more likely to help.",
+      "order": 120,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Uneven returns to additional scaffolding"
+      ],
+      "char_start": 43694,
+      "char_end": 44770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb959e2819fffd728642e987d8f6cece",
+      "kind": "heading",
+      "text": "Partial independence of capability and safety",
+      "order": 121,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Partial independence of capability and safety"
+      ],
+      "char_start": 44772,
+      "char_end": 44817,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f61ec2719f5118f2a4d85e30fce39a1",
+      "kind": "paragraph",
+      "text": "Capability improvements and safety improvements appear to be only partially correlated. An agent's rate of correctly parsing tool schemas or satisfying planning constraints (Sections 4.1-4.2) is a largely separate empirical question from its rate of proceeding on unwarranted assumptions under ambiguity (ToolEmu) or complying with injected malicious instructions (InjecAgent). As discussed in Section 5.4, fine -tuning targeted specifically at safety behavior reduced vulnerability substantially more than general capability scaling alone would predict, which is grounds for cautious optimism rather than for concluding that safety is simply intractable.",
+      "order": 122,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Partial independence of capability and safety"
+      ],
+      "char_start": 44819,
+      "char_end": 45474,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1629aedf5ac21ed396e99b6c6c1a2706",
+      "kind": "heading",
+      "text": "A maturing, but still-lagging, measurement infrastructure",
+      "order": 123,
+      "page_number": 12,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "A maturing, but still-lagging, measurement infrastructure"
+      ],
+      "char_start": 45476,
+      "char_end": 45533,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c58f5c4e0bdc9379dd613dae6323b5e",
+      "kind": "paragraph",
+      "text": "Several of the most -cited benchmarks in the field have required substantial post -hoc correction once independently re -audited (Section 4.6). We read this cautiously rather than as evidence that reported progress is illusory: the emergence of infrastructure specifically designed to address this — standardized, cost-aware, parallel evaluation harnesses such as the Holistic Agent Leaderboard, rigorous test augmentation efforts such as UTBoost, and rigorous huma n-calibrated measurement efforts such as METR's time -horizon methodology — indicates the field is actively correcting its own measurement practices, which is itself a sign of a maturing rather than a stagnant research area.",
+      "order": 124,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "A maturing, but still-lagging, measurement infrastructure"
+      ],
+      "char_start": 45535,
+      "char_end": 46225,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4793a390a3e6794c981448223a3c68f8",
+      "kind": "heading",
+      "text": "Implications for Research, Practice, and Policy",
+      "order": 125,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for Research, Practice, and Policy"
+      ],
+      "char_start": 46227,
+      "char_end": 46274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1d03a634b23d8265037d4e1444389b50",
+      "kind": "heading",
+      "text": "Implications for researchers",
+      "order": 126,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for researchers"
+      ],
+      "char_start": 46276,
+      "char_end": 46304,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb4b247faf896e269dca7ee87f1d46c5",
+      "kind": "paragraph",
+      "text": "These findings argue for evaluation practices that go beyond aggregate task -success rates. Reporting constraint-level alongside plan -level success rates, reporting partial -progress alongside binary succes s, reporting cost-adjusted rather than raw accuracy, and explicitly auditing for contamination and test -suite adequacy before reporting benchmark gains, would each make published results more interpretable and comparable across studies. Where a paper repor ts an improvement attributable to additional test -time computation, we suggest reporting the accuracy -cost frontier explicitly, given the demonstrated cases in which additional compute failed to improve, or reduced, task success.",
+      "order": 127,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for researchers"
+      ],
+      "char_start": 46306,
+      "char_end": 47003,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71241918ddfbabb7ccf5f324bc37e7f6",
+      "kind": "heading",
+      "text": "Implications for practitioners",
+      "order": 128,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for practitioners"
+      ],
+      "char_start": 47005,
+      "char_end": 47035,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f3fdd92d86859378d1c2ff3ade218fb",
+      "kind": "paragraph",
+      "text": "The taxonomy in Section 4, read alongside the genuine -progress account in Section 5, offers a rough diagnostic checklist. Failures concentrated in malformed parameters or wrong tool selection point toward tool-schema and grounding improvements — an area where current techniques already show strong singleturn results. Failures that appear only as tasks lengthen point toward context management and hierarchical planning architectures, rather than simply relying on larger context windows. Failures spe cific to multi agent configurations point toward tightening specification and verification protocols rather than adding more capable underlying models to an under-specified scaffold. Deployments that expose an agent to external, potentially untrusted conte nt should assume a non -trivial baseline vulnerability to indirect prompt injection absent dedicated defenses, though Section 5.4 indicates that targeted safety fine-tuning is a demonstrably effective, if partial, mitigation.",
+      "order": 129,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for practitioners"
+      ],
+      "char_start": 47037,
+      "char_end": 48023,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62d61d93bf562b42de8c7123c6fc3811",
+      "kind": "heading",
+      "text": "Implications for deployers and policymakers",
+      "order": 130,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for deployers and policymakers"
+      ],
+      "char_start": 48025,
+      "char_end": 48068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:519ed1b317800c7761dbe72986189747",
+      "kind": "paragraph",
+      "text": "For organizations deploying agentic systems in consequential domains — financial transactions, healthcare records, infrastructure control — the combination of findings in Sections 4.5 and 4.6 argues for treating agent reliability and safety evaluation as an open, ongoing measurement problem rather than an assumed byproduct of using a capable underlying model. The reliability framework discussed in Section 4.6, which decomposes agent performance along consistency, robustness, predictability, and safety rather than a single aggregate accuracy figure, is one candidate template for pre-deployment evaluation. More broadly, the gap between reported benchmark trajectories and the more uneven underlying picture documented here argues for measured ra ther than either uncritically optimistic or uncritically dismissive extrapolation of current progress curves in public and policy discourse. Continued improvement on existing benchmarks does not, by itself, establish that the compounding, compositional, an d safety-related failure modes identified here have been resolved; equally, the existence of these failure modes does not mean the field is failing to progress, since Section 5 documents specific, credible areas of genuine improvement.",
+      "order": 131,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Implications for deployers and policymakers"
+      ],
+      "char_start": 48070,
+      "char_end": 49314,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69fab6d73e384495485961f8ac5c40c1",
+      "kind": "heading",
+      "text": "Open research questions",
+      "order": 132,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Open research questions"
+      ],
+      "char_start": 49316,
+      "char_end": 49339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6a09efb73d6e40ea0eebc4a3505ac02",
+      "kind": "paragraph",
+      "text": "Several open questions follow from the taxonomy developed here. First, it remains unclear whether the non-composability of sub -skill competence (Sections 4.2 and 7.2) is a fundamental property of autoregressive language modeling, or an artifact of current training objectives that could be addressed through targeted interventions such as explicit constraint -tracking modules or reinforcement learning objectives defined directly over composed, multi-step success. Second, whether the test -time-scaling non-improvement documented in Section 4.2 generalizes across a wider range of agent architectures and task domains, or is specific to the general -purpose setting in which it was observed, remains an open empirical question with direct implications for how much inference-time compute is worth allocating to agentic deployments. Third, the interaction between measurement -validity problems (Section 4.6) and the other clusters is not yet well understood; it is plausible that some apparent non-composability is its elf partly attributable to benchmark construction choices, such as whether automated success criteria adequately capture partial credit for near -miss solutions, rather than purely reflecting model capability. Fourth, comparatively little of the surveyed li terature directly compares agent failure patterns against the human-factors literature on error recovery and team coordination in high -stakes domains such as aviation and clinical medicine; given that several patterns identified here (non-recoverable early errors, coordination",
+      "order": 133,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Open research questions"
+      ],
+      "char_start": 49341,
+      "char_end": 50899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1266c7592cc0af49bd6204d28b576de2",
+      "kind": "paragraph",
+      "text": "breakdowns under ambiguous roles, proceeding on unwarranted assumptions under pressure) have well studied human analogues, cross-pollination with human-factors engineering may offer conceptual tools not yet systematically explored in the LLM agent setting.",
+      "order": 134,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Open research questions"
+      ],
+      "char_start": 50901,
+      "char_end": 51157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eddc34a166a56e60173769cd2c9206f5",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 135,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Limitations"
+      ],
+      "char_start": 51159,
+      "char_end": 51170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0f5e853673c58ac40713f73ff53c77a",
+      "kind": "paragraph",
+      "text": "This synthesis has several limitations. First, although we impose explicit scope and inclusion criteria (Section 3), it remains a narrative rather than a systematic review conducted under a pre-registered protocol, and some relevant work may be omitted; a different research team applying our stated grouping procedure independently might draw the six cluster boundaries somewhat differently. Second, the field moves quickly: several cited papers report figures that superseded earlier findings within months, and figures reported here will likely themselves be revised or superseded by the time of publication. Third, we rely on the benchmark and error-taxonomy papers' own reported methodology and inter-annotator agreement statistics; we did not independently reproduce any of the underlying experiments, and Table 2 should be read as a compilation of others' reported results rather than an independently verified comparison. Fourth, most cited studies evaluate English -language, text- and web-based tasks; failure patterns in other languages, modalities, or domains (robotics, embodied agents, voice agents) may differ and are outside this paper's scope. Fifth, of the sources cited, the great majority are peer -reviewed conference papers or arXiv pre-prints; a small number (a benchmark -and-state-of-the-field secondary analysis) are not independently peer-reviewed, and we have flagged every such instance explicitly at the point of citation, using them only to corroborate a pattern already  independently established in the peer -reviewed or pre -print academic",
+      "order": 136,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Limitations"
+      ],
+      "char_start": 51172,
+      "char_end": 52745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc3578e92ddf96520813337f31894c19",
+      "kind": "paragraph",
+      "text": "literature rather than as freestanding evidence.",
+      "order": 137,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Limitations"
+      ],
+      "char_start": 52747,
+      "char_end": 52795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f571320daf46a4d835ebf21a38ed6a9",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 138,
+      "page_number": 14,
+      "heading_level": 3,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Conclusion"
+      ],
+      "char_start": 52797,
+      "char_end": 52807,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b725db002e3af0212c8bb8c2ee99b3d7",
+      "kind": "paragraph",
+      "text": "Across tool use, planning, long -horizon execution, multi -agent coordination, and safety, the empirical literature on LLM a gents converges on a genuinely mixed picture. Current systems remain brittle at the interface between reasoning and action in multi -turn and long -horizon settings, degrade non -linearly as tasks lengthen, and do not reliably compose sub -task competence into end-to-end reliability or safety. At the same time, single-turn tool use, short-horizon web navigation, and narrowly scoped coding tasks show credible, substantial improvement that is not solely attributable to measurement correction, and targeted safety fine-tuning demonstrably reduces specific classes of vulnerability.",
+      "order": 139,
+      "page_number": 14,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Conclusion"
+      ],
+      "char_start": 52809,
+      "char_end": 53517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9593a8f0cd27828c9982532daccb9c1",
+      "kind": "paragraph",
+      "text": "A parallel body of work shows that some of the field's most -cited progress metrics required substantial downward correction once independently audited — itself a sign of a self -correcting and maturing evaluation culture rather than of stagnation. Taken together, these observations argue for evaluation practices, and a public discourse around agent progress, that treat compounding failure, non-composability, safety, and measurement validity as first-class concerns alongside a clear-eyed account of genuine progress. We hope the taxonomy in Figure 1, the explicit account of where improvement is most credible, and the categorized comparative synthesis in Table 2 provide a useful, balanced organizing frame for both research and deployment decisions going forward.",
+      "order": 140,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Verified",
+        "Conclusion"
+      ],
+      "char_start": 53519,
+      "char_end": 54289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4406d6ed738d4c106a883cf2f6df03f8",
+      "kind": "heading",
+      "text": "References",
+      "order": 141,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "References"
+      ],
+      "char_start": 54291,
+      "char_end": 54301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c80e33e7f515a53c3c97906b4d0c44f1",
+      "kind": "reference",
+      "text": "Albayaydh, W. S., & Flechais, I. (2022). Exploring bystanders' privacy concerns with smart homes in Jordan. CHI Conference on Human Factors in Computing Systems (CHI '22), 1-24. Albayaydh, W., & Flechais, I. (2023). Examining power dynamics and user privacy in smart technology use among Jordanian households. 32nd USENIX Security Symposium (USENIX Security 23), 4643 -4659. [Distinguished",
+      "order": 142,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "References"
+      ],
+      "char_start": 54303,
+      "char_end": 54692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a668d610c783f39893a4412fa37d947a",
+      "kind": "heading",
+      "text": "Paper Award.]",
+      "order": 143,
+      "page_number": 15,
+      "heading_level": 2,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 54694,
+      "char_end": 54707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef9975d7fff154bec95f8bce58cc47a3",
+      "kind": "paragraph",
+      "text": "Albayaydh, W., & Flechais, I. (2024). Co-designing a mobile app for bystander privacy protection in Jordanian smart homes: A step towards addressing a complex privacy landscape. 33rd USENIX Security Symposium (USENIX Security 24), 4963-4980. Aleithan, R., et al. (2024). SWE-Bench+: Next-gen code agent benchmarks. [Pre-print.] Cemri, M., Pan, M. Z., Yang, S., Agrawal, L. A., Chopra, B., Tiwari, R., Keutzer, K., Parameswaran, A., Klein, D., Ramchandran, K., Zaharia, M., Gonzalez, J. E., & Stoica, I. (2025). Why do multi -agent LLM systems fail? arXiv:2503.13657. [Pre-print.] Jimenez, C. E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., & Narasimhan, K. (2024). SWE -bench: Can language models resolve real-world GitHub issues? arXiv:2310.06770. [Pre-print.] Kapoor, S., Stroebl, B., Kirgis, P., Nadgir, N., Siegel, Z. S., Wei, B., Xue, T., Chen, Z., Chen, F., Utpala, S., Ndzomga, F., Oruganty, D., Luskin, S., Liu, K., Yu, B., Arora, A., Hahm, D., Trivedi, H., Sun, H., Lee, J., Jin, T., Mai, Y., Zhou, Y., Zhu, Y., Bommasani, R., Kang, D., Song, D., Henderson, P., Su, Y., Liang, P., & Narayanan, A. (2025). Holistic Agent Leaderboard: The missing infrastructure for AI agent evaluation. arXiv:2510.11977. Accepted, ICLR 2026. Kokane, S., Zhu, M., Awalgaonkar, T., Zhang, J., Hoang, T., Prabhakar, A., Liu, Z., Lan, T., Yang, L., Tan, J., Murthy, R., Yao, W., Liu, Z., Niebles, J. C., Wang, H., Heinecke, S., Xiong, C., & Savarese, S. (2024). ToolScan: A benchmark for characterizing errors in tool-use LLMs. arXiv:2411.13547. ICLR 2025 Workshop",
+      "order": 144,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 54709,
+      "char_end": 56267,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d0d93577efc83232c4f4b6cf5fe804f",
+      "kind": "table",
+      "text": "on Building Trust in Language Models and Applications. Kwa, T., West, B., Becker, J., Deng, A., Garcia, K., Hasin, M., Jawhar, S., Kinniment, M., Rush, N., Von Arx, S., Bloom, R., Broadley, T., Du, H., Goodrich, B., Jurkovic, N., Miles, L. H., Nix, S.,  Lin, T., Painter, C., Parikh, N., Rein, D., Sato, L. J. K., Wijk, H., Ziegler, D. M., Barnes, E., & Chan, L. (2025). Measuring AI ability to complete long tasks. arXiv:2503.14499. [Pre-print, METR.] Li, M., Zhao, Y., Yu, B., Song, F., Li, H., Yu, H., Li, Z., Huang, F., & Li, Y. (2023). API-Bank: A comprehensive benchmark for tool-augmented LLMs. arXiv:2304.08244. [Pre-print.] Liu, X., Yu, H., Zhang, H., Xu, Y., Lei, X., Lai, H., Gu, Y., Ding, H., Men, K., Yang, K., Zhang, S., Deng, X., Zeng, A., Du, Z., Zhang, C., Shen, S., Zhang, T., Su, Y., Sun, H., Huang, M., Dong, Y., & Tang, J. (2023). AgentBench: Evaluating LLMs as agents. arXiv:2308.03688. ICLR 2024. Marreed, S., Oved, A., Yaeli, A., Shlomov, S., Levy, I., Akrabi, O., Sela, A., Adi, A., & Mashkif, N.  (2025). Towards enterprise-ready computer using generalist agent. arXiv:2503.01861. [Pre-print.] Mialon, G., Fourrier, C., Wolf, T., LeCun, Y., & Scialom, T. (2024). GAIA: A benchmark for general AI assistants. arXiv:2311.12983. ICLR 2024.",
+      "order": 145,
+      "page_number": 15,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 56269,
+      "char_end": 57531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fab9e9c796944f70a83c00dd47d17ca",
+      "kind": "paragraph",
+      "text": "Patil, S. G., Mao, H., Yan, F., Ji, C. C., Suresh, V., Stoica, I., & Gonzalez, J. E. (2025). The Berkeley Function Calling Leaderboard (BFCL): From tool use to agentic evaluation of large language models. Proceedings of ICML 2025. Prathifkumar, T., Mathews, N. S., & Nagappan, M. (2025). Does SWE-Bench-Verified test agent ability or model memory? arXiv:2512.10218. [Pre-print.] Press, O., Zhang, M., Min, S., Schmidt, L., Smith, N. A., & Lewis, M. (2023). Measuring and narrowing the compositionality gap in language models. [Pre-print.] Ruan, Y., Dong, H., Wang, A., Pitis, S., Zhou, Y., Ba, J., Dubois, Y., Maddison, C. J., & Hashimoto, T. (2023). Identifying the risks of LM agents with an LM-emulated sandbox (ToolEmu). arXiv:2309.15817. ICLR 2024 Spotlight. Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom, T. (2023). Toolformer: Language models can teach themselves to use tools. [Pre -print.] Shinn, N., Cassano, F., Berman, E., Gopinath, A., Narasimhan, K., & Yao, S. (2023 ). Reflexion: Language agents with verbal reinforcement learning. [Pre-print.] Xie, J., Zhang, K., Chen, J., Zhu, T., Lou, R., Tian, Y., Xiao, Y., & Su, Y. (2024). TravelPlanner: A benchmark for real-world planning with language agents. arXiv:2402.01622. ICML 2024. Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K. R., & Cao, Y. (2023). ReAct: Synergizing reasoning and acting in language models. [Pre-print.] Yu, et al. (2025). UTBoost: Rigorous evaluation of coding agents on SWE -Bench. arXiv:2506.09289. [Pre-print.]",
+      "order": 146,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 57533,
+      "char_end": 59108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5beb61bc21ac98601641c14041af60df",
+      "kind": "paragraph",
+      "text": "Zhan, Q., Liang, Z., Ying, Z., & Kang, D. (2024). InjecAgent: Benchmarking indirect prompt injections in tool integrated large language model agents. arXiv:2403.02691. ACL Findings 2024. Wooldridge, M. (2009). An introduction to MultiAgent systems (2nd ed.). John Wiley & Sons. Zhou, S., Xu, F. F., Zhu, H., Zhou, X., Lo, R., Sridhar, A., Cheng, X., Bisk, Y., Fried, D., Alon, U., & Neubig, G. (2024). WebArena: A realistic web environment for building autonomous agents. arXiv:2307.13854. ICLR 2024. (2024). Large language models can solve real-world planning rigorously with formal verification tools. arXiv:2404.11891. [Pre-print.] (2024). Reducing tool hallucination via reliability alignment. arXiv:2412.04141. [Pre -print.] (2024/2026). Learning to ask: When LLM agents meet unclear instruction (NoisyToolBench). arXiv:2409.00557. [Pre-print.] (2024). VisualWebArena: Evaluating multimodal agents on realistic visual web tasks. [Pre -print.] (2025). A framework for testing and adapting REST APIs as LLM tools. arXiv:2504.15546. [Pre-print.] (2025). Evaluating long-context reasoning in LLM-based WebAgents. arXiv:2512.04307. [Pre-print.] (2025). LoCoBench-Agent: An interactive benchmark for LLM agents in long-context software engineering. arXiv:2511.13998. [Pre-print.] (2025). Scaling long-horizon LLM agent via context-folding. arXiv:2510.11967. [Pre-print.] (2026). Benchmark test-time scaling of general LLM agents (General AgentBench). arXiv:2602.18998. [Pre -print.] (2026). Internal representations as indicators of hallucinations in agent tool selection. arXiv:2601.05214. [Pre -print.]",
+      "order": 147,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 59110,
+      "char_end": 60713,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5b4f0f519b4dcd6ee53f12cf6c8ae0f",
+      "kind": "paragraph",
+      "text": "(2026). LEAD: Breaking the no-recovery bottleneck in long-horizon reasoning. arXiv:2603.06870. [Pre-print.] (2026). Towards a science of AI agent reliability. [Pre-print.]",
+      "order": 148,
+      "page_number": 16,
+      "heading_level": null,
+      "heading_path": [
+        "Reasoning Failures in Large Language Model Agents",
+        "Paper Award.]"
+      ],
+      "char_start": 60715,
+      "char_end": 60886,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 16,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 16
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.05775",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 16,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

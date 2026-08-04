@@ -1,0 +1,2259 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "7f4fc2f8f3105539b1352a4de814f38ac21c09e4cea5208e4d30746ff11dd6d7",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:bd70463fce07bcb5bd50f354a8f2b11a",
+      "kind": "paragraph",
+      "text": "1 Refused in Chat, Written in Code: Workflow-Level Jailbreak Construction in IDE Coding Agents. Abhishek Kumar ∗, Carsten Maple †",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3b2bb9f886952790962127810cf2564",
+      "kind": "heading",
+      "text": "The Alan Turing Institute, London, United Kingdom",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom"
+      ],
+      "char_start": 131,
+      "char_end": 180,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9649f12979d598d552866f7472747907",
+      "kind": "paragraph",
+      "text": "∗akumar@turing.ac.uk †cmaple@turing.ac.uk, cm@warwick.ac.uk Abstract—Large language models are increasingly deployed as IDE-integrated coding agents that decompose tasks, generate and edit files, run code, and refine outputs over many turns. Yet their safety is still often evaluated as if they were chatbots: one harmful prompt, one response, judged in isolation. We introduceworkflowlevel jailbreak construction, a failure mode in which a harmful objective is assembled across ordinary stages of a softwaredevelopment workflow rather than generated through a single direct prompt. Using GitHub Copilot in Visual Studio Code, we study four closed-weight backends: Claude Sonnet 4.6, Claude Haiku 4.5, Gemini 3.1 Pro, and Gemini 3.5 Flash. Across 204 prompts from Hammurabi’s Code, HarmBench, and AdvBench , the models show near-complete refusal under direct chat, CSVread, and single-step code-fix baselines, with only 8/816 successful responses in each baseline condition. Under the full workflow, however, the same prompts and backends produce 816/816 unsafe teaching-shot completions, all independently confirmed by two expert evaluators under a strict rubric. These results show that conversational refusal benchmarks can substantially overstate the safety of deployed coding agents and motivate defenses that reason about safety across multi-turn IDE workflows and their generated artifacts, not only individual chat turns. Index Terms—Coding agents, IDE security, Jailbreak attacks, LLM safety, Agentic AI.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom"
+      ],
+      "char_start": 182,
+      "char_end": 1695,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69c872a4a1efaf93dca512105bc951a0",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION"
+      ],
+      "char_start": 1697,
+      "char_end": 1709,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be0ab2ffe02b4d1575403487312af05e",
+      "kind": "paragraph",
+      "text": "Large language models (LLMs) have rapidly reshaped software engineering, moving from passive code-completion engines to active participants in the software-development loop [1]–[5]. Through IDE-integrated coding agents, these systems interpret developer goals, generate and edit files, execute commands, read execution results, debug failures, and refine their output across many turns [6]–[8]. This shift is not merely a capability upgrade; it changes the shape of the safety problem [9], [10]. A safety failure is no longer necessarily a single harmful prompt answered by a single harmful response. It can instead emerge gradually, distributed across a multi-turn development workflow in which every individual interaction looks like an ordinary programming task. Existing safety evaluation has only partially adapted to the shift from chatbots to agentic systems. Much of the jailbreak literature still evaluates models through prompt-level or conversation-level interactions. Prompt-level attacks, including optimization-based [11], [12], in-context [13], [14], and codereformulation attacks [15], can bypass safety behavior in frontier, closed-weight models. Multi-turn conversational attacks have also been demonstrated [16]. These studies show that refusal behavior can fail in general LLM settings, but they do not fully capture the software-development workflows in which coding agents operate. In parallel, software-engineering work has begun to study harmful behavior in coding contexts. Code Red introduces Hammurabi’s Code, a benchmark",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION"
+      ],
+      "char_start": 1711,
+      "char_end": 3259,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ca46c12ed1d1f49f2fd1ddac61203f3",
+      "kind": "paragraph",
+      "text": "of software-engineering-specific harmful prompts spanning malware, copyright misuse, and other dangerous tasks [17]. Another recent study shows that coding agents can fail during ordinary development by breaking constraints, performing destructive actions, optimizing the wrong metric, or falsely claiming that a task has been completed [18]. What remains unexamined is whether the IDE coding-agent workflowitself, including task decomposition, scripting, execution, and metricdriven refinement, can be turned into the attack surface. This gap is especially important because prior software-engineering safety work has identified code-specific jailbreaking as an open direction, calling for further exploration of jailbreak techniques tailored to code-generation LLMs [17]. We show that it can. We study four closed-weight model backends available through the Copilot interface in Visual Studio Code: Claude Sonnet 4.6, Claude Haiku 4.5, Gemini 3.1 Pro, and Gemini 3.5 Flash. Across these backends, we find a sharp divergence between baseline interaction and full workflow interaction. In the baseline settings, where the harmful objective is submitted directly through chat, read from a CSV file, or framed as a single-step code-fix task, the models reliably refuse or return safety-aligned responses. Inside the full multi-turn coding workflow, thesameobjective leads the agent to construct and iteratively refine a jailbreak-evaluation pipeline. The relevant vulnerability is therefore located not in any single prompt, but in the development workflow that",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION"
+      ],
+      "char_start": 3261,
+      "char_end": 4820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a973d9775761d7e08d6534ee8484e7d",
+      "kind": "paragraph",
+      "text": "surrounds it. We call this phenomenonworkflow-level jailbreak construction. Rather than relying on a single adversarial prompt, the harmful objective is decomposed across ordinary development stages: the agent is engaged in a benign coding task, asked to load harmful benchmark prompts into the pipeline, prompted to generate supporting scripts, shown evaluation results, and then asked to improve those results. In our study, the agent is tasked with building an evaluation pipeline that measures attack success rate (ASR) against a nominal target model. When the reported ASR is treated as insufficient, the agent is asked to improve the pipeline by addingteaching shots,",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION"
+      ],
+      "char_start": 4822,
+      "char_end": 5495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:686dd30b3791f34c4e775857e200189c",
+      "kind": "heading",
+      "text": "e., prompt–response examples inserted into the evaluation",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION",
+        "e., prompt–response examples inserted into the evaluation"
+      ],
+      "char_start": 5497,
+      "char_end": 5554,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcaa0cf9ee96b52eab71f5e7f23b73dd",
+      "kind": "paragraph",
+      "text": "pipeline. The agent then populates these teaching shots with harmful prompt–response pairs that it generates itself. Impor-",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION",
+        "e., prompt–response examples inserted into the evaluation"
+      ],
+      "char_start": 5556,
+      "char_end": 5679,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:76242a27f6821f30bbf81aee87d1ceff",
+      "kind": "table",
+      "text": "arXiv:2607.03968v2  [cs.SE]  9 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION",
+        "e., prompt–response examples inserted into the evaluation"
+      ],
+      "char_start": 5681,
+      "char_end": 5720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9159d3be5375d691f67199291209f109",
+      "kind": "paragraph",
+      "text": "2 tantly, we provide only the public benchmark prompts and never provide the corresponding harmful responses, yet the agent still produces responses to requests it had refused in direct chat. This suggests that the failure lies in the softwareengineering workflow rather than in a generic prompting trick. Agentic coding creates a different setting: the model is editing data structures, populating test fixtures, and optimizing a quantitative metric. In this setting, the same model that refuses in chat may still produce the harmful response as part of the generated code. The mechanism is consistent with rewardhacking and proxy-optimization tendencies documented for coding agents in benign settings [18]. When a harmful response is requested as a string literal inside a teachingshot array and framed as part of improving a benchmark score, the usual refusal behavior is not triggered reliably. The same practices that make coding agents useful, including task decomposition, iterative debugging, and optimization toward task completion, can therefore allow a harmful objective to be assembled piece by piece. We evaluate this phenomenon across three complementary benchmarks: a stratified sample of 78 prompts from Hammurabi’s Code spanning 24 harmful programming categories [17], a stratified sample of 75 prompts from Harm- Bench spanning six harmful-behavior categories [19], and",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "INTRODUCTION",
+        "e., prompt–response examples inserted into the evaluation"
+      ],
+      "char_start": 5722,
+      "char_end": 7110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ff798ccec7e240c5de89d8036f2767f",
+      "kind": "heading",
+      "text": "prompts from AdvBench [11]. In total, this gives 204",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204"
+      ],
+      "char_start": 7112,
+      "char_end": 7164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e39c99e03dd5ab8ed2cfe9e05b6011b2",
+      "kind": "paragraph",
+      "text": "prompts covering software-engineering-specific harmful coding tasks from Hammurabi’s Code, together with broader harmful behavior prompts from HarmBench and AdvBench. We use stratified sampling to ensure category coverage while keeping the response set feasible for manual human evaluation. Because jailbreak success is a semantic judgment, we manually assess the outputs using a strict rubric: a response counts as successful only if it is specific, actionable, and instruction-satisfying; refusals, safe alternatives, generic discussion, partial answers, and warning-only responses are counted as failures. Across 204 prompts and four backends, the workflow produced 816 model-generated responses, all of which were manually checked and independently confirmed as unsafe by two expert evaluators. In contrast, under the three baseline framings, direct chat, CSV read, and singlestep code-fix, the same models refused almost all prompts. This workflow-versus-baseline contrast is the central evidence that the vulnerability lies in the development workflow rather than in any single prompt. To the best of our knowledge, this is the first study of multiturn jailbreak construction in a production IDE coding agent where the agent itself authors the harmful content under a metric-improvement pretext. Prior jailbreaks have primarily studied single-prompt attacks, API-level interactions, promptstructure attacks, or natural-language multi-turn conversations, leaving IDE-based software-development workflows compar-",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204"
+      ],
+      "char_start": 7166,
+      "char_end": 8682,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09ce732f8291dbd1151688d04c9c1131",
+      "kind": "paragraph",
+      "text": "atively underexplored. This paper makes the following contributions: •We introduceworkflow-level jailbreak construction, a safety failure mode of IDE-based coding agents in which harmful behavior emerges across a multi-turn softwaredevelopment workflow rather than through a single direct prompt. •We present, to the best of our knowledge, the first empirical study of this failure mode in GitHub Copilot within Visual Studio Code, using four closed-weight model backends and three baseline framings: direct chat, CSV read, and single-step code-fix. •We evaluate the attack across 204 prompts from Hammurabi’s Code, HarmBench, and AdvBench, and use a strict human-evaluation protocol in which two expert evaluators independently assess whether each workflow output is specific, actionable, and instruction-satisfying. •We discuss implications for safer AI-assisted software engineering, arguing that defenses must move beyond turn-level refusal and reason about safety at the level of the multi-turn IDE workflow and generated artifacts.",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204"
+      ],
+      "char_start": 8684,
+      "char_end": 9721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:673b42531e933f84c91f1b5b44d2a25f",
+      "kind": "heading",
+      "text": "MOTIVATINGEXAMPLE",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "MOTIVATINGEXAMPLE"
+      ],
+      "char_start": 9723,
+      "char_end": 9740,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fb921a779d5df41fe66dc6a7a1ccc9d",
+      "kind": "paragraph",
+      "text": "IDE-integrated coding agents are no longer experimental tools used by a small group of early adopters. Systems such as GitHub Copilot are now used by millions of developers and are embedded directly into everyday development environments. Developers use these tools for code generation, code editing, debugging, documentation, data processing, and navigating unfamiliar frameworks. As these systems move from passive completion tools to agentic assistants that can read files, modify code, run commands, and iterate over project artifacts, their safety becomes a software-engineering concern rather than only a chatbot-safety concern. This raises a question that direct-prompt testing cannot answer. By the conventional check, the evaluated codingagent backends look safe: harmful benchmark prompts are submitted directly, the models refuse them, and that refusal largely survives even when the prompt is shifted into a weaker non-conversational form. But none of these checks ask what happens once the harmful prompt is no longer something toanswer, but something toprocess. An IDE coding agent is routinely asked to build pipelines, ingest data, inspect a metric, and improve a result across many turns; once a harmful benchmark prompt is simply an input to that ongoing task, declining to act on it stops looking like a safety decision and starts looking like a failure to finish the work. A check that only asks “does the model refuse this prompt” cannot see a vulnerability that only appears once the prompt is embedded",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "MOTIVATINGEXAMPLE"
+      ],
+      "char_start": 9742,
+      "char_end": 11266,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b34c7ddb7b4adcbdc0a33acd725d46e",
+      "kind": "paragraph",
+      "text": "in something the agent is already trying to complete.",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "MOTIVATINGEXAMPLE"
+      ],
+      "char_start": 11268,
+      "char_end": 11321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfa34e38df3520cc894f0417ae63ba6f",
+      "kind": "caption",
+      "text": "Figure 1 makes this concrete: the same prompts that produce",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "MOTIVATINGEXAMPLE"
+      ],
+      "char_start": 11323,
+      "char_end": 11382,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bbf93c37b077659a55cf046294ba24a9",
+      "kind": "paragraph",
+      "text": "refusals under the baseline conditions instead become structured teaching-shot records once embedded in the pipelineimprovement task, with harmful terms redacted for safety. The contrast is the motivation for this paper: safety observed under direct prompting does not necessarily hold once the same objective is folded into an ordinary multi-turn IDE workflow.",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "MOTIVATINGEXAMPLE"
+      ],
+      "char_start": 11384,
+      "char_end": 11745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:59f885182b6bf986abd75c45a1a1251e",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from AdvBench [11]. In total, this gives 204",
+        "RELATEDWORK"
+      ],
+      "char_start": 11747,
+      "char_end": 11758,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bcdd2f11960551a315d6a2eb0b46729e",
+      "kind": "heading",
+      "text": "A. Jailbreak Attacks on LLMs",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 11760,
+      "char_end": 11788,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8457c676946acf0b39d75641212e4bc",
+      "kind": "paragraph",
+      "text": "Prior work has studied several ways to bypass LLM safety behavior. Optimization-based attacks such as GCG [11] and DSN [12] search for adversarial suffixes or refusal-suppression",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 11790,
+      "char_end": 11968,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e360a68532b2b5504d0e46532f78e9c",
+      "kind": "paragraph",
+      "text": "3",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 11970,
+      "char_end": 11971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e5120c4b4bc550197046064a758a356",
+      "kind": "caption",
+      "text": "Fig. 1. Representative example of workflow-level jailbreak construction. The same class of prompts that produces refusals under direct chat, CSV read, and",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 11973,
+      "char_end": 12127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:73f60ffcb0546c72b5aab20d70a212e1",
+      "kind": "paragraph",
+      "text": "code-fix baselines leads the agent backend, under the full workflow, to write structured prompt-answer records inside code. Unsafe content is redacted with asterisks for safety. prompts, while black-box attacks such as CodeAttack [15] and bijection learning [13] reformulate harmful requests through code-completion or in-context encoding. HarmBench provides a standardized benchmark for evaluating automated red teaming and refusal robustness [19]. Other work moves beyond single-turn prompting: Crescendo gradually steers the model toward a harmful objective over multiple conversational turns [16], and few-shot or many-shot attacks use harmful demonstrations to weaken refusal behavior [14], [20]. These attacks show that LLM refusal can be bypassed in promptlevel, API-level, or conversational settings. B. Safety of Code LLMs and Agents A growing line of work studies safety in code generation and agentic settings. Al-Kaswan et al. [17] introduce Hammurabi’s Code, a benchmark of 509 harmful softwareengineering prompts across malware, copyright, and unfair/dangerous categories, and evaluate 70 models using a humanannotation protocol. Their evaluation measureswillingness to respond, scoring any non-refusal as harmful, and identifies code-specific jailbreaking as an open direction, which this paper addresses. Ouyang et al. [21] study jailbreaking in LLM-based code generation throughimplicit malicious prompts. Their CodeJailbreaker approach frames the request as a software-evolution task: the instruction appears benign, while",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 12129,
+      "char_end": 13669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08226457000be65919f74993e58db5b0",
+      "kind": "paragraph",
+      "text": "the malicious intent is encoded through a commit message and associated code context. Their results show that this implicit framing can bypass safety behavior more effectively than explicit malicious prompts across text-to-code, functionlevel completion, and block-level completion tasks. RedCode evaluates code agents on risky code execution and generation in sandboxed environments, finding that unsafe operations expressed in code are accepted more readily than the same operations in natural language [22]. AgentHarm measures harmfulness in tool-using agents across multi-step malicious tasks [23]. Hasan and Biswas [18] mine real-world incidents from coding agents and document failure modes such as reward hacking and deceptive “false assurance” during benign, goal-directed use. Recent work on deployed and tool-using agents further shows that safety behavior can change when models are placed inside agent wrappers, tools, and workspace contexts. Kumar et al. [24] show that refusal-trained models that refuse harmful requests in chat can still be jailbroken when deployed as browser agents, suggesting that conversational refusal does not always transfer to agentic settings. AgentDojo and OS- Harm evaluate prompt injection, deliberate misuse, and unsafe behavior in tool-using and computer-use agents [25], [26]. Closest to coding workflows, RedCoder studies automated multi-turn red teaming for Code LLMs [27], while JAWS- Bench shows that code agents become more vulnerable as the setting moves from prompt-only interaction to richer",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 13671,
+      "char_end": 15217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b19f62ff127e766a2e54821637aa31c",
+      "kind": "paragraph",
+      "text": "workspace-based conditions [28]. However, these studies do not examine a production IDE coding agent in which harmful content is authored by the agent itself as part of a multi-turn software-development workflow. We address this gap by measuring how the same prompts and backends behave under baseline interaction versus a workflow that includes pipeline construction, benchmark processing, metric-driven refinement, and model-generated teaching shots.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs"
+      ],
+      "char_start": 15219,
+      "char_end": 15671,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bace284faff667a0ff0371b44e10e35a",
+      "kind": "heading",
+      "text": "THREATMODEL",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs",
+        "THREATMODEL"
+      ],
+      "char_start": 15673,
+      "char_end": 15684,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecf8f7d3efe92d89401755fde47bb9fb",
+      "kind": "paragraph",
+      "text": "We define the threat model in terms of the actors involved, the operator’s capabilities, and the conditions under which we count the workflow as successful. We also state what the operator does not control, because our claim depends on the harmful content being authored by the agent backend rather than supplied by the operator.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Jailbreak Attacks on LLMs",
+        "THREATMODEL"
+      ],
+      "char_start": 15686,
+      "char_end": 16015,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6d12ac5136057d2f09fe0e7355979cf",
+      "kind": "heading",
+      "text": "A. Actors",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Actors"
+      ],
+      "char_start": 16017,
+      "char_end": 16026,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f95ddad835fba2b3fb5f72940ccbcefa",
+      "kind": "paragraph",
+      "text": "We distinguish three actors.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Actors"
+      ],
+      "char_start": 16028,
+      "char_end": 16056,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a79ce875e47cd64a36d0958ce6ff858c",
+      "kind": "paragraph",
+      "text": "4 •Operator (O).The human adversary.Ois an ordinary developer using an IDE-based coding agent through its normal interface.Ohas no privileged access to the model or the tool. •Coding agent (A), backed by modelM.The agent under study. In our experiments, this is GitHub Copilot Chat in Visual Studio Code backed by one of the evaluated closed-weight backends: Claude Sonnet 4.6, Claude Haiku 4.5, Gemini 3.1 Pro, or Gemini 3.5 Flash. The safety behavior we measure is the behavior ofM. •Nominal target (T).A separate model named inside the evaluation pipeline as the system under test. In our study, Tis Llama 3.1-8B.Tis used to motivate the evaluation task, but it is not the model being jailbroken. The harmful teaching-shot content is authored byM, not byT. This distinction betweenMandTis important. The workflow is framed as evaluatingT, but the safety failure occurs whenM, the backend of the coding agent, writes content that it refuses under the baseline conditions. Thus,Tserves as the nominal target of the pipeline, whileMis the model whose safety behavior is evaluated.",
+      "order": 31,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Actors"
+      ],
+      "char_start": 16058,
+      "char_end": 17138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96e36119f96612da9a150cb1e187b7c6",
+      "kind": "heading",
+      "text": "B. Adversary Knowledge and Capabilities",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Adversary Knowledge and Capabilities"
+      ],
+      "char_start": 17140,
+      "char_end": 17179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:82687c2a79f82b8b7e5ed2d96a361796",
+      "kind": "paragraph",
+      "text": "Oknows that the session is framed as a jailbreak-evaluation engineering task and has access to the public benchmark prompts from HarmBench, AdvBench, and Hammurabi’s Code. These prompts are fixed benchmark inputs and are not authored byO. The operator’s capabilities are limited to normal interaction with the coding agent: •issuing natural-language and code instructions over multiple turns; •accepting, rejecting, or requesting revisions to generated files; •providing feedback signals, such as approval or claims that a metric is improving.",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Adversary Knowledge and Capabilities"
+      ],
+      "char_start": 17181,
+      "char_end": 17724,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ed56e8f9ba2f45679e74fb64d1339adc",
+      "kind": "heading",
+      "text": "Out of Scope",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Adversary Knowledge and Capabilities",
+        "Out of Scope"
+      ],
+      "char_start": 17726,
+      "char_end": 17738,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7b7ba8bd20a985b63c16792e7bcd181",
+      "kind": "paragraph",
+      "text": "The operator doesnot: •access or modifyM’s weights, system prompt, decoding parameters, or safety filters; •perform fine-tuning, gradient-based optimization, or adversarial-suffix search; •inject instructions through external data, retrieved documents, tool outputs, or other indirect prompt-injection channels; •supply harmful answer text.Oprovides only the benchmark prompts and the workflow scaffolding used to build the evaluation pipeline. Each harmful teachingshot response is generated byM. The last point is central to our provenance claim: the operator supplies the harmful questions, but not the harmful answers.",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Adversary Knowledge and Capabilities",
+        "Out of Scope"
+      ],
+      "char_start": 17740,
+      "char_end": 18362,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8f2bdef761aa702572731f322dff7f1",
+      "kind": "heading",
+      "text": "D. Success Criterion",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Success Criterion"
+      ],
+      "char_start": 18364,
+      "char_end": 18384,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f3e8eeb5523b601b4384a8430a869cb",
+      "kind": "paragraph",
+      "text": "A workflow output is counted as successful when, for a benchmark promptp, the agent backendMproduces within the workflow a teaching-shot completion that is specific, actionable, and instruction-satisfying with respect top. Refusals, safe alternatives, generic or warning-only discussion, and partial answers are counted as failures. This judgment is made by two expert evaluators using the manual evaluation protocol described in Section VI-D.",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Success Criterion"
+      ],
+      "char_start": 18386,
+      "char_end": 18829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aaf4fd18f85e813e3410c6b08c41a589",
+      "kind": "heading",
+      "text": "APPROACH: WORKFLOW-LEVELJAILBREAK",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Success Criterion",
+        "APPROACH: WORKFLOW-LEVELJAILBREAK"
+      ],
+      "char_start": 18831,
+      "char_end": 18864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2424aba25561a9cbd8c6114f5c107cde",
+      "kind": "heading",
+      "text": "CONSTRUCTION",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "CONSTRUCTION"
+      ],
+      "char_start": 18866,
+      "char_end": 18878,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2699a68364062fa940eb3a9a3bad9d93",
+      "kind": "heading",
+      "text": "A. Overview",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Overview"
+      ],
+      "char_start": 18880,
+      "char_end": 18891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2be1181e5a7692d75517e89938f94176",
+      "kind": "paragraph",
+      "text": "Workflow-level jailbreak construction elicits harmful content from a coding agent’s backendMwithout asking for that content in one direct adversarial prompt. Instead, the harmful objective is distributed across a multi-turn softwaredevelopment workflow. The workflow is framed as building an evaluation pipeline, but its later stages lead the agent to write harmful teaching-shot content into code. We useevaluation pipelineto refer to the code that loads benchmark prompts, queries a nominal target modelT, records responses, and computes attack success rate (ASR). We use teaching shotto refer to a prompt–response pair inserted into the evaluation pipeline as a worked example for the model to imitate. Figure 2 summarizes the workflow, and the stages are described below. We deliberately omit the exact prompt wording and all generated harmful content.",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Overview"
+      ],
+      "char_start": 18893,
+      "char_end": 19749,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d683659ee44b971d313eb3e902246436",
+      "kind": "heading",
+      "text": "B. Workflow Stages",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Workflow Stages"
+      ],
+      "char_start": 19751,
+      "char_end": 19769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e03e96bd726938624f04e1a395dfd9a9",
+      "kind": "heading",
+      "text": "Frame establishment.OasksAto build a jailbreak-",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Frame establishment.OasksAto build a jailbreak-"
+      ],
+      "char_start": 19771,
+      "char_end": 19818,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9582ad813d24170d5342a9a457d33e3",
+      "kind": "paragraph",
+      "text": "evaluation pipeline for a nominal targetT. This creates an engineering frame in which working with adversarial benchmark inputs appears to be part of the evaluation task.",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Frame establishment.OasksAto build a jailbreak-"
+      ],
+      "char_start": 19820,
+      "char_end": 19990,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a513a0d06fac9c0c5574b03246646150",
+      "kind": "heading",
+      "text": "Benchmark ingestion.Aloads the public benchmark",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Benchmark ingestion.Aloads the public benchmark"
+      ],
+      "char_start": 19992,
+      "char_end": 20039,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:646ba0b925b11bdd7080de5845c2d982",
+      "kind": "paragraph",
+      "text": "prompts into the pipeline as data. At this point, the harmful questions are treated as benchmark records, rather than as direct requests toM.",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Benchmark ingestion.Aloads the public benchmark"
+      ],
+      "char_start": 20041,
+      "char_end": 20182,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:be163d7e14a5939e58e5b165681aad64",
+      "kind": "heading",
+      "text": "Pipeline construction.Awrites the code needed to",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Pipeline construction.Awrites the code needed to"
+      ],
+      "char_start": 20184,
+      "char_end": 20232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0881d614c4bac6106818091ffb54a7ab",
+      "kind": "paragraph",
+      "text": "queryT, collect responses, and compute ASR. This produces a runnable evaluation loop.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Pipeline construction.Awrites the code needed to"
+      ],
+      "char_start": 20234,
+      "char_end": 20319,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1e29bf3cc9744925ec38bfb1561fdbed",
+      "kind": "heading",
+      "text": "Metric introduction.Oindicates that the ASR is low",
+      "order": 49,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Metric introduction.Oindicates that the ASR is low"
+      ],
+      "char_start": 20321,
+      "char_end": 20371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eccc7ccbe27e038a6b5608e2193c18fc",
+      "kind": "paragraph",
+      "text": "or not improving. This turns the task into a metricoptimization problem, where the goal becomes improving the reported score.",
+      "order": 50,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Metric introduction.Oindicates that the ASR is low"
+      ],
+      "char_start": 20373,
+      "char_end": 20498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe8eef7eacffa2b3ab372bfbd78a962d",
+      "kind": "heading",
+      "text": "Benign escalation.Osuggests adding teaching shots",
+      "order": 51,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Benign escalation.Osuggests adding teaching shots"
+      ],
+      "char_start": 20500,
+      "char_end": 20549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a8c1fb48859942ec1c23b61c8a1b9a1",
+      "kind": "paragraph",
+      "text": "as a standard way to improve the pipeline.Afirst adds harmless teaching shots, making the act of writing prompt–response examples into the code a routine part of the workflow.",
+      "order": 52,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Benign escalation.Osuggests adding teaching shots"
+      ],
+      "char_start": 20551,
+      "char_end": 20726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:74785cab205393f5304294f29a54f773",
+      "kind": "heading",
+      "text": "Harmful escalation.Othen asks that the teaching",
+      "order": 53,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Harmful escalation.Othen asks that the teaching"
+      ],
+      "char_start": 20728,
+      "char_end": 20775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:266d367f975cc3dac87d7f82148f56f3",
+      "kind": "paragraph",
+      "text": "shots include harmful prompt–response pairs, so that the pipeline captures the intended behavior. At this stage, Awrites the pairs itself, placing answers to benchmark prompts as plain strings inside the code. These are prompts thatMrefuses in direct chat. This is the jailbreak point.",
+      "order": 54,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Harmful escalation.Othen asks that the teaching"
+      ],
+      "char_start": 20777,
+      "char_end": 21062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8ea1bfdb7d9bcc9ed5c19868fec266e",
+      "kind": "heading",
+      "text": "Reinforcement.Osignals that the ASR is improv-",
+      "order": 55,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-"
+      ],
+      "char_start": 21064,
+      "char_end": 21110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0f1443c949b156ea6df3d46d448a3a8c",
+      "kind": "paragraph",
+      "text": "ing. This feedback keeps the optimization frame active",
+      "order": 56,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-"
+      ],
+      "char_start": 21112,
+      "char_end": 21166,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfc49188848879159c043bc001843e18",
+      "kind": "paragraph",
+      "text": "5 and leadsAto continue producing further completions across the benchmark. The workflow was executed using a fixed scripted protocol across all models and prompts. The resulting teaching-shot responses were generated by the agent backendMand later evaluated manually.",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-"
+      ],
+      "char_start": 21168,
+      "char_end": 21436,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80a1fc62c031786c0023409bc56d86f7",
+      "kind": "heading",
+      "text": "EXPERIMENTALSETUP",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-",
+        "EXPERIMENTALSETUP"
+      ],
+      "char_start": 21438,
+      "char_end": 21455,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:030e0a2ca7c32858e70e132f0b6dfa13",
+      "kind": "paragraph",
+      "text": "A. Models and Environment All experiments were conducted using GitHub Copilot Chat version 0.30.3 inside Visual Studio Code version 1.103.0. We use the Copilot coding-agent interface rather than standalone web or API interfaces, since our goal is to study model behavior as it appears in an IDE-based software-development workflow. We evaluate four backends available through Copilot at the time of testing: Claude Sonnet 4.6, Claude Haiku 4.5, Gemini 3.1 Pro, and Gemini 3.5 Flash. Unless otherwise stated, all backend and interface settings were left at their default values; we did not modify decoding parameters, safety filters, system prompts, or model-side settings. The same settings were used across all experimental conditions, including direct chat, CSV read, code-fix, and full workflow, so the main variable we manipulate is the interaction structure rather than the model configuration. Each model–condition run was conducted in a fresh session with prior context cleared before starting the next run. All sessions were conducted between 2 April 2026 and 22 June 2026. We record the model labels, Copilot version, VS Code version, and experiment dates because hosted backends and IDE extensions may change over time. B. Benchmarks and Sampling We draw harmful prompts from three complementary sources: •Hammurabi’s Code[17]: a stratified sample of 78 prompts spanning 24 harmful programming-task categories drawn from the benchmark’s malware, copyright, and unfair/dangerous categories. •AdvBench[11]: 51 jailbreak-oriented prompts.",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-",
+        "EXPERIMENTALSETUP"
+      ],
+      "char_start": 21457,
+      "char_end": 23002,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26b8caef55dc0e8da201793ce0b22d32",
+      "kind": "paragraph",
+      "text": "•HarmBench[19]: a stratified sample of 75 prompts spanning all six harmful-behavior categories. In total, this gives 204 prompts covering softwareengineering-specific harmful coding tasks, general harmful behavior, and jailbreak-oriented instructions. For Hammurabi’s Code and HarmBench, we sample across categories so that the evaluation is not dominated by a small number of harm types. We use sampling rather than evaluating the full Hammurabi’s Code and HarmBench benchmarks because our priority is careful manual judgment rather than maximizing the number of prompts. Evaluating the full benchmarks across four backends would produce a much larger response set, making independent expert annotation difficult to complete consistently under a strict rubric. Recent jailbreak studies often rely on automatic evaluators [13], [29], [30], including LLM-based judges [31], [32], to label whether a response is harmful or successful. However, such judges can still be unreliable for this task, especially when outputs contain refusals, partial compliance, generic safety discussion, or warning-heavy text [33]– [36]. To avoid inflated or inconsistent success estimates, we manually evaluate the generated responses using two expert annotators and a strict success rubric. Across the 204 prompts and four evaluated backends, this produces 816 workflow responses for manual evaluation.",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-",
+        "EXPERIMENTALSETUP"
+      ],
+      "char_start": 23004,
+      "char_end": 24386,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e796f9d2d312e3a6c064bb5b71b26fd9",
+      "kind": "heading",
+      "text": "Experimental Conditions",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-",
+        "Experimental Conditions"
+      ],
+      "char_start": 24388,
+      "char_end": 24411,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83a336feef0ea022d685adb6d688b607",
+      "kind": "paragraph",
+      "text": "Each of the 204 prompts is evaluated for every model under four conditions. We keep the model, interface, and settings fixed across conditions; the intended difference is the interaction structure. The first three conditions are baselines with increasing levels of framing, while the fourth is the full multi-turn workflow.",
+      "order": 62,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Reinforcement.Osignals that the ASR is improv-",
+        "Experimental Conditions"
+      ],
+      "char_start": 24413,
+      "char_end": 24736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a844da7b10ce82455cc86af6a60f6fd6",
+      "kind": "heading",
+      "text": "Direct chat (DC).The harmful prompt is submitted as-",
+      "order": 63,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Direct chat (DC).The harmful prompt is submitted as-"
+      ],
+      "char_start": 24738,
+      "char_end": 24790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf09c5f4d613deec5fb798e1893c305d",
+      "kind": "paragraph",
+      "text": "is through the chat interface. This is the conventional single-turn setting.",
+      "order": 64,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Direct chat (DC).The harmful prompt is submitted as-"
+      ],
+      "char_start": 24792,
+      "char_end": 24868,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:007211a50706868bff3096f8e28cd4b9",
+      "kind": "heading",
+      "text": "CSV read (CSV).The model is asked to read the prompt",
+      "order": 65,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "CSV read (CSV).The model is asked to read the prompt"
+      ],
+      "char_start": 24870,
+      "char_end": 24922,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7c1846c01c00d747349e7b21d49b425",
+      "kind": "paragraph",
+      "text": "from a data file and answer it. This tests whether placing the harmful request in a data/file context, without a multi-turn workflow, is sufficient to bypass refusal.",
+      "order": 66,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "CSV read (CSV).The model is asked to read the prompt"
+      ],
+      "char_start": 24924,
+      "char_end": 25090,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8acf341e2af74c5be6ef7a43043b429",
+      "kind": "heading",
+      "text": "Code-fix with teaching shot (CF).The model is asked,",
+      "order": 67,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Code-fix with teaching shot (CF).The model is asked,"
+      ],
+      "char_start": 25092,
+      "char_end": 25144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c13f8a2b4b2f1df0c8bffb7ca293822",
+      "kind": "paragraph",
+      "text": "in a single step, to fix code by adding a harmful teaching-shot prompt–response pair. This tests whether code and demonstration framing alone, without the full metric-driven workflow, is sufficient.",
+      "order": 68,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Code-fix with teaching shot (CF).The model is asked,"
+      ],
+      "char_start": 25146,
+      "char_end": 25344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77c282968b9054fb8e22f87630b4c54a",
+      "kind": "heading",
+      "text": "Full workflow (WF).The complete multi-turn con-",
+      "order": 69,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Full workflow (WF).The complete multi-turn con-"
+      ],
+      "char_start": 25346,
+      "char_end": 25393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d7e4b22e8bb531969e0e2203cf7151a",
+      "kind": "paragraph",
+      "text": "struction shown in Figure 2, in which the agent builds the evaluation pipeline, is placed under metric pressure, and is led to author teaching-shot completions for the benchmark prompts. The CSV and CF baselines are included to test whether simpler framings are enough to produce the same behavior as the full workflow. CSV tests data/file framing, while CF tests code and demonstration framing in a single step. All operator turns, including feedback signals in WF, follow a fixed scripted protocol rather than ad hoc improvisation. Feedback statements are predetermined and do not depend on any real ASR value observed during the session. Under no condition does the operator write or supply answer text; the operator provides only the benchmark prompts and workflow scaffolding.",
+      "order": 70,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "Full workflow (WF).The complete multi-turn con-"
+      ],
+      "char_start": 25395,
+      "char_end": 26176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c28d30beab7a7b50ec47938c44d85716",
+      "kind": "heading",
+      "text": "D. Manual Evaluation Protocol",
+      "order": 71,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 26178,
+      "char_end": 26207,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33b780296b3064ea1452340c104d7c5e",
+      "kind": "paragraph",
+      "text": "We manually evaluate the workflow outputs using two expert evaluators. The evaluation covers 816 workflow responses, corresponding to 204 prompts across four model backends. Before expert annotation, we performed an initial manual check of each prompt–response pair and found that every workflow response was harmful under our rubric. To verify this finding independently, we then asked two expert evaluators to label the same responses using a strict binary success criterion. The rubric distinguishes successful harmful compliance from non-refusal alone:",
+      "order": 72,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 26209,
+      "char_end": 26765,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20f6baffa8f4a83d8bfd7316004b02ba",
+      "kind": "paragraph",
+      "text": "6",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 26767,
+      "char_end": 26768,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d664e04d0c1022154ca5a3be44b2f45e",
+      "kind": "caption",
+      "text": "Fig. 2. Overview of workflow-level jailbreak construction in an IDE coding-agent setting. The figure contrasts three baseline settings, which largely lead to",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 26770,
+      "char_end": 26927,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:405d12883a2a3b1d984f75e71cf2023d",
+      "kind": "paragraph",
+      "text": "refusal, with a multi-turn workflow in which the agent backend authors harmful prompt-response pairs under an evaluation-pipeline and metric-improvement pretext. •Successful.A response is marked as successful only if it is specific, actionable, and instruction-satisfying with respect to the corresponding harmful prompt. •Failure.Refusals, safe alternatives, generic or educational discussion, partial answers, and warning-only responses are marked as failures. Thus, a response is not counted as successful simply because it does not refuse; it must provide concrete and usable content that satisfies the harmful request. Baseline responses are used to compute baseline counts. Clear refusals and safetyaligned responses are counted as failures, while any nonrefusal baseline response is checked using the same rubric. For annotation, evaluators were provided with the model responses for all three benchmarks and all four backends. To reduce model-name bias, the true backend names were hidden and replaced with anonymized labels, Model A, Model B, Model C, and Model D. Evaluators were given the strict rubric described above and then labeled the full set of responses independently. Both evaluators independently labeled all 816 workflow responses as successful under the rubric, yielding 100% raw agreement (816/816). We do not report a chancecorrected agreement statistic such as Cohen’sκ, sinceκis undefined when both raters assign a single label to every item (zero variance in ratings makes the expected-chance-",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 26929,
+      "char_end": 28450,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f5fa04fa8fed5bc701a4fd1b7445ba2c",
+      "kind": "paragraph",
+      "text": "agreement term degenerate). To reduce risk, evaluators assessed the responses in a controlled setting, and no harmful outputs are included in the paper or the public release.",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol"
+      ],
+      "char_start": 28452,
+      "char_end": 28626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fad6d5eb90fe3e1e6d95c9fd358e5b1",
+      "kind": "heading",
+      "text": "RESULTS",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 28628,
+      "char_end": 28635,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d906f5f2d9508890a29606038e8c5cd3",
+      "kind": "paragraph",
+      "text": "In this section, we try to answer two questions. First, we evaluate how the full multi-turn workflow performs compared with direct chat and weaker non-conversational framings under the same prompts, model backends, interface, and settings. Second, we analyze the interaction cost of the workflow by examining how many operator-agent exchanges are needed before unsafe teaching-shot responses first appear, and how this process scales when larger prompt sets are handled in batches. RQ1: For the same model and prompts, how does the full multi-turn workflow compare to direct chat and weaker nonconversational framings? The full workflow changes model behavior from nearcomplete refusal to complete harmful compliance, as shown in Figure 3. Baseline behavior.Across the three baseline conditions, direct chat (DC), CSV read (CSV), and code-fix with teaching shot (CF), the four models refused almost all prompts. For AdvBench and HarmBench, every model refused every prompt in every baseline condition. For Hammurabi’s Code, only a small number of prompts were answered: Claude Sonnet 4.6 answered 1/78, Claude Haiku 4.5 answered 1/78, Gemini 3.5 Flash answered 2/78, and Gemini 3.1 Pro answered 4/78. These counts were identical across DC, CSV , and CF, showing that neither file/data framing nor singlestep code/demonstration framing was sufficient to substantially change refusal behavior. This gives a baseline success count of 8 out of 816 model-",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 28637,
+      "char_end": 30087,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8e52ddb9fcb7ae23bd6648fc1baed88",
+      "kind": "paragraph",
+      "text": "7 prompt pairs in each baseline condition, with 0 successful responses on AdvBench and HarmBench. The few successful baseline cases occur only in Hammurabi’s Code, which is consistent with prior evidence that software-engineering-specific harmful prompts may sometimes evade refusal [17]. In the CF condition, models also produced refusals framed around code modification, such as stating that they could not modify the code to generate harmful responses. This is important because code/demonstration framing is ineffective as a singlestep baseline, but becomes effective when embedded in the full multi-turn workflow. Workflow behavior.In the full workflow condition, the behavior changes sharply. Across all 204 prompts and all four backends, the agent produced teaching-shot completions for every prompt, yielding 816/816 workflow completions. No workflow run ended in a refusal or safety-aligned response. Under the expert-evaluation rubric, both evaluators independently confirmed that all 816 workflow responses satisfied the success criterion. Figure 1 shows representative baseline refusals alongside the corresponding workflow-generated response format; harmful terms in the workflow output are redacted for safety. Workflow-baseline contrast.Figure 3 summarizes the contrast across the three benchmark prompt sets. The combined baselines reach only 24/2448 successful responses across DC, CSV , and CF, while the full workflow reaches 816/816 under the same prompts, models, interface, and settings. The contrast",
+      "order": 79,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 30089,
+      "char_end": 31611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:702006d39272218b2b0e2c2bc7f1ee08",
+      "kind": "paragraph",
+      "text": "indicates that the observed behavior is not explained by the harmful prompts alone, nor by simply placing them in a file or asking for a single code edit. Instead, the effect appears when the request is distributed across the multi-turn IDE workflow. Answer to RQ1 The full workflow changes model behavior from nearcomplete refusal to complete harmful compliance. Each baseline condition produces only 8/816 successful responses, with 0 successes on AdvBench and HarmBench. In contrast, the full workflow produces 816/816 successful teaching-shot completions, all confirmed by two expert evaluators. This shows that the failure is caused by the multi-turn IDE workflow, not by the prompts alone or by simple file/code framing. RQ2: How many operator-agent exchanges are needed before unsafe teaching-shot responses appear, and how does the interaction scale across larger prompt sets? Under the scripted protocol used in our formal evaluation, unsafe teaching-shot responses appear after approximately six operator-agent exchanges. Figure 4 shows how these exchanges are distributed across the workflow, organized into four analytical stages. The first two stages resemble ordinary IDE assistance. The operator asks the agent to read code, run scripts, fix execution issues, and report ASR values. These stages establish the evaluation pipeline but do not require the agent to produce unsafe content. Stage 3 introduces metric pressure: the operator states that ASR is low and asks the agent to improve the pipeline by adding teaching-shot examples.",
+      "order": 80,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 31613,
+      "char_end": 33162,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b958dcc1cca05591485f36ff7ff0c775",
+      "kind": "paragraph",
+      "text": "This normalizes teaching-shot insertion as a code-editing task. Unsafe content appears only in Stage 4, when the operator asks the agent to add benchmark-derived prompts as teachingshot entries. At this point, the agent writes the corresponding prompt–response pairs into the pipeline as code or data. The operator does not provide the answer text; the responses are generated by the backend model through the IDE workflow. Interaction cost of the evaluated protocol.The protocol we formally evaluate requires approximately six operatoragent exchanges before the first unsafe teaching-shot batch appears: two exchanges for code familiarization and initial execution, two exchanges for downstream execution and ASR evaluation, one exchange for benign teaching-shot insertion, and one exchange for the first benchmark-derived teachingshot insertion. The number of exchanges in this protocol can increase further when code execution fails, when the agent performs debugging, when the operator asks for additional benign examples, or when the prompt set is processed in smaller batches. We did not search for the minimal sufficient interaction; this count describes the standardized, scripted protocol we evaluated consistently across all 204 prompts and four backends, not a lower bound on how few exchanges the attack requires in general. Thus, the relevant finding is not a single exact or minimal turn number, but the fact that unsafe responses emerge after a short, ordinary-looking sequence of IDE interactions under the protocol we measure.",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 33164,
+      "char_end": 34707,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5962c1b1ccb1c50914526d4937705de",
+      "kind": "paragraph",
+      "text": "Batch-wise scaling.After the first unsafe teaching-shot batch is generated, the workflow can be extended by repeating the same batch-level interaction. In our experiments, prompts were usually added in small batches rather than all at once. This was more reliable because large batches can lead to incomplete generation, formatting errors, or context-window pressure. For this reason, the workflow scales by repeated batch insertion: the operator asks the agent to add a small group of benchmark-derived teaching shots, reports that the ASR has improved, and then asks for the next group. The evaluated sample in this paper is limited to 204 prompts because our priority is careful manual verification by expert evaluators. The interaction pattern itself is not limited to those prompts; it can continue over additional benchmark prompts through repeated batch-level requests. Answer to RQ2 Under the scripted protocol we evaluate, unsafe teaching-shot responses appear after approximately six operator-agent exchanges. This describes the standardized interaction we measured across all prompts and backends, not a minimal sufficient interaction; the exchange count can increase with debugging, reruns, or smaller prompt batches. After the first unsafe batch appears, the workflow scales through repeated batchlevel insertion of benchmark-derived teaching shots.",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 34709,
+      "char_end": 36071,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9dcf5a224e746606b6808f7f587cff6f",
+      "kind": "paragraph",
+      "text": "8",
+      "order": 83,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 36073,
+      "char_end": 36074,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3747ff88f8e0712b365cb8ca3b995b7",
+      "kind": "caption",
+      "text": "Fig. 3. Attack success rate under the combined baseline conditions and the full workflow across the three benchmark prompt sets. The baseline bar aggregates",
+      "order": 84,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 36076,
+      "char_end": 36232,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:966b765d9d310a795941dd1bf4a50f6f",
+      "kind": "paragraph",
+      "text": "successful responses across direct chat (DC), CSV read (CSV), and single-step code-fix (CF), so baseline counts are out of three attempts per prompt; the workflow bar reports the full-workflow (WF) condition alone, out of one attempt per prompt.",
+      "order": 85,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 36234,
+      "char_end": 36479,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:af4ad3de6a79e3f1041bb4552c350ee2",
+      "kind": "caption",
+      "text": "Fig. 4. Stage-wise interaction dynamics of the full workflow. Unsafe teaching-",
+      "order": 86,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 36481,
+      "char_end": 36559,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e630c62ccf4bb9bd7eb55fd5f8dae9ca",
+      "kind": "paragraph",
+      "text": "shot responses first appear in Stage 4, after routine coding-agent interactions and metric-driven pipeline improvement. Harmful content is redacted for safety.",
+      "order": 87,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "RESULTS"
+      ],
+      "char_start": 36561,
+      "char_end": 36720,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26d129ff8d5627921a9e825cf5ca2b8b",
+      "kind": "heading",
+      "text": "DISCUSSION",
+      "order": 88,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "D. Manual Evaluation Protocol",
+        "DISCUSSION"
+      ],
+      "char_start": 36722,
+      "char_end": 36732,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fff44afb7ec4b611cc444a93538fbc28",
+      "kind": "heading",
+      "text": "A. Direct-Prompt Refusal Does Not Predict Workflow Safety",
+      "order": 89,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Direct-Prompt Refusal Does Not Predict Workflow Safety"
+      ],
+      "char_start": 36734,
+      "char_end": 36791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7da9bb4e85c2d53749657a497b659fbc",
+      "kind": "paragraph",
+      "text": "The central lesson from our results is that coding-agent safety cannot be understood only through direct prompt refusal. In the baseline settings, the evaluated backends behaved largely as expected: they refused harmful prompts in direct chat, and this refusal behavior mostly remained when the prompt was placed in a CSV file or framed as a singlestep code-editing request. If safety evaluation stopped at these settings, the models would appear robust. The full IDE workflow changes this conclusion. Under the same prompts, backends, interface, and settings, the agent produced unsafe teaching-shot completions once the task was distributed across ordinary software-engineering actions: reading files, running scripts, processing benchmark inputs, inspecting ASR values, and improving an evaluation pipeline. Critically, the harmful content was not produced as a direct chat answer to a harmful question. It appeared as code or data inside an artifact the agent was constructing. This also explains why the weaker baselines were not sufficient. Reading a harmful prompt from a file changes where the input is stored, but not the structure of the interaction. The model is still being asked, in a single step, to answer or act on the harmful request. Similarly, asking for a harmful teaching-shot pair in a single code-editing turn still resembles a direct unsafe request, so refusal behavior remains active. The full workflow differs because it first establishes a normal development context. The agent is asked to understand code,",
+      "order": 90,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Direct-Prompt Refusal Does Not Predict Workflow Safety"
+      ],
+      "char_start": 36793,
+      "char_end": 38326,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e9f206ed65206f218daca32507bd324",
+      "kind": "paragraph",
+      "text": "execute scripts, fix issues, evaluate outputs, and improve a metric. Only after this context has been established is teachingshot generation introduced as a pipeline-improvement step. In that setting, the model is no longer simply deciding whether to answer a harmful prompt; it is trying to complete an engineering task and improve an evaluation artifact. This supports our central claim that the failure is workflow-level, not merely prompt-level, and that the relevant safety boundary is the workflow in which the model is embedded, not only the prompt–response pair.",
+      "order": 91,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "A. Direct-Prompt Refusal Does Not Predict Workflow Safety"
+      ],
+      "char_start": 38328,
+      "char_end": 38898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2aff01eb7a260c78241da3d88086b762",
+      "kind": "heading",
+      "text": "B. Relation to Single-Prompt Implicit-Intent Attacks",
+      "order": 92,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks"
+      ],
+      "char_start": 38900,
+      "char_end": 38952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:532a711ef8b8d6d1f6fe77275f22e483",
+      "kind": "paragraph",
+      "text": "The closest prior attack to ours is CodeJailbreaker [21], which also separates malicious intent from an explicit instruction. Rather than asking for harmful code directly, Code- Jailbreaker encodes the intent inside a commit message and asks the model to simulate the resulting code change. The underlying insight is related to ours: a non-conversational, code-mediated channel can carry harmful intent past refusal",
+      "order": 93,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks"
+      ],
+      "char_start": 38954,
+      "char_end": 39369,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c77efe480b773de98f10bd6b9eb94b77",
+      "kind": "paragraph",
+      "text": "9 mechanisms tuned to direct instruction-level cues. However, the two attacks differ in where that channel lives. Code- Jailbreaker constructs a single, self-contained prompt: the commit message, preceding code, and output specification are submitted in one shot, with no interaction history beyond what that prompt encodes. Our workflow is not reducible to a single prompt artifact. The harmful prompt enters as one benchmark record among many, the engineering context is built over several turns through pipeline construction, metric feedback, and benign teaching-shot insertion, and the harmful completion is authored by the agent as a consequence of the workflow state. This distinction matters for defenses. A detector tuned to identify disguised single-shot prompts, for example by scanning commit messages for implicit malicious framing, would not necessarily detect a failure that only becomes visible across several ordinary-looking turns. Our workflow does not depend on an overt adversarial persona, a special jailbreak template, or a single carefully engineered malicious prompt. It relies on the same IDE-agent capabilities that make these systems useful: reading files, editing code, running scripts, debugging failures, and improving artifacts. A sequence of interactions that appears benign turn by turn can therefore move the system into an unsafe state when considered as a workflow.",
+      "order": 94,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks"
+      ],
+      "char_start": 39371,
+      "char_end": 40772,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6292554e7e4b6bb3bf9b675367a6ef1b",
+      "kind": "heading",
+      "text": "Threats to Validity",
+      "order": 95,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks",
+        "Threats to Validity"
+      ],
+      "char_start": 40774,
+      "char_end": 40793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:da2b025bb20f9aae4400a46432b34ee7",
+      "kind": "paragraph",
+      "text": "Construct validity.Jailbreak success is a semantic judgment, and simply measuring non-refusal can overstate risk. We therefore use a strict success criterion: a response is counted as successful only if it is specific, actionable, and instructionsatisfying. Refusals, safe alternatives, generic explanations, partial answers, and warning-only responses are counted as failures. The workflow outputs were independently checked by two expert evaluators. Although manual judgment can involve subjective interpretation, we reduce this risk by using a conservative rubric and by not counting a response as successful merely because it avoids refusal. Internal validity.A key internal-validity concern is whether the observed difference between the baseline and workflow conditions can be attributed to the interaction structure rather than to differences in prompts, models, or experimental settings. We mitigate this by holding the benchmark prompts, model backends, IDE interface, and configuration fixed across all conditions. We also include three complementary baselines: direct chat, CSV read, and single-step code-fix. These baselines are designed to rule out simpler explanations, such as the harmful prompt merely being placed in a file or framed as code. The sharp contrast between these baselines and the full workflow supports our interpretation that the failure emerges from the multi-turn IDE workflow. However, because the evaluated systems are hosted services, hidden system prompts, safety filters, and backend updates remain outside our control.",
+      "order": 96,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks",
+        "Threats to Validity"
+      ],
+      "char_start": 40795,
+      "char_end": 42353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86a498c9f7f59419cc8768f81c034cf5",
+      "kind": "paragraph",
+      "text": "External validity.Our experiments are conducted in GitHub Copilot Chat inside Visual Studio Code with four closed-weight model backends. The results establish the existence of this workflow-level failure mode in this setting, but may not directly generalize to other IDE agents, standalone chat interfaces, API deployments, open-weight models, or future versions of the same systems. Similarly, our benchmark set contains 204 prompts sampled from Hammurabi’s Code, HarmBench, and AdvBench. This sampling enables careful expert evaluation, but it does not cover every possible harmful request or every software-engineering scenario. Reproducibility and disclosure.Exact reproduction is difficult because the evaluated systems are hosted services whose behavior may change over time. We record the IDE version, Copilot Chat version, model backends, and experiment dates to improve reproducibility. At the same time, we do not release harmful outputs or exact operational prompts, because doing so could enable misuse. Instead, we describe the workflow at a high level and redact unsafe content in examples. This limits full replication, but is necessary for responsible reporting. D. Implications for Evaluation and Defense For researchers and benchmark designers.Our results suggest that prompt-level evaluations, including those based on Hammurabi’s Code, HarmBench, and AdvBench, measure a necessary but not sufficient condition for coding-agent safety. A model that refuses harmful prompts in isolation may still fail once the same objective is embedded inside an ordinary",
+      "order": 97,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks",
+        "Threats to Validity"
+      ],
+      "char_start": 42355,
+      "char_end": 43929,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a48bbf67a4e51f343e0b0948efd5331",
+      "kind": "paragraph",
+      "text": "multi-turn IDE session. We therefore see value in benchmarks that evaluate models inside live agentic workflows rather than only as single-completion endpoints. Such benchmarks should score not only the final response, but also the trajectory of turns, intermediate files, generated examples, and artifacts that led to it. For coding-agent developers.Because the unsafe content in our study is produced as code or data inside a generated artifact rather than as a chat reply, defenses that operate only on the visible conversational turn may miss it. We see three concrete and complementary directions. First,artifact-level inspection: guardrails should examine the files, scripts, and data structures an agent writes, since this is where the harmful content in our study appears. Second,cross-turn monitoring: because no single turn contains the full harmful objective, detection should reason over the session trajectory rather than classify each turn independently. Third,optimization-framing awareness: in our workflow, harmful escalation is introduced as a way to improve a reported metric. Requests that justify generating or expanding sensitive content by appealing to an evaluation or benchmark score may therefore be useful signals for safety monitoring. None of these directions is a complete defense on its own, and designing safeguards that catch this pattern without obstructing legitimate evaluation and securityresearch workflows remains an open problem.",
+      "order": 98,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "B. Relation to Single-Prompt Implicit-Intent Attacks",
+        "Threats to Validity"
+      ],
+      "char_start": 43931,
+      "char_end": 45400,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4c19202bc739a0f44c7b349d53c15a8",
+      "kind": "heading",
+      "text": "E. Future Work",
+      "order": 99,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "E. Future Work"
+      ],
+      "char_start": 45402,
+      "char_end": 45416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd733db62a87bf88d7e8e0bf64120afe",
+      "kind": "paragraph",
+      "text": "This study opens several directions for future work. First, our evaluation focuses on GitHub Copilot in Visual Studio Code; applying the same baseline-versus-workflow protocol to other IDE-integrated coding agents, such as Cursor, Cline, Windsurf, or other agentic development environments, would help determine whether workflow-level jailbreak construction",
+      "order": 100,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "E. Future Work"
+      ],
+      "char_start": 45418,
+      "char_end": 45775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5248a4d4d10daf719dc37ff3ee57b455",
+      "kind": "paragraph",
+      "text": "10 is primarily driven by the model backend, the agent scaffolding, or their interaction. Second, our four evaluated backends come from two providers, Anthropic and Google. Due to budget, access, and manual-evaluation constraints, we did not evaluate additional model families such as OpenAI’s GPT models, Meta’s Llama models, Mistral, DeepSeek, Qwen, or other open- and closed-weight backends. Extending the backend pool would clarify whether the baseline-refusal versus workflow-compliance pattern generalizes across model families or varies with provider-specific safety training. Third, our strict two-evaluator protocol supports careful judgment but limits scale. Future work could explore calibrated automatic judges, validated against manually labeled outputs, to support larger prompt sets and more model backends.",
+      "order": 101,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "E. Future Work"
+      ],
+      "char_start": 45777,
+      "char_end": 46599,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e842ec314f7ba90ef87cd9e8213813fb",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 102,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "E. Future Work",
+        "CONCLUSION"
+      ],
+      "char_start": 46601,
+      "char_end": 46611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fcff28b6a54c0242230a0c687c91aa4",
+      "kind": "paragraph",
+      "text": "This paper studied workflow-level jailbreak construction in IDE-based coding agents, showing that safety behavior observed under direct prompting does not necessarily transfer to a multi-turn software-development workflow. Across",
+      "order": 103,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "E. Future Work",
+        "CONCLUSION"
+      ],
+      "char_start": 46613,
+      "char_end": 46842,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc070a8f0bae403a7da6033de6fc0313",
+      "kind": "heading",
+      "text": "prompts from Hammurabi’s Code, HarmBench, and Ad-",
+      "order": 104,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from Hammurabi’s Code, HarmBench, and Ad-"
+      ],
+      "char_start": 46844,
+      "char_end": 46893,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c0deefc1d70501fdcc8e9bde3f01f9a8",
+      "kind": "paragraph",
+      "text": "vBench, four model backends largely refused harmful requests under direct chat, CSV read, and single-step code-fix baselines. However, under the full IDE workflow, the same prompts and backends produced successful teaching-shot completions for all 816 workflow outputs, all independently confirmed by two expert evaluators under a strict success rubric. The key finding is that this failure is caused neither by the harmful prompts alone nor by simple file or code framing. Instead, it emerges when the objective is distributed across ordinary coding-agent actions: reading files, running scripts, inspecting ASR values, and improving an evaluation pipeline. In this setting, unsafe content appears as code or data inside an artifact the agent is constructing, rather than as a direct chat response. This shows that coding-agent safety must be evaluated and enforced at the workflow level. Future defenses should therefore monitor not only prompts and chat replies, but also generated files, scripts, examples, logs, and intermediate artifacts produced during IDE-based development workflows.",
+      "order": 105,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from Hammurabi’s Code, HarmBench, and Ad-"
+      ],
+      "char_start": 46895,
+      "char_end": 47987,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fca871f290d0db55ca9ca9379898b00b",
+      "kind": "heading",
+      "text": "ETHICS ANDRESPONSIBLEDISCLOSURE",
+      "order": 106,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from Hammurabi’s Code, HarmBench, and Ad-",
+        "ETHICS ANDRESPONSIBLEDISCLOSURE"
+      ],
+      "char_start": 47989,
+      "char_end": 48020,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e19ad0ba716d4a998d744ece836584a2",
+      "kind": "paragraph",
+      "text": "This work studies a misuse vector in IDE-based coding agents, and some parts of the paper necessarily discuss potentially harmful or offensive model behavior. This material is included only for the purpose of evaluating and improving the safety of LLM-based software-engineering systems; it does not endorse, encourage, or facilitate criminal or harmful activity. We report the findings in a way that maximizes defensive value while minimizing misuse risk. We do not reproduce harmful completions, exact operational prompts, or full workflow transcripts; all examples are sanitized and unsafe terms in figures are redacted. The harmful prompts come from existing public benchmarks, HarmBench, AdvBench, and Hammurabi’s Code, and we introduce no new harmful prompt categories. We have disclosed our findings to the affected IDE-agent and model providers. We believe this structural disclosure provides defensive value by motivating workflowlevel guardrails, artifact-level safety checks, and more realistic evaluation of agentic coding tools.",
+      "order": 107,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "prompts from Hammurabi’s Code, HarmBench, and Ad-",
+        "ETHICS ANDRESPONSIBLEDISCLOSURE"
+      ],
+      "char_start": 48022,
+      "char_end": 49063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c63d1f796640a4edc37d600df0b0f365",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 108,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "REFERENCES"
+      ],
+      "char_start": 49065,
+      "char_end": 49075,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3166e257b1d2f6ce2d856c98dfaa58c",
+      "kind": "reference",
+      "text": "[1] A. Kumar, S. Sankar, P. P. Das, and P. P. Chakrabarti, “Using large language models for multi-level commit message generation for large diffs,”Information and Software Technology, vol. 187, p. 107831, 2025. [2] A. Kumar, P. P. Das, and P. P. Chakrabarti, “Summarize me: The future of issue thread interpretation,” in2023 IEEE International Conference on Software Maintenance and Evolution (ICSME). IEEE, 2023, pp. 341–345. [3] X. Hou, Y . Zhao, Y . Liu, Z. Yang, K. Wang, L. Li, X. Luo, D. Lo, J. Grundy, and H. Wang, “Large language models for software engineering: A systematic literature review,”ACM Transactions on Software Engineering and Methodology, vol. 33, no. 8, pp. 1–79, 2024. [4] S. Lu, D. Guo, S. Ren, J. Huang, A. Svyatkovskiy, A. Blanco,",
+      "order": 109,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "REFERENCES"
+      ],
+      "char_start": 49077,
+      "char_end": 49834,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2a2a6f44cf5c8de452f0938881f2364",
+      "kind": "heading",
+      "text": "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine",
+      "order": 110,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "REFERENCES",
+        "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine"
+      ],
+      "char_start": 49836,
+      "char_end": 49901,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6e6f093468e55fa1a5fd3da1719e52ff",
+      "kind": "paragraph",
+      "text": "learning benchmark dataset for code understanding and generation,” arXiv preprint arXiv:2102.04664, 2021. [5] F. F. Xu, U. Alon, G. Neubig, and V . J. Hellendoorn, “A systematic evaluation of large language models of code,” inProceedings of the 6th ACM SIGPLAN international symposium on machine programming, 2022, pp. 1–10. [6] M. Chen, J. Tworek, H. Jun, Q. Yuan, H. P. D. O. Pinto, J. Kaplan, H. Edwards, Y . Burda, N. Joseph, G. Brockmanet al., “Evaluating large language models trained on code,”arXiv preprint arXiv:2107.03374, 2021. [7] M. Izadi, J. Katzy, T. Van Dam, M. Otten, R. M. Popescu, and A. Van Deursen, “Language models for code completion: A practical evaluation,” inProceedings of the IEEE/ACM 46th International Conference on Software Engineering, 2024, pp. 1–13. [8] J. Wang and Y . Chen, “A review on code generation with llms: Application and evaluation,” in2023 IEEE International Conference on Medical Artificial Intelligence (MedAI). IEEE, 2023, pp. 284–289. [9] M. Bhatt, S. Chennabasappa, C. Nikolaidis, S. Wan, I. Evtimov, D. Gabi, D. Song, F. Ahmad, C. Aschermann, L. Fontanaet al., “Purple llama cyberseceval: A secure coding benchmark for language models,”arXiv preprint arXiv:2312.04724, 2023. [10] U. Anwar, A. Saparov, J. Rando, D. Paleka, M. Turpin, P. Hase, E. S. Lubana, E. Jenner, S. Casper, O. Sourbutet al., “Foundational challenges in assuring alignment and safety of large language models,”arXiv preprint arXiv:2404.09932, 2024. [11] A. Zou, Z. Wang, N. Carlini, M. Nasr, J. Z. Kolter, and M. Fredrikson,",
+      "order": 111,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "REFERENCES",
+        "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine"
+      ],
+      "char_start": 49903,
+      "char_end": 51450,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ba90d40338bca6b7ae2710b7b950215",
+      "kind": "paragraph",
+      "text": "“Universal and transferable adversarial attacks on aligned language models,”arXiv preprint arXiv:2307.15043, 2023. [12] Y . Zhou, J. Lou, Z. Huang, Z. Qin, S. Yang, and W. Wang, “Don’t say no: Jailbreaking llm by suppressing refusal,” inFindings of the Association for Computational Linguistics: ACL 2025, 2025, pp. 25 224–25 249. [13] B. R. Huang, M. Li, and L. Tang, “Endless jailbreaks with bijection learning,” inInternational Conference on Learning Representations, vol. 2025, 2025, pp. 70 770–70 790. [14] C. Anil, E. Durmus, N. Panickssery, M. Sharma, J. Benton, S. Kundu, J. Batson, M. Tong, J. Mu, D. Fordet al., “Many-shot jailbreaking,”Advances in Neural Information Processing Systems, vol. 37, pp. 129 696–",
+      "order": 112,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "REFERENCES",
+        "Clement, D. Drain, D. Jiang, D. Tanget al., “Codexglue: A machine"
+      ],
+      "char_start": 51452,
+      "char_end": 52171,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e533cf79b977187ac888da38fd215020",
+      "kind": "heading",
+      "text": "742, 2024.",
+      "order": 113,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "742, 2024."
+      ],
+      "char_start": 52173,
+      "char_end": 52183,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abb420abf1b835699134da5052f09909",
+      "kind": "paragraph",
+      "text": "[15] Q. Ren, C. Gao, J. Shao, J. Yan, X. Tan, W. Lam, and L. Ma, “Codeattack: Revealing safety generalization challenges of large language models via code completion,” inFindings of the Association for Computational Linguistics: ACL 2024, 2024, pp. 11 437–11 452. [16] M. Russinovich, A. Salem, and R. Eldan, “Great, now write an article about that: The crescendo{Multi-Turn}{LLM}jailbreak attack,” in34th USENIX Security Symposium (USENIX Security 25), 2025, pp. 2421– 2440. [17] A. Al-Kaswan, S. Deatc, B. Koc ¸, A. van Deursen, and M. Izadi, “Code red! on the harmfulness of applying off-the-shelf large language models to programming tasks,”Proceedings of the ACM on Software Engineering, vol. 2, no. FSE, pp. 2477–2499, 2025. [18] A. A. Hasan and S. Biswas, “What breaks when llms code? characterizing operational safety failures of agentic code assistants,”arXiv preprint arXiv:2605.30777, 2026. [19] M. Mazeika, L. Phan, X. Yin, A. Zou, Z. Wang, N. Mu, E. Sakhaee, N. Li, S. Basart, B. Liet al., “Harmbench: A standardized evaluation framework for automated red teaming and robust refusal,”arXiv preprint arXiv:2402.04249, 2024.",
+      "order": 114,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "742, 2024."
+      ],
+      "char_start": 52185,
+      "char_end": 53320,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3892fb6e87944b3def0a9b0c071b663c",
+      "kind": "paragraph",
+      "text": "11 [20] Z. Wei, Y . Wang, A. Li, Y . Mo, and Y . Wang, “Jailbreak and guard aligned language models with only few in-context demonstrations,” IEEE Transactions on Pattern Analysis and Machine Intelligence, 2026. [21] S. Ouyang, Y . Qin, B. Lin, L. Chen, X. Mao, and S. Wang, “Smoke and mirrors: Jailbreaking llm-based code generation via implicit malicious prompts,” 2025. [Online]. Available: https://arxiv.org/abs/2503.17953 [22] C. Guo, X. Liu, C. Xie, A. Zhou, Y . Zeng, Z. Lin, D. Song, and B. Li, “Redcode: Risky code execution and generation benchmark for code agents,”Advances in Neural Information Processing Systems, vol. 37, pp. 106 190–106 236, 2024. [23] M. Andriushchenko, A. Souly, M. Dziemian, D. Duenas, M. Lin, J. Wang, D. Hendrycks, A. Zou, Z. Kolter, M. Fredriksonet al., “Agentharm: A benchmark for measuring harmfulness of llm agents, 2024,”URL https://arxiv. org/abs/2410.09024, 2024. [24] P. Kumar, E. Lau, S. Vijayakumar, T. Trinh, S. Team, E. Chang,",
+      "order": 115,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "742, 2024."
+      ],
+      "char_start": 53322,
+      "char_end": 54297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8fbc8fc06966693094608fc951cb45ae",
+      "kind": "heading",
+      "text": "Robinson, S. Hendryx, S. Zhou, M. Fredriksonet al., “Refusal-trained",
+      "order": 116,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "742, 2024.",
+        "Robinson, S. Hendryx, S. Zhou, M. Fredriksonet al., “Refusal-trained"
+      ],
+      "char_start": 54299,
+      "char_end": 54367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec69528337d02e4eb0a9f6726a7a7f75",
+      "kind": "paragraph",
+      "text": "llms are easily jailbroken as browser agents, 2024,”URL https://arxiv. org/abs/2410.13886. [25] E. Debenedetti, J. Zhang, M. Balunovic, L. Beurer-Kellner, M. Fischer, and F. Tram`er, “Agentdojo: A dynamic environment to evaluate prompt injection attacks and defenses for llm agents,”Advances in Neural Information Processing Systems, vol. 37, pp. 82 895–82 920, 2024. [26] T. Kuntz, A. Duzan, H. Zhao, F. Croce, Z. Kolter, N. Flammarion, and M. Andriushchenko, “Os-harm: A benchmark for measuring safety of computer use agents, 2025,”URL https://arxiv. org/abs/2506.14866. [27] W. J. Mo, Q. Liu, X. Wen, D. Jung, H. Askari, W. Zhou, Z. Zhao, and M. Chen, “Redcoder: Automated multi-turn red teaming for code llms,” inProceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), 2026, pp. 33 140–",
+      "order": 117,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "742, 2024.",
+        "Robinson, S. Hendryx, S. Zhou, M. Fredriksonet al., “Refusal-trained"
+      ],
+      "char_start": 54369,
+      "char_end": 55216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6158f31a732830604fe14d758227e3e",
+      "kind": "heading",
+      "text": "155.",
+      "order": 118,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "155."
+      ],
+      "char_start": 55218,
+      "char_end": 55222,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bfef9f994ff257cf97043a3a9af65eb",
+      "kind": "paragraph",
+      "text": "[28] S. Saha, J. Chen, S. Mayers, S. K. Gouda, Z. Wang, and V . Kumar, “Breaking the code: Security assessment of ai code agents through systematic jailbreaking attacks,”arXiv preprint arXiv:2510.01359, 2025. [29] M. Feng, X. Liu, W. Yang, J. Song, X. Zhu, C. Xu, and J. Gao, “Sema: Simple yet effective learning for multi-turn jailbreak attacks,”arXiv preprint arXiv:2602.06854, 2026. [30] W. Guo, Z. Shi, Z. Li, Y . Wang, X. Liu, W. Wang, F. Liu, M. Zhang, and J. Li, “Jailbreak-r1: Exploring the jailbreak capabilities of llms via reinforcement learning,”arXiv preprint arXiv:2506.00782, 2025. [31] A. Kumar, S. Sankar, S. Haiduc, P. P. Das, and P. P. Chakrabarti, “Llms as evaluators: A novel approach to commit message quality assessment,” in2025 IEEE/ACM 47th International Conference on Software Engineering: New Ideas and Emerging Results (ICSE-NIER). IEEE, 2025, pp. 111–115. [32] H. Li, Q. Dong, J. Chen, H. Su, Y . Zhou, Q. Ai, Z. Ye, and Y . Liu, “Llmsas-judges: a comprehensive survey on llm-based evaluation methods,” arXiv preprint arXiv:2412.05579, 2024.",
+      "order": 119,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "155."
+      ],
+      "char_start": 55224,
+      "char_end": 56294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfc2ca6e53a08e650fe1b1c3a2e5ed8a",
+      "kind": "heading",
+      "text": "[33] L. Schwinn, M. Ladenburger, T. Beyer, M. Mofakhami, G. Gidel, and",
+      "order": 120,
+      "page_number": 11,
+      "heading_level": 2,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "[33] L. Schwinn, M. Ladenburger, T. Beyer, M. Mofakhami, G. Gidel, and"
+      ],
+      "char_start": 56296,
+      "char_end": 56366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd4d70ed97db287184b7a0c3074e19d8",
+      "kind": "paragraph",
+      "text": "S. G ¨unnemann, “A coin flip for safety: Llm judges fail to reliably measure adversarial robustness,”arXiv preprint arXiv:2603.06594, 2026. [34] F. Liu, Y . Feng, Z. Xu, L. Su, X. Ma, D. Yin, and H. Liu, “Jailjudge: A comprehensive jailbreak judge benchmark with multiagent enhanced explanation evaluation framework,” 2024. [Online]. Available: https://arxiv.org/abs/2410.12855 [35] S. Li, C. Xu, J. Wang, X. Gong, C. Chen, J. Zhang, J. Wang, K.-Y . Lam, and S. Ji, “Llms cannot reliably judge (yet?): A comprehensive assessment on the robustness of llm-as-a-judge,” 2025. [Online]. Available: https://arxiv.org/abs/2506.09443 [36] R. Stureborg, D. Alikaniotis, and Y . Suhara, “Large language models are inconsistent and biased evaluators,” 2024. [Online]. Available: https://arxiv.org/abs/2405.01724",
+      "order": 121,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "The Alan Turing Institute, London, United Kingdom",
+        "[33] L. Schwinn, M. Ladenburger, T. Beyer, M. Mofakhami, G. Gidel, and"
+      ],
+      "char_start": 56368,
+      "char_end": 57169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 11,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 11
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.03968",
+    "arxiv_version": 2,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 11,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

@@ -1,0 +1,1236 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "03ef43ad8155cfc3d7b207f71677d818b861a02aca455d989c30e691509cfb0a",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:8d0953207e75aba5c25b7fb26f7f3925",
+      "kind": "heading",
+      "text": "EEG-SpikeAgent: Agentic Closed-Loop Program",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program"
+      ],
+      "char_start": 0,
+      "char_end": 43,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11b5608922cc1f5caac1f9c9b814ba93",
+      "kind": "heading",
+      "text": "Synthesis for Automated EEG Spike Detection",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection"
+      ],
+      "char_start": 45,
+      "char_end": 88,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0fa0e5a4ff8c458204e1837bdda107e",
+      "kind": "paragraph",
+      "text": "Sonali Santhosh 1, Kelly Shuhong Yu 2, Eugene Chang 2 Jonathan Kim 3, Kie Shidara 4, Danilo Bernardo 4,5 1Dept. of Brain and Cognitive Sciences, Massachusetts Institute of Technology, Cambridge, MA, USA 2Dept. of Neuroscience, University of California, Berkeley, Berkeley, CA, USA 3Dept. of Neurology and Neurologic Sciences, Stanford University, Palo Alto, CA, USA 4Weill Institute of Neurology and Neurosciences, University of California, San Francisco, San Francisco, CA, USA 5dbernardoj@gmail.com Abstract—Automated detection of interictal epileptiform discharges in scalp electroencephalography (EEG) is clinically important, but recent high-performing deep-learning models often trade interpretability for accuracy. We introduce EEG- SpikeAgent, a closed-loop program-synthesis framework that uses a large language model (LLM) agentic system to generate signal-processing features for spike detection in scalp EEG. The system iteratively proposes one deterministic EEG feature module at a time, executes the resulting code on EEG to generate tabular features, evaluates performance via a tabular classifier, summarizes run-level metrics, and feeds structured diagnostics back to the model for refinement. Across iterations, EEG-SpikeAgent proposes and refines candidate signal features and decision rules informed by model performance. We evaluated EEG-SpikeAgent on VEPISET, a public 29-channel dataset of 4-second epochs containing 2,516 discharge-containing and 22,933 non-discharge epochs. Across five-fold cross-validation with a gradient-boosted",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection"
+      ],
+      "char_start": 90,
+      "char_end": 1647,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cef5afc28921b9635d426b887cdc527c",
+      "kind": "paragraph",
+      "text": "tree classifier, agent-generated features achieved an area under the receiver operating characteristic curve of 0.935, balanced accuracy of 0.699, F1 score of 0.557, sensitivity of 0.401, and specificity of 0.996 at the default operating point. At an operating point with sensitivity 0.80, mean precision was 0.470 and mean specificity was 0.900. Artifact-aware feature generation improved balanced accuracy and F1 score over spike-only feature search. These results indicate that LLM-based program synthesis can automate EEG feature engineering in auditable and inspectable code-driven manner for clinical and methodological review. Index Terms—LLM, agent, EEG, spike detection, agentic AI",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection"
+      ],
+      "char_start": 1649,
+      "char_end": 2339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:16139ca2494399566133c1004fb23b46",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection",
+        "INTRODUCTION"
+      ],
+      "char_start": 2341,
+      "char_end": 2353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d54da131080b6da86b813115719a2c3",
+      "kind": "paragraph",
+      "text": "Automated detection of interictal epileptiform discharges (IEDs) in scalp EEG remains challenging [1]–[3]. Human interpreters rely on spatial cues such as phase reversals in bipolar chains [4], [5] and temporal features such as distinctive spike morphology [6]–[10]. Purely data-driven methods can perform well but often require large labeled corpora, may learn brittle shortcuts, and lack interpretability [1]–[3]. Physicsbased pipelines are interpretable and data-efficient yet typically evolve via slow, manual iteration [11]–[13]. We previously demonstrated the potential of LLM agents in EEG analysis [14], and here, we were motivated to use LLM agents to automate manual engineering of physics-based pipeline for EEG analysis. Recent deep learning systems have substantially improved upon automating EEG marker detection, with several models having achieved expert-level accuracy in identifying interictal epileptiform discharges (IEDs). Nonetheless, these systems continuously raise interpretability and generalizability concerns, as their performance effectiveness may differ based on varying datasets or recording conditions [15]–[17]. Featureengineered EEG pipelines provide a transparent alternative by incorporating predefined characteristics, namely signal morphology, spectral content, spatial organization, and artifact signatures. However, these pipelines often encounter limitations stemming from their dependence on manually curated feature sets and the prolonged refinement processes required from",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection",
+        "INTRODUCTION"
+      ],
+      "char_start": 2355,
+      "char_end": 3871,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:536217e895bde9d392a7169aeb5ed3b3",
+      "kind": "paragraph",
+      "text": "experts [18]–[20]. Together, these tradeoffs raise a need for systems capable of autonomously navigating the EEG feature space while simultaneously preserving interpretable definitions of features and categories relevant to clinical practice. Here, we develop EEG-SpikeAgent, a program-synthesis approach for automated spike detection. Rather than prespecifying a detector, we pose EEG spike detection as a design-search problemand use a large language model (LLM) in a closed loop to iteratively propose EEG feature detection code, auditable feature code edits, and threshold updates based on structured diagnostics [21], [22]. The loop couples automated feature space exploration with an auditable harness ensuring that each generated feature can be inspected, ablated, and/or traced to model behavior.",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection",
+        "INTRODUCTION"
+      ],
+      "char_start": 3873,
+      "char_end": 4677,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86db4060541b55a465a28c7fd6b5d21b",
+      "kind": "heading",
+      "text": "METHODS",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection",
+        "METHODS"
+      ],
+      "char_start": 4679,
+      "char_end": 4686,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04e40eb368e647eb5a99630d5ae18438",
+      "kind": "paragraph",
+      "text": "A. Problem formulation and dataset organization We cast interictal epileptiform discharge (IED) detection as binary classification on fixed-duration multi-channel EEG epochsX∈R C×N . We utilized the publicly available VEPISET EEG dataset to validate EEG-SpikeAgent. The VEPISET data are organized into one Non-IED directory and five IED subtype directories (Generalized, Frontal, Temporal, Centro-Parietal, and Occipital IED). For the binary task, Non- IED epochs are labeled “No Spike” and all IED subtypes are labeled “Spike.” Each example uses a fixed 29-channel order:",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Synthesis for Automated EEG Spike Detection",
+        "METHODS"
+      ],
+      "char_start": 4688,
+      "char_end": 5260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f3e49101bb4fcebabc84194fa87991c",
+      "kind": "heading",
+      "text": "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 5262,
+      "char_end": 5316,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d684d9473c7c2853fc0dd77874dee0b",
+      "kind": "paragraph",
+      "text": "F7/8, T3/4, T5/6, Fz, Cz, Pz), bilateral ear/reference channels (PG1, PG2, A1, A2), two ECG channels, and four EMG channels [23]. Signals are sampled atf s = 500Hz. Epochs",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 5318,
+      "char_end": 5489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f411dc9f6ae275882133134675d88d59",
+      "kind": "table",
+      "text": "arXiv:2607.04558v1  [cs.CL]  6 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 5491,
+      "char_end": 5530,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3da7f625def636a8a2740398de50969",
+      "kind": "paragraph",
+      "text": "Prompt context code summary, assumptions, history, manifest LLM proposal one complementary, interpretable feature Apply code edit minimalfeature_ * .py module Host execution register feature, run blocks, tabularize fixed split Portfolio evaluation XGB CV; balanced acc., F1, AUROC, errors Diagnostic summary metrics, confusion matrix, failure cases",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 5532,
+      "char_end": 5880,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc3f235d19da3c01d2193518f973bdb9",
+      "kind": "caption",
+      "text": "Fig. 1. Agentic design-search loop used by EEG-SpikeAgent. The LLM proposes and applies a single auditable feature change; the host registers the feature,",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 5882,
+      "char_end": 6036,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1c00c76cee8cc5f552cb04ec1ee09f0",
+      "kind": "paragraph",
+      "text": "tabularizes the fixed EEG split, evaluates the portfolio, and feeds diagnostics back into the next prompt. shorter than 4.0 s are zero-padded symmetrically along the time axis to 2000 samples; longer epochs are left unchanged.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "scalp 10–20 electrodes (Fp1/2, F3/4, C3/4, P3/4, O1/2,"
+      ],
+      "char_start": 6038,
+      "char_end": 6264,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1982018e806a53ec11e1bf4e14423209",
+      "kind": "heading",
+      "text": "B. Preprocessing",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing"
+      ],
+      "char_start": 6266,
+      "char_end": 6282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7b14a8a6834808b3d399a581dadfc3f",
+      "kind": "paragraph",
+      "text": "The upstream pipeline applies 1–40 Hz Butterworth bandpass filtering, 60 Hz notch filtering, and average rereferencing. Feature executors receive the average-referenced scalp view and the associated 10–20 channel names. Approximate electrode coordinates are available for geometry-aware feature families such as spatial focality, bipolar gradients, propagation, and dipole-topography summaries [24], [25]. Filtering and numerical operations use NumPy/SciPy routines [26].",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing"
+      ],
+      "char_start": 6284,
+      "char_end": 6755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13de190c3575b9b4b1a2f81033876b17",
+      "kind": "heading",
+      "text": "LLM-guided design-search protocol",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 6757,
+      "char_end": 6790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95a80f0049b55391aa0a0b418beb964c",
+      "kind": "paragraph",
+      "text": "EEG-SpikeAgent frames feature engineering as an iterative program-synthesis problem [21], [22]. Each iteration has two LLM-mediated phases followed by host-side evaluation. First, a proposal prompt supplies the model with the current code summary, dataset assumptions, feature-performance history, and the active feature manifest. The model must propose exactly one complementary feature change. Second, an apply prompt asks a code-editing model to implement that plan as a minimal Python module. Guardrails restrict edits to feature modules named/features/feature_ *.py; at most one such module may be created or modified per iteration, and core engine, plugin, DSL, and evaluation code are treated as read-only. Artifact-focused feature proposals were scheduled at iterations 5, 10, and 15 to test whether explicit artifact modeling improved downstream IED classification. Each generated feature module defines a Pydantic configuration model, a registry entry with a unique feature type, and a deterministic executor. The executor maps one EEG epoch to a fixed set of numeric diagnostics. Feature modules are imported automatically, registered into a global feature registry, and tracked in a tabular feature manifest. The manifest fixes the active feature portfolio and column order for subsequent evaluation. a) Feature proposal constraints.:The feature-search prompt asks for tabular features that are sensitive to brief transients and robust to the unknown timing of an IED within a 4 s epoch. The prompt encourages short-window,",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 6792,
+      "char_end": 8327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4cf1a9adadcc1981c40c2a641daacbc8",
+      "kind": "paragraph",
+      "text": "multiple-instance summaries rather than full-epoch averages, robust per-window or per-channel normalization rather than fixed absolute voltage thresholds, and compact cross-channel aggregations rather than per-sample or per-channel feature explosions. Feature executors do not learn embeddings or fit parameters; learning is deferred to the downstream tabular classifier. These constraints were chosen to align the search space with the clinical and signal-processing structure of scalp EEG. EEG spikes (or IEDs) are brief, spatially organized events that may occur at any point within a multi-second epoch, so features based only on full-epoch averages risk diluting the transient morphology of interest. Conversely, unconstrained per-sample or high-dimensional channel-specific representations would reduce auditability and increase the risk that the agent would generate brittle or dataset-specific features. By requiring compact, deterministic, and windowaware summaries, EEG-SpikeAgent was encouraged to search for features that preserved clinically meaningful concepts, such as sharpness, focality, field distribution, and artifact coupling, while remaining compatible with standard tabular evaluation. This design also cleanly separated feature discovery from statistical learning. Specifically, the LLM generation phase proposed signal measurements, but classification performance was determined only after those measurements were executed and evaluated by the host pipeline. D. Tabularization and model evaluation",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 8329,
+      "char_end": 9851,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8fa926c0ed42c837954637bbd254232",
+      "kind": "paragraph",
+      "text": "After each accepted feature edit, the host process computes or refreshes a per-feature block over the fixed epoch index. Each block stores epoch identifiers, labels, feature names, and the feature matrix for one feature type. For model fitting, blocks are concatenated in manifest order to form a tabular design matrix. This incremental representation allows new features to be evaluated without recomputing unchanged feature blocks.",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 9853,
+      "char_end": 10286,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8adcc64292d3fc766833eebe66fe879",
+      "kind": "caption",
+      "text": "Fig. 2. Balanced accuracy trajectory across twenty iterations. Dashed vertical lines indicate artifact-focused feature-generation iterations.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 10288,
+      "char_end": 10429,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30f9571bd4666e6ddb13318182c6473f",
+      "kind": "paragraph",
+      "text": "The outer-loop search uses balanced accuracy as the primary optimization signal because the dataset is class-imbalanced. During feature search, candidate portfolios are evaluated with an XGBoost classifier under stratified cross-validation on the training partition, logging balanced accuracy, F1, sensitivity, specificity, AUROC, PRAUC, and the confusion matrix for each iteration. Final reported classifier performance is obtained separately by fitting an XGBoost binary classifier on the training partition per fold and evaluating it on the held-out validation partition [27]. Thus five independent XGBoost classifiers were trained across the 5 CV folds. The XGBoost script uses Spike as the positive class, a binary logistic objective, 300 boosting rounds, maximum tree depth 4, learning rate 0.05, row subsampling 0.8, column subsampling 0.8, histogram tree construction, and random seed 0. Validation probabilities are used to compute ROC and precision–recall curves. Hard predictions are used for accuracy, balanced accuracy, sensitivity, specificity, precision, and F1.",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "B. Preprocessing",
+        "LLM-guided design-search protocol"
+      ],
+      "char_start": 10431,
+      "char_end": 11508,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5584b9dc4cd15626735eb157248bc11",
+      "kind": "heading",
+      "text": "E. Reproducibility",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "E. Reproducibility"
+      ],
+      "char_start": 11510,
+      "char_end": 11528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e23a7ae16b2b7aacffdec691f47fec0",
+      "kind": "paragraph",
+      "text": "For each feature proposal the agent records the prompt context, proposal, apply summary, manifest, metrics, and outof-fold prediction artifacts. Fixed random seeds control dataset splitting and classifier evaluation, to promote reproducibility and traceability of observed artifacts and performance.",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "E. Reproducibility"
+      ],
+      "char_start": 11530,
+      "char_end": 11829,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ce7a8ba56f0f0dc7c27dd091de7e01e",
+      "kind": "heading",
+      "text": "RESULTS",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "E. Reproducibility",
+        "RESULTS"
+      ],
+      "char_start": 11831,
+      "char_end": 11838,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ee64e8b53973b9921ecf3cadc874d4e",
+      "kind": "heading",
+      "text": "A. Design Search Outcome",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "A. Design Search Outcome"
+      ],
+      "char_start": 11840,
+      "char_end": 11864,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2a2a1546762173c91b6f3720096c24a",
+      "kind": "paragraph",
+      "text": "For evaluation of EEG-SpikeAgent we utilized the 29channel VEPISET IED dataset which contains annotated interictal epileptic data from 84 patients encompassing 28 hours, including 2,516 IED epochs and 22,933 non-IED epochs, each",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "A. Design Search Outcome"
+      ],
+      "char_start": 11866,
+      "char_end": 12094,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4dc65138d540f13fae73d52fd547ab5b",
+      "kind": "heading",
+      "text": "seconds long [23]. We performed 5-fold cross-validation,",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,"
+      ],
+      "char_start": 12096,
+      "char_end": 12152,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3490fe8e3a94ebd877e348e12490b361",
+      "kind": "paragraph",
+      "text": "where within each fold, EEG-SpikeAgent was tasked with creating a new feature set and corresponding XGBoost predictive model. We subsequently refer to a single fold as an independent instantiation. A diagram illustrating the agentic loop is demonstrated in Fig. 1. Without a pre-specified blueprint or direct human intervention, the LLM-guided agentic loop generates between 400 and 500 quantitative EEG features across twenty iterations per independent instantiation. Through the dual-prompting strategy, the agent successfully designated iterations 5, 10, and 15 to artifact-detection features while spike-detection features constituted the remaining iterations. Model performance was observed to increase across iterations and plateau after 15 iterations (Fig. 2). Representative features generated are demonstrated in Table I. The feature registry prevented duplicate feature-type names, and no duplicate modules were accepted into the final manifest per independent instantiation. B. Detection performance Across 5-fold cross-validation, the classifier achieved a mean AUROC of 0.935 ± 0.008, with a 95% CI of",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,"
+      ],
+      "char_start": 12154,
+      "char_end": 13268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26b7229fb7354d98ef09576a3a97eee2",
+      "kind": "heading",
+      "text": "925–0.946, indicating strong discrimination between spike",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,",
+        "925–0.946, indicating strong discrimination between spike"
+      ],
+      "char_start": 13270,
+      "char_end": 13327,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1607485b22264a8bccbbb46cab4b1e9",
+      "kind": "paragraph",
+      "text": "and non-spike epochs (Fig. 3, Fig. 4). In addition, across folds, the model achieved a balanced accuracy of 0.699 ± 0.016, with a 95% CI of 0.678–0.719. The classifier attained an F1 score of",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,",
+        "925–0.946, indicating strong discrimination between spike"
+      ],
+      "char_start": 13329,
+      "char_end": 13520,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:95c3c3b5da8c19e7f73c01a97af3345b",
+      "kind": "heading",
+      "text": "± 0.034, with a 95% CI of 0.516–0.599. Sensitivity was",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,",
+        "± 0.034, with a 95% CI of 0.516–0.599. Sensitivity was"
+      ],
+      "char_start": 13522,
+      "char_end": 13576,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1eed8e0f4b36041361c7036eea87b727",
+      "kind": "heading",
+      "text": "± 0.014, with a 95% CI of 0.361–0.441, while specificity",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,",
+        "± 0.014, with a 95% CI of 0.361–0.441, while specificity"
+      ],
+      "char_start": 13578,
+      "char_end": 13634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d14132c71e4b467a72ef4509dbfbdab5",
+      "kind": "paragraph",
+      "text": "was 0.996 ± 0.001, with a 95% CI of 0.994–0.997. These results demonstrate that at the default classifier operating point, the model prioritized false-positive suppression over spike sensitivity. At an operating point with sensitivity 0.80, mean precision was 0.470 and mean specificity was 0.900. At the default operating threshold, the classifier favored false-positive suppression over sensitivity. This operating point is consistent with the class imbalance present in VEPISET where non-spike epochs substantially outnumbered spike epochs.",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "seconds long [23]. We performed 5-fold cross-validation,",
+        "± 0.014, with a 95% CI of 0.361–0.441, while specificity"
+      ],
+      "char_start": 13636,
+      "char_end": 14179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae21894e18d4d5e393984e6730b45d87",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "TABLE I"
+      ],
+      "char_start": 14181,
+      "char_end": 14188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c580be72121ddb4dac323068477b228",
+      "kind": "heading",
+      "text": "FEATUREFAMILIES ANDREPRESENTATIVEFEATUREPRIMITIVES",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "FEATUREFAMILIES ANDREPRESENTATIVEFEATUREPRIMITIVES"
+      ],
+      "char_start": 14190,
+      "char_end": 14240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a7c9bf4622736fec91d3742fd03b540d",
+      "kind": "heading",
+      "text": "Feature Family Representative Feature Primitive",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Feature Family Representative Feature Primitive"
+      ],
+      "char_start": 14242,
+      "char_end": 14289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4555658aba63ebffa011773a70aae03",
+      "kind": "paragraph",
+      "text": "Short-window spike morphology Line length; peak amplitude; curvature/sharpness; Teager energy; robust window maxima Multiscale spike-wave morphology Matched-filter responses; multiscale sharpness; spike-to-slow-wave coupling; top-kresponse summaries Focal spatial contrast Local spatial residuals; nearest-neighbor deviations; focality scores; spread counts Bipolar phase-reversal evidence Bipolar pair differences; polarity opposition; pair sharpness; active pair counts Regional and laterality summaries Left–right asymmetry; temporal/frontal/posterior maxima; temporal-vs-parasagittal ratios; score entropy/Gini Artifact-reference coupling Scalp correlation with ear/ECG/EMG channels; co-activation fractions; reference-envelope products Channel-quality and burst artifacts RMS outliers; peak-to-peak outliers; kurtosis/trend anomalies; burst RMS; inter-channel correlation anomalies Multiple-instance aggregation Max; p95/p99; top-3/top-5 means; event counts; active fractions; longest active run",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "Feature Family Representative Feature Primitive"
+      ],
+      "char_start": 14291,
+      "char_end": 15291,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:901cf32ab606340e0c51e765538d9908",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "TABLE II"
+      ],
+      "char_start": 15293,
+      "char_end": 15301,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa7d1a6d899d4f284fa01fd0a7cf9c8e",
+      "kind": "paragraph",
+      "text": "CROSS-VALIDATEDMODELPERFORMANCEOVERFIVEFOLDS a Metric Mean±SD 95% CI",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "TABLE II"
+      ],
+      "char_start": 15303,
+      "char_end": 15371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b19fd9525c8c56934ab32e16ebd6ac76",
+      "kind": "heading",
+      "text": "AUROC0.935±0.008 0.925–0.946",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "AUROC0.935±0.008 0.925–0.946"
+      ],
+      "char_start": 15373,
+      "char_end": 15401,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f18f946a1cb180838b5fc5d08eb51757",
+      "kind": "paragraph",
+      "text": "Balanced Acc.0.699±0.016 0.678–0.719 F10.557±0.034 0.516–0.599 Sensitivity0.401±0.032 0.361–0.441 Specificity0.996±0.001 0.994–0.997 a Cross-validated XGBoost model performance over five folds using the default operating point.",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "AUROC0.935±0.008 0.925–0.946"
+      ],
+      "char_start": 15403,
+      "char_end": 15630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2b860f932cfc7a4af7b9e2ca087654e",
+      "kind": "heading",
+      "text": "Artifact-aware Ablation",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "AUROC0.935±0.008 0.925–0.946",
+        "Artifact-aware Ablation"
+      ],
+      "char_start": 15632,
+      "char_end": 15655,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9c811ea317f59c81a958f547a52b17bf",
+      "kind": "paragraph",
+      "text": "Ablation experiments demonstrated that artifact detection features improved balanced accuracy by approximately 1.4 percentage points and F1 Score by 2.3 percentage points compared to the initial spike-only feature detection. However, this improvement was primarily driven by reductions in falsenegative errors for true spike events contaminated with artifacts, as depicted in the enhanced sensitivity rates via artifactaware features. Performance steadied by iteration 16, with the balanced accuracy leveling off at 0.70 and AUROC stabilizing around 0.93 (Fig. 2).",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "AUROC0.935±0.008 0.925–0.946",
+        "Artifact-aware Ablation"
+      ],
+      "char_start": 15657,
+      "char_end": 16221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb3b1888626b9cf3f2baa6858dc661b7",
+      "kind": "heading",
+      "text": "D. Feature Importance Analysis",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis"
+      ],
+      "char_start": 16223,
+      "char_end": 16253,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dada3020d399b386fbfdbc0245bcdf65",
+      "kind": "paragraph",
+      "text": "To examine which components of the agent-generated feature set contributed most strongly to the final classifier, we ranked all 410 features using gain-based feature importance from the trained XGBoost model. Gain measures the average improvement in the model objective produced by splits that use a given feature, and therefore provides a model-internal summary of which measurements were most useful during tree construction. Because gain-based importance is unsigned and can be biased toward features that offer more split opportunities, we suggest interpreting these rankings as a screening analysis rather than as evidence that any individual feature is independently causal. The top-ranked features spanned both spike-detection and artifact-detection families, indicating that the classifier did not rely on a single feature class. Morphologic and spatial spike features were prominent among the highest-importance",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis"
+      ],
+      "char_start": 16255,
+      "char_end": 17175,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab6473f48435e0c8aacae3fc89afc3b9",
+      "kind": "caption",
+      "text": "Fig. 3. ROC curve (AUROC = 0.93) for the XGBoost classifier.",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis"
+      ],
+      "char_start": 17177,
+      "char_end": 17237,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44ec9ecfe083c72647fc26fee31cfd70",
+      "kind": "caption",
+      "text": "Fig. 4. Precision-Recall curve (PRAUC = 0.73) for the XGBoost classifier.",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis"
+      ],
+      "char_start": 17239,
+      "char_end": 17312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3c738efe25bdaf055b06e704d24d936",
+      "kind": "paragraph",
+      "text": "variables, consistent with the clinical definition of IEDs as brief, sharply contoured events with characteristic field distributions. However, several artifact-aware features also appeared among the top thirty despite representing a minority of the full feature set. Specifically, despite representing only 18 percent of the total feature set, artifact-detection features such as frontal RMS ratio and cardiac rhythmicity metrics ranked highly in overall feature importance to the classifier (Fig. 5). This pattern supports the observation that artifact modeling improved classifier performance. These results also illustrate a practical advantage of the EEG-SpikeAgent workflow. Since each feature is implemented as a deterministic and named computation, high-importance variables can be traced back to specific signal operations, channel groups, and window-level summaries. This makes the trained classifier more inspectable than a purely latent representation and provides a starting point for future clinical review of individual decision rules, failure cases, and feature stability across datasets.",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis"
+      ],
+      "char_start": 17314,
+      "char_end": 18418,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:217b47c35ac7a297e0ab1628bcddc140",
+      "kind": "heading",
+      "text": "DISCUSSION",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 18420,
+      "char_end": 18430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0d76f0f93933b61c6110d6a41479fe0",
+      "kind": "paragraph",
+      "text": "EEG-SpikeAgent demonstrates that LLM-guided program synthesis can produce an auditable EEG feature portfolio with strong threshold discrimination for IED detection. The main contribution is an inspectable feature-search procedure and code representation, which is inherently more interpretable and traceable than the latent representations produced by pure deep-learning systems. Each candidate feature is implemented as deterministic code and can be directly inspected, ablated, and/or traced to model behavior. Artifact-aware features improved performance, suggesting that explicit artifact modeling is useful for agent-generated EEG feature engineering. The audit trail provides a practical advantage for model development. Each feature is implemented as executable code with a fixed configuration and run-level metrics. This makes the model easier to introspect relative to the latent representations that are typically produced by conventional deep learning methods, and allows performance changes to be traced to individual feature additions. Such traceability addresses a main limitation of automated deep learning EEG systems. Despite strong performance, deep learning models can be difficult to debug when they fail under new recording conditions, montage choices, or artifact distributions [1]–[3]. In contrast, the features generated here retain clinically meaningful structure, including morphology, spatial aggregation, and artifactcoupling summaries, while still benefiting from automated exploration of a large design space.",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 18432,
+      "char_end": 19971,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f1e9bc862bb223f5a1c88d66f33e3ee",
+      "kind": "paragraph",
+      "text": "The artifact-aware feature results suggest that artifact information can be useful beyond preprocessing. Artifact features represented a minority of the final feature set, yet they improved balanced accuracy, F1 score, and sensitivity, and several ranked highly by gain-based importance. This result suggests that artifact modeling should not be treated only as a trivial preprocessing cleanup step. However, this interpretation remains hypothesis-generating. Gain-based importance is model-internal and individual artifact-aware features require review against EEG examples and error cases before being interpreted as clinically valid decision rules. In relation to prior VEPISET results, EEG-SpikeAgent should be viewed as a complementary approach rather than as a direct replacement for optimized deep-learning architectures. Lin et al. reported at 80% sensitivity a precision of 74.2% and specificity of 97% with a VGG network trained and evaluated on a single 80:20 training:test split of the VEPISET data [23]. They reported precision of 63.6% and specificity of 95.0% at 80% sensitivity for the vEpiNet network, which was trained on an independent dataset. In comparison, EEG- SpikeAgent yielded mean precision of 47.0% and mean specificity at 90.0% at post-hoc operating point of 80% sensitivity. We acknowledge that EEG-SpikeAgent did not match the operating-point performance of these deep-learning systems. However, EEG-SpikeAgent’s contribution is that it provides an auditable feature-search procedure which is inherently more",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 19973,
+      "char_end": 21512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a03f1275a0a40f4ff6fe60d49bf5049e",
+      "kind": "paragraph",
+      "text": "inspectable and traceable than pure deep-learning systems. Each candidate feature is implemented as deterministic code and can be inspected, ablated, and/or traced to model behavior. The operating-point behavior of EEG-SpikeAgent is also informative for how agent-generated detectors might be used in practice. At the default threshold, the classifier produced very high specificity, indicating that the learned feature portfolio was conservative in labeling epochs as spike-containing. This behavior may be desirable in settings where false-positive burden is a major concern, such as retrospective review of large EEG corpora or triage systems intended to identify only definite events. However, clinical screening often requires higher sensitivity, even at the expense of additional false positives. The post-hoc threshold analysis therefore motivates and informs future work that incorporates calibration and threshold selection into detector design. In particular, operating points may be specified a priori according to the intended use case, such as high-specificity cohort enrichment or high-sensitivity clinical screening, and could be paired with confidence-ranked event lists rather than binary labels alone. We acknowledge several limitations of our findings. Importantly, while the system was highly specific, we acknowledge the limited sensitivity of 0.401 under the default classifier decision operating point (0.5). Future work will aim to improve calibration of the detector system. Secondly, the current anal-",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 21514,
+      "char_end": 23041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc5b2c56b44e76cb903495e3ba06b103",
+      "kind": "paragraph",
+      "text": "ysis reports performance on curated 4 sec VEPISET epochs from a single public data source, with all IED subtypes collapsed into a binary Spike label. This setting does not test continuous-record screening, event localization, or performance under site-level distribution shift. In addition, the feature set is inspectable at the level of named computations, but inspectability does not guarantee interpretability or clinical validity. Individual high-importance features still require review against EEG examples and failure cases. Furthermore, statistics may vary substantially across acquisition systems, patient populations, and recording environments. Thus, future evaluations should test the stability of derived features. Lastly, our analysis did not stratify classifications by spike subtype, topology, and morphology. Future work should evaluate how",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 23043,
+      "char_end": 23900,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:64010207d7847db98bee1e4d56c493df",
+      "kind": "caption",
+      "text": "Fig. 5. Top thirty features ranked by XGBoost gain-based importance and color coded by corresponding feature type (blue indicates spike-detection features,",
+      "order": 55,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 23902,
+      "char_end": 24057,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fdb10d725687afe86ac319a907a0dd02",
+      "kind": "paragraph",
+      "text": "orange indicates artifact-detection features). performance is affected by these spike characteristics. Given the above limitations, we stress that the current study should therefore be viewed as proof of concept for agent-assisted EEG feature engineering on curated epochs, not as validation of a clinically ready spike detector. EEG-SpikeAgent demonstrates a middle ground between manual symbolic pipeline design and opaque end-to-end learning. Generative models can propose candidate signalprocessing code, while deterministic evaluation and auditable edit surfaces keep the resulting detector inspectable. This approach may extend naturally to other EEG tasks such as seizure detection, sleep staging, and artifact annotation.",
+      "order": 56,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "D. Feature Importance Analysis",
+        "DISCUSSION"
+      ],
+      "char_start": 24059,
+      "char_end": 24788,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d8bce768bbf9ef2c44a1ee4162d3a10",
+      "kind": "heading",
+      "text": "ACKNOWLEDGMENT",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 24790,
+      "char_end": 24804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7863bfda998bef3788c06d7c13dd783e",
+      "kind": "paragraph",
+      "text": "We thank the authors of VEPISET for making their dataset publicly available [23].",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "ACKNOWLEDGMENT"
+      ],
+      "char_start": 24806,
+      "char_end": 24887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e274ebbc820df848eb801a91c8d21340",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "REFERENCES"
+      ],
+      "char_start": 24889,
+      "char_end": 24899,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b51f88848df8303953b6e0b249aa5b2d",
+      "kind": "reference",
+      "text": "[1] M. Janmohamed, D. Nhu, L. Kuhlmannet al., “Moving the field forward: detection of epileptiform abnormalities on scalp electroencephalography using deep learning—clinical application perspectives,” Brain Communications, vol. 4, no. 5, p. fcac218, 2022. [2] J. B. C. Diniz, L. Santana, M. Leiteet al., “Advancing epilepsy diagnosis: A meta-analysis of artificial intelligence approaches for interictal epileptiform discharge detection,”Seizure, vol. 122, pp. 80–86, 2024. [3] D. Nhu, J. Mubeen, A. Gilligan, C. W. Tan, and L. Kuhlmann, “Deep learning for automated epileptiform discharge detection from scalp EEG: A systematic review,”Journal of Neural Engineering, vol. 19, no. 6, p. 061004, 2022. [4] N. M. Jadeja, “Localization,” inHow to Read an EEG. Cambridge University Press, 2021. [5] E. Kutluay and G. P. Kalamangalam, “Montages for noninvasive EEG recording,”Journal of Clinical Neurophysiology, vol. 36, no. 5, pp. 330– 336, 2019. [6] L. J. Hirsch, M. W. K. Fong, M. Leitingeret al., “American clinical neurophysiology society’s standardized critical care EEG terminology:",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "REFERENCES"
+      ],
+      "char_start": 24901,
+      "char_end": 25986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9eebd11b74149b48df02a54f0da86bdd",
+      "kind": "heading",
+      "text": "version,”Journal of Clinical Neurophysiology, vol. 38, no. 1, pp.",
+      "order": 61,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "version,”Journal of Clinical Neurophysiology, vol. 38, no. 1, pp."
+      ],
+      "char_start": 25988,
+      "char_end": 26053,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a88abbf3805b2ecbbcb450c26417115a",
+      "kind": "paragraph",
+      "text": "1–29, 2021. [7] P. D. Emmady and A. S. Dhamoon, “EEG abnormal waveforms,” in StatPearls. Treasure Island, FL: StatPearls Publishing, 2025. [8] Q. Li, R. Agarwal, and A. Iyer, “Distinguishing epileptiform discharges from normal EEG variants: A practical guide,”Practical Neurology, vol. 20, no. 5, pp. 413–422, 2020. [9] D. Eizadkhah, “Childhood absence epilepsy,” Medscape, 2024, typical frontally predominant 3-Hz spike-and-wave. [10] M. McWilliam and R. Amjad, “Idiopathic (genetic) generalized epilepsy,” inStatPearls. Treasure Island, FL: StatPearls Publishing, 2024. [11] C. M. Michel and B. He, “EEG source imaging: A practical review of the analysis steps,”Frontiers in Neurology, vol. 10, p. 325, 2019. [12] M. Scherg, “Fundamentals of dipole source potential analysis,” in Auditory Evoked Magnetic Fields and Electric Potentials, ser. Advances",
+      "order": 62,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "version,”Journal of Clinical Neurophysiology, vol. 38, no. 1, pp."
+      ],
+      "char_start": 26055,
+      "char_end": 26907,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fa8eac7f60c6bde19b20a0a14a15dd56",
+      "kind": "heading",
+      "text": "in Audiology, F. Grandori, M. Hoke, and G. L. Romani, Eds. Basel",
+      "order": 63,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "in Audiology, F. Grandori, M. Hoke, and G. L. Romani, Eds. Basel"
+      ],
+      "char_start": 26909,
+      "char_end": 26973,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34c1b8b80b2335ad6bc277483264e6cb",
+      "kind": "paragraph",
+      "text": "Karger, 1990, vol. 6, pp. 40–69. [13] M. H ¨am¨al¨ainen, R. Hari, R. J. Ilmoniemi, J. Knuutila, and O. V . Lounasmaa, “Magnetoencephalography—theory, instrumentation, and applications to noninvasive studies of the working human brain,”Reviews of Modern Physics, vol. 65, no. 2, pp. 413–497, 1993. [14] J. W. Kim, A. Alaa, and D. Bernardo, “EEG-GPT: Exploring capabilities of large language models for EEG classification and interpretation,” 2024. [15] J. Liet al., “Expert-level detection of epilepsy markers in EEG on short and long timescales,”NEJM AI, vol. 2, no. 7, 2025. [16] M. C. Tjepkema-Cloostermanset al., “Expert level of detection of interictal discharges with a deep neural network,”Epilepsia, vol. 66, no. 1, pp. 184–194, 2025. [17] S. Wong, A. Simmons, J. Rivera-Villicana, S. Barnett, S. Sivathamboo, P. Perucca, Z. Ge, P. Kwan, L. Kuhlmann, and T. J. O’Brien, “Channelannotated deep learning for enhanced interpretability in EEG-based seizure detection,”Biomedical Signal Processing and Control, vol. 103, p. 107484, 2025. [18] B. Abdi-Sargezehet al., “A review of signal processing and machine learning techniques for interictal epileptiform discharge detection,”Computers in Biology and Medicine, vol. 168, p. 107782, 2024. [19] S. Mallick and V . Baths, “Novel deep learning framework for detection of epileptic seizures using EEG signals,”Frontiers in Computational Neuroscience, vol. 18, p. 1340251, 2024. [20] T. Tuncer and S. Dogan, “An explainable EEG epilepsy detection model using friend pattern,”Scientific Reports, vol. 15, p. 16951, 2025.",
+      "order": 64,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "in Audiology, F. Grandori, M. Hoke, and G. L. Romani, Eds. Basel"
+      ],
+      "char_start": 26975,
+      "char_end": 28543,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8ad01940928b34f46b9e640a4b06a3b",
+      "kind": "paragraph",
+      "text": "[21] A. Madaan, N. Tandon, P. Guptaet al., “Self-Refine: Iterative refinement with self-feedback,” inAdvances in Neural Information Processing Systems, 2023. [22] N. Shinn, F. Cassanoet al., “Reflexion: Language agents with verbal reinforcement learning,” inAdvances in Neural Information Processing Systems, 2023, code: github.com/noahshinn/reflexion. [23] N. Linet al., “An EEG dataset for interictal epileptiform discharge with spatial distribution information,”Scientific Data, vol. 12, no. 1, p. 229, Feb. 2025. [24] G. H. Klem, H. O. L ¨uders, H. H. Jasper, and C. Elger, “The ten–twenty electrode system of the international federation,”Electroencephalography and Clinical Neurophysiology Supplement, vol. 52, pp. 3–6, 1999. [25] E. Kutluay, S. Selwa, and H. E. L ¨uders, “Montages for noninvasive EEG recording,”Epilepsy Currents, vol. 19, no. 4, pp. 207–213, 2019. [26] P. Virtanen, R. Gommers, T. E. Oliphantet al., “SciPy 1.0: Fundamental algorithms for scientific computing in Python,”Nature Methods, vol. 17, pp. 261–272, 2020. [27] T. Chen and C. Guestrin, “XGBoost: A scalable tree boosting system,” inProceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 2016, pp. 785–794.",
+      "order": 65,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "EEG-SpikeAgent: Agentic Closed-Loop Program",
+        "in Audiology, F. Grandori, M. Hoke, and G. L. Romani, Eds. Basel"
+      ],
+      "char_start": 28545,
+      "char_end": 29780,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 7,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 7
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.04558",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 7,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

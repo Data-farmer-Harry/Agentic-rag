@@ -1,0 +1,2787 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "b8014d09f602b1126a6603ce2c3071f5f0cfc6eaba6121cfae891dea101c2fc0",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:be9fccb9e6fb278944774342e79d3b00",
+      "kind": "paragraph",
+      "text": "AgentKGV: Agentic LLM-RAG Framework with Two-Stage Training for the Fact Verification of Knowledge Graphs",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 105,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db6f0ab1b4b1928d948423e67923b042",
+      "kind": "heading",
+      "text": "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*"
+      ],
+      "char_start": 107,
+      "char_end": 161,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5b2bd6d054c3d8914653683c36c6c5af",
+      "kind": "paragraph",
+      "text": "1SungKyunKwan University, 2NA VER, ymheo1123@gmail.com, yjko@skku.edu {hyeongu.lee, sumin.seo}@navercorp.com",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*"
+      ],
+      "char_start": 163,
+      "char_end": 271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5001e6904fc535f71755d1cf96e3b050",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Abstract"
+      ],
+      "char_start": 273,
+      "char_end": 281,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:adbe89949c572979ded618fa06fb621f",
+      "kind": "paragraph",
+      "text": "Knowledge graphs (KGs) are often automatically constructed from large-scale corpora, but they inevitably contain factual errors due to noisy sources and extraction failures, and verifying them reliably at industrial scale remains a critical challenge. To address this, we propose AgentKGV , the Agentic LLM-RAG framework for KG fact Verification, that integrates dynamic routing and iterative query rewriting, which handles surface-form mismatch in document-level retrieval. To make this framework more accurate and cost-efficient for industrial deployment, we further introduce a two-stage training strategy: turn-level distillation-based SFT that transfers reasoning ability from a large teacher model into a small model for stable query rewriting and reasoning, and trajectory-level GRPO that optimizes the search policy to reduce unnecessary retrieval at scale. On the long-tail-predicate split of the open-domain T-REx benchmark, our framework improves macro-F1 over single-turn RAG by 5.5 %p, and two-stage training does it further by 9.4 %p. GRPO also cuts the average number of search calls from 3.24 to 1.63 without lowering accuracy.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Abstract"
+      ],
+      "char_start": 283,
+      "char_end": 1426,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:255fee529b94abdc04a733a07e34f6e6",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 1428,
+      "char_end": 1440,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:01f943688066afa91225819cef9ed761",
+      "kind": "paragraph",
+      "text": "Knowledge graphs encode entities and their relationships as triples in the form (subject,predicate, object), and they serve as core components across a wide range of knowledge-intensive applications such as search engines, recommendation systems, question answering, and decision support. In industrial settings, the demand for automatic construction of KGs from large volumes of documents has considerably grown. However, automatically constructed KGs inevitably contain incorrect information due to ambiguous sentence structures, low-reliability sources, and errors in NLP models. Therefore, the factual validity of extracted *Corresponding author triples has become a critical bottleneck for the downstream reliability of industrial KGs. Researchers have traditionally relied on isolated methodologies to evaluate the validity of automatically constructed triples. Graph-based methods (Bordes et al., 2013) assess validity through structural consistency, but they often fail to detect realworld factual errors because they rely solely on internal graph topology. LLM-based methods (Pan et al., 2024) offer broader semantic reasoning, but they remain vulnerable to domain-specific hallucinations. RAG-based methods (Lewis et al., 2020; Trivedi et al., 2023) utilize external document retrieval, but they fail when the system cannot retrieve the relevant information. A further difficulty is the structural modality gap between compressed triples and natural language documents, because factual information in documents rarely appears in",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 1442,
+      "char_end": 2980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efd5740bfb86c3e0d3b1090939443da5",
+      "kind": "paragraph",
+      "text": "the same standardized form as KG triples and this makes single-round retrieval unreliable. To overcome these limitations, recent research has adopted Agentic LLM frameworks (Yao et al., 2023; Schick et al., 2023), in which autonomous agents dynamically orchestrate reasoning and retrieval. On this paradigm, we propose AgentKGV in which the agent first decides whether it verifies a triple through internal parametric knowledge or through external retrieval through dynamic routing. When external retrieval is necessary, the agent then iteratively rewrites an input triple into natural language queries that are compatible with document-level retrieval. Because this iterative rewriting transforms the compressed triple into diverse natural language expressions, it grounds the verification in retrieved evidence. However, deploying this framework reliably and efficiently in industrial KGs requires addressing two practical challenges. First, query rewriting can become unstable because the model may lack a stable semantic anchor for domain-specific predicates, and industrial KGs contain a large proportion 1",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 2982,
+      "char_end": 4093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4a246f192f75d7deaf43e076d91f5b04",
+      "kind": "table",
+      "text": "arXiv:2607.09092v1  [cs.CL]  10 Jul 2026",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 4095,
+      "char_end": 4135,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cf8015bfad07cb00c4309cde0b99fff",
+      "kind": "paragraph",
+      "text": "of long-tail predicates that are rarely observed in general pretraining corpora. Second, the iterative search policy can become inefficient because the model may not know when to stop searching, and this inefficiency is especially costly at industrial scale where even a small increase in search iterations per triple leads to substantial computational overhead. To make the framework more accurate and costefficient for industrial deployment, we introduce a two-stage training strategy. The first stage applies distillation-based SFT, in which a large teacher model generates complete verification trajectories. From each successful trajectory, we take the final judgment together with the query that immediately precedes it, and we train the small model on these. The query-rewriting part teaches the model how the teacher rewrites a triple into an effective query, and the judgment part teaches the model how the teacher reasons over the retrieved evidence to reach a conclusion. Through this distillation, the small model learns the query rewriting and reasoning ability of the teacher, and it acquires a stable semantic foundation for triple-grounded query rewriting and routing, even on domain-specific predicates. The second stage applies trajectory-level GRPO, in which the model is trained through full rollouts with trajectory-level rewards. We additionally impose a per-turn search penalty, so that the model is discouraged from issuing unnecessary search calls. Through this design, the model learns when to stop",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 4137,
+      "char_end": 5661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d2cdd70796e3ce0c14b462529353245a",
+      "kind": "paragraph",
+      "text": "searching and how to draw a conclusion under insufficient evidence. The contributions of this work are summarized as follows: • We proposeAgentKGV, the Agentic LLM- RAG framework for KG fact verification that integrates dynamic routing and iterative query rewriting to verify triples against documentlevel evidence through multi-turn retrieval. • We introduce atwo-stage training strategythat combines turn-level distillation-based SFT and trajectory-level GRPO, and this makes the framework more accurate and costefficient for industrial deployment. • We validate AgentKGV on an open-domain English benchmark, confirming its effectiveness onlong-tail predicatesrarely seen during training, and we further verify its applicability on areal-world Korean enterprise KG.",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Introduction"
+      ],
+      "char_start": 5663,
+      "char_end": 6430,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdc59d844b7ff433c3026b96b7bba8cf",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Related Work"
+      ],
+      "char_start": 6432,
+      "char_end": 6444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8f1a37bc0e1d878ceb78787db31ffd1",
+      "kind": "heading",
+      "text": "KG Fact Verification",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Related Work",
+        "KG Fact Verification"
+      ],
+      "char_start": 6446,
+      "char_end": 6466,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:058db3787de1fffe8aa591d21d639ff3",
+      "kind": "paragraph",
+      "text": "Approaches to verifying KG triple validity fall into three groups.Graph-based methodsassess validity from internal graph structure, either by scoring triples with learned embeddings (Bordes et al., 2013; Yang et al., 2015) or by path- and reasoningbased inference over the graph (Lao et al., 2011; Das et al., 2018). They capture structural regularities but rely solely on graph topology, and thus cannot detect construction-time factual errors that have no support within the graph.LLM-based methods(Pan et al., 2024) instead exploit the parametric knowledge of large language models, and they offer broader semantic coverage but remain vulnerable to hallucination on domain-specific predicates that are rarely seen during pretraining.RAG-based methodsground the judgment in retrieved documents (Lewis et al., 2020; Popat et al., 2018; Chen et al., 2022; Pan et al., 2023), and recent work extends them with iterative (Trivedi et al., 2023; Asai et al.,",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Related Work",
+        "KG Fact Verification"
+      ],
+      "char_start": 6468,
+      "char_end": 7422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:754d9963b6cb1ff934e58673508d2262",
+      "kind": "heading",
+      "text": "and adaptive (Mallen et al., 2023; Shi et al.,",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "and adaptive (Mallen et al., 2023; Shi et al.,"
+      ],
+      "char_start": 7424,
+      "char_end": 7470,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13bcf2f0cbd653ff24f0255c035ca145",
+      "kind": "heading",
+      "text": "retrieval. These reduce hallucination but are",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "retrieval. These reduce hallucination but are"
+      ],
+      "char_start": 7472,
+      "char_end": 7517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b93bf446113c6d4cf793e6e47f28ac8",
+      "kind": "paragraph",
+      "text": "designed for natural-language question answering, and they overlook a challenge specific to KG verification: the target is a compressed (s, p, o)triple rather than a question, and a single retrieval over it is often unreliable because documents express the same fact with different wording. Agentic LLM frameworksgo one step further. The model acts as an autonomous agent that interleaves reasoning with tool or retrieval calls (Yao et al., 2023; Schick et al., 2023), and recent work trains the agent with reinforcement learning so that it learns when and how to search (Jin et al., 2025; Song et al., 2025). These frameworks are effective on multi-hop question answering, but they are not designed for KG triple verification, and they do not address the (s, p, o)-to-document modality gap. Our framework adopts the agentic paradigm for KG fact verification, and it addresses this gap through dynamic routing and (s, p, o)-grounded iterative query rewriting.",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "retrieval. These reduce hallucination but are"
+      ],
+      "char_start": 7519,
+      "char_end": 8478,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c7af813673d84c5a8fccc185fda79a72",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology"
+      ],
+      "char_start": 8480,
+      "char_end": 8491,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2005b4ff45e1095e91db163d691a60e",
+      "kind": "heading",
+      "text": "Problem Formulation",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Problem Formulation"
+      ],
+      "char_start": 8493,
+      "char_end": 8512,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0ea678f2875f4980615f2231531a7ffc",
+      "kind": "paragraph",
+      "text": "We formulate KG fact verification as a binary classification task. Given a triple τ= (s, p, o), the goal is to assign a label y∈ {true,false}, which indicates whether the triple is factually correct, to 2",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Problem Formulation"
+      ],
+      "char_start": 8514,
+      "char_end": 8718,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:283eb9dc73f814ec9b09b988ec061a99",
+      "kind": "caption",
+      "text": "Figure 1: Overview of the proposed Agentic LLM-RAG framework. The agent dynamically routes between internal",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Problem Formulation"
+      ],
+      "char_start": 8720,
+      "char_end": 8827,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb8b602433d00164c274e74a9f5f9eb1",
+      "kind": "paragraph",
+      "text": "verification and external retrieval, and iteratively rewrites the triple into retrieval-compatible queries until it produces a final judgment. the triple. The verification is performed over a document corpus D={d 1, d2, . . . , dN }, where each document may contain evidences relevant to the triple.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Problem Formulation"
+      ],
+      "char_start": 8829,
+      "char_end": 9128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:921d16e1f5c5fb955969e5a71f421c87",
+      "kind": "heading",
+      "text": "Agentic LLM-RAG Framework",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework"
+      ],
+      "char_start": 9130,
+      "char_end": 9155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e8a097e09d9debc2ccc29d6015563722",
+      "kind": "heading",
+      "text": "Overall Architecture",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Overall Architecture"
+      ],
+      "char_start": 9157,
+      "char_end": 9177,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:80f0d2d248051083eed4906d7b9102b7",
+      "kind": "paragraph",
+      "text": "The proposed framework operates as a multi-turn agent that interacts with a retrieval system. Figure 1 shows the overview of the framework. Given a triple τ, the agent first performs dynamic routing and decides whether to verify the triple directly through its internal knowledge or to initiate iterative retrieval. When retrieval is initiated, the agent selects one of several component combinations as a guide and writes an initial query, and then it enters a multi-turn loop. At each turn t, the agent observes a context ct that consists of the triple, a running summary of previous turns, the most recent query, and its retrieval result: ct =",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Overall Architecture"
+      ],
+      "char_start": 9179,
+      "char_end": 9825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00ac15ea15298a160cb6930fbefce6c4",
+      "kind": "paragraph",
+      "text": "τ,S <t, qt−1,R t−1",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Overall Architecture"
+      ],
+      "char_start": 9827,
+      "char_end": 9845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a665e126c691e58346e6d68d1959c7c",
+      "kind": "paragraph",
+      "text": "(1) where S<t is the running summary of earlier turns, and qt−1 and Rt−1 are the most recent query and its retrieved documents. Based on this context, the agent decides whether the accumulated evidence is sufficient to produce a final judgment or whether it should rewrite the query and continue searching. The loop continues until the agent produces a final judgment, or until it reaches the maximum number of turns T . Across these turns, a separate summarization module compresses the retrieval history so that the context remains compact.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Overall Architecture"
+      ],
+      "char_start": 9847,
+      "char_end": 10389,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2f65773a7b1ed1a38ee185de63d433a",
+      "kind": "heading",
+      "text": "Dynamic Routing",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Dynamic Routing"
+      ],
+      "char_start": 10391,
+      "char_end": 10406,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2023d311d1aeedf9acf6feebd6f58e9",
+      "kind": "paragraph",
+      "text": "The routing decision is made through explicit chainof-thought reasoning over a triple. When the triple can be confidently verified through internal parametric knowledge, the agent produces a judgment without retrieval. Otherwise, the agent initiates iterative retrieval instead. This adaptive routing avoids unnecessary retrieval and reduces cost.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Dynamic Routing"
+      ],
+      "char_start": 10408,
+      "char_end": 10755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a23b2bdcd9761a5fd31a1e0321a0c33",
+      "kind": "heading",
+      "text": "3(s, p, o)-grounded Initial Query Writing",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "3(s, p, o)-grounded Initial Query Writing"
+      ],
+      "char_start": 10757,
+      "char_end": 10798,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c7196adf3ce6c9459b07ef31c6e9c65",
+      "kind": "paragraph",
+      "text": "When retrieval is necessary, the agent transforms the compressed triple into a natural language query that is compatible with document-level retrieval. Unlike general query rewriting that operates on a natural language query, the agent can leverage the explicit (s, p, o)structure of the triple. Actually, document-level retrieval using only a single fixed query can be unreliable; an overly broad query returns documents that mention the entity but do not include the fact, while an overly specific query may match no document when the corpus expresses the same fact with different wording. In our method, a set of component combinations (Table 3 in Appendix A) is presented to the agent as selectable options in the prompt, and one combination is chosen per each turn to set the specificity and surface form of its query. This enable the agent to adjust retrieval granularity and cover lexical variation of the predicate.",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "3(s, p, o)-grounded Initial Query Writing"
+      ],
+      "char_start": 10800,
+      "char_end": 11723,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb9cbce86e8309ba688cdf533a6049b5",
+      "kind": "heading",
+      "text": "Iterative Query Rewriting",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Iterative Query Rewriting"
+      ],
+      "char_start": 11725,
+      "char_end": 11750,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b280bc570a408733bd01dd0e7ef8afa9",
+      "kind": "paragraph",
+      "text": "The agent refines the query multiple times until evidence is found. Starting from the second turn, the agent no longer writes each query independently. Instead, this system refines subsequent 3",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Iterative Query Rewriting"
+      ],
+      "char_start": 11752,
+      "char_end": 11945,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec7b36023c71d3cd2e2e237bf27e6751",
+      "kind": "paragraph",
+      "text": "queries based on previous queries and their results to enable it to find relevant evidence more accurately. When the previous result is only partially relevant, the agent reformulates the query toward a more suitable component combination or surface form. On the other hand, when the previous query retrieves no useful documents, the agent changes the formulation rather than repeats the same search. This feedback between retrieval results and subsequent queries enables the agent to more effectively search for evidences that support or refute the triple. The iteration continues until the agent retrieves sufficient evidences for a final judgment, or until it reaches the maximum number of turns.",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Iterative Query Rewriting"
+      ],
+      "char_start": 11947,
+      "char_end": 12646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04641ad2c690f8aa2cb18e5f7990943f",
+      "kind": "heading",
+      "text": "Retrieval Summarization Module",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Retrieval Summarization Module"
+      ],
+      "char_start": 12648,
+      "char_end": 12678,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f5a5f3bd2dd68be862bdfad2d648f6e",
+      "kind": "paragraph",
+      "text": "The retrieval summarization module maintains the running summary S<t across turns. At each turn, it combines the previous summary with the most recent query and retrieval result: S<t+1 =Summarizer",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Retrieval Summarization Module"
+      ],
+      "char_start": 12680,
+      "char_end": 12876,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc130662e56270966973d2697039d7a6",
+      "kind": "paragraph",
+      "text": "S<t, qt,R t",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Retrieval Summarization Module"
+      ],
+      "char_start": 12878,
+      "char_end": 12889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8539c757e7d78453cbf97cec71e69039",
+      "kind": "paragraph",
+      "text": "(2) In this way, the full result of the current turn is compressed into the summary at the next turn, so that the agent always sees the compressed history of earlier turns together with the full result of only the current turn. This design provides two benefits. First, it bounds the context length, because all but the most recent turn are stored in compressed form rather than as full documents. Second, the summary makes the search history explicit, so the agent can avoid redundant queries and instead target the evidence that is still missing. Therefore, the module maintains the context compact while it supports more effective query rewriting across turns.",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Agentic LLM-RAG Framework",
+        "Retrieval Summarization Module"
+      ],
+      "char_start": 12891,
+      "char_end": 13554,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37b3307e0dbee27a499663f9a978ab59",
+      "kind": "heading",
+      "text": "Two-Stage Training Strategy",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy"
+      ],
+      "char_start": 13556,
+      "char_end": 13583,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1201d5251435b8a911567dc4bd74abd",
+      "kind": "paragraph",
+      "text": "To deploy the framework reliably and efficiently in industrial KGs, a two-stage sequential strategy is presented for the two practical challenges in Section 1: unstable query rewriting on domain-specific predicates and an inefficient search policy.",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy"
+      ],
+      "char_start": 13585,
+      "char_end": 13833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0354064de3b33ac6c6c08e53a7d65971",
+      "kind": "heading",
+      "text": "Stage 1: Distillation-based SFT",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy",
+        "Stage 1: Distillation-based SFT"
+      ],
+      "char_start": 13835,
+      "char_end": 13866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a726cc0f673e3c415273727fb10410f",
+      "kind": "paragraph",
+      "text": "The first stage stabilizes query rewriting and routing through supervised fine-tuning. Because a small target model has limited reasoning capacity, we use a large teacher model to generate complete verification trajectories. To bridge the knowledge gap between the two models, we configure the teacher model to invoke the retrieval function whenever the triple is uncertain, and to provide direct answers only for triples that can be clearly verified using general knowledge. This prevents the target model from relying too heavily on its limited parametric knowledge. We retain only the trajectories whose final judgment matches the gold label, and then we take the last turn of these trajectories. This turn decomposes into two parts: query rewriting and final judgment. The query-rewriting part retrieves the document using the rewritten query; we treat it as a successful rewritten query, since no further search follows. The judgment part produces the correct label, which serves as supervision for reasoning over the retrieved evidence. From these, we form two state–action pairs, (st−1, at−1) and (st−2, at−2), where st−1 and st−2 follows the inference-time context format of the query rewriting part and the final judgement part, respectively; the first pair supervises query rewriting and the second one does answer generation. The training objective is the standard SFT loss: LSFT =−E (st,at)∼Dtrain",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy",
+        "Stage 1: Distillation-based SFT"
+      ],
+      "char_start": 13868,
+      "char_end": 15277,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:84dbcecb1d54429ac8d65223f64ac751",
+      "kind": "paragraph",
+      "text": "logP θ(at |s t)",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy",
+        "Stage 1: Distillation-based SFT"
+      ],
+      "char_start": 15279,
+      "char_end": 15294,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:11fa32826f595a8f01c92c12f413ec60",
+      "kind": "paragraph",
+      "text": "(3) The retrieved documents and summaries appear only in st and are excluded from the loss, because the retrieval and summarization modules are not trained in our model.",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy",
+        "Stage 1: Distillation-based SFT"
+      ],
+      "char_start": 15296,
+      "char_end": 15465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c02ebb4e8a99bbf5e1f8d3332b297234",
+      "kind": "heading",
+      "text": "Stage 2: GRPO for Trajectory-level",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Methodology",
+        "Two-Stage Training Strategy",
+        "Stage 2: GRPO for Trajectory-level"
+      ],
+      "char_start": 15467,
+      "char_end": 15501,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:13bbbea01399e0dee87f1d7a98b63771",
+      "kind": "heading",
+      "text": "Search Policy Optimization",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Search Policy Optimization"
+      ],
+      "char_start": 15503,
+      "char_end": 15529,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:078050607b246336a4981378a72d7a60",
+      "kind": "paragraph",
+      "text": "The second stage optimizes the iterative search policy through trajectory-level reinforcement learning. Turn-level SFT stabilizes individual decisions but cannot capture the global trade-off between search depth and verification accuracy; continuing to search is always locally reasonable when evidence is insufficient, but excessive iterations can harm both efficiency and accuracy. Therefore, we apply Group Relative Policy Optimization (GRPO) (Shao et al., 2024; DeepSeek-AI, 2025) with trajectory-level rewards. For each triple, the model generates a group of full trajectories that follow the same context structure as inference. The trajectory-level reward combines final correctness and search cost terms: R=R correct +R search (4) The correctness term assigns +1.0 when the final judgment matches the gold label, 0 when it does not, and −0.5 when the output cannot be parsed into a valid label. 4",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Search Policy Optimization"
+      ],
+      "char_start": 15531,
+      "char_end": 16435,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9bdf55565aa1bd4782340d9e21c96915",
+      "kind": "caption",
+      "text": "Figure 2: Overview of the two-stage training strategy.Stage 1 (Distillation-based SFT)distills the last turn",
+      "order": 47,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Search Policy Optimization"
+      ],
+      "char_start": 16437,
+      "char_end": 16545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ed0bede63f85732145c9229dc50ed76",
+      "kind": "paragraph",
+      "text": "of correct teacher trajectories into two state–action pairs that supervise query rewriting and evidence-grounded reasoning.Stage 2 (GRPO)optimizes the search policy with a trajectory-level reward combining final correctness and a per-turn search penalty, reducing redundant retrieval while preserving accuracy. The search cost term penalizes unnecessary retrieval. The first search incurs no penalty, because at least one retrieval is generally required to ground the verification, and each subsequent search incurs a fixed penalty: Rsearch =−α·max(0, N search −1)(5) where α is the small positive number, andNsearch is the total number of retrieval calls in the trajectory. Within each group, the advantage of the i-th trajectory Ai is computed by standardizing Ri against the group’s mean and standard deviation (Shao et al., 2024). This trajectory-level advantage is broadcasted to every model-generated token, and the policy is updated by maximizing the standard clipped GRPO objective with a KL penalty against the reference model. Tokens produced by the retrieval environment (i.e., the returned documents) are excluded from the gradient, so the policy gradient is computed only over the model’s own reasoning and action tokens. The full objective is given in Appendix B. Through this trajectory-level optimization, the model learns when to continue searching and when to stop, and it learns to reach a definitive conclusion even under insufficient evidence. The search cost term further discourages redundant retrieval, which",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Search Policy Optimization"
+      ],
+      "char_start": 16547,
+      "char_end": 18079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:efa35b48805bc2bca1004d7e8df2f819",
+      "kind": "paragraph",
+      "text": "reduces the average number of search calls per triple and lowers inference cost at industrial scale.",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Search Policy Optimization"
+      ],
+      "char_start": 18081,
+      "char_end": 18181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42987e399445dfd099ba22ecd3b2666f",
+      "kind": "heading",
+      "text": "Experiments",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Experiments"
+      ],
+      "char_start": 18183,
+      "char_end": 18194,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ecbab7570ee4046fa72194e685257290",
+      "kind": "heading",
+      "text": "Experimental Settings",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Experiments",
+        "Experimental Settings"
+      ],
+      "char_start": 18196,
+      "char_end": 18217,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d6a2e50227583f25f714150ea94a825",
+      "kind": "paragraph",
+      "text": "English Open KGOur main benchmark is built from T-REx (Elsahar et al., 2018). The source set contains 50K triples over 376 predicates and we define two disjoint predicate regimes. Plong-tail appears in training but each predicate is capped at",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Experiments",
+        "Experimental Settings"
+      ],
+      "char_start": 18219,
+      "char_end": 18461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba6c115ea5561aa83713b22b4a14827b",
+      "kind": "heading",
+      "text": "triples andP unseen is held out from training.",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "triples andP unseen is held out from training."
+      ],
+      "char_start": 18463,
+      "char_end": 18509,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:403dbf001b4c1ea8ccc8758e9594eb7f",
+      "kind": "paragraph",
+      "text": "Hard negatives.We buildhardnegatives rather than random ones. For each positive (s, p, o), we replace o with the same-predicate object o′ that is most similar to o under BAAI/bge-base-en-v1.5 embeddings (Xiao et al., 2024), and we exclude any (s, p, o′) that already exists as a positive. A per-split similarity threshold balances the positive and negative counts, and all negatives pass validation without collisions against known positives (Table 4). Korean Enterprise KG (industrial application). To test real-world transfer, we evaluate on an automatically constructed Korean enterprise KG, where the negatives are genuine real-world errors arising from extraction failures and noise in the source documents. Human annotators labeled each triple, and the final set contains 337 positive and 114 negative triples. Although small in scale, every triple is human-verified, making it a high-quality testbed. This benchmark differs from T-REx in language, domain, and retriever. Setup.The English benchmark uses a BGE dense retriever (Xiao et al., 2024), while the enterprise benchmark uses an in-house lexical retriever. We retrieve the top-5 documents per query, cap the number of turns at 8, and summarize with Qwen-",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "triples andP unseen is held out from training."
+      ],
+      "char_start": 18511,
+      "char_end": 19729,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee07bf0a2efe3ada9d713c666c67557b",
+      "kind": "heading",
+      "text": "7B-Instruct (Team, 2024). The search penalty",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "triples andP unseen is held out from training.",
+        "7B-Instruct (Team, 2024). The search penalty"
+      ],
+      "char_start": 19731,
+      "char_end": 19775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:71bae7c93bc28431571178199c689919",
+      "kind": "paragraph",
+      "text": "coefficient α is set to 0.05 on T-REx and 0.12 on the Korean enterprise KG. The teacher is gpt-oss- 120b, and the backbone is Qwen-2.5-7B-Instruct, shared across all LLM baselines. 5",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "triples andP unseen is held out from training.",
+        "7B-Instruct (Team, 2024). The search penalty"
+      ],
+      "char_start": 19777,
+      "char_end": 19959,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:080676b0ee4db193eff7bbaaa9edf92d",
+      "kind": "paragraph",
+      "text": "T-REx long-tail T-REx unseen",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "triples andP unseen is held out from training.",
+        "7B-Instruct (Team, 2024). The search penalty"
+      ],
+      "char_start": 19961,
+      "char_end": 19989,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:34c4decfcec5f1378f4e2b9095053372",
+      "kind": "heading",
+      "text": "Method P-F1 N-F1 Macro Calls P-F1 N-F1 Macro Calls",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro Calls P-F1 N-F1 Macro Calls"
+      ],
+      "char_start": 19991,
+      "char_end": 20041,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9c008237d5c69576f608a1fb5b3a35e",
+      "kind": "paragraph",
+      "text": "Direct LLM 0.598 0.714 0.656 0.00 0.571 0.745 0.658 0.00 Single-turn RAG 0.747 0.806 0.777 1.00 0.759 0.822 0.791 1.00 IRCoT 0.819 0.848 0.834 5.39 0.813 0.842 0.828 5.58 AgentKGV (framework) 0.822 0.842 0.832 1.82 0.838 0.855 0.847 1.86",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro Calls P-F1 N-F1 Macro Calls"
+      ],
+      "char_start": 20043,
+      "char_end": 20280,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0995252abb7fe3b63ae0c22805499dc",
+      "kind": "list_item",
+      "text": "+ SFT 0.861 0.867 0.864 3.24 0.847 0.860 0.854 3.36",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro Calls P-F1 N-F1 Macro Calls"
+      ],
+      "char_start": 20282,
+      "char_end": 20333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4ea9db81311b1e64781a71eea8c478e",
+      "kind": "heading",
+      "text": "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+      "order": 61,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80"
+      ],
+      "char_start": 20335,
+      "char_end": 20389,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c34012d408d9475a23d81e7e47be1367",
+      "kind": "caption",
+      "text": "Table 1: Main results on the two T-REx splits (long-tail → unseen).P-F1/N-F1are per-class F1,Macrois their",
+      "order": 62,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80"
+      ],
+      "char_start": 20391,
+      "char_end": 20497,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c75b7dbc5555fc6b5b6db03e7127f9d",
+      "kind": "paragraph",
+      "text": "macro-average, andCallsis the average search calls per triple. Baselines / Metrics.We compare against Direct LLM, Single-turn RAG, IRCoT (Trivedi et al.,",
+      "order": 63,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80"
+      ],
+      "char_start": 20499,
+      "char_end": 20652,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c22718a5da4bb27bffac678b86c81df8",
+      "kind": "heading",
+      "text": "We report per-class F1 (Pos-F1, Neg-",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "We report per-class F1 (Pos-F1, Neg-"
+      ],
+      "char_start": 20654,
+      "char_end": 20690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38f7519c2e95ce79a5bfb396eb451611",
+      "kind": "paragraph",
+      "text": "F1), their macro-average (Macro) and the average search calls per triple. For retrieval-based models, if a valid label is not produced before generation terminates, the prediction is scored as negative.",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "We report per-class F1 (Pos-F1, Neg-"
+      ],
+      "char_start": 20692,
+      "char_end": 20894,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:63db2d3d5f1b65694b6dc236b030b57c",
+      "kind": "heading",
+      "text": "Main Results",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "Main Results"
+      ],
+      "char_start": 20896,
+      "char_end": 20908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ba6a72bc3df88498f948122b6eb25e8",
+      "kind": "caption",
+      "text": "Table 1 shows that our framework outperforms all",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "Main Results"
+      ],
+      "char_start": 20910,
+      "char_end": 20958,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf5f08e8293e417b3b968812b1b8b6cb",
+      "kind": "paragraph",
+      "text": "baselines. Two-stage training achieves the best perclass F1, and it improves over Single-turn RAG by a clear margin on both splits. The gap to IRCoT is also consistent across both splits, even though IRCoT issues substantially more search calls per triple. This pattern indicates that Stage 1 gives a stable query-rewriting foundation that transfers to predicates with limited or no training exposure, rather than to in-distribution relations only. Two-stage training also cuts retrieval cost. GRPO reduces the average number of search calls consistently across both T-REx splits, while F1 is improved. The reduction is most valuable on the unseen split, where a search agent risks a blow-up on relations it has never encountered, yet our model keeps its search calls controlled.",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "Main Results"
+      ],
+      "char_start": 20960,
+      "char_end": 21739,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:926e76d57b46e88065b921e5e7af97ba",
+      "kind": "heading",
+      "text": "Industrial Applicability",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "Industrial Applicability"
+      ],
+      "char_start": 21741,
+      "char_end": 21765,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4845d6719eca743719995ad23f946751",
+      "kind": "paragraph",
+      "text": "On the Korean enterprise KG (Table 2), the framework substantially outperforms the baselines, and two-stage training achieves the best Pos-F1 and Macro-F1. This result holds even though the benchmark differs in language, domain, and retriever, and its negatives are real extraction errors. Notably, the untrained framework (AgentKGV) leads on P-F1 and Macro-F1, but its N-F1 still trails IRCoT. Architecture alone does not resolve this noisy negative class. SFT closes this gap and achieves the best N- F1. GRPO then raises P-F1 further, at a small cost to N-F1, and this yields the best overall Macro-F1.",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.872 0.870 0.8711.630.864 0.862 0.8631.80",
+        "Industrial Applicability"
+      ],
+      "char_start": 21767,
+      "char_end": 22372,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcff9d80853c988d431d380e05e68c94",
+      "kind": "heading",
+      "text": "Method P-F1 N-F1 Macro",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro"
+      ],
+      "char_start": 22374,
+      "char_end": 22396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbb69f1ed9700b389e0f1b3aea0f56f4",
+      "kind": "paragraph",
+      "text": "Direct LLM 0.591 0.375 0.483 Single-turn RAG 0.391 0.394 0.392 IRCoT 0.618 0.405 0.511 AgentKGV (framework) 0.701 0.381 0.541",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro"
+      ],
+      "char_start": 22398,
+      "char_end": 22523,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d928f09e3c51cb5de146fa89e2ba4606",
+      "kind": "list_item",
+      "text": "+ SFT 0.7450.4400.593",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Method P-F1 N-F1 Macro"
+      ],
+      "char_start": 22525,
+      "char_end": 22546,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c90094d9ea0b8a58ea44f742799d20aa",
+      "kind": "heading",
+      "text": "+ SFT + GRPO0.7940.4220.608",
+      "order": 74,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.7940.4220.608"
+      ],
+      "char_start": 22548,
+      "char_end": 22575,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4aa47f57812ed953f888e7e90d46e4c0",
+      "kind": "caption",
+      "text": "Table 2: Results on the Korean enterprise KG (industrial",
+      "order": 75,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.7940.4220.608"
+      ],
+      "char_start": 22577,
+      "char_end": 22633,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04cc732c40ee674cca884dec761e2a9d",
+      "kind": "paragraph",
+      "text": "application).",
+      "order": 76,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.7940.4220.608"
+      ],
+      "char_start": 22635,
+      "char_end": 22648,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:222b7179e23754b13e317edb3ab9a547",
+      "kind": "heading",
+      "text": "Ablation Study",
+      "order": 77,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.7940.4220.608",
+        "Ablation Study"
+      ],
+      "char_start": 22650,
+      "char_end": 22664,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83d3df8049ca0f4385ea1a69edd5d6c3",
+      "kind": "paragraph",
+      "text": "Effect of each training stage.Table 1 disentangles the contribution of each stage. Stage 1 (SFT) consistently improves Macro-F1 over the untrained framework on both splits, confirming that turn-level distillation stabilizes query rewriting and reasoning. However, it does so at the cost of more retrieval: the average search calls rise on every split, because the distilled policy leans on the teacher’s retrievewhen-uncertain behavior and searches more aggressively. Stage 2 (GRPO) resolves this trade-off. It cuts the search calls back to near the untrained level whilefurtherimproving Macro-F1, which shows that many of the extra searches induced by Stage 1 were redundant rather than informative.",
+      "order": 78,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "+ SFT + GRPO0.7940.4220.608",
+        "Ablation Study"
+      ],
+      "char_start": 22666,
+      "char_end": 23366,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05896deb2c2bff6bbaf7d1cbebfd70f5",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 79,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Conclusion"
+      ],
+      "char_start": 23368,
+      "char_end": 23378,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e1cb3286f690e70c48eb7686d650e614",
+      "kind": "paragraph",
+      "text": "We presented an Agentic LLM-RAG framework for KG fact verification, together with a two-stage training strategy that stabilizes query rewriting, optimizes the iterative search policy. Experiments demonstrate that our framework outperforms representative baselines, and the ablation study confirms the complementary contribution of each training stage. We believe this framework offers a practical foundation for reliable fact verification in industrial KGs. 6",
+      "order": 80,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Conclusion"
+      ],
+      "char_start": 23380,
+      "char_end": 23839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9e484226d495156dca0e817a3f3653b",
+      "kind": "heading",
+      "text": "Limitations",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Limitations"
+      ],
+      "char_start": 23841,
+      "char_end": 23852,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c1f0d2290d8d3c2ac3dad9dac7a7d0f9",
+      "kind": "paragraph",
+      "text": "Scale of the industrial benchmark.Our industrial evaluation relies on a human-annotated Korean enterprise KG. Because every triple is labeled and verified by human annotators, the annotation cost is high, and the resulting benchmark is necessarily small. We therefore treat it as a high-precision sanity check rather than a large-scale evaluation, and the reported industrial numbers should be interpreted with this limited sample size in mind. Scaling the evaluation to larger industrial KGs without prohibitive annotation cost—for example, through semi-automatic labeling or human-in-theloop verification—is an important direction for future work.",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Limitations"
+      ],
+      "char_start": 23854,
+      "char_end": 24503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2b01540268cfd5d4f80bddb4ebf1ee5",
+      "kind": "heading",
+      "text": "References",
+      "order": 83,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "References"
+      ],
+      "char_start": 24505,
+      "char_end": 24515,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd913eee979f5acd67f6678be9339f9b",
+      "kind": "heading",
+      "text": "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and",
+      "order": 84,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and"
+      ],
+      "char_start": 24517,
+      "char_end": 24568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a5756033ab7a3731f82cb9478c1413cf",
+      "kind": "paragraph",
+      "text": "Hannaneh Hajishirzi. 2024. Self-rag: Learning to retrieve, generate, and critique through self-reflection.",
+      "order": 85,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and"
+      ],
+      "char_start": 24570,
+      "char_end": 24676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24ea3ba0ed36d77fb57654e7896f3aa7",
+      "kind": "heading",
+      "text": "InInternational Conference on Learning Representa-",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "InInternational Conference on Learning Representa-"
+      ],
+      "char_start": 24678,
+      "char_end": 24728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a84fdb341215628b6deaea465a35863",
+      "kind": "paragraph",
+      "text": "tions.",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "InInternational Conference on Learning Representa-"
+      ],
+      "char_start": 24730,
+      "char_end": 24736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f2dbd63959e2b5321ed452576e9a719",
+      "kind": "heading",
+      "text": "Antoine Bordes, Nicolas Usunier, Alberto Garcia-",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Antoine Bordes, Nicolas Usunier, Alberto Garcia-"
+      ],
+      "char_start": 24738,
+      "char_end": 24786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:029010840cfa91a3a4d962406e0b68de",
+      "kind": "paragraph",
+      "text": "Duran, Jason Weston, and Oksana Yakhnenko.",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Antoine Bordes, Nicolas Usunier, Alberto Garcia-"
+      ],
+      "char_start": 24788,
+      "char_end": 24830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7efeb6b958efeba09e1d5a78a2bca41",
+      "kind": "heading",
+      "text": "Translating embeddings for modeling multi-",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Antoine Bordes, Nicolas Usunier, Alberto Garcia-",
+        "Translating embeddings for modeling multi-"
+      ],
+      "char_start": 24832,
+      "char_end": 24874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba356b567de985c0989009f64a9e19d6",
+      "kind": "paragraph",
+      "text": "relational data. InAdvances in Neural Information Processing Systems, volume 26. Curran Associates, Inc.",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Antoine Bordes, Nicolas Usunier, Alberto Garcia-",
+        "Translating embeddings for modeling multi-"
+      ],
+      "char_start": 24876,
+      "char_end": 24980,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cff9fc6973a33e8c6b045f9848e4ea6",
+      "kind": "heading",
+      "text": "Jifan Chen, Aniruddh Sriram, Eunsol Choi, and Greg",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Jifan Chen, Aniruddh Sriram, Eunsol Choi, and Greg"
+      ],
+      "char_start": 24982,
+      "char_end": 25032,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e2dc268b58cf8d000cc578834c44b23",
+      "kind": "paragraph",
+      "text": "Durrett. 2022. Generating literal and implied subquestions to fact-check complex claims. InProceedings of the 2022 Conference on Empirical Methods in Natural Language Processing, pages 3495–3516,",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Jifan Chen, Aniruddh Sriram, Eunsol Choi, and Greg"
+      ],
+      "char_start": 25034,
+      "char_end": 25229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f6d665eb679dd41741dc8511384dcd0",
+      "kind": "heading",
+      "text": "Abu Dhabi, United Arab Emirates. Association for",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Abu Dhabi, United Arab Emirates. Association for"
+      ],
+      "char_start": 25231,
+      "char_end": 25279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6c66194864bd051871006b52b35e3c1c",
+      "kind": "paragraph",
+      "text": "Computational Linguistics. Rajarshi Das, Shehzaad Dhuliawala, Manzil Zaheer, Luke Vilnis, Ishan Durugkar, Akshay Krishnamurthy, Alex Smola, and Andrew McCallum. 2018. Go for a walk and arrive at the answer: Reasoning over paths in knowledge bases using reinforcement learning. In",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Abu Dhabi, United Arab Emirates. Association for"
+      ],
+      "char_start": 25281,
+      "char_end": 25560,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d29b40e798009737d432862dcabda43f",
+      "kind": "heading",
+      "text": "International Conference on Learning Representa-",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "International Conference on Learning Representa-"
+      ],
+      "char_start": 25562,
+      "char_end": 25610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bd218019093ce17155827b869cd93be5",
+      "kind": "paragraph",
+      "text": "tions. DeepSeek-AI. 2025. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning. arXiv preprint arXiv:2501.12948. Hady Elsahar, Pavlos V ougiouklis, Arslen Remaci,",
+      "order": 97,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "International Conference on Learning Representa-"
+      ],
+      "char_start": 25612,
+      "char_end": 25804,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6bb5dde1105d1d4f7e3d281785e8ce9",
+      "kind": "heading",
+      "text": "Christophe Gravier, Jonathon Hare, Frederique Lafor-",
+      "order": 98,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Christophe Gravier, Jonathon Hare, Frederique Lafor-"
+      ],
+      "char_start": 25806,
+      "char_end": 25858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:778a6d63b1bce6fca96a5622c374955c",
+      "kind": "paragraph",
+      "text": "est, and Elena Simperl. 2018. T-REx: A large scale alignment of natural language with knowledge base triples. InProceedings of the Eleventh International Conference on Language Resources and Evaluation (LREC 2018), Miyazaki, Japan. European Language Resources Association (ELRA). Bowen Jin, Han Zeng, Zihan Yue, Dawei Wang, Hamed Zamani, and Jiawei Han. 2025. Searchr1: Training llms to reason and leverage search engines with reinforcement learning.arXiv preprint arXiv:2503.09516. Ni Lao, Tom Mitchell, and William W. Cohen. 2011. Random walk inference and learning in a large scale knowledge base. InProceedings of the 2011 Conference on Empirical Methods in Natural Language Processing, pages 529–539, Edinburgh, Scotland, UK. Association for Computational Linguistics.",
+      "order": 99,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Christophe Gravier, Jonathon Hare, Frederique Lafor-"
+      ],
+      "char_start": 25860,
+      "char_end": 26633,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8cf8f0993b128176cd251717eb86a879",
+      "kind": "heading",
+      "text": "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio",
+      "order": 100,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio"
+      ],
+      "char_start": 26635,
+      "char_end": 26687,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30d135d009b7550532c6c567a2c29ded",
+      "kind": "heading",
+      "text": "Petroni, Vladimir Karpukhin, Naman Goyal, Hein-",
+      "order": 101,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Petroni, Vladimir Karpukhin, Naman Goyal, Hein-"
+      ],
+      "char_start": 26689,
+      "char_end": 26736,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3fb826e28c59e1d0b70e5c42f5bd7906",
+      "kind": "heading",
+      "text": "rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-",
+      "order": 102,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-"
+      ],
+      "char_start": 26738,
+      "char_end": 26786,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e58892ac479cfa3d55c06a1c0170fd95",
+      "kind": "paragraph",
+      "text": "täschel, Sebastian Riedel, and Douwe Kiela. 2020. Retrieval-augmented generation for knowledgeintensive nlp tasks. InAdvances in Neural Information Processing Systems, volume 33, pages 9459–",
+      "order": 103,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-"
+      ],
+      "char_start": 26788,
+      "char_end": 26978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6449625c9ff55bdc04d26eff1139bb6",
+      "kind": "heading",
+      "text": "Curran Associates, Inc.",
+      "order": 104,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-",
+        "Curran Associates, Inc."
+      ],
+      "char_start": 26980,
+      "char_end": 27003,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1cd2da05845fae7df14a6a4ab9fa8136",
+      "kind": "paragraph",
+      "text": "Alex Mallen, Akari Asai, Victor Zhong, Rajarshi Das, Daniel Khashabi, and Hannaneh Hajishirzi. 2023. When not to trust language models: Investigating effectiveness of parametric and non-parametric memories. InProceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V olume 1: Long Papers), pages 9802–9822, Toronto, Canada. Association for Computational Linguistics.",
+      "order": 105,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "rich Küttler, Mike Lewis, Wen-tau Yih, Tim Rock-",
+        "Curran Associates, Inc."
+      ],
+      "char_start": 27005,
+      "char_end": 27404,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:abd592d873422ae86ca4a0c44cfdab8a",
+      "kind": "heading",
+      "text": "Liangming Pan, Xiaobao Wu, Xinyuan Lu, Anh Tuan",
+      "order": 106,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Liangming Pan, Xiaobao Wu, Xinyuan Lu, Anh Tuan"
+      ],
+      "char_start": 27406,
+      "char_end": 27453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d0b4e18fa46db4cf48946e0baaf064b0",
+      "kind": "heading",
+      "text": "Luu, William Yang Wang, Min-Yen Kan, and Preslav",
+      "order": 107,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Luu, William Yang Wang, Min-Yen Kan, and Preslav"
+      ],
+      "char_start": 27455,
+      "char_end": 27503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4ee909373b62d409985a0c3bf68ad29d",
+      "kind": "paragraph",
+      "text": "Nakov. 2023. Fact-checking complex claims with program-guided reasoning. InProceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V olume 1: Long Papers), pages 6981–7004, Toronto, Canada. Association for Computational Linguistics.",
+      "order": 108,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Luu, William Yang Wang, Min-Yen Kan, and Preslav"
+      ],
+      "char_start": 27505,
+      "char_end": 27770,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6309a36d4296907922881424e99a9786",
+      "kind": "heading",
+      "text": "Shirui Pan, Linhao Luo, Yufei Wang, Chen Chen, Ji-",
+      "order": 109,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shirui Pan, Linhao Luo, Yufei Wang, Chen Chen, Ji-"
+      ],
+      "char_start": 27772,
+      "char_end": 27822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4033c17f71ad67ee3834911a6a694239",
+      "kind": "paragraph",
+      "text": "apu Wang, and Xindong Wu. 2024. Unifying large language models and knowledge graphs: A roadmap. IEEE Transactions on Knowledge and Data Engineering, 36(7):3580–3599. Kashyap Popat, Subhabrata Mukherjee, Andrew Yates, and Gerhard Weikum. 2018. DeClarE: Debunking fake news and false claims using evidence-aware deep learning. InProceedings of the 2018 Conference on Empirical Methods in Natural Language Processing, pages 22–32, Brussels, Belgium. Association for Computational Linguistics.",
+      "order": 110,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shirui Pan, Linhao Luo, Yufei Wang, Chen Chen, Ji-"
+      ],
+      "char_start": 27824,
+      "char_end": 28313,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa3470e4a88c0da739414a44b55cd6a7",
+      "kind": "heading",
+      "text": "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta",
+      "order": 111,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta"
+      ],
+      "char_start": 28315,
+      "char_end": 28367,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f9e62cfa22379076c85ad14874196a7",
+      "kind": "heading",
+      "text": "Raileanu, Maria Lomeli, Luke Zettlemoyer, Nicola",
+      "order": 112,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Raileanu, Maria Lomeli, Luke Zettlemoyer, Nicola"
+      ],
+      "char_start": 28369,
+      "char_end": 28417,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05563668dc4da703502780a9f50799d6",
+      "kind": "paragraph",
+      "text": "Cancedda, and Thomas Scialom. 2023. Toolformer: Language models can teach themselves to use tools.",
+      "order": 113,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Raileanu, Maria Lomeli, Luke Zettlemoyer, Nicola"
+      ],
+      "char_start": 28419,
+      "char_end": 28517,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d70ff2620e12d5ab9d93617d10cb93a9",
+      "kind": "heading",
+      "text": "InAdvances in Neural Information Processing Sys-",
+      "order": 114,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "InAdvances in Neural Information Processing Sys-"
+      ],
+      "char_start": 28519,
+      "char_end": 28567,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b61663b8e9bdd00dc507983f7c91be6d",
+      "kind": "paragraph",
+      "text": "tems, volume 36. Curran Associates, Inc.",
+      "order": 115,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "InAdvances in Neural Information Processing Sys-"
+      ],
+      "char_start": 28569,
+      "char_end": 28609,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e28bc93ad65867a34a7d514e4d7a1c76",
+      "kind": "heading",
+      "text": "Zhihong Shao, Peiyi Wang, Qihao Zhu, Ruo Xu, Jian",
+      "order": 116,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Zhihong Shao, Peiyi Wang, Qihao Zhu, Ruo Xu, Jian"
+      ],
+      "char_start": 28611,
+      "char_end": 28660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4f8d2d35d6a1db813dce1edcc2d2ddb",
+      "kind": "heading",
+      "text": "Song, Xin Bi, Hui Zhang, Min Zhang, Yin Li, Yuxi-",
+      "order": 117,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Song, Xin Bi, Hui Zhang, Min Zhang, Yin Li, Yuxi-"
+      ],
+      "char_start": 28662,
+      "char_end": 28711,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ff59a45a56ca0db6a1fba4ff00faaf0a",
+      "kind": "paragraph",
+      "text": "ang Wu, and Daya Guo. 2024. Deepseekmath: Pushing the limits of mathematical reasoning in open language models.arXiv preprint arXiv:2402.03300. 7",
+      "order": 118,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Song, Xin Bi, Hui Zhang, Min Zhang, Yin Li, Yuxi-"
+      ],
+      "char_start": 28713,
+      "char_end": 28858,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3e2e82d5c2f6874b27f25a3518811298",
+      "kind": "paragraph",
+      "text": "Zhengliang Shi, Shuo Zhang, Weiwei Sun, Shen Gao, Pengjie Ren, Zhumin Chen, and Zhaochun Ren. 2024. Generate-then-ground in retrieval-augmented generation for multi-hop question answering. InProceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (V olume 1: Long Papers), pages 7339–7353, Bangkok, Thailand. Association for Computational Linguistics.",
+      "order": 119,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Song, Xin Bi, Hui Zhang, Min Zhang, Yin Li, Yuxi-"
+      ],
+      "char_start": 28860,
+      "char_end": 29243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:278e63dc4bb433a03d152705547dd3f4",
+      "kind": "heading",
+      "text": "Hao Song, Jyun Jiang, Yizhou Min, Jun Chen, Zhen",
+      "order": 120,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hao Song, Jyun Jiang, Yizhou Min, Jun Chen, Zhen"
+      ],
+      "char_start": 29245,
+      "char_end": 29293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:074a1fff5418afd79f62decfac47172c",
+      "kind": "paragraph",
+      "text": "Chen, Wayne Xin Zhao, Lu Fang, and Ji-Rong Wen.",
+      "order": 121,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hao Song, Jyun Jiang, Yizhou Min, Jun Chen, Zhen"
+      ],
+      "char_start": 29295,
+      "char_end": 29342,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a8be3a66913830001edbb3461c9ed68b",
+      "kind": "heading",
+      "text": "R1-searcher: Incentivizing the search capabil-",
+      "order": 122,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hao Song, Jyun Jiang, Yizhou Min, Jun Chen, Zhen",
+        "R1-searcher: Incentivizing the search capabil-"
+      ],
+      "char_start": 29344,
+      "char_end": 29390,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:29ba781e677d88844f8c7c2911e32910",
+      "kind": "paragraph",
+      "text": "ity in llms via reinforcement learning.arXiv preprint arXiv:2503.05592. Qwen Team. 2024. Qwen2.5 technical report.arXiv preprint arXiv:2412.15115. Harsh Trivedi, Niranjan Balasubramanian, Tushar Khot, and Ashish Sabharwal. 2023. Interleaving retrieval with chain-of-thought reasoning for knowledgeintensive multi-step questions. InProceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V olume 1: Long Papers), pages 10014–10037, Toronto, Canada. Association for Computational Linguistics.",
+      "order": 123,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hao Song, Jyun Jiang, Yizhou Min, Jun Chen, Zhen",
+        "R1-searcher: Incentivizing the search capabil-"
+      ],
+      "char_start": 29392,
+      "char_end": 29915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:229f4b66b71cc15b86e02b8024ea7078",
+      "kind": "heading",
+      "text": "Shitao Xiao, Zheng Liu, Peitian Zhang, Niklas Muen-",
+      "order": 124,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shitao Xiao, Zheng Liu, Peitian Zhang, Niklas Muen-"
+      ],
+      "char_start": 29917,
+      "char_end": 29968,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72c3c6d245c3e655f5fda6a7f970b68d",
+      "kind": "paragraph",
+      "text": "nighoff, Defu Lian, and Jian-Yun Nie. 2024. C-pack: Packed resources for general chinese embeddings. In Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval, SIGIR ’24, page 641–649, New York, NY , USA. Association for Computing Machinery. Bishan Yang, Wen-tau Yih, Xiaodong He, Jianfeng Gao, and Li Deng. 2015. Embedding entities and relations for learning and inference in knowledge bases. InInternational Conference on Learning Representations.",
+      "order": 125,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shitao Xiao, Zheng Liu, Peitian Zhang, Niklas Muen-"
+      ],
+      "char_start": 29970,
+      "char_end": 30476,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b78020a927ce3921f55b3526154955da",
+      "kind": "heading",
+      "text": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak",
+      "order": 126,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak"
+      ],
+      "char_start": 30478,
+      "char_end": 30526,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51ba365002e3335f3ab8c3ba82926301",
+      "kind": "paragraph",
+      "text": "Shafran, Karthik Narasimhan, and Yuan Cao. 2023. React: Synergizing reasoning and acting in language models. InInternational Conference on Learning Representations.",
+      "order": 127,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak"
+      ],
+      "char_start": 30528,
+      "char_end": 30692,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4893003a9b85f9ca91a5a587de1dae4c",
+      "kind": "heading",
+      "text": "A Component Combinations for Initial",
+      "order": 128,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "A Component Combinations for Initial"
+      ],
+      "char_start": 30694,
+      "char_end": 30730,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8af11d8c3a2fb9791eed2d903949f50f",
+      "kind": "heading",
+      "text": "Query Writing",
+      "order": 129,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Query Writing"
+      ],
+      "char_start": 30732,
+      "char_end": 30745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4b1662a568b0a1df1d156d52bc7c65fa",
+      "kind": "caption",
+      "text": "Table 3 shows the example component combina-",
+      "order": 130,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Query Writing"
+      ],
+      "char_start": 30747,
+      "char_end": 30791,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c10ed9afdead2ff2ef23fc3a19870e6",
+      "kind": "paragraph",
+      "text": "tions provided to the agent as a guide. For each turn, the agent selects one combination and writes a single query. The example queries are derived from the triple(Hamlet, written by, Shakespeare), where p′ denotes a paraphrased surface form of the predicate.",
+      "order": 131,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Query Writing"
+      ],
+      "char_start": 30793,
+      "char_end": 31052,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62546430951c0cbcc988592aba0a714e",
+      "kind": "heading",
+      "text": "B GRPO Objective",
+      "order": 132,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "B GRPO Objective"
+      ],
+      "char_start": 31054,
+      "char_end": 31070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:922a39ab5ca4292e4786c68fbd12c1f1",
+      "kind": "paragraph",
+      "text": "Within each group of G trajectories, the relative advantage of the i-th trajectory is computed by",
+      "order": 133,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "B GRPO Objective"
+      ],
+      "char_start": 31072,
+      "char_end": 31169,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c5e7d4d896f1830b42a2a449e1a3dac",
+      "kind": "heading",
+      "text": "Combination Example Agent Query",
+      "order": 134,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Combination Example Agent Query"
+      ],
+      "char_start": 31171,
+      "char_end": 31202,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6172bbcc35e10ced88a176c38db2058c",
+      "kind": "paragraph",
+      "text": "sHamlet s, pHamlet written by s, p, oHamlet written by Shakespeare s, p′ Hamlet author s, p′, oHamlet author Shakespeare",
+      "order": 135,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Combination Example Agent Query"
+      ],
+      "char_start": 31204,
+      "char_end": 31324,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7e1b6e4ab0607254ee8359580169d302",
+      "kind": "caption",
+      "text": "Table 3: Component combinations example provided to",
+      "order": 136,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Combination Example Agent Query"
+      ],
+      "char_start": 31326,
+      "char_end": 31377,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2969d0b246d2e95ce9ca45db71c865eb",
+      "kind": "paragraph",
+      "text": "the agent as a guide. standardizing its reward against the group statistics (Shao et al., 2024): Ai = Ri −mean({R j}G j=1) std({Rj}G j=1) .(6) The trajectory-level advantage is broadcast to every generated token, and the policy is updated by maximizing the clipped GRPO objective",
+      "order": 137,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Combination Example Agent Query"
+      ],
+      "char_start": 31379,
+      "char_end": 31658,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fe5798d189b26cd2fd5b57fd0434fbe",
+      "kind": "heading",
+      "text": "LGRPO =E",
+      "order": 138,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "LGRPO =E"
+      ],
+      "char_start": 31660,
+      "char_end": 31668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d982eb568ff010b1200c22dfee7ba65",
+      "kind": "paragraph",
+      "text": "\" 1P",
+      "order": 139,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "LGRPO =E"
+      ],
+      "char_start": 31670,
+      "char_end": 31674,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a29b5bafea6659135f01ae59095df92c",
+      "kind": "heading",
+      "text": "|τi|",
+      "order": 140,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31676,
+      "char_end": 31680,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5b3a1cdf9a11b09a77562f5e8b346d8",
+      "kind": "paragraph",
+      "text": "GX i=1 X t∈Mi min",
+      "order": 141,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31682,
+      "char_end": 31699,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b84ec25fe66b984e526298b9dd702bf2",
+      "kind": "paragraph",
+      "text": "ri,t(θ)A i, clip",
+      "order": 142,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31701,
+      "char_end": 31717,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2a7c6556063527ecbf083b30b653892",
+      "kind": "paragraph",
+      "text": "ri,t(θ),1−ϵ,1 +ϵ",
+      "order": 143,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31719,
+      "char_end": 31735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a29324a9d0312bab8db1e791c905256d",
+      "kind": "paragraph",
+      "text": "Ai # −βE h DKL",
+      "order": 144,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31737,
+      "char_end": 31751,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f99d8e674da5b0e6d1e862bf0fa48ef1",
+      "kind": "table",
+      "text": "Pθ ∥P ref i , (7) where ri,t(θ) = Pθ(ai,t |s i,t) Pθold(ai,t |s i,t) is the per-token importance ratio, ϵ is the clipping range, and Mi denotes the set ofmodel-generatedtoken positions in trajectory τi. Tokens produced by the retrieval environment are excluded fromM i.",
+      "order": 145,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "|τi|"
+      ],
+      "char_start": 31753,
+      "char_end": 32022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c947cc6adf903410853647fa800d7ac8",
+      "kind": "heading",
+      "text": "Hard-Negative Construction Statistics",
+      "order": 146,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hard-Negative Construction Statistics"
+      ],
+      "char_start": 32024,
+      "char_end": 32061,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e58de515740bf98c367f67bebf521c9d",
+      "kind": "paragraph",
+      "text": "Split Pos / Neg Thresh. Mean Sim. test_long_tail 500 / 499 0.45 0.660 test_unseen 500 / 500 0.45 0.700",
+      "order": 147,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hard-Negative Construction Statistics"
+      ],
+      "char_start": 32063,
+      "char_end": 32165,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3b7aa1fa26df887bad9bc0f518d70722",
+      "kind": "caption",
+      "text": "Table 4: Hard-negative statistics.Mean Sim.is the",
+      "order": 148,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hard-Negative Construction Statistics"
+      ],
+      "char_start": 32167,
+      "char_end": 32216,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:75c9f5f0cad2dd42366842245067b623",
+      "kind": "paragraph",
+      "text": "mean object cosine similarity between each positive and its negative. 8",
+      "order": 149,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Yumin Heo1, Hyeon-gu Lee2, Sumin Seo2, Youngjoong Ko1*",
+        "Hard-Negative Construction Statistics"
+      ],
+      "char_start": 32218,
+      "char_end": 32289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 8,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 8
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.09092",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 8,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

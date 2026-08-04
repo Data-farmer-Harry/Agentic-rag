@@ -1,0 +1,3564 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "217b7da17ec5794274cf9316d33da39cdf2def06cf6850267b5e7a89e9d3f4ec",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:9538c86f84a2ee97d2db5dc2f8d7ee71",
+      "kind": "heading",
+      "text": "AUTOCEDAR: An Agentic Framework for",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for"
+      ],
+      "char_start": 0,
+      "char_end": 35,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c0935ec3dfa86292b62c347f967a121",
+      "kind": "heading",
+      "text": "Verifier-Guided Access Control Policy Synthesis",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Verifier-Guided Access Control Policy Synthesis"
+      ],
+      "char_start": 37,
+      "char_end": 84,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:314567714ba32a3171d2fe21b1d7d76f",
+      "kind": "heading",
+      "text": "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers"
+      ],
+      "char_start": 86,
+      "char_end": 145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab62dd7330b46cf3ecf3fb4085e8683d",
+      "kind": "paragraph",
+      "text": "Stevens Institute of Technology {avatsa, sshome, yzhou136, weiers}@stevens.edu Abstract—Large Language Models are increasingly used to turn natural-language requirements into code. In access control, that shortcut is dangerous: a generated policy can compile and read correctly while granting access that no one approved. The difficulty is not only writing policy code. It is fixing what the requirements mean before code is written, and then checking that the final policy actually satisfies that intent. We present AUTOCEDAR, a verifier-guided system that first turns naturallanguage access-control requirements into a reviewed, checkable target, and then synthesizes Cedar policies against that target. AUTOCEDARdecomposes schema and policy authoring into small intent atoms: reviewable claims about vocabulary and behavior. Once those atoms pass mechanical validation and human intent review, the model proposes a candidate policy, the verifier checks it against the approved target, and each failure is turned into a repair signal that tells the model whether to broaden, narrow, or restructure the policy without changing the target. Because the model’s work is split into small problems, each grounded in reviewed intent and backed by verifier feedback, end-to-end policy authoring becomes tractable. AUTOCEDARconverges on all 221 tasks of CedarBench, our benchmark of authorization tasks paired with executable semantic boundaries. Across three requirements-corpus case studies covering healthcare, education, and conference management, AUTOCEDARconverts noisy prose",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers"
+      ],
+      "char_start": 147,
+      "char_end": 1721,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cb94e70db6e8890529f0276fb967fcf2",
+      "kind": "paragraph",
+      "text": "and extracted access-control fragments into reviewed schemas, formal checks, and a globally verified Cedar policy store for each scenario.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers"
+      ],
+      "char_start": 1723,
+      "char_end": 1861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b4638fb18e9e8d6cfb405f0ff68523e",
+      "kind": "heading",
+      "text": "INTRODUCTION",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 1863,
+      "char_end": 1875,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b8ca15a183acde5250ebdfa8a715540",
+      "kind": "paragraph",
+      "text": "Access control is ubiquitous across deployed software systems, yet the gap between natural-language access control requirements and the formal policies that enforce them remains a persistent source of misconfiguration and vulnerability. This gap makes access control the most common source of security failures: it ranks first in the OW ASP Top 10 and appeared in every tested application in their survey [1]. What makes these failures so persistent is not that any single access control rule is hard to write; individual rules can look reasonable while combining to permit or deny requests no author intended. Instead, it is that correctness is a property of the entire system: a policy is correct only when its entire set of rules, taken together, permits exactly the requests it should and no others. This problem compounds in modern software development, where AI tools now author a large and growing share of committed code. Fewer than half of developers say they always verify AI-generated code before it ships, and a substantial share report that reviewing it takes more effort than reviewing human-written code [2]. Authorization logic is not exempt: more of it is being generated, faster, by systems with no internal signal for whether a rule matches intent. Automated vulnerability discovery throws the resulting gap into relief rather than closing it: Anthropic’s Project Glasswing reports that around fifty partners using Claude Mythos have found more than ten thousand critical vulnerabilities in important software, and similarly a parallel scan of over a thousand open-",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 1877,
+      "char_end": 3461,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1cb13627656b9429eec768b5f32168ea",
+      "kind": "paragraph",
+      "text": "source projects surfaced 6,202 high or critical findings out of 23,019 candidates, yet the disclosed bugs are overwhelmingly memory-safety failures and cryptographic defects, with authorization logic barely represented [3]. The reason is structural: a memory bug carries its own ground truth, since a buffer overflow trips a sanitizer and crashes with no statement of intent required, while “user A can read user B’s record” is a defect only relative to a policy the code never states. The moment when more authorization logic is being written by fewer human eyes is also the moment when the field’s most powerful bug-finders are least able to catch it. Which makes correctness at authoring time, not detection after deployment, the place where the leverage actually lies. A natural tool for authoring-time correctness is the large language model, which can turn natural-language requirements into policy text directly [4], [5]. But a model can produce a syntactically valid, plausible-looking policy that is semantically wrong, with no internal signal that anything is off: Vatsa et al. [5] report that policies written via roundtrip generation have semantic equivalence rates of 45.8% for non-reasoning models and 93.7% for reasoning models relative to the groundtruth policies. A natural response is to pair the model with a verifier, so that correctness guarantees come from the verifier rather than the model, separating generation from checking. We argue this is only half of the problem: the requirements themselves are usually incomplete, leaving cases unsaid. No",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 3463,
+      "char_end": 5034,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a405b041b7956cb8e07fc9729f9a748f",
+      "kind": "paragraph",
+      "text": "amount of verification against an under-specified, informal intent can fill that gap. The Cedar [6] policy language makes verification more tractable since policies are declarative, typed against an explicit schema, and open to symbolic comparison so the property we want is not that a generated policy looks reasonable, but that the set of requests it permits falls inside a reviewed authorization boundary. This boundary does not exist in ordinary requirements text; it has to be constructed, reviewed, and kept fixed while the policy is synthesized. In this work we present AUTOCEDAR, which constructs that reviewed boundary by completing intent rather than merely translating requirements into policy text. Instead of treating the requirements as a finished specification, AUTOCEDARsurfaces",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 5036,
+      "char_end": 5830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a85dbab3ce4a5dd141527f4113ac1484",
+      "kind": "table",
+      "text": "arXiv:2607.03656v1  [cs.SE]  4 Jul 2026",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 5832,
+      "char_end": 5871,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69ce443074aaa50f3998ee87e1ec0d83",
+      "kind": "paragraph",
+      "text": "their gaps during authoring: when the requirements leave something unsaid, a property the schema cannot yet support triggers a repair that the reviewer resolves, so the intent is completed before the policy is finalized rather than left implicit. AUTOCEDARconverges on all 221 tasks of CedarBench, our benchmark of authorization tasks paired with executable semantic boundaries, and across three ACRE/REDE-derived requirements corpora for healthcare, education, and conference management it turns fragments that cannot be deployed on their own into globally checked Cedar policy stores. Because that completed intent is recorded explicitly rather than baked silently into the final rules, AUTOCEDARalso produces a durable, updatable log of intent: when requirements change, the log is edited and a fresh, verified policy is re-authored from it, making the system not a one-shot synthesizer but a substrate for ongoing policy maintenance. It thus turns text expressing access-control intent, in any format, into deployable, verified Cedar. The contribution is the boundary-preserving authoring loop: AUTOCEDARfixes what the policy is supposed to mean, keeps that target outside the model’s control, and uses verifier evidence to search for policy code that satisfies it. Contributions.We make four contributions.",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Adarsh Vatsa, Sachi Shome, Yingming Zhou, and William Eiers",
+        "INTRODUCTION"
+      ],
+      "char_start": 5873,
+      "char_end": 7184,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e49396502fba7522e768e9537e43442f",
+      "kind": "heading",
+      "text": "AUTOCEDAR, a verifier-guided authoring loop that turns",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AUTOCEDAR, a verifier-guided authoring loop that turns"
+      ],
+      "char_start": 7186,
+      "char_end": 7240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:786cd4f770c0d0cd43e8168f060eed53",
+      "kind": "paragraph",
+      "text": "fragmented natural-language access-control intent into a reviewed Cedar schema and boundary plan of floors, ceilings, liveness slices, and derived checks.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AUTOCEDAR, a verifier-guided authoring loop that turns"
+      ],
+      "char_start": 7242,
+      "char_end": 7396,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:39c6f72e4a91c395ec5948199d5ccd7c",
+      "kind": "heading",
+      "text": "A CEGIS-style synthesis discipline for LLM policy gen-",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A CEGIS-style synthesis discipline for LLM policy gen-"
+      ],
+      "char_start": 7398,
+      "char_end": 7452,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:78112d035a65d5f57e5fb62e37f71956",
+      "kind": "paragraph",
+      "text": "eration: the model proposes candidates, the verifier owns the target, failure history, and accept/reject decision.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A CEGIS-style synthesis discipline for LLM policy gen-"
+      ],
+      "char_start": 7454,
+      "char_end": 7568,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcee0b8240b1f06d8ad829ed52a93324",
+      "kind": "heading",
+      "text": "A signal-layer contract that translates verifier evidence",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A signal-layer contract that translates verifier evidence"
+      ],
+      "char_start": 7570,
+      "char_end": 7627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:77fd36637393ce12404abf2cfee7f13f",
+      "kind": "paragraph",
+      "text": "into target-preserving repair packets across target admission, semantic direction, local Cedar diagnostics, and search history.",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A signal-layer contract that translates verifier evidence"
+      ],
+      "char_start": 7629,
+      "char_end": 7756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:36b967937d8b8803264732d51f9d4e88",
+      "kind": "heading",
+      "text": "CedarBench, a 221-scenario verification benchmark,",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CedarBench, a 221-scenario verification benchmark,"
+      ],
+      "char_start": 7758,
+      "char_end": 7808,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:06fe38b258152e80c582f66cfb917a84",
+      "kind": "paragraph",
+      "text": "plus three ACRE/REDE-derived case studies showing end-to-end transformation from NL/NLACP intent into deployable, globally checked Cedar policy stores. The implementation, benchmarks, and reproduction materials are available at https://github.com/neselab/ cedar-synthesis-engine.",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CedarBench, a 221-scenario verification benchmark,"
+      ],
+      "char_start": 7810,
+      "char_end": 8089,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2e1808f0cf2d42b610e13ab171fa1b5",
+      "kind": "heading",
+      "text": "BACKGROUND ANDPRELIMINARIES",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CedarBench, a 221-scenario verification benchmark,",
+        "BACKGROUND ANDPRELIMINARIES"
+      ],
+      "char_start": 8091,
+      "char_end": 8118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1eb08243e4fbf831b9809bd9e6973c5e",
+      "kind": "heading",
+      "text": "A. Cedar Policy Language",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Cedar Policy Language"
+      ],
+      "char_start": 8120,
+      "char_end": 8144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0f3d4984cea79839ccd17c5cef652ee",
+      "kind": "paragraph",
+      "text": "Cedar is a language for writing authorization policies and making authorization decisions based on those policies [6], [7]. We now summarize the relevant elements of Cedar below. Schema.A Cedar schemaΣfixes the vocabulary that policies are permitted to reference. It defines the types of entities recognized by the application or context in which the policy operates. The entities includeprincipals(who is doing the access),actions(what is being performed),resources(what is being accessed), andcontext(environment information) referenced in policies. Cedar usesΣto validate policies at authoring time, ensuring that every entity, attribute, and action a policy references is consistent withΣ. Policies.A Cedar policyπis a set of one or more declarative rules which describes whatprincipalscan perform which actionson whichresourcesin whatcontext.πspecifies the effect,scope, and optionalconditions: effect(principal,action,resource)[whenφ 1][unlessφ 2] whereeffect∈ {permit,forbid}; scope restricts which principals, actions, and resources the policy applies to;φ 1,φ2 are boolean conditions over entity attributes drawn fromΣ.",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Cedar Policy Language"
+      ],
+      "char_start": 8146,
+      "char_end": 9274,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b314c886a6adfe6b0f11030b43538b52",
+      "kind": "heading",
+      "text": "B. Terminology",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Terminology"
+      ],
+      "char_start": 9276,
+      "char_end": 9290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d2f8c981ebc0898fbd28b5fd601eb50",
+      "kind": "paragraph",
+      "text": "Requests, schemas, and policies.We write a Cedar authorization request asρ= (p, α, o, γ): principal, action, resource, and context. For a fixed schemaΣ, these declarations induce the request universeR Σ, the domain over which every comparison, witness, and certification claim is quantified. A policy bundlePis a finite set ofpermitandforbidrules guarded by Cedar conditions. Permit-set denotation.OnceΣfixes the universe, two policy texts should be compared by behavior. Cedar uses denyoverrides semantics: a request is permitted only when at least one matchingpermitapplies and no matchingforbid applies. We writesem Σ(P) ={ρ∈R Σ |permit Σ(P, ρ)} for the permit-set denotation ofP, writingsem(P)whenΣ is fixed. Two different Cedar encodings are equivalent for synthesis when they permit exactly the same requests. Symbolic policy comparison.Cedar comes with a symbolic compilercedar symccwhich translates Cedar policies into SMT formulae, enabling comparison between policies through formulae satisfiability.symccallows us to compare the permit sets over the supported Cedar fragment rather than over a finite test suite. For policy bundlesP 1 andP 2, it can decide inclusion sem(P1)⊆sem(P 2), equivalencesem(P 1) = sem(P 2), and satisfiability or emptiness properties; when an inclusion check fails, it returns a concrete request in the relevant set difference. This follows the same lineage as SMT-based policy analyzers such as Zelkova [8]. The property we use is that many requirements can themselves be encoded as Cedar policies.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Terminology"
+      ],
+      "char_start": 9292,
+      "char_end": 10828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0141518506fe4ba365a8ce02685bbe07",
+      "kind": "heading",
+      "text": "AUTOCEDAR",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Terminology",
+        "AUTOCEDAR"
+      ],
+      "char_start": 10830,
+      "char_end": 10839,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b133b71c404a0d6cd126dcb85f63e759",
+      "kind": "paragraph",
+      "text": "AUTOCEDARstarts from a problem that a direct translator cannot solve: policy text cannot be checked until the intended behavior has been made checkable. The system therefore has two jobs. First, it turns requirements into a reviewed semantic target over a Cedar schema. Then it lets an LLM search for policy text while a verifier checks candidates against the target.",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Terminology",
+        "AUTOCEDAR"
+      ],
+      "char_start": 10841,
+      "char_end": 11208,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14ed2963d77bdb6355c35cb850369cc1",
+      "kind": "heading",
+      "text": "A. Overview",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Overview"
+      ],
+      "char_start": 11210,
+      "char_end": 11221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd7cf479ef8866e7f99498d992143a86",
+      "kind": "paragraph",
+      "text": "The failure mode of direct LLM synthesis is simple: policy text gets written before intent is fixed. AUTOCEDARreverses this order, turning requirements into a reviewed, checkable target before the model proposes any candidate.",
+      "order": 27,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Overview"
+      ],
+      "char_start": 11223,
+      "char_end": 11449,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c53f6220cd915461d23063f4fc55b0ea",
+      "kind": "caption",
+      "text": "Figure 1 shows the full workflow, and Algorithm 1 spells",
+      "order": 28,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Overview"
+      ],
+      "char_start": 11451,
+      "char_end": 11507,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5c95bb7f825b0ed30c18bcfc37cf1398",
+      "kind": "paragraph",
+      "text": "out the control flow. Requirements enter as a documentD. AUTOCEDARindexesDinto a source DAGG D, then proposes schema atoms and property atoms from bounded source",
+      "order": 29,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Overview"
+      ],
+      "char_start": 11509,
+      "char_end": 11670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:72c0c9f92c570bf89a483c78396759c3",
+      "kind": "paragraph",
+      "text": "Reviewed target: fixed before candidate search GD source DAG A approved atoms Σ schema Π plan F,C,G compiled checks Untrusted proposal, deterministic checking mt repair LLM proposer Pt candidate",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Overview"
+      ],
+      "char_start": 11672,
+      "char_end": 11866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8c19a6b74a072971526a6d22931d7599",
+      "kind": "heading",
+      "text": "Cedar",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Cedar"
+      ],
+      "char_start": 11868,
+      "char_end": 11873,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49463a648e2c578e2b31ae984924837a",
+      "kind": "paragraph",
+      "text": "checker Qt records evidence",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Cedar"
+      ],
+      "char_start": 11875,
+      "char_end": 11902,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38c910d0075c6e5b424bb8e4836b94ef",
+      "kind": "heading",
+      "text": "(Σ,Π, P, T)",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "(Σ,Π, P, T)"
+      ],
+      "char_start": 11904,
+      "char_end": 11915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:896d11b426b407a516d7b1174c7f7ce5",
+      "kind": "paragraph",
+      "text": "signal layerΦ: outcome class, direction, witness, provenance, history",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "(Σ,Π, P, T)"
+      ],
+      "char_start": 11917,
+      "char_end": 11986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55c3df601317a94a0304da33a5bdbe97",
+      "kind": "heading",
+      "text": "Ttrace",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ttrace"
+      ],
+      "char_start": 11988,
+      "char_end": 11994,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9452c9799a55195a97d2113370f9bbe9",
+      "kind": "paragraph",
+      "text": "source→atom→boundary check→candidate clause all pass fixed target failuresnextm t+1",
+      "order": 36,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ttrace"
+      ],
+      "char_start": 11996,
+      "char_end": 12079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e872abb0789f7e6bb771743f873bd081",
+      "kind": "caption",
+      "text": "Fig. 1. AUTOCEDARas fixed-target construction plus verifier-guided search. Raw requirementsDare indexed into a source DAGG D: stable source nodes",
+      "order": 37,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ttrace"
+      ],
+      "char_start": 12081,
+      "char_end": 12226,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a43064132b9b12678cb6bf6b87df068",
+      "kind": "paragraph",
+      "text": "and bounded context packets used to propose atoms.Ais the set of approved schema and property atoms,Σis the Cedar schema,Πis the boundary plan, and F,C,Gare the approved floors, ceilings, and liveness slices. Some review-level constraints are derived: they are checked only after AUTOCEDARcompiles them into primitive verifier obligations. The model proposes candidatesP t from repair packetsm t, while the Cedar checker validatesP t and runscedar symccto produce check recordsQ t against the fixed plan. The signal layerΦturns failed records into the next repair packet; passing records produce an evidence package whose traceTrecords source spans, atoms, boundaries, checks, and associated candidate clauses. packets. A reviewer accepts only atoms that match the intended behavior; approved schema atoms compile into a schemaΣ, and approved property atoms compile into a boundary plan Π. Only then does candidate-policy search begin: the model proposes policy bundleP t, the verifier produces check records Qt, and the signal layer turns failed records into the next repair packetm t+1. Success is a Cedar file plus evidence that it satisfies the fixed target. AUTOCEDARdoes not prompt overDas one undifferentiated blob. Instead, it usesG D: stable source nodes and bounded context packets that keep each proposal tied to a local, auditable slice of the requirements. Schema atoms say what exists in the authorization world: users, documents, roles, actions, attributes, and context fields. Property atoms say what",
+      "order": 38,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ttrace"
+      ],
+      "char_start": 12228,
+      "char_end": 13744,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21c93758bafaff94c91e19f617e00f2c",
+      "kind": "paragraph",
+      "text": "behavior should hold over that world: which requests must be allowed, which requests must not leak through, which workflow classes must remain possible, and which constraints should compile into verifier checks. The human review step decides whether those atoms capture the intended behavior. The target is not fixed after the first pass of review. During target construction, AUTOCEDARmay discover that a property atom needs schema support the current schema does not provide, that a current property should be rejected or repaired, that a prior property now conflicts with the emerging target, or that an approved source node still lacks coverage. These repairs happen before candidate-policy search. The fixed target begins only after schema repair, property repair, coverage accounting, and admission checks have produced an approved Cedar schemaΣand boundary planΠ. The LLM then has a narrower job: propose a candidate Cedar policyP t under that fixed target. The verifier checks the candidate against the entire plan. If the candidate is too broad, too narrow, syntactically invalid, or has made an approved workflow impossible, AU- TOCEDARsends the model a repair packet rather than a vague failure message. If every check passes, AUTOCEDARreturns (Σ,Π, P, T),whereΣis the Cedar schema,Πis the approved boundary plan,Pis the synthesized policy bundle, andT Algorithm 1AUTOCEDARsynthesis workflow Require:Access-control requirementsD; iteration budgetK Ensure:Verified evidence package(Σ,Π, P, T)or a reportable failure",
+      "order": 39,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ttrace"
+      ],
+      "char_start": 13746,
+      "char_end": 15271,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8330faddf9fc6ea27ab0e4f6e28e9714",
+      "kind": "heading",
+      "text": "IndexDinto source DAGG D with source nodes and bounded context",
+      "order": 40,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IndexDinto source DAGG D with source nodes and bounded context"
+      ],
+      "char_start": 15273,
+      "char_end": 15335,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fd42f278dc88b78265b01e5a71f7d819",
+      "kind": "paragraph",
+      "text": "packets",
+      "order": 41,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IndexDinto source DAGG D with source nodes and bounded context"
+      ],
+      "char_start": 15337,
+      "char_end": 15344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e20b07e62e340b1cc1ae2f1b0e13ba9",
+      "kind": "heading",
+      "text": "Propose and review schema atoms from source packets",
+      "order": 42,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Propose and review schema atoms from source packets"
+      ],
+      "char_start": 15346,
+      "char_end": 15397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a98d2fbd93dbc0e80037ccadd4983f61",
+      "kind": "heading",
+      "text": "Propose property atoms one packet at a time with coverage tracking",
+      "order": 43,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Propose property atoms one packet at a time with coverage tracking"
+      ],
+      "char_start": 15399,
+      "char_end": 15465,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21b209b8f2a8e85656f4e2a06bd5d5f2",
+      "kind": "heading",
+      "text": "whilea property exposes missing schema support or target conflictdo",
+      "order": 44,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "whilea property exposes missing schema support or target conflictdo"
+      ],
+      "char_start": 15467,
+      "char_end": 15534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0907bd3454a634d3e2cb7d23344542ec",
+      "kind": "heading",
+      "text": "Repair schema or property atoms; rerun mechanical and intent review",
+      "order": 45,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Repair schema or property atoms; rerun mechanical and intent review"
+      ],
+      "char_start": 15536,
+      "char_end": 15603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d09412f9c8a214f20357954970060840",
+      "kind": "heading",
+      "text": "end while",
+      "order": 46,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end while"
+      ],
+      "char_start": 15605,
+      "char_end": 15614,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5d7b4525fc730654c6012bae04611c9",
+      "kind": "heading",
+      "text": "Compile approved atoms into schemaΣand boundary planΠ",
+      "order": 47,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Compile approved atoms into schemaΣand boundary planΠ"
+      ],
+      "char_start": 15616,
+      "char_end": 15669,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c377e338cd9569a732638a783e205dc9",
+      "kind": "heading",
+      "text": "ifΣfails validation or admission checks rejectΠthen",
+      "order": 48,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ifΣfails validation or admission checks rejectΠthen"
+      ],
+      "char_start": 15671,
+      "char_end": 15722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:512abe19db0e991cc00ddb8270c49440",
+      "kind": "heading",
+      "text": "returntarget-admission failure with reviewer-facing diagnostics",
+      "order": 49,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returntarget-admission failure with reviewer-facing diagnostics"
+      ],
+      "char_start": 15724,
+      "char_end": 15787,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d60423ad56c1508c3a14a0d2ca23a41",
+      "kind": "heading",
+      "text": "end if",
+      "order": 50,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end if"
+      ],
+      "char_start": 15789,
+      "char_end": 15795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ccde8e6d01d818d4978ae1b3ea10906a",
+      "kind": "heading",
+      "text": "H← ∅;m←summary of the fixed target",
+      "order": 51,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "H← ∅;m←summary of the fixed target"
+      ],
+      "char_start": 15797,
+      "char_end": 15831,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fcae783056e8a22e1baecb4561cf73c6",
+      "kind": "heading",
+      "text": "fort= 1toKdo",
+      "order": 52,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "fort= 1toKdo"
+      ],
+      "char_start": 15833,
+      "char_end": 15845,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:307e6bda8eb1140be45bb74a008f85a5",
+      "kind": "heading",
+      "text": "Ask the model for a candidate policyP t using repair packetm",
+      "order": 53,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Ask the model for a candidate policyP t using repair packetm"
+      ],
+      "char_start": 15847,
+      "char_end": 15907,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:687314d2a881ba6e683a2cf58324ae77",
+      "kind": "heading",
+      "text": "ifP t does not parse or type-check underΣthen",
+      "order": 54,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ifP t does not parse or type-check underΣthen"
+      ],
+      "char_start": 15909,
+      "char_end": 15954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce198c824414541aa31365080c38dce2",
+      "kind": "heading",
+      "text": "m←local diagnostic repair packet forP t",
+      "order": 55,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "m←local diagnostic repair packet forP t"
+      ],
+      "char_start": 15956,
+      "char_end": 15995,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c28cdb7ae3f6ac0bd405df73e775bddf",
+      "kind": "heading",
+      "text": "else",
+      "order": 56,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "else"
+      ],
+      "char_start": 15997,
+      "char_end": 16001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27621201be466d73b151126362704e09",
+      "kind": "heading",
+      "text": "Q t ←verifier records for checkingP t againstΠ",
+      "order": 57,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Q t ←verifier records for checkingP t againstΠ"
+      ],
+      "char_start": 16003,
+      "char_end": 16049,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:58042942b21078834f4837e6be5be350",
+      "kind": "heading",
+      "text": "ifall records inQ t passthen",
+      "order": 58,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ifall records inQ t passthen"
+      ],
+      "char_start": 16051,
+      "char_end": 16079,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c66d75d8e827a5670b303d7fae58564",
+      "kind": "heading",
+      "text": "Record traceTwith source spans, atoms, boundaries, records,",
+      "order": 59,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Record traceTwith source spans, atoms, boundaries, records,"
+      ],
+      "char_start": 16081,
+      "char_end": 16140,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b96d13dc7362192635b3eb9abedcca6e",
+      "kind": "paragraph",
+      "text": "and associated clauses",
+      "order": 60,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Record traceTwith source spans, atoms, boundaries, records,"
+      ],
+      "char_start": 16142,
+      "char_end": 16164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c6ebf8f14f22e52edc8496adc055b20",
+      "kind": "heading",
+      "text": "return(Σ,Π, P t, T)",
+      "order": 61,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "return(Σ,Π, P t, T)"
+      ],
+      "char_start": 16166,
+      "char_end": 16185,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cea1a932d51e3a0e60ce4b9624ef65e",
+      "kind": "heading",
+      "text": "end if",
+      "order": 62,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end if"
+      ],
+      "char_start": 16187,
+      "char_end": 16193,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f42fb34ed0227059c5167a6731b3e429",
+      "kind": "heading",
+      "text": "m←Φ(Q t, Pt,Π, H)",
+      "order": 63,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "m←Φ(Q t, Pt,Π, H)"
+      ],
+      "char_start": 16195,
+      "char_end": 16212,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:956ee81c593d82aa325ac20df7a9d1f2",
+      "kind": "heading",
+      "text": "end if",
+      "order": 64,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end if"
+      ],
+      "char_start": 16214,
+      "char_end": 16220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70d8acd40d7e01142d3c8133223a6723",
+      "kind": "heading",
+      "text": "Append the candidate, diagnostics or verifier records, andmtoH",
+      "order": 65,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Append the candidate, diagnostics or verifier records, andmtoH"
+      ],
+      "char_start": 16222,
+      "char_end": 16284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8df2edfcb32359e9022e8748ea520f2a",
+      "kind": "heading",
+      "text": "end for",
+      "order": 66,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end for"
+      ],
+      "char_start": 16286,
+      "char_end": 16293,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9a068d3d01aa1a29dea74ec99ad20701",
+      "kind": "heading",
+      "text": "returnbudget failure with target, history, and verifier records",
+      "order": 67,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnbudget failure with target, history, and verifier records"
+      ],
+      "char_start": 16295,
+      "char_end": 16358,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07c7b24ce0428d9ffe9b7b53dd7e7583",
+      "kind": "paragraph",
+      "text": "is the evidence trace recording source text, approved atoms, boundaries, verifier records, and candidate clauses associated with those records.",
+      "order": 68,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnbudget failure with target, history, and verifier records"
+      ],
+      "char_start": 16360,
+      "char_end": 16503,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0223387eae379167fbe81b18c799e8e2",
+      "kind": "heading",
+      "text": "B. Verification-Guided Search",
+      "order": 69,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Verification-Guided Search"
+      ],
+      "char_start": 16505,
+      "char_end": 16534,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50b870cdfd56940b4a48bb5995609b9c",
+      "kind": "paragraph",
+      "text": "The verifier cannot check a candidate against the original prose. It needs a semantic target. In this setting, that target is not a preexisting reference implementation, because writing the implementation is the problem. AUTOCEDAR instead builds a reviewed boundary of acceptable behavior. A boundary is necessary because two Cedar policies can express the same access-control behavior with different clauses, and two policies that look almost identical can permit different",
+      "order": 70,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Verification-Guided Search"
+      ],
+      "char_start": 16536,
+      "char_end": 17010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c17b13e5c341d6e4c1029e821d0cf91b",
+      "kind": "paragraph",
+      "text": "requests. A single golden policy would make the target too brittle. A boundary lets the verifier ask the question that matters: is the candidate inside the approved behavior and does it include the required behavior? Once a schemaΣfixes the typed request universeR Σ, every candidate policy bundlePdenotes a set of permitted requests sem(P)⊆R Σ. The primitive plan asks three questions about that set. What must be inside it? What must stay outside it? What workflow class must not be emptied? AUTOCEDAR represents those answers as a boundary planΠ = (C,F,G) whereCis a set of ceiling policies,Fis a set of floor policies, andGis a set of reviewed liveness slices. Each ceiling",
+      "order": 71,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. Verification-Guided Search"
+      ],
+      "char_start": 17012,
+      "char_end": 17689,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cc2c3a57d0159eaecd0f287fff0f6825",
+      "kind": "heading",
+      "text": "says that a candidate must not permit requests outside",
+      "order": 72,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "says that a candidate must not permit requests outside"
+      ],
+      "char_start": 17691,
+      "char_end": 17745,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2c45afbe17b858e54197b8013be61895",
+      "kind": "table",
+      "text": "sem(Ci). Each floorF j says that a candidate must at least includesem(F j). Each liveness sliceG k ⊆R Σ says that an approved request class cannot disappear. The third case matters because a policy that denies everything can satisfy many safety constraints while still being useless. Beyond the primitive plan, AUTOCEDARalso accepts authoring conveniences (such as disjointness and rate-limit-style intent) that it grounds, reviews, and compiles into checks or patches overΠwhen their meaning is expressible in it. They extend what the author can state rather than what the plan represents. Disjointness is especially important for global policy stores: it can patch same-action floors so that one approved workflow does not accidentally permit a mutually exclusive one. Rate-limit-style atoms are governed by the same discipline: they contribute only through the finite, verifierfacing obligations that AUTOCEDARcan compile from the reviewed atom, not through a claim about runtime enforcement outside Cedar’s policy semantics. Definition 1(Plan satisfaction).For a permit setS⊆R Σ, writeS|= Πiff ∀Ci ∈ C. S⊆sem(C i), ∀Fj ∈ F.sem(F j)⊆S, ∀Gk ∈ G. S∩G k ̸=∅. A candidate policy bundlePsatisfiesΠ, writtenP|= Π, iff sem(P)|= Π. Definition 1 is the point where the prose target becomes something the verifier can own: a candidate is too permissive when it escapes a ceiling, too restrictive when it misses a floor, and has lost an approved workflow when it fails to intersect a liveness slice. These are not different phrasings of the same",
+      "order": 73,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "says that a candidate must not permit requests outside"
+      ],
+      "char_start": 17747,
+      "char_end": 19284,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:48bfd54eedfb97e29b3e684caefcaf39",
+      "kind": "paragraph",
+      "text": "error; they are different semantic failures. The admissible interval.The candidate policy must exist between these two bounds: it must be permissive enough to include all floors and restrictive enough not to exceed any ceiling. Let UΠ = \\ Ci∈C sem(Ci), L Π = [ Fj ∈F sem(Fj), with the usual conventions that an empty ceiling intersection isR Σ and an empty floor union is∅. RΣ requests UΠ ceiling maximum approved access candidate sem(Pt) LΠ floor required access Gk live workflow",
+      "order": 74,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "says that a candidate must not permit requests outside"
+      ],
+      "char_start": 19286,
+      "char_end": 19766,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dfedf1bac0fd4b11a5313f5eeb8c63ec",
+      "kind": "heading",
+      "text": "TIGHTEN",
+      "order": 75,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TIGHTEN"
+      ],
+      "char_start": 19768,
+      "char_end": 19775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28746335f0775189a2995d4d380d8e39",
+      "kind": "heading",
+      "text": "LOOSEN EXPAND",
+      "order": 76,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "LOOSEN EXPAND"
+      ],
+      "char_start": 19777,
+      "char_end": 19790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4802daaa145666d62d48dfc9c3dc751a",
+      "kind": "caption",
+      "text": "Fig. 2. The synthesis sandwich. The dashed rectangle is an intermediate",
+      "order": 77,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "LOOSEN EXPAND"
+      ],
+      "char_start": 19792,
+      "char_end": 19863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d023b228226d5c6745fd13d0d242736",
+      "kind": "paragraph",
+      "text": "candidate: it must stay inside the ceiling envelope, grow to include required access, and hit each live workflow slice. Final acceptance requiresL Π ⊆ sem(P)⊆U Π andsem(P)∩G k ̸=∅. The same verifier call therefore induces different repair directions: a request outside the ceiling tightens, a missing floor loosens, and an empty liveness slice expands. Theorem 1(Synthesis sandwich).A candidate policy bundle",
+      "order": 78,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "LOOSEN EXPAND"
+      ],
+      "char_start": 19865,
+      "char_end": 20273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dd8055ec3c30aa0ad3343e254399df8d",
+      "kind": "heading",
+      "text": "PsatisfiesΠiff",
+      "order": 79,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff"
+      ],
+      "char_start": 20275,
+      "char_end": 20289,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a67b9ce695e7a705edeaed36b8d43f9",
+      "kind": "paragraph",
+      "text": "LΠ ⊆sem(P)⊆U Π and∀G k ∈ G.sem(P)∩G k ̸=∅. Proof.The floor clauses of Definition 1 are equivalent toS Fj ∈F sem(Fj)⊆sem(P), which isL Π ⊆sem(P). The ceiling clauses are equivalent tosem(P)⊆ T Ci∈C sem(Ci), which issem(P)⊆U Π. The liveness clauses are unchanged by the definition ofL Π andU Π. Combining the three equivalences gives the result. The theorem says exactly what the verifier certifies at the end of a run: the final policy is no smaller than the approved floors, no larger than the approved ceilings, and not empty on any approved liveness slice. Floors and ceilings form the sandwich in Fig. 2. Liveness prevents the sandwich from being satisfied by a policy that silently drops a required workflow. Plan compatibility.Some targets are broken before the first LLM call. A reviewer may approve a floor that a ceiling forbids, or a liveness slice that lies entirely outside the upper bound. In those cases the problem is not that the model needs a better prompt. The target itself must be repaired. At the set level, the ideal compatibility condition is simple: LΠ ⊆U Π and∀G k ∈ G. UΠ ∩G k ̸=∅. The first clause says the required requests fit inside the approved upper bound; the second says every approved liveness slice is reachable somewhere inside that bound. This condition abstracts away Cedar syntax, so it should not be read as an implementation claim that AUTOCEDARsolves a complete global feasibility problem. The current system uses verifier-backed admission checks: schema validation, boundary validation, pairwise floor-versus-ceiling checks after",
+      "order": 80,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff"
+      ],
+      "char_start": 20291,
+      "char_end": 21863,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f7e9d22bad40cac374e56191444d77af",
+      "kind": "paragraph",
+      "text": "derived-constraint compilation, identity-consistency checks, and liveness and probe checks. These are target-admission checks, not repair packets. They use some of the same verifier machinery that the signal layer later uses, but they run before",
+      "order": 81,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff"
+      ],
+      "char_start": 21865,
+      "char_end": 22110,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21782a9b910c459e98ad4c7dca17fc00",
+      "kind": "paragraph",
+      "text": "search and decide whether the target is coherent enough to give to the model at all. If they fail, AUTOCEDARreports a target-construction problem to the reviewer instead of asking the LLM to synthesize around an impossible plan. Proposition 1(Conditional soundness).IfAUTOCEDARreturns a policy bundlePfor an approved planΠ, then the returned artifact has passed Cedar validation, andcedar symcchas certified the inclusion checks in Theorem 1 and the implemented liveness checks inΠ. Consequently, the returned policy is semantically valid with respect to the approved boundary plan: it stays within all ceilings, includes all floors, and passes the approved liveness checks. Validity with respect to organizational intent holds only under the explicit assumption that the human-approved plan accurately captures that intent.AUTOCEDARmakes no stronger claim. A compatible plan may still lack a concise Cedar implementation, or the model may fail to find one within budget.",
+      "order": 82,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff"
+      ],
+      "char_start": 22112,
+      "char_end": 23083,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9504e1559c531477b938e86c5f5ffb65",
+      "kind": "heading",
+      "text": "Intent Construction and Review",
+      "order": 83,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff",
+        "Intent Construction and Review"
+      ],
+      "char_start": 23085,
+      "char_end": 23115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b9b104f4f83a2a98cf89c9c3eb785b7f",
+      "kind": "paragraph",
+      "text": "A verifier can say thatP|= Π, but it cannot say whether Πwas the right plan. That judgment belongs before search, because once the plan is approved every later guarantee is relative to it. AUTOCEDARtherefore makes human review attach to behavior rather than to final Cedar syntax. During target construction, each atom is proposed from a bounded source packet and carries source-node attribution. AUTOCEDARformalizes each reviewable unit as an atom a= (s, k, u, z, σsym , σintent ),wheresis the source span or source-node set,kis the atom kind,uis the plain-English rendering shown to the reviewer,zis the Cedar artifact or schema edit,σ sym is the mechanical status, andσ intent is the review status. An atom enters the approved atom set iff σsym (a) =passandσ intent (a) =accept.σ sym sayszis well formed under Cedar syntax, typing, and boundary-admission checks.σ intent says that the reviewer acceptsuas the intended interpretation of the source span. Neither status implies the other, and only approved atoms contribute toΣorΠ. The split between schema atoms and property atoms is not bookkeeping. A schema atom decides what concepts exist in the policy world: entity types, actions, attributes, relationships, and context fields. It authorizes no request by itself. A property atom decides behavior over that vocabulary: a floor, a ceiling, a liveness slice, or a derived constraint such as disjointness that compiles into verifier-facing checks. A correct-looking boundary over the wrong vocabulary is still wrong, and a good",
+      "order": 84,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff",
+        "Intent Construction and Review"
+      ],
+      "char_start": 23117,
+      "char_end": 24649,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa332b3312448248f8ebdf811bcdc26d",
+      "kind": "paragraph",
+      "text": "vocabulary can still support a boundary that is too broad, too narrow, or missing a required workflow. This is why target construction can backtrack. A property atom may require schema hooks that do not exist yet, such as a relationship field, status flag, or context attribute. AU- TOCEDARdoes not show that unsatisfiable property to the reviewer as if it were ready. It records the missing support, repairs the schema candidate, and reruns the mechanical and intent checks before the property can enter the plan. The target becomes fixed only after this repair loop and coverage accounting finish. Reviewers are not asked to certify an unchecked generated policy. They approve the target that the verifier will later enforce. When two admissible Cedar encodings of the same intent behave differently, AUTOCEDARcan present the difference as a request rather than as a Cedar diff: for example, whether a role-scoped user may read a sensitive field under a particular context. The reviewer chooses behavior, and the chosen behavior becomes part ofΠ. After synthesis, the traceTrecords source spans, approved atoms, boundary policies, verifier records, and the candidate clauses associated with those records. It is an audit aid, not a proof of clause provenance. It lets a reviewer ask why a clause was included and which approved boundary it helped satisfy, while the semantic guarantee still comes from the verifier. Benchmark runs may use simulated review as a measurement instrument, but those runs do not create intent authority. The",
+      "order": 85,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff",
+        "Intent Construction and Review"
+      ],
+      "char_start": 24651,
+      "char_end": 26188,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c3f58b5192fe23f44b751bdda5f879a0",
+      "kind": "paragraph",
+      "text": "correctness claim rests on human-approved targets.",
+      "order": 86,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "PsatisfiesΠiff",
+        "Intent Construction and Review"
+      ],
+      "char_start": 26190,
+      "char_end": 26240,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32c42ba3036316009fca6b1862fd4416",
+      "kind": "heading",
+      "text": "D. Signal-Layer",
+      "order": 87,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "D. Signal-Layer"
+      ],
+      "char_start": 26242,
+      "char_end": 26257,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d8bd47207d3a9978584eb98499f33be0",
+      "kind": "paragraph",
+      "text": "The first failed candidate is where verifier-guided synthesis is most prone to misdirection. The verifier can be completely precise and still not tell the model what to do next. A failed check might mean that the target itself is broken, that the candidate is too broad, that it is too narrow, that it cannot typecheck, that a reviewed workflow has disappeared, or that the model is cycling through the same bad repair. If AUTOCEDAR sends these outcomes back as one generic rejection, the model can move in exactly the wrong direction: loosen a ceiling failure, tighten a floor failure, or remove the workflow the reviewer wanted preserved. The signal layer is the translation boundary that prevents this collapse. It does not make the verifier stronger. It makes verifier evidence usable without letting that evidence rewrite the reviewed target. A signal record is a typed objectq= (ℓ, o, τ, κ, w, e),whereℓsays which layer produced the record, onames the oracle or check,τrecords the boundary or diagnostic kind,κrecords the relation being tested,wis any witness or counterexample, andeis localization evidence such as a candidate/reference excerpt, diff, or diagnosis. AUTO- CEDARthen computesΦ(Q t, Pt,Π, Ht)→m t+1,from the current recordsQ t, failed candidateP t, approved planΠ, and search historyH t. The output is the next repair packet. The packet may select, normalize, compress, and order evidence. It may not mutateΠ, invent a witness, reverse polarity, or add an unapproved obligation. This typing is what keeps the current implementation from",
+      "order": 88,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "D. Signal-Layer"
+      ],
+      "char_start": 26259,
+      "char_end": 27816,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:88f76288398c5941bff25c13ad0eb095",
+      "kind": "paragraph",
+      "text": "becoming a flat list of checks. Signals fall into four classes: target admission, semantic direction, local diagnostics, and history. Each has distinct obligations for what may and may not reach the model. Table I states these four obligations;",
+      "order": 89,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "D. Signal-Layer"
+      ],
+      "char_start": 27818,
+      "char_end": 28062,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fedd2dd1a0e33632ccf12aa946682653",
+      "kind": "caption",
+      "text": "Algorithm 2 gives the full translation. These are different uses",
+      "order": 90,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "D. Signal-Layer"
+      ],
+      "char_start": 28064,
+      "char_end": 28128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:69178aff6bfd8785172566c8a6e3a388",
+      "kind": "paragraph",
+      "text": "of verifier evidence, not different excuses to change the oracle. O1 keeps malformed targets out of the search loop. An atom that never matches any request, a disjointness constraint whose compiled form is not actually disjoint, a floor that is outside a same-action ceiling, or an identity check that compares a staff",
+      "order": 91,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "D. Signal-Layer"
+      ],
+      "char_start": 28130,
+      "char_end": 28448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5f54a441e3337a3a611eec522384f27d",
+      "kind": "heading",
+      "text": "TABLE I",
+      "order": 92,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE I"
+      ],
+      "char_start": 28450,
+      "char_end": 28457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b60d56582ae34dcd829e4ffdf84d7ec",
+      "kind": "heading",
+      "text": "SIGNAL-LAYER OBLIGATIONS AND REPAIR INFORMATION PRESERVATION",
+      "order": 93,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "SIGNAL-LAYER OBLIGATIONS AND REPAIR INFORMATION PRESERVATION"
+      ],
+      "char_start": 28459,
+      "char_end": 28519,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79c99c52a45d41c6105840002876938e",
+      "kind": "paragraph",
+      "text": "Obligation Preserved signal and invariant O1: target well formed Target-admission records preserve schema validity, satisfiable atoms, never-errors, match vacuity/broadness, identity consistency, derived-constraint compilation, duplicate/equivalent atoms, and floor-ceiling consistency before search starts. O2: semantic direction Boundary kind, checked relation, witness, and action-local evidence preserve whether the candidate shouldTIGHTEN,LOOSEN,EXPAND, or repair a disjointness collapse. O3: local diagnostic repair Parse, validation, setup, runtime-safety, excerpt/diff, session-binding, membership-drift, union-ceiling, role-intersection, and global-constraint diagnostics keep local repairs local. O4: history and non-progress Candidate hashes, recurring failure sets, oscillation windows, and repeated action-local diffs surface non-progress without changing the oracle. Algorithm 2Signal-layer translationΦ Require:Check recordsQ t; candidateP t; approved planΠ; historyH t Ensure:Repair packetm t+1",
+      "order": 94,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "SIGNAL-LAYER OBLIGATIONS AND REPAIR INFORMATION PRESERVATION"
+      ],
+      "char_start": 28521,
+      "char_end": 29531,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a218bed280b63febd877a83f7c92bbf1",
+      "kind": "heading",
+      "text": "Select failed records and attach their layerℓ, oracleo, kindτ, relationκ,",
+      "order": 95,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Select failed records and attach their layerℓ, oracleo, kindτ, relationκ,"
+      ],
+      "char_start": 29533,
+      "char_end": 29606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f055196dac2f23fdf4b874db3185a773",
+      "kind": "paragraph",
+      "text": "witnessw, and localization evidencee",
+      "order": 96,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Select failed records and attach their layerℓ, oracleo, kindτ, relationκ,"
+      ],
+      "char_start": 29608,
+      "char_end": 29644,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd10d58cd81d689bfeb37d0933e8be77",
+      "kind": "heading",
+      "text": "ifany target-admission record failsthen",
+      "order": 97,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ifany target-admission record failsthen"
+      ],
+      "char_start": 29646,
+      "char_end": 29685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:57165e338aaf386305472a31e44c665e",
+      "kind": "heading",
+      "text": "returntarget-construction diagnostic; do not ask model to repairP t",
+      "order": 98,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returntarget-construction diagnostic; do not ask model to repairP t"
+      ],
+      "char_start": 29687,
+      "char_end": 29754,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:53108809c2f122f09b5e5e5c39324029",
+      "kind": "heading",
+      "text": "end if",
+      "order": 99,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end if"
+      ],
+      "char_start": 29756,
+      "char_end": 29762,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b7f21db1e480f9158180feea0e6a700",
+      "kind": "heading",
+      "text": "for allcandidate-side semantic recordsqdo",
+      "order": 100,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "for allcandidate-side semantic recordsqdo"
+      ],
+      "char_start": 29764,
+      "char_end": 29805,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f8f703e125046a6ca004252713b2587",
+      "kind": "heading",
+      "text": "ifqis a ceiling or disjointness over-permission failurethen",
+      "order": 101,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ifqis a ceiling or disjointness over-permission failurethen"
+      ],
+      "char_start": 29807,
+      "char_end": 29866,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb3410fe78036981bde3245ca44b2ea7",
+      "kind": "heading",
+      "text": "mark directionTIGHTEN",
+      "order": 102,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "mark directionTIGHTEN"
+      ],
+      "char_start": 29868,
+      "char_end": 29889,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0e21ef45baa672f810f2e8337994c80",
+      "kind": "heading",
+      "text": "else ifqis a floor failurethen",
+      "order": 103,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "else ifqis a floor failurethen"
+      ],
+      "char_start": 29891,
+      "char_end": 29921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe26c0fc27aab8723aa951f7c8c27c68",
+      "kind": "heading",
+      "text": "mark directionLOOSEN",
+      "order": 104,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "mark directionLOOSEN"
+      ],
+      "char_start": 29923,
+      "char_end": 29943,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:679b1d87efdde4bc408cedb7788cf6f8",
+      "kind": "heading",
+      "text": "else ifqis a liveness failurethen",
+      "order": 105,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "else ifqis a liveness failurethen"
+      ],
+      "char_start": 29945,
+      "char_end": 29978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d73c540ac84786c1f56b29e6db93b1e6",
+      "kind": "heading",
+      "text": "mark directionEXPAND",
+      "order": 106,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "mark directionEXPAND"
+      ],
+      "char_start": 29980,
+      "char_end": 30000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0eb80a68e27bc786ceef537d429f1fd0",
+      "kind": "heading",
+      "text": "end if",
+      "order": 107,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end if"
+      ],
+      "char_start": 30002,
+      "char_end": 30008,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bce00cc9ed9eda4817c38132c6355e74",
+      "kind": "heading",
+      "text": "attach only approved boundary text, witnessw, and localization",
+      "order": 108,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "attach only approved boundary text, witnessw, and localization"
+      ],
+      "char_start": 30010,
+      "char_end": 30072,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aa94f07f8d1ee609b2620e749780996e",
+      "kind": "paragraph",
+      "text": "evidencee",
+      "order": 109,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "attach only approved boundary text, witnessw, and localization"
+      ],
+      "char_start": 30074,
+      "char_end": 30083,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd269daaecac423c43b17bf14a4de4c4",
+      "kind": "heading",
+      "text": "end for",
+      "order": 110,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "end for"
+      ],
+      "char_start": 30085,
+      "char_end": 30092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d71fd8dab2914e5c3b288ca961b4708",
+      "kind": "heading",
+      "text": "Convert parse, validation, setup, runtime-safety, and structural diagnostics",
+      "order": 111,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Convert parse, validation, setup, runtime-safety, and structural diagnostics"
+      ],
+      "char_start": 30094,
+      "char_end": 30170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1cbe7f502cf5ae4ad37d6170f235c1e6",
+      "kind": "paragraph",
+      "text": "into local repair hints",
+      "order": 112,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Convert parse, validation, setup, runtime-safety, and structural diagnostics"
+      ],
+      "char_start": 30172,
+      "char_end": 30195,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc92150005ab17e8686fbef1d72893a5",
+      "kind": "heading",
+      "text": "CompareP t and failed records withH t to detect repetition, oscillation",
+      "order": 113,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CompareP t and failed records withH t to detect repetition, oscillation"
+      ],
+      "char_start": 30197,
+      "char_end": 30268,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c8cb20acfbe20587927b9bcf751c9c29",
+      "kind": "heading",
+      "text": "returnrepair packet with selected boundaries, directions, witnesses, local",
+      "order": 114,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local"
+      ],
+      "char_start": 30270,
+      "char_end": 30344,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b6b8358950aa747c30bf9b4d6f7fc4f",
+      "kind": "paragraph",
+      "text": "hints, and history summary user to a patient entity is not a hard synthesis problem. It is an invalid target. The right response is to send the reviewer or target construction step a precise diagnostic, not to ask the LLM to synthesize around an invalid target. O2 preserves direction. The same witness can require opposite repairs depending on which boundary produced it. A request outside an approved ceiling is excess permission; a request inside an approved floor may be missing permission. Direction is therefore a function of the typed check record: Dt(q) =    TIGHTEN, q.τ∈ {ceiling,disjoint}, LOOSEN, q.τ=floor, EXPAND, q.τ=liveness, LOCAL, q.τ∈ {parse,type,safety}. The relation fieldq.κstill has to agree with the kind: an upperbound failure tightens, a lower-bound failure loosens, and a nonempty failure expands. If the boundary and relation kind disagree, the record is malformed feedback and should not become a model instruction. O3 keeps local diagnostics local. A candidate that does not parse, does not validate, or can raise runtime Cedar errors has no meaningful permit-set denotation to compare against the synthesis sandwich. AUTOCEDARmay ask the model to fix the offending expression, declaration, optional-attribute guard, or clause under the same schema. It may also point to the candidate block that failed, show the reference block it was checked against, or explain a session-binding or setmembership encoding mismatch. None of those local repairs becomes a new floor, ceiling, or liveness requirement.",
+      "order": 115,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local"
+      ],
+      "char_start": 30346,
+      "char_end": 31885,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:981f15ab333539f1dd008e8e88087757",
+      "kind": "paragraph",
+      "text": "O4 makes search history part of the repair state. A single verifier call cannot say whether search is improving, repeating, or oscillating. AUTOCEDARrecords recurring failed boundaries, repeated candidates, and failures that trade off against each other across iterations. It can tell the model that it is cycling between a floor and a ceiling, or that a rolescoped forbid rule keeps removing access required by a floor. History changes the repair packet, not the oracle. This is how AUTOCEDARremembers non-progress without letting the model rewrite the target.",
+      "order": 116,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local"
+      ],
+      "char_start": 31887,
+      "char_end": 32448,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd65910b84742531e6ab4cf2083932af",
+      "kind": "heading",
+      "text": "CEDARBENCH: A CEDARBENCHMARK",
+      "order": 117,
+      "page_number": 6,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "CEDARBENCH: A CEDARBENCHMARK"
+      ],
+      "char_start": 32450,
+      "char_end": 32478,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92c6791493eb773391ee58d5a6fb1e59",
+      "kind": "paragraph",
+      "text": "If the claim were only that an LLM can produce Cedar syntax, an ordinary natural-language-to-policy benchmark would be enough. AUTOCEDARis making a different claim. It says that the hard part is holding a global semantic target fixed while verifier evidence guides a stochastic proposer. CedarBench exists to measure that interface. The current CedarBench repository contains 221 tasks. Seventy-nine are mutation tasks rooted in official Cedar example domains for GitHub-style repositories, document clouds, hotel chains, sales organizations, streaming services, tag-androle systems, tax-preparation workflows, and clinical data access. The other 142 are hand-authored real-world tasks covering scoped tokens, delegation, revocation, time windows, break-glass access, role intersections, and large policy stores. Every task is executable: it has a prose specification, a Cedar schema, a Python verification plan, and Cedar reference policies. The reference policies are not deployment answers. They are formal witnesses for the reviewed floors, ceilings, liveness probes, and related checks that define the target for that task. Each CedarBench task pairs a requirement with the objects AUTOCEDARneeds to make the requirement checkable: a vocabulary, reviewed semantic boundaries, and executable verifier checks. The unit of measurement is not whether a generated snippet looks plausible in isolation. It is whether a candidate policy store satisfies the whole reviewed target: floors are included, ceilings are not exceeded, liveness slices",
+      "order": 118,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "CEDARBENCH: A CEDARBENCHMARK"
+      ],
+      "char_start": 32480,
+      "char_end": 34021,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e30874f3ba4edda0b64c00ea5a5fbd33",
+      "kind": "paragraph",
+      "text": "remain reachable, and the final artifact validates under the shared schema. This matters because independent translation hides failure mode we care about. A system can translate fifty fragments into fifty locally reasonable rules and still produce global trouble: one rule grants outside the intended scope, another",
+      "order": 119,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "CEDARBENCH: A CEDARBENCHMARK"
+      ],
+      "char_start": 34023,
+      "char_end": 34338,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83a6f32ca502f6870f7ad9642d74d356",
+      "kind": "paragraph",
+      "text": "relies on implicit exception, and a later rule makes an approved workflow unreachable. CedarBench therefore makes crosspolicy interference visible: whether the policy store, taken as a whole, lands inside the approved authorization boundary. CedarBench should not be read as a production-policy distribution or as proof that every organizational intent has been captured perfectly. Its target is narrower and more useful for this paper: it gives AUTOCEDARa replayable substrate for asking whether reviewed intent constraints, symbolic checks, and model-facing repair signals actually work together.",
+      "order": 120,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "CEDARBENCH: A CEDARBENCHMARK"
+      ],
+      "char_start": 34340,
+      "char_end": 34938,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1ddb3a3345daf2d82ea5ed075adfc39",
+      "kind": "heading",
+      "text": "EXPERIMENTS",
+      "order": 121,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "EXPERIMENTS"
+      ],
+      "char_start": 34940,
+      "char_end": 34951,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:606bc3776537cda0dd907faba7af7087",
+      "kind": "paragraph",
+      "text": "We consider the following research questions: RQ1 Synthesis effectiveness: To what extent can AUTO- CEDARsynthesize Cedar policies that satisfy formal verification targets, and at what computational cost? RQ2 Signal-layer contribution: How does verifier-to-model feedback contribute to AUTOCEDARsynthesis performance? RQ3 Verification validity: Does satisfying the verification plan produced by AUTOCEDARreliably predict policy correctness with respect to NL intent? RQ4 Baseline comparison: How does AUTOCEDARpolicy quality compare to direct LLM-based policy generation?",
+      "order": 122,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "returnrepair packet with selected boundaries, directions, witnesses, local",
+        "EXPERIMENTS"
+      ],
+      "char_start": 34953,
+      "char_end": 35524,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07d51841484ce4cb36234e9d52e6dd38",
+      "kind": "heading",
+      "text": "A. Experimental Setup",
+      "order": 123,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Experimental Setup"
+      ],
+      "char_start": 35526,
+      "char_end": 35547,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a942c06449f9b189e0f0bec18048611d",
+      "kind": "paragraph",
+      "text": "Datasets.Our evaluation considers two datasets: the Cedar- Bench benchmark discussed in Section IV, and three naturallanguage access-control requirements corpora drawn from iTrust, CyberChair, and the IBM course registration system, following the ACRE/REDE access-control extraction line of work [9], [10]. The reported external-corpus scenarios use",
+      "order": 124,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "A. Experimental Setup"
+      ],
+      "char_start": 35549,
+      "char_end": 35898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4264cade6a749bf6c15943d2aee64bc8",
+      "kind": "heading",
+      "text": "IBM Course Management sentences, 303 CyberChair sen-",
+      "order": 125,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IBM Course Management sentences, 303 CyberChair sen-"
+      ],
+      "char_start": 35900,
+      "char_end": 35952,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15d5970e310fc759d0ca6d163b49ba6e",
+      "kind": "paragraph",
+      "text": "tences, and 471 iTrust-for-Text2Policy sentences, from which access control sentences were extracted from. We use these access control sentences in our experiments, rather than the full natural language description of each system. Those corpora provide realistic natural-language and NLACP-style accesscontrol material, but they do not provide Cedar schemas or policies. Metrics.We record the model configuration, iteration budget, number of checks, convergence status, final loss, wallclock time, token usage, and estimated API cost. The current CedarBench driver runs the checked-in targets with a 20iteration budget and checkpoints each scenario so long runs can be resumed. We report both GPT-5.5 low, a strong proposer, and Haiku 4.5, a cheaper and faster proposer, because the question is not only whether the loop works with the strongest model but whether verifier-guided repair still carries a smaller model. We use the Cedar CLI andcedar symcc with the cvc5 SMT solver [11]. Model cost is reported separately from local solver time and human review time.",
+      "order": 126,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IBM Course Management sentences, 303 CyberChair sen-"
+      ],
+      "char_start": 35954,
+      "char_end": 37018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b17ae0f38fb3b11dca6684eb3dec50e",
+      "kind": "heading",
+      "text": "B. RQ1: Synthesis Effectiveness",
+      "order": 127,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. RQ1: Synthesis Effectiveness"
+      ],
+      "char_start": 37020,
+      "char_end": 37051,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5e6dab7448e92917334da0e6ef46d13",
+      "kind": "paragraph",
+      "text": "RQ1 asks the most direct question: once the target has been made executable, can AUTOCEDARactually synthesize policies that satisfy it? On CedarBench, the answer is yes",
+      "order": 128,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "B. RQ1: Synthesis Effectiveness"
+      ],
+      "char_start": 37053,
+      "char_end": 37221,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8155dd5bbd9fb026416b4d21581043f",
+      "kind": "heading",
+      "text": "TABLE II",
+      "order": 129,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE II"
+      ],
+      "char_start": 37223,
+      "char_end": 37231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:347711d5b6540c280dee2107bb0c34f5",
+      "kind": "heading",
+      "text": "CEDARBENCH SYNTHESIS EFFECTIVENESS FORAUTOCEDAR ON ALL221",
+      "order": 130,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CEDARBENCH SYNTHESIS EFFECTIVENESS FORAUTOCEDAR ON ALL221"
+      ],
+      "char_start": 37233,
+      "char_end": 37290,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45c74c79dcc1c50c4583b7e4c34704b1",
+      "kind": "paragraph",
+      "text": "SCENARIOS. ALL REPORTED NUMBERS ARE AVERAGES.",
+      "order": 131,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CEDARBENCH SYNTHESIS EFFECTIVENESS FORAUTOCEDAR ON ALL221"
+      ],
+      "char_start": 37292,
+      "char_end": 37337,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:735bb6a224cda92c39b201cc5859f5d1",
+      "kind": "heading",
+      "text": "Model Convergence Iters Time Tokens Cost",
+      "order": 132,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Model Convergence Iters Time Tokens Cost"
+      ],
+      "char_start": 37339,
+      "char_end": 37379,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04f352e7bddf85d3a8ce4f39dca0c9ad",
+      "kind": "equation",
+      "text": "GPT-5.5 low 221/221, 100% 1.67 24.59s 9,084 $0.0405 Haiku 4.5 221/221, 100% 2.51 8.93s 12,397 $0.0185",
+      "order": 133,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Model Convergence Iters Time Tokens Cost"
+      ],
+      "char_start": 37381,
+      "char_end": 37482,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25d4921212dad67e1c3b33de0691b7ad",
+      "kind": "heading",
+      "text": "TABLE III",
+      "order": 134,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE III"
+      ],
+      "char_start": 37484,
+      "char_end": 37493,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96393a3dfc8628a02e9623a5b0f25453",
+      "kind": "paragraph",
+      "text": "SIGNAL-LAYER ABLATION ON A100-SCENARIOCEDARBENCH SLICE. LOSS IS THE MEAN FINAL VERIFIER-VIOLATION COUNT. MEAN ITER.",
+      "order": 135,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE III"
+      ],
+      "char_start": 37495,
+      "char_end": 37610,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3bdd9500068505c41e559b8803600a20",
+      "kind": "heading",
+      "text": "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT",
+      "order": 136,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT"
+      ],
+      "char_start": 37612,
+      "char_end": 37672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:265294369a4ea589851e1bc787a38253",
+      "kind": "paragraph",
+      "text": "CAN BE FRACTIONAL. COST IS TOTAL RUN COST. Mode Scen. Conv. Mean loss Mean iter. Cost Schema only 100 85 15.58 1.00 $1.42 Schema + atoms, one-shot 100 84 0.27 1.00 $1.62 Native verifier loop 100 94 0.10 2.37 $5.73 Full signal stack 100 100 0.00 2.20 $5.83 for both model configurations we tested. Table II reports perscenario averages over all 221 CedarBench scenarios. Both models converge on every scenario. GPT-5.5 low takes fewer repair iterations and fewer tokens per scenario. Haiku 4.5 takes more iterations, but is faster and cheaper in this run.Thus we find that AUTOCEDARcan successfully synthesize Cedar policies that satisfy formal verification targets.",
+      "order": 137,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT"
+      ],
+      "char_start": 37674,
+      "char_end": 38339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf4c178ce5d5c75d39266775142e657d",
+      "kind": "heading",
+      "text": "RQ2: Signal-Layer Contribution",
+      "order": 138,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT",
+        "RQ2: Signal-Layer Contribution"
+      ],
+      "char_start": 38341,
+      "char_end": 38371,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db65e8449881a7882dd321b3f5b07d67",
+      "kind": "paragraph",
+      "text": "The ablation asks how useful the Signal Layer contribution is inside of AUTOCEDAR. We use a fixed 100-scenario Cedar- Bench slice and hold fixed the model (GPT-5.5 low), selected scenarios, Cedar validator, schemas, verification plans, and reference policies. The schema-only condition is also not a raw natural-language-to-Cedar baseline: it receives the approved schema produced by AUTOCEDAR’s schema-generation stage and must synthesize only the policy. We then compare four full-slice conditions: the model sees only that approved schema and prose, sees the schema plus property atoms in a one-shot setting, sees native verifier feedback in an iterative loop, or sees the full AUTOCEDARrepair-oriented signal stack. Table III shows why pass rate alone is misleading. Residual loss counts how many verifier violations remain at the end of a run, so it separates a near miss from a policy that is still far from the reviewed target. Schema-only and one-shot schema-plus-atoms converge on 85/100 and 84/100, but their residual losses differ sharply: 15.58 versus 0.27. The formal target pulls the model close even when the first candidate is not accepted. Native verifier feedback is also strong, converging on 94/100 with mean loss 0.10. The full signal stack closes the last six failures, reaching 100/100 with zero loss and similar cost.RQ2 therefore has a split answer: reviewed targets reduce the size of mistakes, and shaped repair signals close the stubborn remainder. D. RQ3 & RQ4: Policy Correctness and Baseline Comparison",
+      "order": 139,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT",
+        "RQ2: Signal-Layer Contribution"
+      ],
+      "char_start": 38373,
+      "char_end": 39906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f60a018868c64fd7bc26ed598b6014ae",
+      "kind": "paragraph",
+      "text": "We note that to the best of our knowledge, AUTOCEDARis the only tool that can synthesize Cedar policies and schemas from natural-language requirements against a formal verification target. A direct LLM baseline can generate policy text,",
+      "order": 140,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "AVERAGES SYNTHESIS ITERATIONS OVER COMPLETED SCENARIOS,SO IT",
+        "RQ2: Signal-Layer Contribution"
+      ],
+      "char_start": 39908,
+      "char_end": 40144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d7ca792f6a9c6fb0226fb17d6562193",
+      "kind": "heading",
+      "text": "TABLE IV",
+      "order": 141,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE IV"
+      ],
+      "char_start": 40146,
+      "char_end": 40154,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:27c12d74f28ada4aa943288ecafac5d7",
+      "kind": "heading",
+      "text": "VALIDATION PASS RATES.CATEGORY1: NLONLY;MODEL GENERATES",
+      "order": 142,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "VALIDATION PASS RATES.CATEGORY1: NLONLY;MODEL GENERATES"
+      ],
+      "char_start": 40156,
+      "char_end": 40211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bbd8edc8fdb6aab84034492ec0572b2",
+      "kind": "paragraph",
+      "text": "SCHEMA AND POLICY.CATEGORY2: NL + AUTOCEDAR SCHEMA; MODEL GENERATES POLICY ONLY. Setting Model CedarBench (221) Real-world (3)",
+      "order": 143,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "VALIDATION PASS RATES.CATEGORY1: NLONLY;MODEL GENERATES"
+      ],
+      "char_start": 40213,
+      "char_end": 40339,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62b24ca7ad96a5934afc8d7cac7a8038",
+      "kind": "heading",
+      "text": "Pass@1 Pass@3 Pass@1 Pass@3",
+      "order": 144,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Pass@1 Pass@3 Pass@1 Pass@3"
+      ],
+      "char_start": 40341,
+      "char_end": 40368,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:695c025498c1e5cbe45fe405903b9adb",
+      "kind": "paragraph",
+      "text": "Category 1 Haiku 4.5 0/221 0/221 0/3 0/3 Category 1 GPT-5.5 155/221 199/221 0/3 0/3 Category 2 Haiku 4.5 146/221 148/221 0/3 0/3 Category 2 GPT-5.5 196/221 204/221 0/3 0/3 AUTOCEDAR:221/221 CedarBench; 3/3 real-world. but without a reviewed boundary plan there is no formal notion of correctness to check against. To answer RQ3 and RQ4, we conduct three experiments which all study policy correctness and baseline comparison from different angles. We therefore organize around three evidence types: formal correctness, semantic correctness, and human alignment. We use two baseline categories throughout. InCategory 1, the model receives only the natural-language (NL) intent and must generate both the Cedar schema and policy. InCategory 2, the model receives the same NL intent together with the schema produced by AUTOCEDARand must generate only the Cedar policy. Category 2 puts all candidate policies under the same AUTOCEDARschema and approved property atoms, so the policies can be checked against the same formal targets. Category 1 lets each model invent its own schema, so there is no common property target for comparing those outputs; we therefore report only validation for that category.",
+      "order": 145,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Pass@1 Pass@3 Pass@1 Pass@3"
+      ],
+      "char_start": 40370,
+      "char_end": 41571,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56eeb95aed69d71a62605566e2e0d36e",
+      "kind": "heading",
+      "text": "Formal Correctness:We probe formal correctness at two",
+      "order": 146,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Formal Correctness:We probe formal correctness at two"
+      ],
+      "char_start": 41573,
+      "char_end": 41626,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d094954ea37a10dbd1adf1e7468ba0e",
+      "kind": "paragraph",
+      "text": "levels. First,Validationusescedar validateto check whether the generated Cedar artifacts are well-formed: the policy must parse, type-check, and conform to its schema. Second,Property checkingusescedar symccto ask whether a validation-passing Category 2 policy satisfies the approved floor, ceiling, and liveness atoms for the same NL intent. We can run property checks in Category 2 only because the policy is written against the AUTOCEDARschema, so the approved atoms and the candidate policy share the same vocabulary. For the real-world scenarios, when a generated Category 2 policy failed validation only because of trivial syntax or casing errors, we repaired those errors without changing the policy logic and then included it in property checking; policies requiring nontrivial modeling changes were left unevaluated. a) Validation:Table IV reports validation results for both input settings on CedarBench and the three real-world scenarios, with Pass@1 denoting the initial generation and Pass@3 denoting validation in at least one of three independent generations. On CedarBench, Haiku 4.5 fails all Category 1 cases, while GPT-5.5 improves from 155/221 at Pass@1 to 199/221 at Pass@3. Supplying the AUTOCEDARschema in Category 2 improves validation for both models, with GPT-5.5 reaching 204/221 at Pass@3. On the real-world scenarios, neither direct baseline validates in Category 1 or Category 2 across three attempts; the common failures are invalid Cedar syntax and schema-policy mismatches. AUTOCEDARvalidates on all 221",
+      "order": 147,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Formal Correctness:We probe formal correctness at two"
+      ],
+      "char_start": 41628,
+      "char_end": 43164,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee2589657cb81283f9a61ad692b12236",
+      "kind": "paragraph",
+      "text": "CedarBench scenarios and all three real-world scenarios.",
+      "order": 148,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Formal Correctness:We probe formal correctness at two"
+      ],
+      "char_start": 43166,
+      "char_end": 43222,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e0ea248d80f86d8761c3964d38b78007",
+      "kind": "heading",
+      "text": "TABLE V",
+      "order": 149,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 43224,
+      "char_end": 43231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8bd4a27834cbf14c12fabe6e28262542",
+      "kind": "paragraph",
+      "text": "CEDARBENCH PROPERTY-CHECKING RESULTS FORCATEGORY2. Generator or method Full property pass Property-check pass rate GPT-5.5 79.6% (176/221) 88.1% (4397/4991) Haiku 4.5 1.4% (3/221) 72.6% (2758/3798) AUTOCEDAR 100.0% (221/221) 100.0% (all checks)",
+      "order": 150,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 43233,
+      "char_end": 43477,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81f285483b1532d3c5d87593a9c8d006",
+      "kind": "caption",
+      "text": "Fig. 3. Error profile of validation-passing policies on CedarBench",
+      "order": 151,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 43479,
+      "char_end": 43545,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c935831afa17f2e4a798883b4169a76a",
+      "kind": "paragraph",
+      "text": "b) Property checking:We run property checking only after the validation gate. On CedarBench, this means the validation-passing Category 2 policies: 148 Haiku-4.5 policies and 204 GPT-5.5 policies at Pass@3. On the real-world scenarios, this means the two GPT-5.5 Category 2 policies for IBM and CyberChair that could be made validation-passing with only trivial syntax or casing repairs. Table V reports CedarBench results. AUTOCEDARsatisfies all approved properties for all 221 scenarios; GPT-5.5 fully passes 176/221 and Haiku 4.5 only 3/221. Individual property-check pass rates expose near misses: GPT-5.5 satisfies 4397/4991 checks and Haiku 4.5 satisfies 2758/3798. Table VI shows the same pattern on the real-world scenarios: AUTOCEDARpasses every property, while repaired GPT-5.5 policies pass 20/21 for IBM and 8/20 for CyberChair.",
+      "order": 152,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 43547,
+      "char_end": 44387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cff4a3e62d81d49ab046831b7e8e7242",
+      "kind": "caption",
+      "text": "Figure 3 plots ceiling violations against floor and live-",
+      "order": 153,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 44389,
+      "char_end": 44446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:46973347d0cd13c6579abdcf38612275",
+      "kind": "paragraph",
+      "text": "ness violations for validation-passing Category 2 policies. AUTOCEDARsits at the origin; GPT-5.5 has small scattered misses; Haiku 4.5 collapses toward over-permissive or overrestrictive/dead policies. Figure 4 shows the gap by domain: GPT-5.5 collapses ontags,streaming, anddoccloud, while Haiku 4.5 is near-zero throughout.",
+      "order": 154,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE V"
+      ],
+      "char_start": 44448,
+      "char_end": 44773,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eeac2261c2f9dd3e8d74fa0d8f5bfde4",
+      "kind": "heading",
+      "text": "Semantic Correctness:We evaluate semantic correctness",
+      "order": 155,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Semantic Correctness:We evaluate semantic correctness"
+      ],
+      "char_start": 44775,
+      "char_end": 44828,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e3896005ac59fbbb88043bb20a4c3d7b",
+      "kind": "paragraph",
+      "text": "using authorization requests. This experiment addresses RQ3 by checking whether policies make the expected authorization",
+      "order": 156,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Semantic Correctness:We evaluate semantic correctness"
+      ],
+      "char_start": 44830,
+      "char_end": 44950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0932766430393779aa9b056399a7b9ce",
+      "kind": "caption",
+      "text": "Fig. 4. Fully-correct rate (%) across CedarBench’s domains. Each cell is the",
+      "order": 157,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Semantic Correctness:We evaluate semantic correctness"
+      ],
+      "char_start": 44952,
+      "char_end": 45028,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22eb15d80f77d083cb80db1715d90a40",
+      "kind": "paragraph",
+      "text": "percentage of that domain’s scenarios in which every property atom passes.",
+      "order": 158,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Semantic Correctness:We evaluate semantic correctness"
+      ],
+      "char_start": 45030,
+      "char_end": 45104,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a1593500380d4a4db661fd2f1db4bcf9",
+      "kind": "heading",
+      "text": "TABLE VI",
+      "order": 159,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "TABLE VI"
+      ],
+      "char_start": 45106,
+      "char_end": 45114,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c656723933b578b2d254fb28f47ca77b",
+      "kind": "heading",
+      "text": "REAL-WORLD PROPERTY AND SEMANTIC REQUEST RESULTS. BASELINE",
+      "order": 160,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "REAL-WORLD PROPERTY AND SEMANTIC REQUEST RESULTS. BASELINE"
+      ],
+      "char_start": 45116,
+      "char_end": 45174,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:765a10e64331e8a5e9c73d97b5bae4f4",
+      "kind": "heading",
+      "text": "ROWS ARECATEGORY2; “REPAIR”MEANS ONLY TRIVIAL SYNTAX OR",
+      "order": 161,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ROWS ARECATEGORY2; “REPAIR”MEANS ONLY TRIVIAL SYNTAX OR"
+      ],
+      "char_start": 45176,
+      "char_end": 45231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0cab879e707cc58d460cdd02f6ff5882",
+      "kind": "paragraph",
+      "text": "CASING FIXES. N/AINDICATES INVALID SCHEMA/POLICY.",
+      "order": 162,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "ROWS ARECATEGORY2; “REPAIR”MEANS ONLY TRIVIAL SYNTAX OR"
+      ],
+      "char_start": 45233,
+      "char_end": 45282,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f4cead7417546f22703175008f9e4887",
+      "kind": "heading",
+      "text": "Scenario Policy Properties",
+      "order": 163,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Scenario Policy Properties"
+      ],
+      "char_start": 45284,
+      "char_end": 45310,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f42ff7c71aeacc42f5f9c1713ab91dc",
+      "kind": "paragraph",
+      "text": "passed",
+      "order": 164,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Scenario Policy Properties"
+      ],
+      "char_start": 45312,
+      "char_end": 45318,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5a92b9ca1c8f9b5e25524641213430a0",
+      "kind": "heading",
+      "text": "Requests",
+      "order": 165,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Requests"
+      ],
+      "char_start": 45320,
+      "char_end": 45328,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5995684542603370880548a97c7d2d7c",
+      "kind": "paragraph",
+      "text": "matched IBM GPT-5.5 (repair) 20/21 72/76",
+      "order": 166,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Requests"
+      ],
+      "char_start": 45330,
+      "char_end": 45370,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4783256695d06e49d4218b9c7d0bbebc",
+      "kind": "heading",
+      "text": "IBM Haiku 4.5 N/A N/A",
+      "order": 167,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IBM Haiku 4.5 N/A N/A"
+      ],
+      "char_start": 45372,
+      "char_end": 45393,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:41fcf3ab2b5a04b3c9df56e769d70bfa",
+      "kind": "heading",
+      "text": "IBM AUTOCEDAR 21/21 76/76",
+      "order": 168,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IBM AUTOCEDAR 21/21 76/76"
+      ],
+      "char_start": 45395,
+      "char_end": 45420,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6ffe68431efbee1acaf86fae01384da",
+      "kind": "paragraph",
+      "text": "CyberChair GPT-5.5 (repair) 8/20 58/68",
+      "order": 169,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "IBM AUTOCEDAR 21/21 76/76"
+      ],
+      "char_start": 45422,
+      "char_end": 45460,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c219c856db78db64a9e5c6398e5a5e5e",
+      "kind": "heading",
+      "text": "CyberChair Haiku 4.5 N/A N/A",
+      "order": 170,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CyberChair Haiku 4.5 N/A N/A"
+      ],
+      "char_start": 45462,
+      "char_end": 45490,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6d49694c85543fdbfc124838bb396c5d",
+      "kind": "paragraph",
+      "text": "CyberChair AUTOCEDAR 20/20 68/68 iTrust GPT-5.5 N/A N/A iTrust Haiku 4.5 N/A N/A iTrust AUTOCEDAR 35/35 38/38 decisions on concrete scenarios derived from the NL intent. For each real-world scenario, we constructed a semantic test set from the NL intent. First, each request was justified by one or more explicit access-control statements in the NL. Second, we instantiated a scenario-specific entity database containing the principals, resources, relationships, and state needed to make those requests executable. Third, we included only requests whose expected decision was determined by the NL intent itself. Each semantic request was translated into a Cedar request under the AUTOCEDARschema. Table VI shows that AUTOCEDARmatches all semantic requests across the three real-world scenarios: 76/76 for IBM, 68/68 for CyberChair, and 38/38 for iTrust. The repaired GPT-5.5 baselines match 72/76 requests for IBM and 58/68 requests for CyberChair. Haiku 4.5 and the iTrust baselines are N/A because they did not pass Cedar validation. The request failures align with the property failures. In IBM, the failed requests exercise the same valid registration behavior captured by the failed floor property. In CyberChair, the failed requests exercise the same role-boundary mistakes exposed by the failed ceiling properties. Thus, the request-level failures provide concrete examples of the same policy weaknesses detected by property checking.",
+      "order": 171,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "CyberChair Haiku 4.5 N/A N/A"
+      ],
+      "char_start": 45492,
+      "char_end": 46933,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2cc79b951d45d6c633892c4b6747d221",
+      "kind": "heading",
+      "text": "Human Alignment:This experiment asks whether human",
+      "order": 172,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Human Alignment:This experiment asks whether human"
+      ],
+      "char_start": 46935,
+      "char_end": 46985,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:28b7d34951b8d4d36545160b8012f656",
+      "kind": "paragraph",
+      "text": "readers prefer the policy artifacts produced by AUTOCEDAR or by direct LLM generation when they must answer concrete access-control questions. We ran a blinded artifactjudgment study with 14 participants. Participants saw requirement context, an access request, and Cedar excerpts from two anonymized systems. The A/B labels were randomized per probe. For each probe, participants selected which artifact better handled the request, or chose tie/neither, and could explain their judgment. The study produced 98 probe-level answers across two scenarios: iTrust credentials, sessions, and patient scope; and gradebook external-grade conflicts. Participants selected the AUTOCEDARartifact in 82/98 answers (83.7%), the direct LLM baseline in 8/98 answers (8.2%), and tie/neither in 8/98 answers (8.2%). The preference was strongest on iTrust, where AUTOCEDARwas selected in 52/56 answers (92.9%). Gradebook was more ambiguous but still favored AUTOCEDAR: 30/42 answers (71.4%) selected the AUTOCEDARartifact. The qualitative explanations match the technical failure modes above. Participants preferred artifacts that made the relevant boundary explicit: sensitive credential fields, session state, represented-patient scope, grade kind, and role-conflict forbids. They criticized baseline artifacts when they used broad permits or lacked the schema fields needed to enforce the intended boundary. This study is not a proof of policy correctness, and it does not yet evaluate the live HITL workflow; optional HITL feedback was sparse. It does show that,",
+      "order": 173,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Human Alignment:This experiment asks whether human"
+      ],
+      "char_start": 46987,
+      "char_end": 48536,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96fba2ed849091ba8bab9a650e5c4b4e",
+      "kind": "paragraph",
+      "text": "under concrete review questions, readers more often judged the AUTOCEDAR-derived artifact as the one that better matched access-control intent.",
+      "order": 174,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Human Alignment:This experiment asks whether human"
+      ],
+      "char_start": 48538,
+      "char_end": 48681,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d887c0cd323c8bf80bcabbe3d2e82e0",
+      "kind": "heading",
+      "text": "Answering RQ3+RQ4:Taken together, the formal prop-",
+      "order": 175,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-"
+      ],
+      "char_start": 48683,
+      "char_end": 48733,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fe427c64980040bfce9ec55d0e2f3a46",
+      "kind": "paragraph",
+      "text": "erty checks, semantic request tests, and blinded artifactjudgment study provide complementary evidence for RQ3 and RQ4. For RQ3, the results show that AUTOCEDAR’s verification plan is a useful predictor of NL-level correctness: policies satisfying the approved atoms also match all semantic requests in the real-world scenarios, while failed atoms correspond to concrete request-level errors. For RQ4, direct LLM generation improves when given the AUTOCEDAR schema, but schema guidance alone is insufficient: validationpassing GPT-5.5 and Haiku 4.5 policies still violate floor or ceiling properties and fail request tests. AUTOCEDARperforms better because it does not stop at producing syntactically valid Cedar; it synthesizes against explicit, reviewed correctness targets and uses verifier feedback to close the gap between NL intent and executable policy.Thus, the combined evidence supports both the validity of the verification targets and the advantage of verifier-guided synthesis over direct LLM policy generation.",
+      "order": 176,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-"
+      ],
+      "char_start": 48735,
+      "char_end": 49759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cbb1040fb837645f50a3005967a01380",
+      "kind": "heading",
+      "text": "THREATS TOVALIDITY",
+      "order": 177,
+      "page_number": 9,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "THREATS TOVALIDITY"
+      ],
+      "char_start": 49761,
+      "char_end": 49779,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9188529b0b9df2b924bb9fb1436ac756",
+      "kind": "paragraph",
+      "text": "Target validity.AUTOCEDARcertifies a policy against the reviewed Cedar schema and verification target, not against organizational truth in the abstract. If a requirement is missing from the source material, or if a reviewer approves the wrong atom, the verifier will faithfully check the wrong boundary. In our experiments, the CedarBench plans are benchmark artifacts and the external-corpus plans were constructed for this study; they should be read as reviewed semantic targets for evaluation, not as independently audited production policies. Request coverage.Symbolic checks are the primary acceptance criterion, but request-level evaluation is still only a sample of concrete behavior. Generated requests can miss",
+      "order": 178,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "THREATS TOVALIDITY"
+      ],
+      "char_start": 49781,
+      "char_end": 50500,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc03d128b82df8f9cbd3164960543f0d",
+      "kind": "paragraph",
+      "text": "corner cases, especially in domains with large entity graphs, temporal conditions, or context-dependent workflow state. We therefore use request tests as a sanity check on policy behavior, not as a replacement for the floor, ceiling, liveness, and disjointness obligations. Model and reviewer effects.LLM outputs are nondeterministic, and direct-generation baselines are especially sensitive to retries; this is why we report retry-based validation results rather than a single sample. The HITL parts of the evaluation also depend on the reviewer population and review procedure. A small or author-driven review study can show whether the artifacts are inspectable, but it cannot by itself prove how production engineers would review the same targets under deployment pressure.",
+      "order": 179,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "THREATS TOVALIDITY"
+      ],
+      "char_start": 50502,
+      "char_end": 51279,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ef779e837213fcc5be3cb0762e5d67b6",
+      "kind": "heading",
+      "text": "RELATEDWORK",
+      "order": 180,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "RELATEDWORK"
+      ],
+      "char_start": 51281,
+      "char_end": 51292,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:087396b45979686d0a2f102b977ac9cf",
+      "kind": "paragraph",
+      "text": "CEGIS when the proposer is stochastic.Counterexampleguided inductive synthesis pairs generation with a verifier that rejects bad candidates [12], [13]. In classical settings, the generator is often symbolic or enumerative, so earlier counterexamples can be removed from the search space by construction. An LLM breaks that assumption. It can read counterexamples and try again, but it does not maintain a symbolic version space and can reintroduce an old failure in the next sample. Recent LLM systems still use this verifierin-the-loop pattern for repair, execution-guided debugging, formal proofs, and planning [14]–[18]. AUTOCEDARkeeps the useful discipline of CEGIS–every accepted candidate is checked against the full target–while making explicit what the LLM does not provide: monotone elimination of prior failures. Verifier-guided formalization.Formal mathematics systems show how much an LLM can gain from a mechanically checked environment: language-model provers have been paired with automated theorem provers, interactive proof environments, retrieval over verified libraries, proof repair, and proof-assistant feedback during search or training [15], [16], [19]–[21]. LEAP [18] combines informal proof sketches, Lean compiler feedback, and a graph that records proof decomposition and memoizes verified subgoals. Roundtrip verification work makes the neighboring point for autoformalization: the formal tool can expose semantic drift and support scoped repair [22]. AUTOCEDARstarts from organizational intent",
+      "order": 181,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "RELATEDWORK"
+      ],
+      "char_start": 51294,
+      "char_end": 52816,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:127c5ecea5eb9a6efc088d094360cded",
+      "kind": "paragraph",
+      "text": "and must first construct the object to be checked: a reviewed schema, boundary plan, and audit trace that records how source spans, approved atoms, verifier records, and candidate clauses were associated. LLM policy authoring.Prior work asks whether LLMs can synthesize access-control policies from examples, request specifications, or natural language [4], and whether they can summarize or reconstruct existing policies at scale [5]. Those studies expose the failure mode that motivates this paper: syntax and plausibility are easier than semantic equivalence to the intended request set. AUTOCEDARtherefore moves the question from “can the model write a policy?” to “can it search under a reviewed target checked by a verifier?” Symbolic analysis as oracle, not repair.Policy analyzers such as Zelkova use SMT solving to reason about cloud policies [8], and related systems quantify or repair permissiveness in access-control policies [23], [24]. These tools can produce the semantic facts we need: inclusion results, equivalence results, and witnesses. A stochastic proposer needs something different from the raw oracle output. It needs to know whether a witness means excess permission, missing permission, or a vanished workflow. AUTOCEDARfocuses on that missing interface between symbolic policy evidence and model-facing repair.",
+      "order": 182,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "RELATEDWORK"
+      ],
+      "char_start": 52818,
+      "char_end": 54155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e96b53f3675a12a1dedd94422469dfd",
+      "kind": "heading",
+      "text": "CONCLUSION",
+      "order": 183,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "CONCLUSION"
+      ],
+      "char_start": 54157,
+      "char_end": 54167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:45977726d28d19677b8db49202010311",
+      "kind": "paragraph",
+      "text": "An LLM that writes a plausible policy has not earned authority over access control. AUTOCEDARassigns it a narrower role: propose candidates after a reviewed target has been fixed, and let a verifier judge every proposal against that target. Floor policies state what access must remain possible, ceiling policies state what access must not leak, and liveness slices keep approved workflows from disappearing. The paper’s main claim is that the hard interface is not only between natural-language and Cedar. It is also between a symbolic checker and a stochastic proposer. A verifier can return an exact failure, but a model needs a repair instruction that preserves boundary identity, witness request, repair direction, provenance, and search history. The signal layer is that contract. It lets the model use verifier evidence without letting the model change the oracle. The resulting guarantee is intentionally narrow. A returned policy is certified bycedar symccagainst the approved boundary plan; the plan’s correspondence to organizational intent remains a human-review judgment. That separation is the point. Verifier-guided LLM systems for security-sensitive synthesis should expose the target, the intent boundary, and the verifier-to-model signal as auditable state rather than hiding them inside prompts.",
+      "order": 184,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "Answering RQ3+RQ4:Taken together, the formal prop-",
+        "CONCLUSION"
+      ],
+      "char_start": 54169,
+      "char_end": 55483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7ed899016123cdf059e96d51f0054ffd",
+      "kind": "heading",
+      "text": "REFERENCES",
+      "order": 185,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "REFERENCES"
+      ],
+      "char_start": 55485,
+      "char_end": 55495,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96965780f670dc3e01d7a1764c89a5a3",
+      "kind": "reference",
+      "text": "[1] OW ASP Foundation, “A01 Broken Access Control – OW ASP Top",
+      "order": 186,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "REFERENCES"
+      ],
+      "char_start": 55497,
+      "char_end": 55559,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ee548a6193590b5468d7d97de249bdd9",
+      "kind": "heading",
+      "text": "2025,” OW ASP Top 10:2025, 2025, accessed: 2026-06-28.",
+      "order": 187,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "2025,” OW ASP Top 10:2025, 2025, accessed: 2026-06-28."
+      ],
+      "char_start": 55561,
+      "char_end": 55615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:389ddd5182252817131f87da056ec456",
+      "kind": "paragraph",
+      "text": "[2] SonarSource, “Sonar Data Reveals Critical “Verification Gap” in AI Coding,” SonarSource press release, 2026, accessed: 2026-06-28. [3] Anthropic, “Project Glasswing: An Initial Update,” Anthropic research update, 2026, accessed: 2026-06-28. [4] A. Vatsa, P. Patel, and W. Eiers, “Synthesizing access control policies using large language models,” inProceedings of the 4th International Workshop on Natural Language-Based Software Engineering, 2025, arXiv:2503.11573. [5] A. Vatsa, B. Hall, and W. Eiers, “Exploring large language models for access control policy synthesis and summarization,”arXiv preprint arXiv:2510.20692, 2025. [6] J. W. Cutler, C. Disselkoen, A. Eline, S. He, K. Headley, M. Hicks,",
+      "order": 188,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "2025,” OW ASP Top 10:2025, 2025, accessed: 2026-06-28."
+      ],
+      "char_start": 55617,
+      "char_end": 56323,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9540e4e1aa6458ebdde83452bba2e20e",
+      "kind": "heading",
+      "text": "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-",
+      "order": 189,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-"
+      ],
+      "char_start": 56325,
+      "char_end": 56391,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cda7bd6f3d49f144a665d4fb2faf72f3",
+      "kind": "paragraph",
+      "text": "Cutchen, N. Rungta, E. Torlak, and A. M. Wells, “Cedar: A new language for expressive, fast, safe, and analyzable authorization (extended version),”arXiv preprint arXiv:2403.04651, 2024. [7] “Cedar policy language,” cedarpolicy.com, accessed: 2026-06-24. [8] J. Backes, P. Bolignano, B. Cook, C. Dodge, A. Gacek, K. Luckow, N. Rungta, O. Tkachu, and C. Varming, “Semantic-based automated reasoning for AWS access policies using SMT,” inProceedings of the 18th Conference on Formal Methods in Computer-Aided Design, 2018, pp. 1–9.",
+      "order": 190,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-"
+      ],
+      "char_start": 56393,
+      "char_end": 56922,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:07a38b0ff1ce51b7df50e460b67f4eb9",
+      "kind": "paragraph",
+      "text": "[9] J. Slankas and L. Williams, “Access control policy extraction from unconstrained natural language text,” inProceedings of the 2013 International Conference on Social Computing. IEEE, 2013, pp. 435–440. [10] J. Slankas, X. Xiao, L. Williams, and T. Xie, “Relation extraction for inferring access control rules from natural language artifacts,” inProceedings of the 30th Annual Computer Security Applications Conference. ACM, 2014, pp. 366–375. [11] H. Barbosa, C. W. Barrett, M. Brain, G. Kremer, H. Lachnitt, M. Mann, A. Mohamed, M. Mohamed, A. Niemetz, A. N ¨otzli, A. Ozdemir, M. Preiner, A. Reynolds, Y . Sheng, C. Tinelli, and Y . Zohar, “cvc5: A versatile and industrial-strength SMT solver,” inTools and Algorithms for the Construction and Analysis of Systems, ser. Lecture Notes in Computer Science, vol. 13243. Springer, 2022, pp. 415–442. [12] A. Solar-Lezama, “Program synthesis by sketching,” Ph.D. dissertation, University of California, Berkeley, December 2008. [Online]. Available: https://www2.eecs.berkeley.edu/Pubs/TechRpts/ 2008/EECS-2008-177.html [13] A. Abate, C. David, P. Kesseli, D. Kroening, and E. Polgreen, “Counterexample guided inductive synthesis modulo theories,” inComputer Aided Verification. Springer, 2018, pp. 270–288. [14] S. Polu and I. Sutskever, “Generative language modeling for automated theorem proving,”arXiv preprint arXiv:2009.03393, 2020. [15] A. Q. Jiang, S. Welleck, J. P. Zhou, T. Lacroix, J. Liu, W. Li, M. Jamnik, G. Lample, and Y . Wu, “Draft, sketch, and prove: Guiding formal",
+      "order": 191,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-"
+      ],
+      "char_start": 56924,
+      "char_end": 58457,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:96d64515123c7ce4c1ae7027b86ad141",
+      "kind": "paragraph",
+      "text": "theorem provers with informal proofs,” inInternational Conference on Learning Representations, 2023. [16] E. First, M. N. Rabe, T. Ringer, and Y . Brun, “Baldur: Whole-proof generation and repair with large language models,” inProceedings of the 31st ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering, 2023, pp. 1229–1241. [17] S. Varambally, T. V oice, Y . Sun, Z. Chen, R. Yu, and K. Ye, “Hilbert: Recursively building formal proofs with informal reasoning,”arXiv preprint arXiv:2509.22819, 2025. [18] P.-N. Kung, L. Song, D. Hwang, J. Yoon, C.-L. Li, S. Severini, M. Olsak, E. Lockhart, Q. V . Le, B. Gokturk, T. Luong, T. Pfister, and N. Peng, “LEAP: Supercharging LLMs for formal mathematics with agentic frameworks,”arXiv preprint arXiv:2606.03303, 2026. [19] A. Q. Jiang, W. Li, S. Tworkowski, K. Czechowski, T. Odrzyg ´o´zd´z, P. Miło´s, Y . Wu, and M. Jamnik, “Thor: Wielding hammers to integrate language models and automated theorem provers,” inAdvances in Neural Information Processing Systems, 2022. [Online]. Available: https://arxiv.org/abs/2205.10893 [20] K. Yang, A. M. Swope, A. Gu, R. Chalamala, P. Song, S. Yu, S. Godil, R. Prenger, and A. Anandkumar, “LeanDojo: Theorem proving with retrieval-augmented language models,” inAdvances in Neural Information Processing Systems, 2023. [Online]. Available: https://arxiv.org/abs/2306.15626 [21] H. Xin, Z. Z. Ren, J. Song, Z. Shao, W. Zhao, H. Wang, B. Liu,",
+      "order": 192,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-"
+      ],
+      "char_start": 58459,
+      "char_end": 59939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:835e13cfd35e219ed5aa2e66187ad437",
+      "kind": "heading",
+      "text": "Zhang, X. Lu, Q. Du, W. Gao, Q. Zhu, D. Yang, Z. Gou, Z. F.",
+      "order": 193,
+      "page_number": 11,
+      "heading_level": 3,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-",
+        "Zhang, X. Lu, Q. Du, W. Gao, Q. Zhu, D. Yang, Z. Gou, Z. F."
+      ],
+      "char_start": 59941,
+      "char_end": 60000,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:582c69d66fe6aee58aeed52e8348cb8b",
+      "kind": "paragraph",
+      "text": "Wu, F. Luo, and C. Ruan, “DeepSeek-Prover-V1.5: Harnessing proof assistant feedback for reinforcement learning and monte-carlo tree search,”arXiv preprint arXiv:2408.08152, 2024. [Online]. Available: https://arxiv.org/abs/2408.08152 [22] D. Amrollahi, J. Lopez, and C. Barrett, “Faithful autoformalization via roundtrip verification and repair,”arXiv preprint arXiv:2604.25031, 2026. [23] W. Eiers, G. Sankaran, A. Li, E. O’Mahony, B. Prince, and T. Bultan, “Quantifying permissiveness of access control policies,” inProceedings of the 44th International Conference on Software Engineering, 2022, pp. 1805–1817. [24] W. Eiers, G. Sankaran, and T. Bultan, “Quantitative policy repair for access control on the cloud,” inProceedings of the 32nd ACM SIGSOFT International Symposium on Software Testing and Analysis, 2023, pp. 564–575.",
+      "order": 194,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "AUTOCEDAR: An Agentic Framework for",
+        "K. Hietala, E. Ioannidis, J. Kastner, A. Mamat, D. McAdams, M. Mc-",
+        "Zhang, X. Lu, Q. Du, W. Gao, Q. Zhu, D. Yang, Z. Gou, Z. F."
+      ],
+      "char_start": 60002,
+      "char_end": 60833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 11,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 11
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.03656",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 11,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

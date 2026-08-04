@@ -1,0 +1,2 @@
+class OutboxLeaseLostError(RuntimeError):
+    pass

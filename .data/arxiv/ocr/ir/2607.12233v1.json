@@ -1,0 +1,2503 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "8b03c2ae99aff919be41757bb465fb958d69a3b0ccc4ceb35aef1706e2e46a79",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:56a3fbfe77760da2dde69764578de3b4",
+      "kind": "paragraph",
+      "text": "Fin-Analyst at FinMMEval 2026 Task 3: A Live Hybrid Trading Agent with LLM Specialists and Rule-Based Signals ⋆ <FinMMEval> at CLEF 2026 Mohotarema Rashid1,*, Lingzi Hong 2, Junhua Ding 2 and K.S.M.Tozammel Hossain 2 1Department of Information Science, University of North Texas, Denton, TX, United States 2Department of Data Science, University of North Texas, Denton, TX, United States",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 387,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ec8562022f1015a80f1e3b8c6ae034e",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 389,
+      "char_end": 397,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b388cc93c97d39302d7e7b4d15c60168",
+      "kind": "paragraph",
+      "text": "Large language model (LLM) trading agents show promising performance in equity markets, yet remain narrowly focused on US equities with little evidence from live deployment. We present Fin-Analyst, a hybrid agent for FinMMEval 2026 Task 3: an eight-specialist LLM pipeline over news, SEC filings, fundamentals, analyst forecasts, technical indicators, and social sentiment, aggregated by a Meta-Agent for Tesla (TSLA), and a lightweight rulebased three-signal vote for Bitcoin (BTC). On the final official leaderboard (accessed 2026-07-05), Fin-Analyst ranks first of all agents on TSLA with a+13.51% return, +28.33 points over Buy-and-Hold (Sharpe 4.10,88% win rate), while the BTC vote ends flat yet well above a sharply falling baseline. Relative to the interim performance, the asset ranking reversed, indicating that short live windows yield volatility-sensitive rankings. Ablation identifies event-driven 8-K disclosures as the most influential TSLA signal. Error analysis shows that the memoryless agents repeat wrong calls for days at a time, and that the fixed-threshold BTC rules lost money by trading on noise in a sideways market while the LLM pipeline gained under similar conditions, motivating a memory-aware, LLM-based successor for both assets.",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract"
+      ],
+      "char_start": 399,
+      "char_end": 1660,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c8d1c2d1179a1e34804b0d3ece1d84c",
+      "kind": "heading",
+      "text": "Keywords",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Keywords"
+      ],
+      "char_start": 1662,
+      "char_end": 1670,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b3be72579b1a13e0014d601fb2d58023",
+      "kind": "paragraph",
+      "text": "Large language model agents, Multi-specialist architecture, Trading, Cross-asset trading, CLEF 2026 FinMMEval",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords"
+      ],
+      "char_start": 1672,
+      "char_end": 1781,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b5ee8711abfb226218f6f6b2a27b0c8",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 1783,
+      "char_end": 1795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a6144ce64f927b19929c250b4b91ba2",
+      "kind": "paragraph",
+      "text": "Financial markets function as vast information processing systems in which security prices aggregate signals from heterogeneous sources [1, 2]. Therefore, trading in financial markets is inherently datadriven. This data-driven approach relies on both structured numerical data, such as price, volume, accounting fundamentals and unstructured textual data including news reports, regulatory filings, analyst forecasts and social media discussions [3]. The rapid advancement of Artificial Intelligence (AI) and Machine Learning (ML) has further accelerated the adoption of algorithmic and high-frequency trading systems that significantly automated trading operations and reduced direct human involvement [4]. Yet classical algorithmic approaches like statistical arbitrage and neural networks for time-series prediction have struggled to integrate unstructured real-time data despite their proven predictive power [5, 6]. The emergence of Large Language Models (LLMs) offers a promising solution to these shortcomings, due to their ability to natively process both structured and unstructured textual information and perform reasoning over heterogeneous sources of evidence [ 7]. As a result, scholars and practitioners have begun adapting LLMs to trading tasks [8]. A recent wave of LLM-based trading agents includes newsdriven [8], reflection-driven [9], debate-driven [10], and reinforcement-learning-driven [11] systems that showed notable performance in backtested settings. CLEF 2026 Working Notes, 21 – 24 September 2026, Jena, Germany",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 1797,
+      "char_end": 3338,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b1456fd4083212e283760d2354af432",
+      "kind": "paragraph",
+      "text": "*Corresponding author. /envel⌢pe-⌢penMohotaremaRashid@my.unt.edu (M. Rashid); Lingzi.Hong@unt.edu (L. Hong); Junhua.Ding@unt.edu (J. Ding); Tozammel.hossain@unt.edu (K.S.M.Tozammel Hossain) /orcid0009-0003-2683-7191 (M. Rashid); 0000-0001-8412-8180 (L. Hong); 0000-0002-2129-1586 (J. Ding); 0000-0003-0136-2145 (K.S.M.Tozammel Hossain) ©2026 Copyright for this paper by its authors. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 3340,
+      "char_end": 3810,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:221e562dd669e51aac5499da96fba52b",
+      "kind": "paragraph",
+      "text": "Daily request",
+      "order": 8,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Keywords",
+        "Introduction"
+      ],
+      "char_start": 3812,
+      "char_end": 3825,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4435ec5850c806a287e24b191bc72ba8",
+      "kind": "heading",
+      "text": "Router",
+      "order": 9,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Router"
+      ],
+      "char_start": 3827,
+      "char_end": 3833,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56fa2744309f4925aca637ca852c20ba",
+      "kind": "heading",
+      "text": "TSLA BTC",
+      "order": 10,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC"
+      ],
+      "char_start": 3835,
+      "char_end": 3843,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:17f0b5d763932e68f5606c19c611970c",
+      "kind": "paragraph",
+      "text": "Persistent memory",
+      "order": 11,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC"
+      ],
+      "char_start": 3845,
+      "char_end": 3862,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cab296c2b9da6c134d1d88cb1d6084e4",
+      "kind": "heading",
+      "text": "K · 10-Q · 10-K · Compustat",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "K · 10-Q · 10-K · Compustat"
+      ],
+      "char_start": 3864,
+      "char_end": 3891,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0355769fa6826335f14edde734159fc3",
+      "kind": "paragraph",
+      "text": "IBES · technical · social Specialist agents",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K · 10-Q · 10-K · Compustat"
+      ],
+      "char_start": 3893,
+      "char_end": 3936,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bb565785c763fa04be24653303a1340d",
+      "kind": "heading",
+      "text": "News Event",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "News Event"
+      ],
+      "char_start": 3938,
+      "char_end": 3948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ea9c5dc7ce478d2611555d5d6088548b",
+      "kind": "heading",
+      "text": "Quarterly Annual",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Quarterly Annual"
+      ],
+      "char_start": 3950,
+      "char_end": 3966,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:032f28d54c6033047c514c23b3e94dd1",
+      "kind": "heading",
+      "text": "Fundamentals Analyst",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Fundamentals Analyst"
+      ],
+      "char_start": 3968,
+      "char_end": 3988,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0d87293ff21d355dccf1c1a3bf6c5d0",
+      "kind": "heading",
+      "text": "Technical Social",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Technical Social"
+      ],
+      "char_start": 3990,
+      "char_end": 4006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c39d6a155526a1386e6a380f5eed2b6f",
+      "kind": "heading",
+      "text": "Meta-agent",
+      "order": 18,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Meta-agent"
+      ],
+      "char_start": 4008,
+      "char_end": 4018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b1bbd53492c2e55c891d3c177109f847",
+      "kind": "paragraph",
+      "text": "Rule-based vote Price trend Fear & Greed",
+      "order": 19,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Meta-agent"
+      ],
+      "char_start": 4020,
+      "char_end": 4060,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4da56f40b7f02d9ee4722b1fd46ba79c",
+      "kind": "heading",
+      "text": "Momentum",
+      "order": 20,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Momentum"
+      ],
+      "char_start": 4062,
+      "char_end": 4070,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f528ae86366056a7cd6bc30b99b7c810",
+      "kind": "paragraph",
+      "text": "Majority vote F&G tiebreaker",
+      "order": 21,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Momentum"
+      ],
+      "char_start": 4072,
+      "char_end": 4100,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9e3e193c9a6311627f17b79304b2efe8",
+      "kind": "heading",
+      "text": "BUY · HOLD · SELL",
+      "order": 22,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL"
+      ],
+      "char_start": 4102,
+      "char_end": 4119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:674d803f8d3c6876f599d117b07387b5",
+      "kind": "caption",
+      "text": "Figure 1:Fin-Analyst architecture.",
+      "order": 23,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL"
+      ],
+      "char_start": 4121,
+      "char_end": 4155,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:00cd1100d3843f19925b5edd98df9108",
+      "kind": "paragraph",
+      "text": "Despite this progress, two empirical limitations of existing LLM trading agents exist. First, work has concentrated on US equities while cryptocurrency markets remain substantially under-represented, and the integration of such agents into live trading infrastructure has received little attention. The FinMMEval Task 3 setting at CLEF 2026 [12, 13] brings these gaps into sharp focus: it replaces offline backtests with a live, sequential, online evaluation protocol over both equity (Tesla Inc. [TSLA]) and cryptocurrency (Bitcoin [BTC]) assets. This setting directly motivates the multi-specialist agent developed in this paper. In the above context, our contribution follows: • A multi-agent LLM-based system for TSLA that combines news, SEC filings (8-K, 10-Q, 10-K), company fundamentals, analyst data, technical indicators, and social-media sentiment through a Meta-Agent aggregator. • A rule-based BTC strategy that uses price trend, the Crypto Fear & Greed index, and momentum.",
+      "order": 24,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL"
+      ],
+      "char_start": 4157,
+      "char_end": 5143,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:135e9f49198e2751e6359ca54f07bfba",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 25,
+      "page_number": 2,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Related Work"
+      ],
+      "char_start": 5145,
+      "char_end": 5157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5ef47ae8357e7eea24eb0542f0fa9146",
+      "kind": "paragraph",
+      "text": "LLMs have demonstrated notable capabilities in complex decision-making tasks across multiple domains including healthcare, software engineering, and scientific discovery [14, 9]. These highlight the value",
+      "order": 26,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Related Work"
+      ],
+      "char_start": 5159,
+      "char_end": 5363,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7cce9fdd8b3f1522cc1970a836656185",
+      "kind": "paragraph",
+      "text": "of LLMs to address complex and sequential decision making task [15]. An emerging area of applying such frameworks to financial trading has grown rapidly in recent years [10, 8, 16, 9, 17]. Scholars have shown that LLMs like GPT can extract meaningful signals from news headlines [8]. Zhang et al. [ 17] developed a specialized agent that processes multimodal data across news and technical indicators. These works collectively highlight the effectiveness of LLM-based trading methods. Beyond these simplified approaches, research also focuses on the memory layers of LLMs to make effective trading decisions. Yu et al. [9] organize sequential trading decisions by incorporating three layers of memory: observation, summary, and reflection. Moreover, scholars use summarization modules to distill long financial documents into concise summaries suitable for the LLM context window [18]. In addition to pure in-context learning, several works train LLM agents using outcome-driven feedback. For example, Koa et al. [11] developed a self-reflective framework that applies proximal policy optimization (PPO) to refine the agent’s predictions based on historical correct and incorrect outcomes. Despite these advances, gaps remain in the existing LLM-based trading literature. Evaluation of trading systems is predominantly confined to US equity markets with limited attention to crypto securities [19], and existing systems are rarely deployed in real-time market scenarios [20]. The system developed in this paper addresses these gaps through an eight-specialist agent architecture that operates",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Related Work"
+      ],
+      "char_start": 5365,
+      "char_end": 6957,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f0fd4c7e856fc209d75c37edf61ab7f8",
+      "kind": "paragraph",
+      "text": "simultaneously on equity (TSLA) and cryptocurrency (BTC) under a live online protocol, supported by a curated in-memory data pipeline loaded once at startup.",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Related Work"
+      ],
+      "char_start": 6959,
+      "char_end": 7116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ab3ebc5595f007519628823f9b47907",
+      "kind": "heading",
+      "text": "Methodology",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology"
+      ],
+      "char_start": 7118,
+      "char_end": 7129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:20dab7ca96e263260d96e02deb3ea1b0",
+      "kind": "heading",
+      "text": "Task Formulation",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "Task Formulation"
+      ],
+      "char_start": 7131,
+      "char_end": 7147,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:21ae5f875001e8e682fc754b253bfb2f",
+      "kind": "paragraph",
+      "text": "We address Task 3 of FinMMEval at CLEF 2026, a daily online trading task. Each day 𝑡, the evaluator sends a request containing the date 𝑑𝑡, the latest price 𝑝𝑡, the price history ℎ𝑡, a news bundle 𝑛𝑡, and a momentum label 𝑚𝑡 for an asset 𝑠∈ {TSLA,BTC} . Our system returns a discrete action 𝑎𝑡∈{BUY,HOLD,SELL}for each request.",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "Task Formulation"
+      ],
+      "char_start": 7149,
+      "char_end": 7475,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4ead4afa9ef0b42669d9d73d63b801e",
+      "kind": "heading",
+      "text": "System Overview",
+      "order": 32,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "System Overview"
+      ],
+      "char_start": 7477,
+      "char_end": 7492,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:40e873fc39e687c169c649965af6c24e",
+      "kind": "paragraph",
+      "text": "We propose a hierarchical agent with three layers: (i) a persistent memory of seven pre-processed corpora loaded at startup, (ii) eight role-conditioned LLM specialists, and (iii) a Meta-Agent that aggregates specialist verdicts into the final trading action. For TSLA, the full hierarchy is used, for BTC the system bypasses the LLM pipeline and applies a rule-based vote. Figure 1 shows the overall architecture of our proposed system.",
+      "order": 33,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "System Overview"
+      ],
+      "char_start": 7494,
+      "char_end": 7931,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:25c168131526f738518e4b925d65d5c1",
+      "kind": "heading",
+      "text": "Agent Specialization and Aggregation for TSLA",
+      "order": 34,
+      "page_number": 3,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "Agent Specialization and Aggregation for TSLA"
+      ],
+      "char_start": 7933,
+      "char_end": 7978,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a29a3b801e01a088868c4a3952945eb9",
+      "kind": "paragraph",
+      "text": "Each of our eight specialized agents consumes one data source: news (today’s bundle), 8-K filings (price-sensitive information), 10-Q reports (quarterly disclosure), 10-K reports (annual disclosure), Compustat fundamentals, IBES analyst consensus, technical indicators, and social-media posts. Each specialist is implemented as a singlegpt-4o-minicall that produces an action, a confidence score, and a brief reasoning for the trading decision. Table 1 summarizes the specialists and their inspiration in prior work. The Meta-Agent applies a recency-weighted hierarchy in which today’s news carries the highest weight and may override consensus when its confidence exceeds a predefined threshold. Each disclosure-based specialist always operates on the most recent filing dated on or before the decision date; filings are carried forward, so on days with no new 8-K, 10-Q, or 10-K the corresponding specialist re-reads the latest prior filing rather than abstaining. This ensures every specialist returns a verdict every day.",
+      "order": 35,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "Agent Specialization and Aggregation for TSLA"
+      ],
+      "char_start": 7980,
+      "char_end": 9005,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9bc7ad9fc1a3ab3e353d50c9b2cb32b",
+      "kind": "caption",
+      "text": "Table 1 The eight TSLA specialists, their data sources, and prior inspiration.",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "BUY · HOLD · SELL",
+        "Methodology",
+        "Agent Specialization and Aggregation for TSLA"
+      ],
+      "char_start": 9007,
+      "char_end": 9085,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d9a51a942f1cdbaa2624912cd0a27ca3",
+      "kind": "heading",
+      "text": "Specialist Data Source Prior Inspiration Proxy for",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for"
+      ],
+      "char_start": 9087,
+      "char_end": 9137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:31196ccdba7012d736fc057197d692a1",
+      "kind": "paragraph",
+      "text": "News Organizer-provided bundle [8] News sentiment Event 8-K filings [21] Price-sensitive info. Quarterly Financial Disclosure 10-Q [9] Quarterly performance Annual Financial Disclosure 10-K [9] Annual performance Fundamentals Compustat [22] Financial ratios Analyst IBES consensus [17] Analyst forecasts Technical MACD, RSI, BB, ADX [17] Market momentum Socialr/wallstreetbets[11] Social media sentiment",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for"
+      ],
+      "char_start": 9139,
+      "char_end": 9542,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6c996e8dbca478fac7c256620a634e4",
+      "kind": "heading",
+      "text": "Cryptocurrency Logic for BTC",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for",
+        "Cryptocurrency Logic for BTC"
+      ],
+      "char_start": 9544,
+      "char_end": 9572,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7c8ec5d6e5f1dc4427ba78de5dcb0cf8",
+      "kind": "paragraph",
+      "text": "For BTC, we use a rule-based three-signal majority vote over the price trend, the Crypto Fear & Greed Index, and the organizer-provided momentum label, with ties broken by the Fear & Greed score. The Crypto Fear & Greed Index is a daily sentiment indicator for the cryptocurrency market, published by alternative.me. It aggregates several market signals including social-media activity, market momentum, and Bitcoin dominance into a single score between 0 and 100, where lower values indicate “Extreme Fear” and higher values indicate “Extreme Greed. ” The index is widely used, with extreme fear historically associated with long opportunities (buy) and extreme greed with increased correction risk [ 23]. In our BTC pipeline, the index is queried at decision time and mapped to a directional vote: BUY when the score is≥60 , SELL when≤40 , and HOLD otherwise. It also serves as the tiebreaker when the price-trend and momentum signals disagree. The price-trend signal is computed from the organizer-provided price history ℎ𝑡 as the percentage change between the first and last price in the window,𝑟𝑡 = (𝑝last−𝑝 first)/𝑝first×100. It votes BUY when 𝑟𝑡 >+0.5% , SELL when 𝑟𝑡 <−0.5% , and HOLD otherwise. The momentum label maps bullish→BUY and bearish→SELL. The final action is the majority of the three votes, with the Fear & Greed score breaking ties (BUY if≥50, else SELL).",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for",
+        "Cryptocurrency Logic for BTC"
+      ],
+      "char_start": 9574,
+      "char_end": 10950,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a2e5c005d57c0a6fdfc083dbdfc6c475",
+      "kind": "heading",
+      "text": "Deployment",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for",
+        "Cryptocurrency Logic for BTC",
+        "Deployment"
+      ],
+      "char_start": 10952,
+      "char_end": 10962,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4073cf9f63feb0f84e36736f18a8ed01",
+      "kind": "paragraph",
+      "text": "Our system is deployed as a containerized FastAPI service on Hugging Face Spaces, with all persistent corpora loaded into memory at startup. On each request the router dispatches by asset. For TSLA, the eight specialists are invoked sequentially as blockinggpt-4o-minicalls via the OpenAI Python SDK, each constrained to JSON-only output with a per-agent token cap, after which the Meta-Agent is called once nine LLM calls per decision. To bound latency and cost, verdicts are cached by an MD5 hash of the prompt, so specialists reading unchanged low-frequency signal cards (e.g., the same most-recent",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Specialist Data Source Prior Inspiration Proxy for",
+        "Cryptocurrency Logic for BTC",
+        "Deployment"
+      ],
+      "char_start": 10964,
+      "char_end": 11565,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cba5f67c39fb586e45ea037400eacfb6",
+      "kind": "heading",
+      "text": "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+      "order": 43,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or"
+      ],
+      "char_start": 11567,
+      "char_end": 11666,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bf04690b1c102cb50a07040c3158314a",
+      "kind": "paragraph",
+      "text": "endpoint exception returns a HOLD verdict, ensuring compliance with the task’s no-retry protocol and addressing the observation of Ding et al. [19] that integration of LLM trading agents with live trading systems is rarely demonstrated in prior work.",
+      "order": 44,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or"
+      ],
+      "char_start": 11668,
+      "char_end": 11918,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ae0fa5cffdf391008ece74b3c4668589",
+      "kind": "heading",
+      "text": "Implementation Details",
+      "order": 45,
+      "page_number": 4,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+        "Implementation Details"
+      ],
+      "char_start": 11920,
+      "char_end": 11942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cdacea5d597cf95b3948341e48b07f6b",
+      "kind": "paragraph",
+      "text": "We use thegpt-4o-minimodel for all specialists and the Meta-Agent with temperature 0.1. See Table 8. Prompts follow the role-play conditioning style of Yu et al. [9]. The full prompts are listed in Appendix.",
+      "order": 46,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+        "Implementation Details"
+      ],
+      "char_start": 11944,
+      "char_end": 12151,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:508e68542be8ca42974814fdc764e5e6",
+      "kind": "heading",
+      "text": "Dataset",
+      "order": 47,
+      "page_number": 4,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+        "Dataset"
+      ],
+      "char_start": 12153,
+      "char_end": 12160,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a19411713edc5af9ca1942d066f01cd6",
+      "kind": "paragraph",
+      "text": "We evaluate our proposed system on the CLEF 2026 Task 3 dataset (TheFinAI/CLEF_Task3_Trading), which spans two assets: Tesla (TSLA, equity) and Bitcoin (BTC, cryptocurrency). Each daily record",
+      "order": 48,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+        "Dataset"
+      ],
+      "char_start": 12162,
+      "char_end": 12354,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:66bca0156a8eed816d1ed103fcc28dc9",
+      "kind": "caption",
+      "text": "Table 2 CLEF 2026 Task 3 evaluation windows.",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K on consecutive days) reuse a cached verdict rather than issuing a new API call. Any specialist or",
+        "Dataset"
+      ],
+      "char_start": 12356,
+      "char_end": 12400,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33f0f7b68ee7c07ad380845e1470edf3",
+      "kind": "heading",
+      "text": "Property Value",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Property Value"
+      ],
+      "char_start": 12402,
+      "char_end": 12416,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ab18518283ce0f547dfd37fe41cf0bba",
+      "kind": "heading",
+      "text": "SourceTheFinAI/CLEF_Task3_Trading",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "SourceTheFinAI/CLEF_Task3_Trading"
+      ],
+      "char_start": 12418,
+      "char_end": 12451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4f6c5990f5c344f280de4d975cf93ad1",
+      "kind": "paragraph",
+      "text": "Asset classes Equity (TSLA), Cryptocurrency (BTC) Fields date, price, news, momentum, future price change Action space {BUY, HOLD, SELL} Offline backtest (historical dataset) Period 2025-08-01 to 2026-05-10 TSLA 194 trading days ($302.63–$489.88) BTC 283 trading days ($62,754–$124,798) Live challenge (Agent Market Arena) Period from 2026-05-11 (leaderboard accessed 2026-07-05) TSLA 33 trading days (through 2026-06-26) BTC 50 days (through 2026-06-29) contains the close price, a pre-summarized news bundle, a momentum label, and the realized next-day price change. The action space is {BUY, HOLD, SELL}. Table 2 summarizes the key dataset properties.",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "SourceTheFinAI/CLEF_Task3_Trading"
+      ],
+      "char_start": 12453,
+      "char_end": 13107,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5d6861c93c8eb7e84789e085963da670",
+      "kind": "heading",
+      "text": "Results",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "SourceTheFinAI/CLEF_Task3_Trading",
+        "Results"
+      ],
+      "char_start": 13109,
+      "char_end": 13116,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:55aa268da22c5130f2f225237e39d151",
+      "kind": "heading",
+      "text": "Evaluation metrics",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "SourceTheFinAI/CLEF_Task3_Trading",
+        "Results",
+        "Evaluation metrics"
+      ],
+      "char_start": 13118,
+      "char_end": 13136,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e22d386846c9ae07682a916f77688012",
+      "kind": "paragraph",
+      "text": "We adopt four portfolio metrics standard in the LLM trading agent literature [11, 9, 24]. Cumulative Return (CR)measures total portfolio growth over an evaluation window of length 𝑇 :",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "SourceTheFinAI/CLEF_Task3_Trading",
+        "Results",
+        "Evaluation metrics"
+      ],
+      "char_start": 13138,
+      "char_end": 13321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85785bef709159fd1baf61beae7a7d13",
+      "kind": "heading",
+      "text": "CR = 𝑃𝑇−𝑃 0",
+      "order": 56,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "CR = 𝑃𝑇−𝑃 0"
+      ],
+      "char_start": 13323,
+      "char_end": 13334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:38b995e005a10afcabbafa8368b65377",
+      "kind": "paragraph",
+      "text": "𝑃0 ,(1) where𝑃 0 and𝑃 𝑇 are portfolio values at the start and end of the window. Alpha versus Buy-and-Hold( 𝛼BH) captures the return the agent generates beyond a passive benchmark on the same asset: 𝛼BH = CRagent−CR BH.(2) Sharpe Ratio (SR)quantifies risk-adjusted return as the ratio of mean excess return to its standard deviation: SR = E[𝑅𝑝]−𝑅 𝑓 𝜎𝑝 ,(3) where 𝑅𝑝 is the realized portfolio return, 𝑅𝑓 the risk-free rate (set to zero following Qian et al. [24]), and𝜎 𝑝 the standard deviation of excess returns. Win Rate (WR)measures the proportion of executed trades that closed profitably: WR = 𝑁wins",
+      "order": 57,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "CR = 𝑃𝑇−𝑃 0"
+      ],
+      "char_start": 13336,
+      "char_end": 13939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:79d6d69c31ec665f1c8acf8e96fd947e",
+      "kind": "heading",
+      "text": "𝑁trades",
+      "order": 58,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "𝑁trades"
+      ],
+      "char_start": 13941,
+      "char_end": 13948,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:49036c89e047d842de970fb22d6d9933",
+      "kind": "paragraph",
+      "text": ",(4) complementing the Sharpe ratio by isolating directional accuracy from magnitude effects [25].",
+      "order": 59,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "𝑁trades"
+      ],
+      "char_start": 13950,
+      "char_end": 14048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e332dd3111552547d56296357a19d77c",
+      "kind": "heading",
+      "text": "Live evaluation",
+      "order": 60,
+      "page_number": 5,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "𝑁trades",
+        "Live evaluation"
+      ],
+      "char_start": 14050,
+      "char_end": 14065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cf6f9c23e7ca9e63a8509e6df4a92677",
+      "kind": "paragraph",
+      "text": "We evaluate Fin-Analyst on the live Agent Market Arena [24] over the FinMMEval Task 3 challenge [13], which started 2026-05-11. The original working-notes discussion was based on an interim live leaderboard performance (2026-06-04); this version reports the update accessed 2026-07-05, with TSLA data available through 2026-06-26 and BTC through 2026-06-29. Returns are net of transaction fees against a passive Buy-and-Hold baseline; Table 3 and Figure 2 report the outcome.",
+      "order": 61,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "𝑁trades",
+        "Live evaluation"
+      ],
+      "char_start": 14067,
+      "char_end": 14542,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4fe2409ccf79fb8b7585420cddc73118",
+      "kind": "heading",
+      "text": "16 05-23 05-30 06-06 06-13 06-20 06-27",
+      "order": 62,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "16 05-23 05-30 06-06 06-13 06-20 06-27"
+      ],
+      "char_start": 14544,
+      "char_end": 14582,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fa37bc70ea76cb47fc0423894a9902d",
+      "kind": "paragraph",
+      "text": "85000 90000 95000 100000 105000 110000Portfolio value (USD) interim performance (2026-06-04) agent $101,997 (+2.0%) $113,326 $85,313 (a) TSLA  1st place: agent ends +28.0 points above Buy-and-Hold (2026-05-11 to 2026-06-26) Fin-Analyst (agent)",
+      "order": 63,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "16 05-23 05-30 06-06 06-13 06-20 06-27"
+      ],
+      "char_start": 14584,
+      "char_end": 14827,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7f56fa973883b7e3bbce7c0347421534",
+      "kind": "heading",
+      "text": "Buy-and-Hold",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Buy-and-Hold"
+      ],
+      "char_start": 14829,
+      "char_end": 14841,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cda3ec61bfcdd52e5126039db477bd99",
+      "kind": "heading",
+      "text": "13 05-20 05-27 06-03 06-10 06-17 06-24 07-01",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "13 05-20 05-27 06-03 06-10 06-17 06-24 07-01"
+      ],
+      "char_start": 14843,
+      "char_end": 14887,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aac237c8e60e1de7513e2dcf7374beda",
+      "kind": "paragraph",
+      "text": "75000 80000 85000 90000 95000 100000 105000 110000Portfolio value (USD) interim performance (2026-06-04) agent $106,370 (+6.4%) $99,906 $73,708 (b) BTC  agent ends +26.2 points above Buy-and-Hold (2026-05-11 to 2026-06-29) Fin-Analyst (agent)",
+      "order": 66,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "13 05-20 05-27 06-03 06-10 06-17 06-24 07-01"
+      ],
+      "char_start": 14889,
+      "char_end": 15131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b6af9644d530bf0f334786551fd2cbc",
+      "kind": "heading",
+      "text": "Buy-and-Hold",
+      "order": 67,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Buy-and-Hold"
+      ],
+      "char_start": 15133,
+      "char_end": 15145,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8f040ba36e4469a3608c4d96ed33075b",
+      "kind": "paragraph",
+      "text": "Fin-Analyst Live Equity Curves (accessed 2026-07-05)",
+      "order": 68,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Buy-and-Hold"
+      ],
+      "char_start": 15147,
+      "char_end": 15199,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:92eb7fef1ca54a0b646650a5b71b08df",
+      "kind": "caption",
+      "text": "Figure 2:Live equity curves over the official window (TSLA 2026-05-11 to 2026-06-26; BTC 2026-05-11 to 2026-06-",
+      "order": 69,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Buy-and-Hold"
+      ],
+      "char_start": 15201,
+      "char_end": 15312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b6e76c17f88d29d6e13c5ba82b698fba",
+      "kind": "heading",
+      "text": ", reconstructed from the arena’s official per-day trading log. The dash-dotted vertical line marks the interim",
+      "order": 70,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        ", reconstructed from the arena’s official per-day trading log. The dash-dotted vertical line marks the interim"
+      ],
+      "char_start": 15314,
+      "char_end": 15424,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a9deac8a59f02e5663b5970340937ab",
+      "kind": "paragraph",
+      "text": "working-notes snapshot date (2026-06-04), at which the corrected series stood at +2.0% (TSLA) and +6.4% (BTC). Table 3 Live evaluation results for Fin-Analyst on the FinMMEval Task 3 Agent Market Arena (accessed 2026-07-05). Returns are net of fees; “Vs B&H” is return relative to the passive Buy-and-Hold baseline. TSLA metrics are from the official leaderboard (data through 2026-06-26); BTC return and alpha are computed from the official per-day trading log through 2026-06-29 via Eqs. (1)–(2), with rank as displayed on the leaderboard at access",
+      "order": 71,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        ", reconstructed from the arena’s official per-day trading log. The dash-dotted vertical line marks the interim"
+      ],
+      "char_start": 15426,
+      "char_end": 15976,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30e28123f31ee67097458a7614e49c84",
+      "kind": "heading",
+      "text": "Asset Return Vs B&H Sharpe Win Rate Rank",
+      "order": 72,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Asset Return Vs B&H Sharpe Win Rate Rank"
+      ],
+      "char_start": 15978,
+      "char_end": 16018,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfae09cc6779f63db59cefb6dd5237ee",
+      "kind": "paragraph",
+      "text": "TSLA+13.51% +28.33% 4.10 88%1st / gold BTC−5.30% +17.63%−1.09 36%13th On TSLA, the multi-specialist LLM pipeline returns +13.51% against a−14.7% Buy-and-Hold (+28.33 points, Sharpe 4.10, 88% win rate), finishing first of all submitted agents. On BTC, the rulebased pipeline ends essentially flat at −5.30%, yet +17.63 points above a Buy-and-Hold that lost roughly a quarter of its value: its early short positioning captured the May drawdown before the lead decayed in late June (ranked 13th at access). Figure 2 makes the window sensitivity explicit: at the interim snapshot date (2026-06-04) the corrected series show TSLA at only +2.0% and BTC at +6.4%, so the TSLA gold-medal run occurred almost entirely after the working-notes cutoff and the interim",
+      "order": 73,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Asset Return Vs B&H Sharpe Win Rate Rank"
+      ],
+      "char_start": 16020,
+      "char_end": 16775,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f916fa5e4b05cc0775b8bbe88d10bd66",
+      "kind": "caption",
+      "text": "Table 4 Offline backtest on TSLA, NewsOnly is the Lopez-Lira and Tang [8] single-prompt news baseline.",
+      "order": 74,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Asset Return Vs B&H Sharpe Win Rate Rank"
+      ],
+      "char_start": 16777,
+      "char_end": 16879,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8d8f43a6c2653e808cb934f98e1f5bfd",
+      "kind": "heading",
+      "text": "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr",
+      "order": 75,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr"
+      ],
+      "char_start": 16881,
+      "char_end": 16913,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:383ef354f90095a8ec3050aa041ff0c0",
+      "kind": "paragraph",
+      "text": "Buy & Hold+0.379 0.000 +0.96 +0.318 0.299 0.37293 Always HOLD0.000−0.379 0.00 0.000 0.000 0.000 Random (𝜎=42)+0.417 +0.039 +1.13 +0.350 0.290 0.28211 Momentum−0.434−0.812−1.22−0.387 0.652 0.32289 NewsOnly+0.217−0.162 +0.94+0.184 0.143 0.1377 Fin-Analyst+0.256−0.122 +0.73 +0.2170.254 0.32293 Table 5 Offline backtest on BTC",
+      "order": 76,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr"
+      ],
+      "char_start": 16915,
+      "char_end": 17238,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:83d7a230b771fff0994f9209c908c305",
+      "kind": "heading",
+      "text": "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr",
+      "order": 77,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr"
+      ],
+      "char_start": 17240,
+      "char_end": 17272,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:62dbb485bf48e3f9e91fe1a0ea2f530a",
+      "kind": "paragraph",
+      "text": "Buy & Hold−0.315 0.000−0.68−0.277 0.497 0.49294 Always HOLD0.000 +0.315 0.00 0.000 0.000 0.000 Random+0.818 +1.133 +1.85 +0.669 0.148 0.36211 Momentum−0.062 +0.254 +0.04−0.053 0.486 0.50294 Fin-Analyst (rule-based)+0.228+0.543+0.66+0.1930.255 0.52294 Table 6 Ablation on TSLA. Δ-CR is the change in cumulative return when the named specialist is disabled; a larger negativeΔindicates a greater positive contribution.",
+      "order": 78,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Strategy CR𝛼 BH SR AR MDD WR𝑁 tr"
+      ],
+      "char_start": 17274,
+      "char_end": 17690,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:81a90463b451cd6633a0b9d751fbdd3c",
+      "kind": "heading",
+      "text": "Disabled CRΔ-CR SRΔ-SR Contribution",
+      "order": 79,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution"
+      ],
+      "char_start": 17692,
+      "char_end": 17727,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7bd3602027549dda64049f278b6c65b7",
+      "kind": "paragraph",
+      "text": "Event (8-K)−0.050−30.65pp+0.05−0.68critical Quarterly (10-Q)+0.113−14.35pp+0.44−0.30critical News (daily bundle)+0.139−11.74pp+0.49−0.24critical Annual (10-K)+0.281 +2.42pp+0.78 +0.05marginally negative Fundamentals (Compustat)+0.286 +2.95pp+0.79 +0.06marginally negative asset ranking reversed by the final window. This reversal is our central live result: over short, volatile windows, live agent rankings are unstable, and conclusions drawn from any single snapshot should be treated with caution.",
+      "order": 80,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution"
+      ],
+      "char_start": 17729,
+      "char_end": 18229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eccf6d8d90e6c2a03a5f853527c761ae",
+      "kind": "heading",
+      "text": "Offline backtest and ablation",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Offline backtest and ablation"
+      ],
+      "char_start": 18231,
+      "char_end": 18260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b13f5b1cfb6c15f3b9feeb1d21114f6",
+      "kind": "paragraph",
+      "text": "To test our proposed system beyond the short live window, we backtest over the historical CLEF Task 3 dataset (2025-08-01 to 2026-05-10) and isolate each specialist’s contribution by ablation. Following common practice [20], we report cumulative return (CR), Sharpe (SR), annualized return (AR), maximum drawdown (MDD), win rate (WR), and alpha to Buy-and-Hold (𝛼BH). In the backtest, the full TSLA system produces +25.63% CR (Sharpe +0.73): the highest annualized return among LLM-based strategies and +3.9 points above the NewsOnly baseline [8], indicating the multi-specialist architecture, rather than news alone, drives the result. NewsOnly attains a marginally higher Sharpe (+0.94) by abstaining on most days, a different trade-off between trading frequency and risk-adjusted return [25]. On BTC, the rule-based vote returns +22.82% against a−31.53% Buy-and- Hold (𝛼BH = +54.34 points) exceeds the best per-agent BTC alpha in prior benchmarks [20]. The gap between these backtest figures and the live result, most pronounced on BTC, is itself consistent with the backtest-to-live degradation reported by Qian et al. [24]. The ablation (Table 6) yields several findings. The Event (8-K) specialist is the most influential signal consistent with the price impact of material corporate disclosures [ 21, 1]. The Earnings (10-Q) and News specialists are equal secondary drivers (−14.35 and−11.74 points). The low-frequency 10-K and",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Offline backtest and ablation"
+      ],
+      "char_start": 18262,
+      "char_end": 19696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1ba6c38cf37e9ba2feb34ee57255dcb3",
+      "kind": "paragraph",
+      "text": "Compustat Fundamentals specialists marginally hurt performance, which suggests that annual signals add noise rather than signal at the daily-decision horizon [26].",
+      "order": 83,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Offline backtest and ablation"
+      ],
+      "char_start": 19698,
+      "char_end": 19861,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:db0260b1a70d0894e28f2b30e97f0159",
+      "kind": "heading",
+      "text": "Discussions, Limitations and Error Analysis",
+      "order": 84,
+      "page_number": 8,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Discussions, Limitations and Error Analysis"
+      ],
+      "char_start": 19863,
+      "char_end": 19906,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:762f92182604e50b53a2a36b7952bf71",
+      "kind": "paragraph",
+      "text": "Our proposed system outperforms the Buy-and-Hold baseline on both assets in the final official window. The outcome, however, reversed between the interim snapshot and the final window: the multi-specialist LLM pipeline, flat at 2026-06-04, captured the late-June TSLA rally and finished first, while the rule-based BTC vote, which led the interim board, decayed to flat. Such rank instability over short, volatile live windows is consistent with evidence that LLM trading advantages are regime-sensitive and deteriorate under longer and broader evaluation [ 27], with the adaptive, regime-dependent nature of market efficiency [28], and with the backtest-to-live degradation reported by Qian et al. [ 24]. For BTC, our rule based three-signal majority vote was defensive rather than return-generating: it preserved capital (+26.2 points of alpha) in a market that fell by roughly 26%, consistent with evidence that simple momentum and technical signals carry real predictive power in cryptocurrency markets [29] and that the Fear & Greed Index aligns with short-horizon BTC returns [23]. Moreover, the following limitations qualify these results and mark where the next gains are likely to come from: • Short, volatile live window.Both assets were evaluated over fewer than two months of live trading in a high-volatility regime; the interim-to-final rank reversal shows that such windows cannot separate skill from regime luck [27, 30], so the live rankings reported here should be read as indicative rather than conclusive.",
+      "order": 85,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Discussions, Limitations and Error Analysis"
+      ],
+      "char_start": 19908,
+      "char_end": 21433,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd0b92adb038cf00ab50143f930cdb50",
+      "kind": "paragraph",
+      "text": "• Multi-source orchestration requires careful aggregation.In the offline backtest, eight specialists pulling from heterogeneous sources appeared to introduce noise in daily trading decisions, and our recency-weighted Meta-agent does not fully discount the slower channels, which echoes Ding et al. ’s observation that naive scaling does not improve trading performance without careful aggregation [19]. The strong final TSLA window shows the ensemble can capture a favorable regime, but the aggregation itself remains hand-tuned. • The daily news signal dominates everything else.Today’s news was clearly our highestinformation reflection, consistent with prior news-driven LLM trading task [8]. Incorporating slow moving inputs such as the 10-K disclosure and social media sentiment through the same vote appears to have diluted that opportunity rather than reinforced it. • An LLM-based BTC agent is the natural next step.The rule-based vote led the interim leaderboard but decayed to flat as the regime turned, because its fixed thresholds cannot adapt. Given that the multi-specialist LLM pipeline ultimately won the TSLA track, extending it to BTC with crypto-native inputs (on-chain activity, funding rates, crypto news) could pair the vote’s defensiveness with adaptive positioning. • Memory engineering is essential.Prior work shows that layered memory [9, 17] and reflectiondriven self-correction [31] significantly improve agent performance. We use a stateless prompt per request and store nothing across time, which might be an obvious gap to close in future",
+      "order": 86,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Discussions, Limitations and Error Analysis"
+      ],
+      "char_start": 21435,
+      "char_end": 23004,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d58e41876027e4aac7a9561492f2215e",
+      "kind": "paragraph",
+      "text": "iterations. • Reasoning engineering might improve the result.Each specialist is a single forward pass with no prompt engineering [ 32], no debate-style aggregation [33], and no fine-tuning of the underlying model. We conclude that these are standard paths in stronger financial agents and would be our next focus. • Our model may simply be too small.We usedgpt-4o-minifor cost and latency . A stronger foundation model such as GPT-4o, or a domain-fine-tuned variant, could significantly shift performance before any of the other changes above are made. • We did not perform statistical significance testing.The performance gap between our system’s returns and the baseline may not be distinguishable from random variation [30]. Any performance claim, positive or negative, needs proper hypothesis testing to stand.",
+      "order": 87,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Discussions, Limitations and Error Analysis"
+      ],
+      "char_start": 23006,
+      "char_end": 23820,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f792cbb8b5c4a51b388b1eee68b13806",
+      "kind": "caption",
+      "text": "Table 7 Day-level error attribution computed from the official per-day trading logs. Hit rates are position-vs-next-move measures and differ from the arena’s trade-level win rate.",
+      "order": 88,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Disabled CRΔ-CR SRΔ-SR Contribution",
+        "Discussions, Limitations and Error Analysis"
+      ],
+      "char_start": 23822,
+      "char_end": 24001,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2e4b2694a539e8d423949339a470cda9",
+      "kind": "heading",
+      "text": "TSLA BTC",
+      "order": 89,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC"
+      ],
+      "char_start": 24003,
+      "char_end": 24011,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f59b2307d7b3f8ef88b3ee2bf68046da",
+      "kind": "paragraph",
+      "text": "Final return (net of fees)+13.51%−5.30% Acted days / exposure 19/33 (58%) 31/50 (62%) Hit rate (acted days) 0.632 0.387 Long days: hit / total PnL 0.75 /−1.55pp 0.17 /−6.50pp Short days: hit / total PnL 0.60 /+15.17pp 0.44 /+7.71pp Max equity drawdown−6.1%−11.1% • Limited SOTA comparison.We benchmark against the single-prompt news baseline of Lopez- Lira and Tang [ 8], which isolates the contribution of the multi-specialist architecture over a news-only LLM. However, we do not yet compare against published multi-agent systems such as FinMem [9] or FinAgent [17], which would position our pipeline relative to the broader field. Extending the evaluation to these systems is a priority for future work. As a result, we do not claim that these live rankings are definitive. What we offer is a documented effort of what a multi-source LLM trading agent looks like without memory, advanced reasoning, a larger model, or rigorous evaluation, together with a clear list of where the next gains are likely to come from.",
+      "order": 90,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC"
+      ],
+      "char_start": 24013,
+      "char_end": 25030,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1b48386aa8930cb20d27344d43ff3f6b",
+      "kind": "heading",
+      "text": "Error analysis",
+      "order": 91,
+      "page_number": 9,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Error analysis"
+      ],
+      "char_start": 25032,
+      "char_end": 25046,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:14632355db620816243063f4aa6f6d42",
+      "kind": "paragraph",
+      "text": "We study when the system made money and when it lost money, using the arena’s official day-by-day trading logs. The TSLA log covers 2026-05-11 to 2026-06-26 with 33 trading days, and the BTC log covers 2026-05-11 to 2026-06-29 with 50 days. A day counts as a hit when the position pointed in the same direction that the price moved on the following day. Table 7 summarises the attribution. Both markets fell during the evaluation window. TSLA lost 14.7% and BTC lost 26.3% under Buyand-Hold. Every point of profit came from short positions, while long positions lost money on both assets. The system performed well in two situations. In the first situation, the market was clearly falling and negative news kept arriving, so the system stayed short and profited. This happened on TSLA from 05-12 to 05-15 with a gain of +5.3% and on BTC from 05-12 to 05-30 with a gain of +8.3%, which is consistent with the finding that LLM predictability concentrates in bad news [8]. In the second situation, the TSLA pipeline timed small ups and downs correctly in mid-June and gained +9.6% even though the price barely moved. This stretch produced the winning margin, and it happened after the interim snapshot. We divide error analysis into four group by following error taxonomy of LLM based trading literature [34]. The first group is the bad first day. On day one the system bought on both assets and lost, with TSLA falling 2.92% on its worst day and BTC falling 1.8%. The reason is that the system starts with no history and no context, so its first decision is effectively a blind guess.",
+      "order": 92,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Error analysis"
+      ],
+      "char_start": 25048,
+      "char_end": 26630,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dedbba042e11f57e88a0f6280f218ff9",
+      "kind": "paragraph",
+      "text": "The second group is holding on to a wrong bet. TSLA stayed short for six days in a row while the price rose 6% between 05-21 and 05-28, and this stretch caused the maximum drawdown of 6.1%. BTC repeated the same mistake by shorting a rising market on its final two days and losing1.8%. The reason is that the system has no memory, so it cannot recognise that it has been wrong for several consecutive days and it keeps repeating the same call. This failure is the trading analogue of the action-inversion errors reported for financial text classifiers [34]. The third group is trading on noise, and it produced the largest loss. BTC lost 8.1% between 06-11 and 06-22 while the market moved only+1.3%, and this single stretch wiped out the lead it had built earlier. The reason is that the trading rules use a threshold of±0.5%, but BTC normally moves 2 to 3",
+      "order": 93,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Error analysis"
+      ],
+      "char_start": 26632,
+      "char_end": 27489,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5e27a8839255bb592aaa471a77f679a2",
+      "kind": "paragraph",
+      "text": "percent in a day. The rules therefore kept flipping direction on random wiggles, and they issued buy signals only after prices had already peaked, so only one of six buy decisions was correct [29]. The fourth group is sitting out big moves. BTC stayed flat while the market fell 15.8%, because its three signals disagreed and the tie defaulted to HOLD. TSLA stayed flat during a4.0% drop, because no news arrived to trigger a trade. These mistakes are safe in the sense that no money was lost, but the profit that was available in those periods was missed. The clearest lesson comes from comparing the two pipelines over the same near-flat weeks. The LLM pipeline gained +9.6% on TSLA while the fixed-threshold rules lost 8.1% on BTC. Reading the news day by day works in sideways markets, whereas fixed thresholds do not. This contrast directly motivates the LLM-based BTC agent and the memory layer proposed in Section 7.",
+      "order": 94,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Error analysis"
+      ],
+      "char_start": 27491,
+      "char_end": 28414,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2fc28733386c70b0d888403de82880dc",
+      "kind": "heading",
+      "text": "Future Work",
+      "order": 95,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Future Work"
+      ],
+      "char_start": 28416,
+      "char_end": 28427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c2e65f65402b862348d43b17ec0f064a",
+      "kind": "paragraph",
+      "text": "Our proposed system relies on static prompting and a hand-tuned aggregation rule for TSLA, and on a rule-based BTC vote with fixed decision thresholds (±0.5% price trend, Fear & Greed 40/60), neither of which learns from realized trading outcomes. Future directions include (i) refine specialist prompts and Meta-Agent weights via proximal policy optimization against next-day returns, (ii) replace single-pass aggregation with structured multi-agent debate, (iii) introduce a regime-conditioned memory layer that discounts low-frequency annual signals during high-volatility periods, extending Yu et al. [9], and (iv) make the BTC vote regime-aware by re-fitting the price-trend and Fear & Greed thresholds on a rolling window and adding a moving-average trend filter to exit short positions when the market turns, addressing the late-June decay observed in Section 5.2. Together, these directions outline a learned, debate-driven, and memory-aware successor to the present prompt-engineered system, and align with the open challenges of stronger backbones, rigorous evaluation, and live deployment identified for LLM trading agents at large [19]. Declaration on Generative AI During the preparation of this work the author(s) used AI tools such as Claude to assist in figure creation, and writing of some of the sections. The authors developed all core ideas, methods, analyses, and conclusions. The final content reflects the authors’ independent scholarly contributions. After using this tool/service, the author(s) reviewed and edited the content as needed and take(s) full responsibility",
+      "order": 96,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Future Work"
+      ],
+      "char_start": 28429,
+      "char_end": 30022,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:04d106e08197aba2e72e60ce6e9befec",
+      "kind": "paragraph",
+      "text": "for the content of the published article.",
+      "order": 97,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "TSLA BTC",
+        "Future Work"
+      ],
+      "char_start": 30024,
+      "char_end": 30065,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:42951cf50090b96c6db9475cd0006362",
+      "kind": "heading",
+      "text": "References",
+      "order": 98,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 30067,
+      "char_end": 30077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e177ee53e091db2348f7f59ea0329ec2",
+      "kind": "reference",
+      "text": "[1] E. F. Fama, Efficient capital markets: A review of theory and empirical work, The Journal of Finance 25 (1970) 383–417. doi:10.2307/2325486. [2] I. Goldstein, C. S. Spatt, M. Ye, Big data in finance, The Review of Financial Studies 34 (2021) 3213–3225. doi:10.1093/rfs/hhab038. [3] P. C. Tetlock, Giving content to investor sentiment: The role of media in the stock market, The Journal of Finance 62 (2007) 1139–1168. doi:10.1111/j.1540-6261.2007.01232.x. [4] T. Hendershott, C. M. Jones, A. J. Menkveld, Does algorithmic trading improve liquidity?, The Journal of Finance 66 (2011) 1–33. doi:10.1111/j.1540-6261.2010.01624.x. [5] L. W. Cong, T. Liang, X. Zhang, W. Zhu, Textual factors: A scalable, interpretable, and data-driven approach to analyzing unstructured information, Management Science 71 (2025) 10727–10739. doi:10.1287/mnsc.2020.01180. [6] T. Fischer, C. Krauss, Deep learning with long short-term memory networks for financial market predictions, European Journal of Operational Research 270 (2018) 654–669. doi:10.1016/j.ejor.",
+      "order": 99,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References"
+      ],
+      "char_start": 30079,
+      "char_end": 31125,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8430fa4bc2c4c26c76ade1a711c4fa86",
+      "kind": "heading",
+      "text": "054.",
+      "order": 100,
+      "page_number": 10,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 31127,
+      "char_end": 31131,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6974e3476dec7acddfdbe15b6602a752",
+      "kind": "paragraph",
+      "text": "[7] J. Wei, X. Wang, D. Schuurmans, M. Bosma, B. Ichter, F. Xia, E. Chi, Q. Le, D. Zhou, Chain-ofthought prompting elicits reasoning in large language models, in: Advances in Neural Information Processing Systems, 2022. ArXiv:2201.11903. [8] A. Lopez-Lira, Y. Tang, Can ChatGPT forecast stock price movements? return predictability and large language models, arXiv preprint arXiv:2304.07619 (2023). [9] Y. Yu, Z. Yao, H. Li, Z. Deng, Y. Jiang, Y. Cao, Z. Chen, J. W. Suchow, Z. Cui, R. Liu, Z. Xu, D. Zhang, K. Subbalakshmi, G. Xiong, Y. He, J. Huang, D. Li, Q. Xie, FinCon: A synthesized LLM multi-agent system with conceptual verbal reinforcement for enhanced financial decision making, in: Advances in Neural Information Processing Systems, volume 37, 2024, pp. 137010–137045. [10] Y. Li, Y. Yu, H. Li, Z. Chen, K. Khashanah, TradingGPT: Multi-agent system with layered memory and distinct characters for enhanced financial trading performance, arXiv preprint arXiv:2309.03736 (2023). [11] K. J. L. Koa, Y. Ma, R. Ng, T.-S. Chua, Learning to generate explainable stock predictions using self-reflective large language models, in: Proceedings of the ACM Web Conference 2024, 2024. doi:10.1145/3589334.3645611. [12] Z. Xie, Y. Dai, R. Elbadry, V. Jani, X. Peng, L. Qian, G. Georgiev, D. Dimitrov, F. Zhang, J. Huang, J. Geng, Y. Chen, Y. Yuan, H. Wu, Y. Wang, I. Koychev, V. Stoyanov, M. Song, Y. Chen, S. Liu, P. Nakov, Overview of FinMMEval 2026: Multilingual and multimodal financial evaluation, in: Experimental IR Meets Multilinguality, Multimodality, and Interaction, Proceedings of the",
+      "order": 101,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 31133,
+      "char_end": 32726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1df337261fb2660f8170a216005766ed",
+      "kind": "paragraph",
+      "text": "Seventeenth International Conference of the CLEF Association (CLEF 2026), Springer Lecture Notes in Computer Science LNCS, Jena, Germany, 2026. [13] Z. Xie, L. Qian, G. Georgiev, D. Dimitrov, R. Elbadry, F. Zhang, X. Peng, J. Huang, V. Jani, Y. Dai, J. Geng, Y. Chen, Y. Yuan, H. Wu, Y. Wang, I. Koychev, V. Stoyanov, M. Song, Y. Chen, S. Liu, P. Nakov, Overview of the FinMMEval 2026 task 3: Financial decision making, in: CLEF 2026 Working Notes, CEUR Workshop Proceedings, CEUR-WS.org, Jena, Germany, 2026. [14] J. S. Park, J. C. O’Brien, C. J. Cai, M. R. Morris, P. Liang, M. S. Bernstein, Generative agents: Interactive simulacra of human behavior, in: Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology, 2023, pp. 1–22. doi:10.1145/3586183.3606763. [15] T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, T. Scialom, Toolformer: Language models can teach themselves to use tools, in: Advances in Neural Information Processing Systems, volume 36, 2023, pp. 68539–68551. [16] T. Takayanagi, K. Izumi, J. Sanz-Cruzado, R. McCreadie, I. Ounis, Are generative AI agents effective personalized financial advisors?, in: Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval, 2025, pp. 286–295. doi: 10. 1145/3726302.3729897. [17] W. Zhang, L. Zhao, H. Xia, S. Sun, J. Sun, M. Qin, X. Li, Y. Zhao, Y. Zhao, X. Cai, L. Zheng, X. Wang, B. An, A multimodal foundation agent for financial trading: Tool-augmented, diversified, and",
+      "order": 102,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 32728,
+      "char_end": 34295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dbefd04fe7e24002a622177b8af653a6",
+      "kind": "paragraph",
+      "text": "generalist, 2024. doi:10.48550/arXiv.2402.18485.arXiv:2402.18485. [18] G. Fatouros, K. Metaxas, J. Soldatos, D. Kyriazis, Can large language models beat wall street? unveiling the potential of AI in stock selection, Neural Computing and Applications (2024). doi:10.1007/s00521-024-10613-4. [19] H. Ding, Y. Li, J. Wang, H. Chen, D. Guo, Y. Zhang, Large language model agent in financial trading: A survey, 2024. doi:10.48550/arXiv.2408.06361.arXiv:2408.06361. [20] L. Qian, X. Peng, H. Smith, Y. Han, Y. He, H. Li, Y. Cao, Y. Yu, G. Xiong, P. Lu, Y. Wang, V. J. Zhang, H. He, A. Lopez-Lira, J. Huang, J.-Y. Nie, S. Ananiadou, When agents trade: Live multi-market trading arena for LLM agents, in: Proceedings of the ACM Web Conference 2026, 2026, pp. 7833–7844. doi:10.1145/3774904.3792821. [21] C. Rawson, B. J. Twedt, J. C. Watkins, Managers’ strategic use of concurrent disclosure: Evidence from 8-K filings and press releases, The Accounting Review 98 (2023) 345–371. doi: 10.2308/ TAR-2021-0088. [22] C. S. Asness, T. J. Moskowitz, L. H. Pedersen, Value and momentum everywhere, The Journal of Finance 68 (2013) 929–985. doi:10.1111/jofi.12021.",
+      "order": 103,
+      "page_number": 11,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 34297,
+      "char_end": 35446,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:053465aaaf4415a6c6c721c90cd27df5",
+      "kind": "paragraph",
+      "text": "[23] J.-N. Wang, H.-C. Liu, Y.-T. Hsu, A u-shaped relationship between the crypto fear-greed index and the price synchronicity of cryptocurrencies, Finance Research Letters 59 (2024) 104763. doi:10.1016/j.frl.2023.104763. [24] L. Qian, X. Peng, Y. Wang, V. J. Zhang, H. He, H. Smith, Y. Han, Y. He, H. Li, Y. Cao, Y. Yu, A. Lopez- Lira, P. Lu, J.-Y. Nie, G. Xiong, J. Huang, S. Ananiadou, When agents trade: Live multi-market trading benchmark for LLM agents, 2025. URL: https://arxiv.org/abs/2510.11695. doi:10.48550/ arXiv.2510.11695.arXiv:2510.11695. [25] D. H. Bailey, M. López de Prado, The deflated Sharpe ratio: Correcting for selection bias, backtest overfitting and non-normality, Journal of Portfolio Management 40 (2014) 94–107. doi:10.2139/ ssrn.2460551. [26] V. Ramiah, X. Xu, I. A. Moosa, Neoclassical finance, behavioral finance and noise traders: A review and assessment of the literature, International Review of Financial Analysis 41 (2015) 89–100. doi:10.1016/j.irfa.2015.05.021. [27] W. W. Li, H. Kim, M. Cucuringu, T. Ma, Can LLM-based financial investing strategies outperform the market in long run?, 2025. URL: https://arxiv.org/abs/2505.07078. arXiv:2505.07078, aCM KDD 2026, to appear. [28] A. W. Lo, The adaptive markets hypothesis: Market efficiency from an evolutionary perspective, Journal of Portfolio Management 30 (2004) 15–29. doi:10.3905/jpm.2004.442611. [29] Y. Liu, A. Tsyvinski, Risks and returns of cryptocurrency, The Review of Financial Studies 34 (2021) 2689–2727. [30] H. White, A reality check for data snooping, Econometrica 68 (2000) 1097–1126.",
+      "order": 104,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 35448,
+      "char_end": 37038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eafbaacc16f829821e1c0e867441eeac",
+      "kind": "paragraph",
+      "text": "[31] N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, S. Yao, Reflexion: Language agents with verbal reinforcement learning, in: Advances in Neural Information Processing Systems, 2023. [32] J. Wei, X. Wang, D. Schuurmans, M. Bosma, B. Ichter, F. Xia, E. Chi, Q. Le, D. Zhou, Chain-ofthought prompting elicits reasoning in large language models, in: Advances in Neural Information Processing Systems, 2022. [33] Y. Du, S. Li, A. Torralba, J. B. Tenenbaum, I. Mordatch, Improving factuality and reasoning in language models through multiagent debate, arXiv preprint arXiv:2305.14325 (2023). [34] S. D’Amico, A. Maurino, F. Osborne, G. Sperlì, Evaluating the effectiveness of fine-tuning in financial NLP: The case of social trading action detection, Information Processing and Management",
+      "order": 105,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "References",
+        "054."
+      ],
+      "char_start": 37040,
+      "char_end": 37827,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e687aa553fd932257c314f40072629ee",
+      "kind": "heading",
+      "text": "(2026) 104910. doi:10.1016/j.ipm.2026.104910.",
+      "order": 106,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "(2026) 104910. doi:10.1016/j.ipm.2026.104910."
+      ],
+      "char_start": 37829,
+      "char_end": 37874,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7cb4b9d621a049f3b3c65e106de93aa",
+      "kind": "heading",
+      "text": "Appendix. Specialist Prompts",
+      "order": 107,
+      "page_number": 12,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 37876,
+      "char_end": 37904,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b16c60960fa83342a52716f43781ec3",
+      "kind": "caption",
+      "text": "Table 8 lists the system and user prompts for the eight specialist agents and the meta agent. All",
+      "order": 108,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 37906,
+      "char_end": 38003,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c298ca917f150a8874decec4ea4f8e01",
+      "kind": "paragraph",
+      "text": "agents are called throughgpt-4o-miniat temperature 0.1 with JSON-only output of the form {action, confidence, reasoning} . If any specialist call errors out, the system falls back to a default HOLD verdict.",
+      "order": 109,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 38005,
+      "char_end": 38211,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4ee1e206302123b3915f8bcbab3e770",
+      "kind": "caption",
+      "text": "Table 8: System and user prompts for the eight TSLA specialists and the meta agent. Placeholders in braces (e.g. {date},",
+      "order": 110,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 38213,
+      "char_end": 38333,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d149053f46e694ffdaa368fbcb07455f",
+      "kind": "paragraph",
+      "text": "{news_text}) are filled in at inference time with data drawn from the corresponding pre-processed signal card. Agent System prompt User prompt template News You are the NEWS Specialist for daily TSLA trading. Strong BUY (conf 0.80–0.90) on earnings beats, positive product launches, analyst upgrades, insider buying. Strong SELL on misses, lawsuits naming specific dollar amounts, recalls, executive departures, regulatory probes, insider selling. Multiple negatives compound. Never default to HOLD when a clear catalyst is present; reasoning must cite the specific phrase. Output JSON. Date: {date} TSLA News for today: {news_text} Judge market impact for next 1–3 days.",
+      "order": 111,
+      "page_number": 12,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 38335,
+      "char_end": 39006,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6358fbdb1d481d54d3ad64b2d16c865f",
+      "kind": "caption",
+      "text": "Table 8 (continued)",
+      "order": 112,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 39008,
+      "char_end": 39027,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce3580a656595df0f0f6ffa1e3e9e4d1",
+      "kind": "paragraph",
+      "text": "Agent System prompt User prompt template Event You are an Event Specialist analyzing the most recent SEC 8-K filing. Earnings + positive impact→ BUY 0.85; earnings + negative → SELL 0.85; M&A → BUY 0.70; CEO/CFO departure→ SELL 0.65; routine management changes→ BUY 0.40; regulatory or legal trouble→ SELL",
+      "order": 113,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts"
+      ],
+      "char_start": 39029,
+      "char_end": 39334,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4595c856f9b34ecc5be74290510ffae",
+      "kind": "heading",
+      "text": "Output JSON.",
+      "order": 114,
+      "page_number": 13,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "Output JSON."
+      ],
+      "char_start": 39336,
+      "char_end": 39348,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0181ee12f5bcf2997cb74ff355f480d",
+      "kind": "paragraph",
+      "text": "Filing date: {date} Event: {event_category} Market impact: {market_impact} Sentiment: {sentiment}, Tone: {tone} Summary: {summary[:300]} Earnings You are an Earnings Specialist using 10-Q commentary",
+      "order": 115,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "Output JSON."
+      ],
+      "char_start": 39350,
+      "char_end": 39548,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:50f6bf386d52fcc71e2423ddd153081e",
+      "kind": "list_item",
+      "text": "+ IBES surprise. BEAT → BUY (0.65 small, 0.85 if sur-",
+      "order": 116,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "Output JSON."
+      ],
+      "char_start": 39550,
+      "char_end": 39603,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:210e8712613edb50ed18fc066a45b973",
+      "kind": "paragraph",
+      "text": "prise > $0.10); MISS→ SELL (symmetric); in-line + optimistic MD&A→ BUY 0.60; in-line + cautious→ SELL",
+      "order": 117,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "Output JSON."
+      ],
+      "char_start": 39605,
+      "char_end": 39706,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b8f0950aa4a616d2a5db529e426c8a74",
+      "kind": "heading",
+      "text": "55; momentum shift±0.10. Confidence never below",
+      "order": 118,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "55; momentum shift±0.10. Confidence never below"
+      ],
+      "char_start": 39708,
+      "char_end": 39755,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e5de0726ae33d93e480d8ecaa1df3fff",
+      "kind": "heading",
+      "text": "Output JSON.",
+      "order": 119,
+      "page_number": 13,
+      "heading_level": 4,
+      "heading_path": [
+        "Abstract",
+        "Appendix. Specialist Prompts",
+        "55; momentum shift±0.10. Confidence never below",
+        "Output JSON."
+      ],
+      "char_start": 39757,
+      "char_end": 39769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b09915efda51074244f4f8c7e8906b93",
+      "kind": "heading",
+      "text": "Q ({date}, {quarter}): MD&A sentiment,",
+      "order": 120,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "Q ({date}, {quarter}): MD&A sentiment,"
+      ],
+      "char_start": 39771,
+      "char_end": 39809,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b0735549b6648b66169c19e633238bc5",
+      "kind": "paragraph",
+      "text": "tone, forward-looking language, business momentum, risk-factor delta, summary. IBES ({date}): consensus, actual, surprise, analyst count. Strategy You are a Strategy Specialist analyzing the most recent",
+      "order": 121,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "Q ({date}, {quarter}): MD&A sentiment,"
+      ],
+      "char_start": 39811,
+      "char_end": 40013,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cfb12bd31f3d0017d2055ae8601c27a9",
+      "kind": "heading",
+      "text": "K. Judge long-term competitive trajectory. Optimistic",
+      "order": 122,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "K. Judge long-term competitive trajectory. Optimistic"
+      ],
+      "char_start": 40015,
+      "char_end": 40068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fc82b60fad8c361829fbee3e1b7a7fd9",
+      "kind": "paragraph",
+      "text": "+≥3 growth signals→ BUY 0.65; optimistic +≥2 growth",
+      "order": 123,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K. Judge long-term competitive trajectory. Optimistic"
+      ],
+      "char_start": 40070,
+      "char_end": 40121,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e068f234df068c4ab110efabe8f269c1",
+      "kind": "list_item",
+      "text": "+ stable risks→ BUY 0.55; cautious + worsening risks→",
+      "order": 124,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K. Judge long-term competitive trajectory. Optimistic"
+      ],
+      "char_start": 40123,
+      "char_end": 40176,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56c2211e5a245066134b6a627950ebe4",
+      "kind": "paragraph",
+      "text": "SELL 0.60; mixed but improving→ BUY 0.45; mixed but stable→HOLD 0.40. Output JSON.",
+      "order": 125,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K. Judge long-term competitive trajectory. Optimistic"
+      ],
+      "char_start": 40178,
+      "char_end": 40260,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3859d3f661ed0b9009b20752d8a181d8",
+      "kind": "heading",
+      "text": "K filed: {filed_date}, period: {pe-",
+      "order": 126,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-"
+      ],
+      "char_start": 40262,
+      "char_end": 40297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0927bd60f0d39f18a503286b47bcfffa",
+      "kind": "paragraph",
+      "text": "riod_end} Business: sentiment, tone, top-5 themes, top-5 growth signals Risk: sentiment, tone, top-5 categories Overall summary (200 chars) Fundamentals You are a Fundamentals Specialist analyzing Compustat ratios. IGNORE the P/E ratio (TSLA’s is always extreme). Revenue growth >+10% QoQ→ BUY 0.80; 0–10%→ BUY 0.55; declining→ SELL 0.65–0.85; operating-margin shift±0.10; negative-to-positive margins → STRONG BUY 0.85; ROE >10% + growth→ BUY 0.75. Output JSON. {quarter} (reported {rdq}): Revenue + QoQ growth, EPS + QoQ growth, margins (operating, net, gross), ROE, ROA, debt-toequity, current ratio. Analyst You are an Analyst Specialist analyzing IBES consensus estimates. Recent BEAT→ BUY (0.85 if surprise > $0.10, else 0.65); recent MISS→ SELL (symmetric); analyst count >20 adds +0.05; tight estimate range (< $0.30)→ BUY",
+      "order": 127,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-"
+      ],
+      "char_start": 40299,
+      "char_end": 41129,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5971305a1a76ebbbb600055129bcc76",
+      "kind": "heading",
+      "text": "65; wide range ( > $0.50)→ SELL 0.50. HOLD only if",
+      "order": 128,
+      "page_number": 13,
+      "heading_level": 3,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-",
+        "65; wide range ( > $0.50)→ SELL 0.50. HOLD only if"
+      ],
+      "char_start": 41131,
+      "char_end": 41181,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e6fd66c8367f4f96e9b0f7a18c2faf38",
+      "kind": "paragraph",
+      "text": "literally no data. Output JSON. IBES ({date}): num analysts, mean estimate, median, stdev, low–high range, last actual EPS, last surprise. Technical You are a Technical Specialist. MACD > signal∧ price > SMA50→ BUY 0.75 (symmetric SELL); MACD bullish cross alone→ BUY 0.55; RSI >70→ SELL 0.65; RSI <30 → BUY 0.65; RSI 40–60 + uptrend→ BUY 0.60; ADX >25 amplifies confidence±0.10. Output JSON. TA ({date}): close, RSI(14) + overbought/oversold label, MACD + signal",
+      "order": 129,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-",
+        "65; wide range ( > $0.50)→ SELL 0.50. HOLD only if"
+      ],
+      "char_start": 41183,
+      "char_end": 41646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:517ab9586191dd0e00cee65cc76c0f87",
+      "kind": "list_item",
+      "text": "+ bullish/bearish-cross label, SMA20,",
+      "order": 130,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-",
+        "65; wide range ( > $0.50)→ SELL 0.50. HOLD only if"
+      ],
+      "char_start": 41648,
+      "char_end": 41685,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:050974c40ff81f7754a16cbd2c0e1ca8",
+      "kind": "paragraph",
+      "text": "SMA50 + up/downtrend label, Bollinger lower/upper, ADX(14) + strong/weak label. Social You are a Social Sentiment Specialist analyzing r/wallstreetbets. WSB = retail FOMO/panic; treat as signal, not contrarian. High volume ( >40 /wk) + bullish tone → BUY 0.55; high volume + panic→ SELL 0.55; low volume (<20 )→ HOLD 0.30; mixed + high volume→ BUY 0.45; “puts/short” mentions→ SELL 0.55; “calls/moon/yolo”→ BUY 0.55. Output JSON. Total TSLA posts in last 7 days, avg score, avg comments, top-15 posts by score with titles (120 chars each). Meta agent You are the Chief Trading Officer. Eight specialists analyzed TSLA; make a decisive final call. Weighting: NEWS (highest, may override if conf >0.70 )≻ Event≻ Earn-",
+      "order": 131,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "K filed: {filed_date}, period: {pe-",
+        "65; wide range ( > $0.50)→ SELL 0.50. HOLD only if"
+      ],
+      "char_start": 41687,
+      "char_end": 42402,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1efc842c45bc8b1892d4148f541d82a9",
+      "kind": "heading",
+      "text": "ings≻ Technical≈ Fundamentals≈ Analyst≻ Social≻",
+      "order": 132,
+      "page_number": 13,
+      "heading_level": 2,
+      "heading_path": [
+        "Abstract",
+        "ings≻ Technical≈ Fundamentals≈ Analyst≻ Social≻"
+      ],
+      "char_start": 42404,
+      "char_end": 42451,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eb6733b1b0436449c7fea06578f858d4",
+      "kind": "paragraph",
+      "text": "Strategy. If≥5 specialists agree, follow with high confidence. HOLD only if truly split with no clear lean. Output JSON. Specialist verdicts (News first): [NEWS] ACTION (conf=X.XX) – reasoning [EVENT] ACTION (conf=X.XX) – reasoning . . . Make the final TSLA trading decision.",
+      "order": 133,
+      "page_number": 13,
+      "heading_level": null,
+      "heading_path": [
+        "Abstract",
+        "ings≻ Technical≈ Fundamentals≈ Analyst≻ Social≻"
+      ],
+      "char_start": 42453,
+      "char_end": 42728,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 13,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 13
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.12233",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "",
+    "pdf_text_pages": 13,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

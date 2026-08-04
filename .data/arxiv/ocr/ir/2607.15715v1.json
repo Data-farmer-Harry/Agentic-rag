@@ -1,0 +1,2867 @@
+{
+  "schema_version": 1,
+  "parser_revision": "document-ir-pdf-v1",
+  "source_hash": "77a56e97a63e5c99ee76baaaab175d09097a5423f471cc96a8baac69d15fe425",
+  "title": null,
+  "blocks": [
+    {
+      "block_id": "block:6d2c45be47a521ce65c2f4cb27cfebbd",
+      "kind": "paragraph",
+      "text": "Behavioral Controllability of Agentic Models for Information Extraction:",
+      "order": 0,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [],
+      "char_start": 0,
+      "char_end": 72,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22f2e4382d77da05f8e34c9b07ac68ac",
+      "kind": "heading",
+      "text": "From Fixed Workflows to Reflective Agents",
+      "order": 1,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents"
+      ],
+      "char_start": 74,
+      "char_end": 115,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:523465e2119233094a927ad5ff8d62a8",
+      "kind": "heading",
+      "text": "Lujia Zhang, Xingzhou Chen, Hongwei Feng",
+      "order": 2,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Lujia Zhang, Xingzhou Chen, Hongwei Feng"
+      ],
+      "char_start": 117,
+      "char_end": 157,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:151ec8b89ed4222b05e916344c76c213",
+      "kind": "heading",
+      "text": "Abstract",
+      "order": 3,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Abstract"
+      ],
+      "char_start": 159,
+      "char_end": 167,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:33ee0325284bb42159bdb78eaa237505",
+      "kind": "paragraph",
+      "text": "Large language model (LLM) agents are increasingly used for complex information-extraction tasks, yet it remains unclear whether agentic components such as reflection and memory lead to observable and controllable improvements over fixed LLM workflows. We study this question through conference-paper dataset extraction, where a system must identify datasets mentioned in scholarly PDFs and produce structured records. We compare a fixed workflow baseline with reflective agent variants and specify an optimized agent condition (S2) that extends the same task with richer PDF tools and dynamic tool selection. Our evaluation emphasizes process-level behavior—including tool execution, retries, reflection, memory use, runtime, and failure recovery—while treating extraction coverage and field completeness as secondary outcome measures. The paper characterizes when agentic mechanisms change system behavior, whether these changes improve task completion, and how the observed failure modes motivate an optimized agent design under the same evaluation harness.",
+      "order": 4,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Abstract"
+      ],
+      "char_start": 169,
+      "char_end": 1229,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f3049e2ab33370d6db0eda8d0fa1886a",
+      "kind": "heading",
+      "text": "Introduction",
+      "order": 5,
+      "page_number": 1,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction"
+      ],
+      "char_start": 1231,
+      "char_end": 1243,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f2b2d754a2f885dc5a72e957c24d01f2",
+      "kind": "paragraph",
+      "text": "Large language models (LLMs) are increasingly embedded in systems that do more than produce a single response to a single prompt. Modern agentic systems connect LLMs to external tools, maintain intermediate state, decompose tasks into multiple actions, reflect on failed or incomplete outputs, and sometimes reuse prior experience through memory (Yao et al. 2023; Schick et al. 2023; Shinn et al. 2023; Packer et al.",
+      "order": 6,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction"
+      ],
+      "char_start": 1245,
+      "char_end": 1661,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2b8a14126bbed9145869fef7b4c19d5b",
+      "kind": "heading",
+      "text": "These capabilities are especially attractive for com-",
+      "order": 7,
+      "page_number": 1,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 1663,
+      "char_end": 1716,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9cf52608b663f5aa162c52870533eff7",
+      "kind": "paragraph",
+      "text": "plex information-extraction tasks, where the required evidence may be distributed across long documents and where a single prompt is unlikely to capture all relevant context. At the same time, it remains difficult to determine whether agentic components actually make such systems more controllable. Agent benchmarks such as AgentBench and WebArena show that tool-using agents can be evaluated in interactive environments, but they also reveal persistent gaps between autonomous execution and reliable task completion (Liu et al. 2024; Zhou et al. 2023). A fixed LLM workflow can already be a strong baseline: it can parse a document, apply carefully designed prompts, validate structured outputs, and save records in a reproducible order. By contrast, an agent may perform additional actions, retry uncertain steps, consult memory, or invoke reflection before continuing. These behaviors may improve coverage or recovery from errors, but they may also increase runtime, amplify mistakes, or create harder-to-debug execution traces. Thus, the key question is not simply whether an agent extracts more records, but whether its behavior changes in observable, configurable, and reproducible ways that are useful for the task. We study this question in the setting of scholarly dataset extraction. Prior scientific text-mining resources and dataset-mention studies show that scholarly documents contain rich metadata, parsed full text, and ambiguous dataset mentions that require detection and linking (Lo et al. 2020;",
+      "order": 8,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 1718,
+      "char_end": 3233,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3618b639537b543ba51a2acbf1a0902e",
+      "kind": "paragraph",
+      "text": "Pan et al. 2023; Heddes et al. 2021). Given conferencepaper PDFs and associated metadata, the system must identify datasets mentioned in each paper and produce structured dataset records containing fields such as dataset name, description, task or domain, paper reference, source link, and platform. This task is a realistic testbed for agentic information extraction. Dataset evidence can appear in abstracts, method sections, experiments, tables, captions, appendices, references, code links, or supplementary material. Mentions may be abbreviated, ambiguous, incomplete, or mixed with model names and benchmark suites. A workflow that follows a fixed sequence may miss evidence outside its initial extraction scope, while an agent has the opportunity to react to low-quality intermediate results by expanding the search, retrying with a different prompt, or using lessons from previous papers. We use this task to examinebehavioral controllability: the extent to which a system’s decisions and adaptations are observable, configurable, reproducible, and comparable across experimental conditions. Observability requires traces that expose tool calls, intermediate outputs, reflection events, retries, memory accesses, errors, and stopping decisions. Configurability requires explicit parameters, such as retry limits, reflection settings, memory injection, and quality thresholds. Reproducibility requires recording prompts, model settings, tool behavior, and run metadata. Comparability requires that workflow and agentic systems operate on the same docu-",
+      "order": 9,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 3235,
+      "char_end": 4794,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4af48b5743a399b8ae0ac7b88fec1236",
+      "kind": "paragraph",
+      "text": "ments, output schema, and evaluation procedure. Our empirical focus is therefore process-centric. We compare a fixed workflow baseline with agentic variants that implement ReAct-style tool use, reflection, retry policies, and memory, and we define an optimized S2 agent with twelve",
+      "order": 10,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 4796,
+      "char_end": 5077,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4d5b9270c4ff48800b72b9b77da7e49",
+      "kind": "table",
+      "text": "arXiv:2607.15715v1  [cs.AI]  17 Jul 2026",
+      "order": 11,
+      "page_number": 1,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 5079,
+      "char_end": 5119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a4918e19ca67baf43c7f83d59d7b37a1",
+      "kind": "caption",
+      "text": "Figure 1: Introductory motivation. Dataset evidence is scattered across paper sections, tables, figures, references, and URLs.",
+      "order": 12,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 5121,
+      "char_end": 5247,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7a8d9769d7217807c9e3dc73638a47e9",
+      "kind": "paragraph",
+      "text": "A fixed workflow may miss evidence outside its initial extraction path, while a reflective agent can retry, consult memory, and make recovery behavior observable. atomic tools and dynamic planning over the same corpus and schema. We measure final outputs, such as the number of dataset records and field completeness, but we treat these as only part of the evidence. The primary evidence comes from execution traces: action sequences, tool usage, reflection frequency, retry behavior, memory injection, failure recovery, runtime, and reproducibility artifacts. This framing leads to three research questions: •RQ1:How does the decision process of an agent differ from that of a fixed workflow on the same extraction task? •RQ2:Do reflection and memory produce measurable changes in tool use, retries, error recovery, and extraction outcomes? •RQ3:What system-level optimizations are suggested by the observed behavior of reflective extraction agents? The paper makes the following contributions: • We present a controlled comparison of fixed-workflow and agentic dataset-extraction systems under a shared corpus, output schema, and execution harness. • We propose a process-centric evaluation framework that measures observable agent behavior in addition to final extraction outcomes. • We analyze how reflection, memory, quality-aware retries, and tool policies affect extraction traces, recovery behavior, runtime, and result sets. • We specify an S2 optimized agent with twelve atomic tools and dynamic planning, and define its evaluation",
+      "order": 13,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 5249,
+      "char_end": 6790,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d06942a292d9ac624da37d5bf5406e32",
+      "kind": "paragraph",
+      "text": "protocol alongside empirical results for S0–S1b under the same corpus, schema, and logging harness. • We derive practical design lessons for building scholarly extraction agents whose behavior is not only capable, but also inspectable, tunable, and reproducible.",
+      "order": 14,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Introduction",
+        "These capabilities are especially attractive for com-"
+      ],
+      "char_start": 6792,
+      "char_end": 7054,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:276f5024f12e866b294342a3c56f78b6",
+      "kind": "heading",
+      "text": "Related Work",
+      "order": 15,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Related Work"
+      ],
+      "char_start": 7056,
+      "char_end": 7068,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3c58375e94e9762a953744c48114f7f",
+      "kind": "heading",
+      "text": "LLM Agents and Tool Use",
+      "order": 16,
+      "page_number": 2,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "LLM Agents and Tool Use"
+      ],
+      "char_start": 7070,
+      "char_end": 7093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:37c2f05a6934cdcd402e0603064cc8a3",
+      "kind": "paragraph",
+      "text": "A growing line of work treats LLMs as controllers that interleave language-based reasoning with external actions. Re- Act (Yao et al. 2023) generates reasoning traces and tool calls in an interleaved loop, improving interpretability and reducing error propagation compared with reasoning-only or action-only baselines. Toolformer (Schick et al. 2023) shows that models can learn when and how to invoke APIs through self-supervised filtering of candidate tool calls, without taskspecific fine-tuning. These systems differ from fixed extraction pipelines in that action selection can depend on intermediate observations rather than a predetermined stage order. Our S1 agent adopts the ReAct-style pattern—observe, think, act, and reflect—while S0 remains a fixed workflow over the same tools and schema. Benchmarks such as Agent- Bench (Liu et al. 2024) and WebArena (Zhou et al. 2023) evaluate autonomous agents in multi-environment and realistic web settings, but primarily report end-task success",
+      "order": 17,
+      "page_number": 2,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "LLM Agents and Tool Use"
+      ],
+      "char_start": 7095,
+      "char_end": 8092,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:232a70071f2c25e12ca51ef3415640c0",
+      "kind": "paragraph",
+      "text": "rather than the internal decision traces that motivate our controllability analysis. Reflection and Self-Correction Reflection and iterative refinement aim to improve outputs after an initial generation. Reflexion (Shinn et al.",
+      "order": 18,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "LLM Agents and Tool Use"
+      ],
+      "char_start": 8094,
+      "char_end": 8321,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:effeef32f0e19b8205b08eb806e47b45",
+      "kind": "heading",
+      "text": "stores verbal self-critiques in episodic memory and",
+      "order": 19,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "stores verbal self-critiques in episodic memory and"
+      ],
+      "char_start": 8323,
+      "char_end": 8374,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8975a049b41903418cbb4b3f0b3b9398",
+      "kind": "paragraph",
+      "text": "reuses them across trials without weight updates, yielding large gains on coding and decision-making tasks. Self- Refine (Madaan et al. 2023) alternates feedback and refinement steps with the same LLM across diverse generation tasks. Our S1a/S1b conditions instantiate a related pattern through rule-based and LLM-based reflection over tool outputs, coupled with quality-aware retries. However, Huang et al. (2024) argue that intrinsic self-correction— correcting responses using only the model’s own judgment and without reliable external feedback—often fails on reasoning tasks and can even degrade performance; reported gains frequently depend on oracle labels or stronger prompts in the feedback step. This caution is consistent with our empirical finding that LLM reflection changes process signals substantially while producing only modest output gains under a fixed retry budget. Memory and Experience Reuse Long-horizon agents require mechanisms to retain and retrieve past context. Generative agents (Park et al. 2023) maintain a natural-language memory stream, periodically synthesize higher-level reflections, and retrieve memories to plan social behavior in an interactive sandbox. MemGPT (Packer et al. 2023) applies an operating-systeminspired virtual context manager that pages information between working context and external storage, enabling document analysis and multi-session chat beyond a model’s native context window. Our agent stores short- and long-term extraction experiences and optionally injects retrieved mem-",
+      "order": 20,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "stores verbal self-critiques in episodic memory and"
+      ],
+      "char_start": 8376,
+      "char_end": 9915,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7fc06e7c6271f116cff2ce0e816e518c",
+      "kind": "paragraph",
+      "text": "ory into prompts, which is closer to Reflexion-style episodic reuse than to MemGPT’s paging architecture. Both prior lines of work highlight risks from stale, irrelevant, or incorrect memories; our S2 design therefore includes memory filtering and compression as explicit targets.",
+      "order": 21,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "stores verbal self-critiques in episodic memory and"
+      ],
+      "char_start": 9917,
+      "char_end": 10197,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7617c81b4951a2e4d3f21935e6b7bf80",
+      "kind": "heading",
+      "text": "Scholarly Information Extraction",
+      "order": 22,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Scholarly Information Extraction"
+      ],
+      "char_start": 10199,
+      "char_end": 10231,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d04bb61ac7ba25a242352287b456985d",
+      "kind": "paragraph",
+      "text": "Scientific text mining has long relied on structured corpora and specialized mention detectors. S2ORC (Lo et al.",
+      "order": 23,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Scholarly Information Extraction"
+      ],
+      "char_start": 10233,
+      "char_end": 10345,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9ac8c2c80233769b6124ef88aa6dc026",
+      "kind": "heading",
+      "text": "provides large-scale scholarly metadata, parsed full",
+      "order": 24,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "provides large-scale scholarly metadata, parsed full"
+      ],
+      "char_start": 10347,
+      "char_end": 10399,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0674d3b504deed6cf20f1b8982bf055d",
+      "kind": "paragraph",
+      "text": "text, and linked inline citations, figures, and tables— infrastructure that motivates richer PDF tools than wholedocument summarization alone. For dataset-centric extraction, DMDD (Pan et al. 2023) offers the largest public corpus for dataset mention detection and linking, with weakly supervised in-text spans and a manually annotated evaluation set; it highlights ambiguity between dataset, method, and task names and the need for entity linking. Earlier work by Heddes et al. (2021) frames dataset-name recognition as NER over conference-paper sentences and releases a gold-standard annotation set with long, enumeration-heavy tag sequences. These studies focus on mention detection accuracy and corpus construction, whereas our task additionally requires structured record generation, link grounding, and agentic recovery when initial extraction is incomplete. PDF layout, tables, captions, references, and external URLs remain practical bottlenecks aligned with the evidence-grounding gaps observed in our case studies. Agent Evaluation and Controllability Agent benchmarks increasingly stress long-horizon, realistic tasks. AgentBench (Liu et al. 2024) evaluates LLM agents across eight interactive environments with comparable success metrics, revealing large capability gaps across models and settings. WebArena (Zhou et al. 2023) provides reproducible, fully functional websites and programmatic validators for functional task correctness, showing that even strong LLM agents remain far below human perfor-",
+      "order": 25,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "provides large-scale scholarly metadata, parsed full"
+      ],
+      "char_start": 10401,
+      "char_end": 11916,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:302dd798cac62cb09ccd00ff8533d1a6",
+      "kind": "paragraph",
+      "text": "mance on everyday web tasks. These benchmarks are essential for measuring what an agent accomplishes, but they offer limited visibility into retries, tool-selection policies, memory injections, and failure recovery. Our work complements outcome-oriented evaluation with a process-centric harness that logs action traces, reflection events, retry decisions, and run manifests under controlled interventions (S0 versus S1a/S1b versus S2). We argue that behavioral controllability—observability, configurability, reproducibility, and comparability—is itself an evaluation target for scholarly extraction agents, not only final record counts.",
+      "order": 26,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "provides large-scale scholarly metadata, parsed full"
+      ],
+      "char_start": 11918,
+      "char_end": 12556,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3f6a0b719c64605386110d0d58db60fc",
+      "kind": "heading",
+      "text": "Task and Experimental Framework",
+      "order": 27,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Task and Experimental Framework"
+      ],
+      "char_start": 12558,
+      "char_end": 12589,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:44bf13da13c75698a4ecfe844f005cb9",
+      "kind": "heading",
+      "text": "Task Definition",
+      "order": 28,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Task Definition"
+      ],
+      "char_start": 12591,
+      "char_end": 12606,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb12f8fc20c55469cca1026bb7cbfa5a",
+      "kind": "paragraph",
+      "text": "The task takes as input a set of conference-paper PDFs together with available paper metadata, such as title, venue, year, authors, and source URL. The output is a JSONL file containing zero or more dataset records for each processed paper. Each record includes a dataset identifier, dataset name, a free-text dataset description, structured type/domain/field labels, paper-reference metadata, a dataset link when discovered, and a platform label such as GitHub, HuggingFace, OpenML, or unspecified. The same output schema is used for both the workflow baseline and the agentic systems so that differences can be attributed to system behavior rather than to downstream formatting. The unit of analysis is multi-level. At the outcome level, we count final dataset records, unique papers covered, field completeness, link availability, and result-set overlap. At the process level, we analyze PDF parsing, LLM extraction calls, reflection events, retries, memory injection, tool execution statistics, and run metadata. This distinction is important because the project is not designed only as a datasetconstruction pipeline; it is also an evaluation harness for observing how agentic mechanisms alter the behavior of an information-extraction system.",
+      "order": 29,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Task Definition"
+      ],
+      "char_start": 12608,
+      "char_end": 13856,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e869dfdd9b77791e059cf449c276904e",
+      "kind": "heading",
+      "text": "Experimental Conditions",
+      "order": 30,
+      "page_number": 3,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Experimental Conditions"
+      ],
+      "char_start": 13858,
+      "char_end": 13881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:047492655a1f484a194a67229cfc92ef",
+      "kind": "paragraph",
+      "text": "We compare four conditions over the same NeurIPS 2024 extraction setting:",
+      "order": 31,
+      "page_number": 3,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Experimental Conditions"
+      ],
+      "char_start": 13883,
+      "char_end": 13956,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:22935d874280c0ac9bcbbed2f11e8aba",
+      "kind": "paragraph",
+      "text": "•S0 Workflow:a fixed extraction workflow implemented inmain neurips.py. It follows a predetermined sequence: download or load papers, parse PDFs, extract paper metadata, extract dataset names, extract dataset details, and append records to the output JSONL file. It has no reflection, no memory, and no agent-level retry policy. •S1a Agent with Rule Reflection:an agentic system implemented inmain agent.py. It uses a ReAct-style controller, tool manager, rule-based reflection, qualityaware retry, and memory injection, with LLM-based reflection disabled. •S1b Agent with LLM Reflection:the same agentic harness as S1a, but with LLM-based reflection enabled in addition to rule reflection. •S2 Optimized Agent:an extended agent implemented inmain agent s2.py. It retains the S1 reflection, memory, and retry framework but registers twelve atomic tools (PDF retrieval, table and reference search, LLM extraction, link search, evidence verification, and record normalization) and selects the next tool dynamically from document state rather than following a fixed highlevel plan. Across conditions, we hold fixed the source corpus, target schema, underlying model family, maximum number of papers, and maximum number of datasets recorded per paper. The principal controlled interventions are therefore the extraction harness (fixed workflow versus reflective agent versus optimized agent) and, within the agent settings, the reflection and planning policies.",
+      "order": 32,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Experimental Conditions"
+      ],
+      "char_start": 13958,
+      "char_end": 15415,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b1eaac344e88398fd6b2bbfe8bf46b9",
+      "kind": "heading",
+      "text": "Behavioral Controllability",
+      "order": 33,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Behavioral Controllability"
+      ],
+      "char_start": 15417,
+      "char_end": 15443,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7228841d596546b0ab643ba43ff9a374",
+      "kind": "paragraph",
+      "text": "We operationalize behavioral controllability through four properties. First,observability: the agent logs observations, selected actions, tool results, reflection scores, retry decisions, and memory usage. Second,configurability: behavior is governed by explicit run controls for corpus size, perpaper output caps, retry budget, quality threshold, memory injection, and reflection mode. Third,reproducibility: each completed run records its condition, anonymized environment snapshot, artifact identifiers, and metrics file. Fourth, comparability: workflow and agent conditions process the same task and write structurally comparable JSONL outputs.",
+      "order": 34,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Behavioral Controllability"
+      ],
+      "char_start": 15445,
+      "char_end": 16093,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e2982ed39e4ad142ebf89405153b020e",
+      "kind": "heading",
+      "text": "System Design",
+      "order": 35,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "System Design"
+      ],
+      "char_start": 16095,
+      "char_end": 16108,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:684bad9c38874d0b4df81ac75a594dc1",
+      "kind": "heading",
+      "text": "Workflow Baseline",
+      "order": 36,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Workflow Baseline"
+      ],
+      "char_start": 16110,
+      "char_end": 16127,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f7398fd3aa203dbcc3ea5fe752f5453",
+      "kind": "paragraph",
+      "text": "The workflow baseline is a practical non-agentic extraction system. For each paper, it parses the PDF with a fixed parser, extracts a bounded text summary and URLs, prompts the LLM for paper metadata, prompts again for dataset names, and then prompts once per dataset name for structured details. The result is appended immediately to a JSONL output file, which supports long-running batch processing and partial recovery if a run is interrupted. This baseline is strong enough to be meaningful because it uses the same PDF parser, prompt templates, LLM backend, and output schema as the agent. Its limitation is not that it lacks LLM capability, but that its action order is predetermined. If the extracted dataset list is incomplete, if a paper uses unusual dataset terminology, or if relevant evidence appears outside the initially summarized text, the workflow does not have an internal mechanism for reflecting on the deficiency, expanding the search, or learning from previous papers.",
+      "order": 37,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Workflow Baseline"
+      ],
+      "char_start": 16129,
+      "char_end": 17119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1f8a8463031d669ba38a5a8eb27ffbb1",
+      "kind": "heading",
+      "text": "Base Agent Architecture",
+      "order": 38,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Base Agent Architecture"
+      ],
+      "char_start": 17121,
+      "char_end": 17144,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:26f5effb7d10a3eb1862780cd7b287fd",
+      "kind": "paragraph",
+      "text": "The agent system is organized around an AgentController. The controller maintains the current goal, plan, retry counts, and shared context for a paper. Its main loop follows the pattern Observe, Think, Act, Reflect, Learn, and Adjust. The current implementation uses a fixed high-level plan—parse the PDF, extract paper metadata, and extract dataset names—followed by a per-dataset detail extraction loop. Although the plan is fixed, each step is represented as an explicit action with parameters, result metadata, reflection, and memory update, making the behavior traceable and configurable. Tools are managed byToolManager. The registered tools include PDF parsing, paper-metadata extraction, dataset-name extraction, and dataset-detail extraction. LLM calls are routed through a shared client that can use an OpenAI-compatible API endpoint; the reported experiments use a vLLM deployment ofopenPangu-Embedded-7B. This design keeps the task interface stable while allowing the model backend and control policy to vary. The reflection module evaluates each action result. Rule reflection assigns a quality score and identifies issues such as empty outputs, low-quality dataset extraction, or missing expected fields. If the score falls below the configured quality threshold and a diagnosable issue is found, the agent can retry the current step within the fixed retry budget. In S1b, LLM reflection is additionally enabled to provide a deeper diagnosis, although this increases runtime and produces more reflection events.",
+      "order": 39,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Base Agent Architecture"
+      ],
+      "char_start": 17146,
+      "char_end": 18671,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7d2605b5f8e46a7871e15b9cc71d3769",
+      "kind": "paragraph",
+      "text": "The memory module stores short-term session experiences and significant long-term experiences. When enabled, retrieved memory is injected into extraction prompts through a memory block. The design goal is to make previous successes and failures available to later papers without changing the output schema. This also creates a process-level signal: memory accesses and injections can be counted and inspected as part of controllability analysis.",
+      "order": 40,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Base Agent Architecture"
+      ],
+      "char_start": 18673,
+      "char_end": 19118,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a10c3d7d53aa73414c3fb74f44cdc144",
+      "kind": "heading",
+      "text": "S2 Optimized Agent",
+      "order": 41,
+      "page_number": 4,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Optimized Agent"
+      ],
+      "char_start": 19120,
+      "char_end": 19138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b5e869e5cec9d5aa4bcfe40ac7a773c1",
+      "kind": "paragraph",
+      "text": "The S2 condition extends the S1 agent into an optimized extraction system implemented inmain agent s2.py. It targets the same JSONL schema and logging harness, but replaces the fixed high-level plan with a controllable Observe– Plan–Act–Reflect–Learn–Adjust loop. Twelve atomic tools are registered in three groups: six PDF tools (parse, page extraction, section retrieval, table extraction, keyword search, and reference extraction), three LLM tools (metadata, dataset-name, and per-dataset detail extraction), and three grounding tools (link search, evidence verification, and record normalization). A planner selects the next tool from document state, pending datasets, planner milestones,",
+      "order": 42,
+      "page_number": 4,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Optimized Agent"
+      ],
+      "char_start": 19140,
+      "char_end": 19832,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:32c37528ca78e28bbe06a07396d349a6",
+      "kind": "paragraph",
+      "text": "and prior failures, combining hard constraints with optional LLM-based planning; when planning is unavailable or invalid, a deterministic fallback order applies. The controller tracks evidence use and stuck datasets, injects link hints into detail prompts, and applies S1-style reflection to tool outputs. Verification and normalization run only after perdataset detail extraction. S2 is designed to test whether richer PDF access and state-dependent tool selection improve retry productivity, link grounding, and trace-level controllability under the same corpus and output budget as S0– S1b.",
+      "order": 43,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Optimized Agent"
+      ],
+      "char_start": 19834,
+      "char_end": 20427,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:cd8f5893717efabbdcf52e6e6bed9f64",
+      "kind": "caption",
+      "text": "Figure 2 summarizes the architectural progression from",
+      "order": 44,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Optimized Agent"
+      ],
+      "char_start": 20429,
+      "char_end": 20483,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ba88401400372a9bae307feef8501628",
+      "kind": "paragraph",
+      "text": "the fixed workflow to the reflective agent and the optimized S2 design. Execution Trace and Logging The project records both outcome artifacts and process artifacts. Outcome artifacts include final JSONL files and perrun result copies. Process artifacts include logs, anonymized environment snapshots, manifests, PID files, and metric summaries. Each run manifest records the condition, system identifier, start time, model backend, model name, paper limit, dataset-per-paper limit, retry threshold, memory setting, reflection setting, and opaque artifact identifiers for outputs and logs. The summarization script converts these artifacts into metrics such as JSONL line count, uniquepaper count, datasets per paper, field non-empty rates, log length, reflection mentions, observation mentions, and retry hints.",
+      "order": 45,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Optimized Agent"
+      ],
+      "char_start": 20485,
+      "char_end": 21297,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:034953779ba2856bc9acfe8fc5864e3b",
+      "kind": "heading",
+      "text": "Experimental Setup",
+      "order": 46,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Experimental Setup"
+      ],
+      "char_start": 21299,
+      "char_end": 21317,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6be13458096314c552f2fb09ef2eb183",
+      "kind": "heading",
+      "text": "Corpus",
+      "order": 47,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Corpus"
+      ],
+      "char_start": 21319,
+      "char_end": 21325,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:807d831b311ebc27ebd6798d3bbcef65",
+      "kind": "paragraph",
+      "text": "The experiments use NeurIPS 2024 papers as the extraction corpus. Each condition processes at most 50 papers. The downloader streams papers and associated metadata, while the parser extracts text and URLs from the PDFs. The latest result package contains three June 6 runs: S0 Workflow, S1a Agent with rule reflection, and S1b Agent with LLM reflection. Each paper can contribute up to five dataset records, a practical cap that keeps systems comparable under a fixed output budget. We do not assume a complete human-annotated ground truth for all dataset mentions. Consequently, the current evaluation treats record count, field completeness, and pairwise differences as task-completion indicators rather than definitive precision or recall. The main target of analysis is the behavioral trace produced by each system.",
+      "order": 48,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Corpus"
+      ],
+      "char_start": 21327,
+      "char_end": 22146,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bfe73fbd91e23215d45c28882d65ba3b",
+      "kind": "heading",
+      "text": "Implementation Details",
+      "order": 49,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Implementation Details"
+      ],
+      "char_start": 22148,
+      "char_end": 22170,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b26d01188495ebe27adc7aca15ed593",
+      "kind": "paragraph",
+      "text": "All June 6 runs use the same vLLM backend servingopenPangu-Embedded-7Bthrough an OpenAIcompatible API, with a 900-second request timeout. The paper corpus is stored in an anonymized cache, and no machine-specific storage location is required for reproducing the analysis. Shared controls fix the year, paper limit, per-paper record cap, retry budget, and quality threshold; the concrete values are listed in Appendix Table 3. Memory injection is enabled for both agent runs. S1a disables LLM reflection, while S1b enables it. All conditions are launched through the same experiment runner, which creates a run directory and records manifests, outputs, and metrics for each condition. Because the system relies on long LLM calls and PDF-processing side effects, the current evaluation reports single-run descriptive results rather than repeated-run statistical estimates.",
+      "order": 50,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Implementation Details"
+      ],
+      "char_start": 22172,
+      "char_end": 23042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6ce704ff845819ad273b9cd960a13d7b",
+      "kind": "heading",
+      "text": "S2 Experimental Design",
+      "order": 51,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Experimental Design"
+      ],
+      "char_start": 23044,
+      "char_end": 23066,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d27c21af2875994d26b22d1b45b9e1ab",
+      "kind": "paragraph",
+      "text": "S2 is configured to use the same NeurIPS 2024 corpus, paper limit, per-paper cap, retry budget, and vLLM-served openPangu-Embedded-7Bbackend as S0–S1b. The planned comparison contrasts S2 against S1a and S1b on outcome metrics (record count, link rate, field completeness), process metrics (tool diversity, section/table/reference tool usage, reflection and retry counts), and controllability metrics (logged planner decisions, stuck-dataset recovery, and run manifests). Since the available archived result package contains completed S0–S1b runs but not a completed S2 run, we report S2 as a specified optimized-agent design and reserve its numerical evaluation for follow-up experiments.",
+      "order": 52,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S2 Experimental Design"
+      ],
+      "char_start": 23068,
+      "char_end": 23757,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c4de3e9ff013b80b0124b3423013ab4a",
+      "kind": "heading",
+      "text": "Evaluation Metrics",
+      "order": 53,
+      "page_number": 5,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Evaluation Metrics"
+      ],
+      "char_start": 23759,
+      "char_end": 23777,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:10ca00924c30c3cfa541933e9795e584",
+      "kind": "paragraph",
+      "text": "Process Metrics.Process metrics describe what the system did before producing final records. For the workflow, the available process signals are primarily paper-processing logs and output counts. For the agent, additional signals include observation events, reflection mentions, retry hints, memory injection, and tool-level execution statistics. These metrics are used to determine whether agentic mechanisms produce observable behavioral changes, not merely whether the final JSONL file is longer. Outcome Metrics.Outcome metrics include total datasetrecord count, unique papers represented in the output, datasets per paper, and non-empty rates for selected fields. The current summaries report link rate, platform rate, and content rate. These values are interpreted as auxiliary taskcompletion metrics. Since the project does not yet include a complete manually verified gold standard, we avoid claiming absolute extraction accuracy from these metrics alone. Controllability Metrics.Controllability metrics are derived from whether decisions are logged, whether behavior is governed by explicit parameters, and whether runs can be reconstructed from manifests and metrics. For example, the difference between S1a and S1b is controlled by a single reflection flag while the task, model, paper limit, retry budget, memory setting, and output schema remain fixed. Manual Validation Protocol.Because the current package does not include a complete human-labeled gold standard, we define a manual audit protocol for the follow-up",
+      "order": 54,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Evaluation Metrics"
+      ],
+      "char_start": 23779,
+      "char_end": 25308,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f9cf36766dc53a7843530aca9796e3d2",
+      "kind": "paragraph",
+      "text": "submission version. For each condition, annotators should sample matched and condition-specific(paper,dataset) pairs, verify whether the dataset is genuinely mentioned in the paper, check whether the record describes a dataset rather than a method or task, and mark whether the link is",
+      "order": 55,
+      "page_number": 5,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Evaluation Metrics"
+      ],
+      "char_start": 25310,
+      "char_end": 25595,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b574fe888975027b238ef9f5d54a1234",
+      "kind": "caption",
+      "text": "Figure 2: System overview. S0 uses a fixed extraction sequence, S1 wraps the same task with observable agent actions, reflec-",
+      "order": 56,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Evaluation Metrics"
+      ],
+      "char_start": 25597,
+      "char_end": 25722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:318dc8ac060bfe1f032a0a287d844df9",
+      "kind": "paragraph",
+      "text": "tion, retries, and memory, and S2 specifies an optimized state-aware agent with expanded PDF and grounding tools. supported by text, references, tables, captions, or external resource pages. The audit should report precision for sampled records, link-grounding precision, missing-field rates, and disagreement cases. This protocol separates the present process-controllability claims from future accuracy claims. Ablations and Statistical Analysis The current runs implement an initial ablation over reflection: S1a disables LLM reflection while retaining rule reflection, memory injection, and retry; S1b enables LLM reflection. The workflow baseline removes the agent harness entirely. Additional ablations—such as disabling memory injection, disabling quality-aware retries, or introducing stronger memory filtering—are left for follow-up runs. Because the present result package contains one run per condition, the analysis is descriptive and paired by corpus rather than inferential. S2 ablations should isolate dynamic planning, expanded PDF tools, and memory-in-planner settings while holding the corpus, schema, and output cap fixed. These ablations are treated as future validation rather than as part of the completed June 6 result package.",
+      "order": 57,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Evaluation Metrics"
+      ],
+      "char_start": 25724,
+      "char_end": 26974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d00ab0a0b9899bd51f32de9aff337260",
+      "kind": "heading",
+      "text": "Results",
+      "order": 58,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Results"
+      ],
+      "char_start": 26976,
+      "char_end": 26983,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f618c1a0667d8babd6d6166cc7b2650",
+      "kind": "heading",
+      "text": "Overall System Comparison",
+      "order": 59,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Overall System Comparison"
+      ],
+      "char_start": 26985,
+      "char_end": 27010,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9f22759e394fcf5223ed2484a41ae8cf",
+      "kind": "caption",
+      "text": "Table 1 summarizes the latest June 6 runs using the",
+      "order": 60,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Overall System Comparison"
+      ],
+      "char_start": 27012,
+      "char_end": 27063,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c5c79e9b8add69892184f8ebb813f17f",
+      "kind": "paragraph",
+      "text": "same statistics computed directly from each archived",
+      "order": 61,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Overall System Comparison"
+      ],
+      "char_start": 27065,
+      "char_end": 27117,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1fdd482413a2173f8cbdc7839b024feb",
+      "kind": "caption",
+      "text": "Table 1: Latest NeurIPS 2024 extraction results. D/Paper de-",
+      "order": 62,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Overall System Comparison"
+      ],
+      "char_start": 27119,
+      "char_end": 27179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a3da9ff596981250613adb9d6db04c16",
+      "kind": "paragraph",
+      "text": "notes datasets per covered paper.",
+      "order": 63,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Overall System Comparison"
+      ],
+      "char_start": 27181,
+      "char_end": 27214,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d4df8376750fbd436726e7f85478e2ad",
+      "kind": "heading",
+      "text": "Condition Rec. Papers D/Paper Link",
+      "order": 64,
+      "page_number": 6,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Condition Rec. Papers D/Paper Link"
+      ],
+      "char_start": 27216,
+      "char_end": 27250,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:4d19b8977a2739303f40fbbdc96d6bb5",
+      "kind": "paragraph",
+      "text": "S0 Workflow 158 42 3.76 0.190 S1a Rule Reflection 165 43 3.84 0.164 S1b LLM Reflection 168 43 3.91 0.185 results.jsonl. The workflow baseline produces 158 records from 42 unique papers, with 3.76 datasets per paper. The agent outputs increase the number of records: S1a produces 165 records from 43 papers, and S1b produces 168 records from 43 papers. Content fields are complete in all reported summaries. Link discovery remains relatively low across systems, indicating that source-link extraction is a persistent bottleneck independent of the agent harness. These results suggest that the agent harness increases extraction coverage under the same paper and per-paper output budget. Figure 3 visualizes the same pattern: record count and datasets per paper rise from S0 to S1b, whereas link rate remains low and non-monotonic. However, the magnitude is modest: S1b produces ten more records than S0. The stronger difference is behavioral. The agent logs contain observation, reflection, and retry signals that are absent from the workflow baseline. Thus, the main empirical finding is not only that the agent extracts more records, but that its behavior is more inspectable and parameterized.",
+      "order": 65,
+      "page_number": 6,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Condition Rec. Papers D/Paper Link"
+      ],
+      "char_start": 27252,
+      "char_end": 28447,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:bc912ada0cc9c0931092f0a0b51199a3",
+      "kind": "paragraph",
+      "text": "(a) Extraction coverage 6 -40 100 160",
+      "order": 66,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Condition Rec. Papers D/Paper Link"
+      ],
+      "char_start": 28449,
+      "char_end": 28486,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:99a3bd10a33c3d6deb3f9f741df4b3ae",
+      "kind": "heading",
+      "text": "S0 S1a S1b",
+      "order": 67,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b"
+      ],
+      "char_start": 28488,
+      "char_end": 28498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:039222817fb6f9db880a63bc85c8337e",
+      "kind": "paragraph",
+      "text": "t t t((((((((((((158 165 168",
+      "order": 68,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b"
+      ],
+      "char_start": 28500,
+      "char_end": 28528,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f0657f061c30400eaf42f825687ee6a",
+      "kind": "heading",
+      "text": "43 43",
+      "order": 69,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "43 43"
+      ],
+      "char_start": 28530,
+      "char_end": 28535,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:70aeceef0b5aeff2a98a7ccc259a08af",
+      "kind": "paragraph",
+      "text": "Filled dots: records Squares: papers (b) Density and grounding 6 -3.70",
+      "order": 70,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "43 43"
+      ],
+      "char_start": 28537,
+      "char_end": 28607,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:816be0daf0dcedbfff1c8f3c9d227b93",
+      "kind": "heading",
+      "text": "82",
+      "order": 71,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "43 43",
+        "82"
+      ],
+      "char_start": 28609,
+      "char_end": 28611,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:824c51573641b1fa35874c9a819ba633",
+      "kind": "heading",
+      "text": "94",
+      "order": 72,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "43 43",
+        "94"
+      ],
+      "char_start": 28613,
+      "char_end": 28615,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a02ebff2c6db1f7533fb449fdd5a9a7d",
+      "kind": "heading",
+      "text": "S0 S1a S1b",
+      "order": 73,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b"
+      ],
+      "char_start": 28617,
+      "char_end": 28627,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0a9cba651c50780ab66d1569ff5cd453",
+      "kind": "paragraph",
+      "text": "t t t",
+      "order": 74,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b"
+      ],
+      "char_start": 28629,
+      "char_end": 28634,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e4c27eb22da5215c098e47f16741d50e",
+      "kind": "heading",
+      "text": "76",
+      "order": 75,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "76"
+      ],
+      "char_start": 28636,
+      "char_end": 28638,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8e80e65704479c2b08d413d54d15021c",
+      "kind": "heading",
+      "text": "84",
+      "order": 76,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "84"
+      ],
+      "char_start": 28640,
+      "char_end": 28642,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8309fe61439204343a69d3c0775204fe",
+      "kind": "heading",
+      "text": "91",
+      "order": 77,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "91"
+      ],
+      "char_start": 28644,
+      "char_end": 28646,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3d9b635146a3ead3d2081253134841de",
+      "kind": "paragraph",
+      "text": "△ △ △@ @ @ @ @ @",
+      "order": 78,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "91"
+      ],
+      "char_start": 28648,
+      "char_end": 28664,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1707551113bcc232a162a027118dbcb0",
+      "kind": "heading",
+      "text": "0%",
+      "order": 79,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "0%"
+      ],
+      "char_start": 28666,
+      "char_end": 28668,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6a8e4cd964389e15242f689be24e1cff",
+      "kind": "heading",
+      "text": "4%",
+      "order": 80,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "4%"
+      ],
+      "char_start": 28670,
+      "char_end": 28672,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b2bad7c82d1924ace69246e9578ad315",
+      "kind": "heading",
+      "text": "5%",
+      "order": 81,
+      "page_number": 7,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "5%"
+      ],
+      "char_start": 28674,
+      "char_end": 28676,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7320da1c770fc619bc47a69ba403af9f",
+      "kind": "paragraph",
+      "text": "Filled dots: datasets/paper Triangles: link rate",
+      "order": 82,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "5%"
+      ],
+      "char_start": 28678,
+      "char_end": 28726,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e7896d8cd623f0897389c4ac00288907",
+      "kind": "caption",
+      "text": "Figure 3: Outcome trends across the completed June 6 conditions. Agentic variants increase record count and datasets per paper",
+      "order": 83,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "5%"
+      ],
+      "char_start": 28728,
+      "char_end": 28854,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:960c278f1b4b0b08380582aad6525523",
+      "kind": "paragraph",
+      "text": "relative to the fixed workflow, while link grounding remains low and non-monotonic.",
+      "order": 84,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "S0 S1a S1b",
+        "5%"
+      ],
+      "char_start": 28856,
+      "char_end": 28939,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3dfd1576aa3fe6fb89fcac7d52262e8e",
+      "kind": "heading",
+      "text": "Workflow Versus Base Agent",
+      "order": 85,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Workflow Versus Base Agent"
+      ],
+      "char_start": 28941,
+      "char_end": 28967,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:05a76cec73e8e7c0dda99c7a4e805eb6",
+      "kind": "paragraph",
+      "text": "Compared with S0, the agent conditions introduce explicit intermediate states. Each paper is processed through actions whose results are reflected on and stored as experiences. If dataset extraction appears low quality, the agent can retry with expanded context and merge newly found dataset names. This changes the extraction process from a one-pass sequence into a quality-aware loop. The outcome difference is visible in the June 6 outputs: S0 records 158 datasets, whereas the agent outputs record 165–168 datasets. Several high-density papers reach the perpaper cap of five records, including papers on surgical videolanguage pretraining, anomaly detection, off-policy evaluation, multimodal image fusion, and anchoring for vision models. These cases illustrate why a fixed cap is useful: without it, a small number of papers with many benchmark datasets could dominate aggregate comparisons. The agent’s additional behavior also carries cost. The S1 metrics report a much larger log trace than S0 and thousands of reflection- or retry-related mentions. This indicates substantially more internal activity. Without a complete gold standard, we cannot claim that every additional record is correct or useful. The result should be interpreted as increased coverage and increased observability, accompanied by increased execution complexity.",
+      "order": 86,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Workflow Versus Base Agent"
+      ],
+      "char_start": 28969,
+      "char_end": 30312,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:465afdee8e623cc33cb4a3c43b3bfb0d",
+      "kind": "heading",
+      "text": "Rule Reflection Versus LLM Reflection",
+      "order": 87,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Rule Reflection Versus LLM Reflection"
+      ],
+      "char_start": 30314,
+      "char_end": 30351,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:504a78f5a29656a12dc28457c84ce495",
+      "kind": "paragraph",
+      "text": "S1a and S1b isolate the effect of enabling LLM reflection on top of the same agent harness. In the latest archived outputs, S1a produces 165 records and S1b produces 168 records. The small record-count difference suggests that LLM reflection does not dramatically change aggregate extraction coverage under the present configuration. Its main expected effect is instead on the process trace: deeper diagnostic reflection, more opportunities to justify retries, and potentially better explanations of failure modes. The archived logs confirm that the agent harness produces the intended process signals. The June 6 S1 logs contain ob-",
+      "order": 88,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Rule Reflection Versus LLM Reflection"
+      ],
+      "char_start": 30353,
+      "char_end": 30986,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:5187c185340a9b31de7cdd31d15df3f7",
+      "kind": "caption",
+      "text": "Table 2: Log-derived process signals for the June 6 runs. S1",
+      "order": 89,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Rule Reflection Versus LLM Reflection"
+      ],
+      "char_start": 30988,
+      "char_end": 31048,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0b5f9011de4de03b274c8a4fc27f86d8",
+      "kind": "paragraph",
+      "text": "mention counts come from the shared agent log through S1b completion.",
+      "order": 90,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Rule Reflection Versus LLM Reflection"
+      ],
+      "char_start": 31050,
+      "char_end": 31119,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:683906bdbe8501ed5532074970945020",
+      "kind": "heading",
+      "text": "Metric S0 S1a S1b",
+      "order": 91,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Metric S0 S1a S1b"
+      ],
+      "char_start": 31121,
+      "char_end": 31138,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f8721b2f8a2956b38b6e2e292167ef5b",
+      "kind": "paragraph",
+      "text": "Log lines 7,084 50,189 50,189 Reflection mentions — 1,967 1,967 Observation mentions — 1,388 1,388 Retry mentions — 2,222 2,222 servation markers, reflection markers, retry decisions, memory retrieval, memory injection, tool-call timing, per-paper session summaries, and final tool statistics. Table 2 summarizes log-derived process signals from the same June 6 run package as Table 1. Because S1a and S1b append to a shared agent log, mention counts reflect cumulative agent activity through the June 6 S1b run completion; run-isolated outcome differences remain visible in Table 1 (165 versus",
+      "order": 92,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Metric S0 S1a S1b"
+      ],
+      "char_start": 31140,
+      "char_end": 31734,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dcdaef3c4915de72c75957afbb46a201",
+      "kind": "heading",
+      "text": "records). Relative to S0 (7,084 log lines), the agent log",
+      "order": 93,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "records). Relative to S0 (7,084 log lines), the agent log"
+      ],
+      "char_start": 31736,
+      "char_end": 31793,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d6a04a9b3f5ac771c6eb93c2e26d166c",
+      "kind": "paragraph",
+      "text": "is much larger (50,189 lines), indicating substantially more internal activity even when additional records are modest. The output-level comparison shows that LLM reflection adds only three additional records over rule reflection in the June 6 run package. The process-level comparison shows much larger agent logs than S0 and thousands of reflectionand retry-related mentions. This motivates a process-centric reading: rule reflection already changes the extraction harness relative to S0, and LLM reflection should be evaluated by whether it produces more useful diagnoses and more productive retries—as illustrated in the case studies—not only by whether it increases the number of extracted records.",
+      "order": 94,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "records). Relative to S0 (7,084 log lines), the agent log"
+      ],
+      "char_start": 31795,
+      "char_end": 32498,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:08e7c47f6a3c068e83a4496bd7b4a3da",
+      "kind": "heading",
+      "text": "Ablation Results",
+      "order": 95,
+      "page_number": 7,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Ablation Results"
+      ],
+      "char_start": 32500,
+      "char_end": 32516,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3a0c6a22ce2199f0fb773d7346e8e7f1",
+      "kind": "paragraph",
+      "text": "The implemented ablation separates three levels of control: no agent harness (S0), agent with rule reflection (S1a), and agent with rule plus LLM reflection (S1b). The largest structural difference is between S0 and the two agent conditions,",
+      "order": 96,
+      "page_number": 7,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Ablation Results"
+      ],
+      "char_start": 32518,
+      "char_end": 32759,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:288e156bb4246766db99ad4f32827063",
+      "kind": "paragraph",
+      "text": "because only the agent records reflection, retry, and memory behavior. The smaller difference between S1a and S1b suggests that rule-based reflection and retry already account for much of the measurable output change in this configuration. LLM reflection may still be valuable for qualitative diagnosis, but the present aggregate results do not show a large record-count gain.",
+      "order": 97,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Ablation Results"
+      ],
+      "char_start": 32761,
+      "char_end": 33137,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:09719011f0d5208b5f0eaacbdb820ed6",
+      "kind": "heading",
+      "text": "Case Studies",
+      "order": 98,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Case Studies"
+      ],
+      "char_start": 33139,
+      "char_end": 33151,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:94dca621daaed8bbca34529f86674a0f",
+      "kind": "paragraph",
+      "text": "We identify three trace-backed case studies from the archived agent logs and result sets. Case 1: Normal ReAct execution with memory creation.",
+      "order": 99,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Case Studies"
+      ],
+      "char_start": 33153,
+      "char_end": 33295,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9b7dc797860b946957dfc221fd18a61e",
+      "kind": "heading",
+      "text": "For “Procedure-Aware Surgical Video-language Pretraining",
+      "order": 100,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "For “Procedure-Aware Surgical Video-language Pretraining"
+      ],
+      "char_start": 33297,
+      "char_end": 33353,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:15d0a73809a87d7750148357ae0f00a0",
+      "kind": "paragraph",
+      "text": "with Hierarchical Knowledge Augmentation,” the S1a log records the full ReAct sequence. The agent parses a 32-page PDF, extracts 99,901 characters, identifies 80 dataset-related sentences and one URL, and then executes metadata extraction and dataset-name extraction. The dataset-name step receives a quality score of 1.00, stores the experience in longterm memory under theextract datasetspattern, and proceeds to per-dataset detail extraction. The initial extraction finds seven dataset names, after which the run-level cap limits the saved records to three: SVL, Cholec80, and AutoLaparo. This case illustrates the basic behavior of the harness: every stage is logged as an action, scored by reflection, and converted into memory. Case 2: Rule reflection triggers bounded retry.For “Span-Based Optimal Sample Complexity for Weakly Communicating and General Average Reward MDPs,” the S1a log shows a low-quality dataset-extraction result. The agent assigns a quality score of 0.10, records the issue “no datasets extracted,” suggests expanding the search scope or adjusting keywords, and retries theextract datasetsaction. The retry path re-parses the 50-page PDF, expands the search text, injects retrieved memory into the prompt, and repeats extraction. After the second retry again receives a quality score of 0.10, the agent reaches the retry limit and skips the step, saving zero datasets for that paper. This is a useful negative case: the agent does not silently fail, but it also does not recover. The trace exposes the failure cause",
+      "order": 101,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "For “Procedure-Aware Surgical Video-language Pretraining"
+      ],
+      "char_start": 33355,
+      "char_end": 34898,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a55bd155ad6df6195b0ee90b69a97135",
+      "kind": "paragraph",
+      "text": "and the stopping decision. Case 3: LLM reflection provides diagnostic guidance. For “Leveraging Catastrophic Forgetting to Develop Safe Diffusion Models against Malicious Finetuning,” the S1b log shows LLM reflection changing the character of the trace. After repeatedextract datasetsattempts, the LLM-reflection step assigns a quality score of 0.78 and reports risks that are more specific than the rule-only messages: the extraction depends heavily on truncated abstract/introduction context, and the experimental setup section may contain missing datasets. It recommends prioritizing sections with keywords such as “Experiments,” “Datasets,” and “Evaluation.” The agent then proceeds to detail extraction for COCO-30K, I2P, and LAION-5B, injecting memory into each detail prompt. This case demonstrates the main value of LLM reflection in the current system: it produces actionable diagnosis and design evidence for S2, even when the current tool set cannot yet execute a true section-level retrieval policy. Across these cases, link grounding remains the most visible weakness. Link rate stays below 20% even though content descriptions are usually present. The traces suggest why: the current prompts can describe datasets from context, but URL grounding is treated as a field inside a broad extraction call rather than as a dedicated verification action. The S2 design addresses this gap by treating URL matching, citation search, and evidence verification as first-class tools; a follow-up run should test whether these tools change link",
+      "order": 102,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "For “Procedure-Aware Surgical Video-language Pretraining"
+      ],
+      "char_start": 34900,
+      "char_end": 36444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:30997fc269a5ed230662a451ee5889be",
+      "kind": "paragraph",
+      "text": "rate and recovery behavior in practice.",
+      "order": 103,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "For “Procedure-Aware Surgical Video-language Pretraining"
+      ],
+      "char_start": 36446,
+      "char_end": 36485,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fb3382fe84d6085225b357d31eefd28",
+      "kind": "heading",
+      "text": "Analysis and Discussion",
+      "order": 104,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Analysis and Discussion"
+      ],
+      "char_start": 36487,
+      "char_end": 36510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2db2002e9e8b7d4721a8786fab1be64b",
+      "kind": "paragraph",
+      "text": "Answers to the Research Questions RQ1.The fixed workflow and the agent differ primarily in process structure. The workflow is a one-pass extraction pipeline with predictable stages and limited recovery. The agent exposes each step as an action with observation, reflection, learning, and adjustment. Even when the high-level plan remains fixed, the agent produces a richer behavioral trace and supports quality-triggered retries. RQ2.Reflection and memory produce clear process-level changes: the agent logs reflection events, retry hints, and memory-related behavior that do not exist in S0. These changes correspond to a modest increase in output records in the latest runs. However, the available evidence is stronger for behavioral change than for absolute accuracy improvement, because no complete human-labeled gold standard is available. RQ3.The S1 runs identify concrete optimization targets—stronger evidence grounding, cleaner source-link extraction, more selective reflection, richer PDF tools, and better memory filtering—that motivate the S2 optimized agent. The current evidence supports S2 as a design response to observed failure modes; its numerical evaluation remains future work.",
+      "order": 105,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Analysis and Discussion"
+      ],
+      "char_start": 36512,
+      "char_end": 37710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ec2d6ec8e5780e99d60323545e040648",
+      "kind": "heading",
+      "text": "Cost–Benefit Trade-Offs",
+      "order": 106,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Cost–Benefit Trade-Offs"
+      ],
+      "char_start": 37712,
+      "char_end": 37735,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e43c0f3372d7184c35169157dafa9242",
+      "kind": "paragraph",
+      "text": "The workflow remains attractive when the goal is cheap, predictable batch extraction and when a fixed prompt sequence is sufficient. It is simpler, easier to run, and easier to debug at the level of final outputs. The agent is more attractive when the corpus contains heterogeneous papers, many dataset mentions, ambiguous benchmark names, or failure modes that can be diagnosed from intermediate outputs. The main trade-off is between behavioral richness and execution cost. Reflection and retry create more opportunities for recovery, but they also increase the number of model calls and the complexity of logs. LLM reflection in particular should be used selectively: the current aggregate output difference between S1a and S1b is small, so indiscriminate deep reflection may not be justified for every paper.",
+      "order": 107,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Cost–Benefit Trade-Offs"
+      ],
+      "char_start": 37737,
+      "char_end": 38549,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:dc941b4800dff4222cf6f5ab82554c71",
+      "kind": "heading",
+      "text": "Implications for Agent Harness Design",
+      "order": 108,
+      "page_number": 8,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Implications for Agent Harness Design"
+      ],
+      "char_start": 38551,
+      "char_end": 38588,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1c5a9cb4496f6a75d4bcb3e07e6e15c6",
+      "kind": "paragraph",
+      "text": "The project suggests four design lessons. First, reflection should be tied to observable deficiencies, such as empty outputs, low dataset counts despite benchmark cues, or missing",
+      "order": 109,
+      "page_number": 8,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Implications for Agent Harness Design"
+      ],
+      "char_start": 38590,
+      "char_end": 38769,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:ce55b885a8159528edfa6da7fa77f0c0",
+      "kind": "paragraph",
+      "text": "required fields. Second, memory should include provenance and quality control; otherwise, irrelevant prior experiences may become prompt noise. Third, better tools are useful only if the controller has policies for selecting them based on state. Fourth, controllability is a property of the whole harness: logging, configuration, run manifests, and output schemas matter as much as the underlying LLM. Limitations and Threats to Validity The study has several limitations. The corpus is limited to NeurIPS 2024 and a maximum of 50 processed papers per run. The reported experiments use a fixed vLLM deployment ofopenPangu-Embedded-7B, so the findings may not transfer directly to other model families or serving stacks. The task lacks a complete manually verified gold standard, which limits claims about precision and recall. The results depend on PDF parsing quality and on whether dataset evidence appears in the extracted text window. The agent implementation also combines architectural changes with prompt and retry-policy changes, so some observed differences cannot be attributed to a single component. Finally, process metrics reveal what the harness logs, but they should not be interpreted as faithful access to the model’s internal reasoning.",
+      "order": 110,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Implications for Agent Harness Design"
+      ],
+      "char_start": 38771,
+      "char_end": 40025,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f1f7b68ef3dbe65fb2f8ecf0084c8458",
+      "kind": "heading",
+      "text": "Future Work",
+      "order": 111,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Future Work"
+      ],
+      "char_start": 40027,
+      "char_end": 40038,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9fc43e6c358aeb4d6c34e9d6684d7b92",
+      "kind": "paragraph",
+      "text": "•S2 Follow-Up Ablations:After the main S2 run, evaluate planner-on versus planner-off settings, memory-inplanner variants, and selective LLM reflection to identify which optimized-agent components contribute most to link grounding and productive retries. •Toward Whole-Paper Understanding Agents:Dataset extraction should eventually become one component of a broader scholarly-paper understanding agent. Such an agent would combine dataset extraction with method extraction, task and benchmark identification, code/resource discovery, contribution summarization, limitation analysis, and evidence-grounded paper comparison. In this direction, the present dataset miner serves as a controllable submodule: it provides structured tool traces, reflection signals, memory behavior, and reproducible outputs that can be integrated into a larger agent for understanding the full content of scientific papers.",
+      "order": 112,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Future Work"
+      ],
+      "char_start": 40040,
+      "char_end": 40942,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8b52174b48501cd50eb2000eb935ffb0",
+      "kind": "heading",
+      "text": "Conclusion",
+      "order": 113,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Conclusion"
+      ],
+      "char_start": 40944,
+      "char_end": 40954,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b642a777d3d19b8ecfba7bb29687ac8d",
+      "kind": "paragraph",
+      "text": "We presented a controlled comparison between a fixed LLM workflow, reflective agentic systems, and an optimized S2 agent design for scholarly dataset extraction. On NeurIPS",
+      "order": 114,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Conclusion"
+      ],
+      "char_start": 40956,
+      "char_end": 41128,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:0c0d7b9ca26be79ba1680b8c0c3dead8",
+      "kind": "heading",
+      "text": "papers, the completed S1 agent conditions produce",
+      "order": 115,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "papers, the completed S1 agent conditions produce"
+      ],
+      "char_start": 41130,
+      "char_end": 41179,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f67ddd47db728d454402c2cd86fd243c",
+      "kind": "paragraph",
+      "text": "slightly more dataset records than the workflow baseline under the same paper limit and per-paper output cap. The S2 design translates observed S1 failure modes into concrete tool and planner requirements for future evaluation. More importantly, the agent conditions expose a richer decision process through observations, reflections, retries, memory injection, and run-level metadata. The results support a process-centric view of agent evaluation. Agentic mechanisms should not be judged only by whether they increase final record counts. They should also be judged by whether their behavior is observable, configurable, reproducible, and meaningfully adaptive to task failures. In this project, reflection, memory, retry thresholds, and run manifests provide a practical foundation for studying behavioral controllability in LLM-based information extraction.",
+      "order": 116,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "papers, the completed S1 agent conditions produce"
+      ],
+      "char_start": 41181,
+      "char_end": 42042,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:e796e77eeaab5b363531b636f5718421",
+      "kind": "heading",
+      "text": "A Reproducibility Details",
+      "order": 117,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "A Reproducibility Details"
+      ],
+      "char_start": 42044,
+      "char_end": 42069,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6b1ea2f9bc673267d18e94c555055b6d",
+      "kind": "paragraph",
+      "text": "The experiments are launched through a common runner that dispatches the workflow, rule-reflection agent, LLMreflection agent, or optimized-agent implementation according to the selected condition. Each completed run writes a manifest containing the anonymized run identifier, condition, system label, start time, environment snapshot, output artifact identifier, log artifact identifier, and metrics artifact identifier. The completed June 6 runs are referenced as S0-June6,S1a-June6, andS1b-June6; S2 uses the same manifest format for a follow-up optimized-agent run.",
+      "order": 118,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "A Reproducibility Details"
+      ],
+      "char_start": 42071,
+      "char_end": 42640,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f03cab0b7bc08d2bd492b8886b778ba",
+      "kind": "caption",
+      "text": "Table 3: Key environment settings for the June 6 runs.",
+      "order": 119,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "A Reproducibility Details"
+      ],
+      "char_start": 42642,
+      "char_end": 42696,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:054e827591fd804ef4f6ccc8dc0bf360",
+      "kind": "heading",
+      "text": "Variable Value",
+      "order": 120,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Variable Value"
+      ],
+      "char_start": 42698,
+      "char_end": 42712,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:573a011dd37061a822fb0b6396720402",
+      "kind": "paragraph",
+      "text": "DATACACHEanonymized corpus cache LLMPROVIDER vllm VLLMMODEL openPangu-Embedded-7B",
+      "order": 121,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Variable Value"
+      ],
+      "char_start": 42714,
+      "char_end": 42795,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2dd78851efdb4d340881f737cbfb713e",
+      "kind": "heading",
+      "text": "VLLMTIMEOUT 900",
+      "order": 122,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "VLLMTIMEOUT 900"
+      ],
+      "char_start": 42797,
+      "char_end": 42812,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c65786a0e46c3bd4245ef4f987bad53a",
+      "kind": "heading",
+      "text": "NEURIPSYEAR 2024",
+      "order": 123,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "NEURIPSYEAR 2024"
+      ],
+      "char_start": 42814,
+      "char_end": 42830,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:f01a499d6a2f7ebddeec193fd6e0e0e8",
+      "kind": "heading",
+      "text": "MAXPAPERS 50",
+      "order": 124,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "MAXPAPERS 50"
+      ],
+      "char_start": 42832,
+      "char_end": 42844,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2292e8b811b78473d59c496b883e631e",
+      "kind": "heading",
+      "text": "MAXDATASETSPERPAPER 5",
+      "order": 125,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "MAXDATASETSPERPAPER 5"
+      ],
+      "char_start": 42846,
+      "char_end": 42867,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a9f25735e505ec8126bc9eccd0875aea",
+      "kind": "heading",
+      "text": "MAXRETRIES 2",
+      "order": 126,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "MAXRETRIES 2"
+      ],
+      "char_start": 42869,
+      "char_end": 42881,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:9882eb9bea08a69541022093288c913c",
+      "kind": "heading",
+      "text": "QUALITYRETRYTHRESHOLD 0.6",
+      "order": 127,
+      "page_number": 9,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "QUALITYRETRYTHRESHOLD 0.6"
+      ],
+      "char_start": 42883,
+      "char_end": 42908,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:967eb1be0f6139b167ea18eae5e17fb2",
+      "kind": "paragraph",
+      "text": "ENABLEMEMORYINPROMPTS true The output schema is a JSONL record with the following top-level fields:dataset id,name,dataset describe,paper refs,dataset link, and platform. Thedataset describeobject containscontent,type,domain, andfields. The paper refsobject contains paper title, authors, institutions, venue, year, URL, andis fellow. This schema is shared by S0, S1a, S1b, and S2. The prompt file defines three main extraction prompts: paper metadata extraction, dataset-name extraction, and per-dataset detail extraction. The agent versions include a {memory block}insertion field, allowing retrieved experience to be injected into the metadata, dataset-name, and dataset-detail prompts when memory injection is enabled. The dataset-name prompt asks the model to return a JSON object of dataset names only, while the detail prompt asks for name, content, type, domain, fields, dataset link, and platform. JSON responses are parsed directly or extracted from fenced JSON blocks. The default agent tool set contains four tools registered by ToolManager: PDF parsing, metadata extraction, datasetname extraction, and dataset-detail extraction. The controller logs observation, reasoning, action, result, reflection, issue, suggestion, retry, and memory-related events. The summarization scriptscripts/summarize run.py computes line count, unique-paper count, datasets per paper,",
+      "order": 128,
+      "page_number": 9,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "QUALITYRETRYTHRESHOLD 0.6"
+      ],
+      "char_start": 42910,
+      "char_end": 44287,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b73aeabe4dada2316033493420c7ab58",
+      "kind": "paragraph",
+      "text": "link rate, platform rate, content rate, top papers by record count, and log counters for reflection, observation, and retry mentions.",
+      "order": 129,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "QUALITYRETRYTHRESHOLD 0.6"
+      ],
+      "char_start": 44289,
+      "char_end": 44422,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2205b28c3ae38a8041ce3e95217efa36",
+      "kind": "heading",
+      "text": "B Additional Results",
+      "order": 130,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "B Additional Results"
+      ],
+      "char_start": 44424,
+      "char_end": 44444,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6f989d4b255d65ecb88241ee8adfa9d8",
+      "kind": "paragraph",
+      "text": "Pairwise result-set overlap is computed over (paper title,dataset name)pairs. S0 and S1a share",
+      "order": 131,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "B Additional Results"
+      ],
+      "char_start": 44446,
+      "char_end": 44540,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b7c7d8c9edf7c23ed0c57d955df18dd",
+      "kind": "heading",
+      "text": "pairs; 22 appear only in S0 and 29 appear only in S1a.",
+      "order": 132,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "pairs; 22 appear only in S0 and 29 appear only in S1a."
+      ],
+      "char_start": 44542,
+      "char_end": 44596,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:fb98b4b7b65e2dd8657a5a6a248fee11",
+      "kind": "paragraph",
+      "text": "S0 and S1b share 138 pairs; 20 appear only in S0 and 30 appear only in S1b. S1a and S1b are much closer, sharing",
+      "order": 133,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "pairs; 22 appear only in S0 and 29 appear only in S1a."
+      ],
+      "char_start": 44598,
+      "char_end": 44710,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2ddd0a509eff9238d5e08b1b8f59cdb7",
+      "kind": "heading",
+      "text": "pairs, with 4 only in S1a and 7 only in S1b.",
+      "order": 134,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "pairs, with 4 only in S1a and 7 only in S1b."
+      ],
+      "char_start": 44712,
+      "char_end": 44756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:3373f877d30af08946a7a0d6dd13125c",
+      "kind": "caption",
+      "text": "Table 4: Pairwise result-set overlap over(paper,dataset)",
+      "order": 135,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "pairs, with 4 only in S1a and 7 only in S1b."
+      ],
+      "char_start": 44758,
+      "char_end": 44814,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:aaaad8b9a60963b2c68a60a9db820a0f",
+      "kind": "paragraph",
+      "text": "pairs.",
+      "order": 136,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "pairs, with 4 only in S1a and 7 only in S1b."
+      ],
+      "char_start": 44816,
+      "char_end": 44822,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:7b53656a85799e94d47c920bdd776e8d",
+      "kind": "heading",
+      "text": "Comparison Shared Only A Only B",
+      "order": 137,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Comparison Shared Only A Only B"
+      ],
+      "char_start": 44824,
+      "char_end": 44855,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:237c23db3b7ccc36036ce34c23275648",
+      "kind": "paragraph",
+      "text": "S0 vs. S1a 136 22 29 S0 vs. S1b 138 20 30 S1a vs. S1b 161 4 7 Examples of records appearing in S1 but not S0 include KDDCup2k, MSNBC, NLTCS, Plants, Argoverse 2, KITTI, GBD13, and QM9. Examples appearing in S1b but not S1a include LassoBench, BAMBOO, Mixamo+, and CIMA. These examples should be treated as candidates for manual verification rather than as automatic proof of correctness.",
+      "order": 138,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Comparison Shared Only A Only B"
+      ],
+      "char_start": 44857,
+      "char_end": 45244,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:618efdb774c8528528101b5425823ed8",
+      "kind": "heading",
+      "text": "References",
+      "order": 139,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "References"
+      ],
+      "char_start": 45246,
+      "char_end": 45256,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:6fdda4598ef128514cac3d40041a3534",
+      "kind": "reference",
+      "text": "Heddes, J.; Meerdink, P.; Pieters, M.; and Marx, M. 2021. The Automatic Detection of Dataset Names in Scientific Articles.Data, 6(8): 84. Huang, J.; Chen, X.; Mishra, S.; Zheng, H. S.; Yu, A. W.;",
+      "order": 140,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "References"
+      ],
+      "char_start": 45258,
+      "char_end": 45453,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:86a434a55cc0eb58b5d440ebf2646504",
+      "kind": "heading",
+      "text": "Song, X.; and Zhou, D. 2024. Large Language Models Can-",
+      "order": 141,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Song, X.; and Zhou, D. 2024. Large Language Models Can-"
+      ],
+      "char_start": 45455,
+      "char_end": 45510,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:85fed04fce432a97e1f534add5bb0c21",
+      "kind": "heading",
+      "text": "not Self-Correct Reasoning Yet. InInternational Conference",
+      "order": 142,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "not Self-Correct Reasoning Yet. InInternational Conference"
+      ],
+      "char_start": 45512,
+      "char_end": 45570,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:51920c65883adb654e7920caedba66a6",
+      "kind": "paragraph",
+      "text": "on Learning Representations. Liu, X.; Yu, H.; Zhang, H.; Xu, Y .; Lei, X.; Lai, H.; Gu, Y .; Ding, H.; Men, K.; Yang, K.; Zhang, S.; Deng, X.; Zeng, A.; Du, Z.; Zhang, C.; Shen, S.; Zhang, T.; Su, Y .; Sun, H.; Huang, M.; Dong, Y .; and Tang, J. 2024. AgentBench: Evaluating LLMs as Agents. InInternational Conference on Learning Representations. Lo, K.; Wang, L. L.; Neumann, M.; Kinney, R.; and Weld,",
+      "order": 143,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "not Self-Correct Reasoning Yet. InInternational Conference"
+      ],
+      "char_start": 45572,
+      "char_end": 45974,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:b735aabf855fba4f07164d361705dc5c",
+      "kind": "heading",
+      "text": "D. S. 2020. S2ORC: The Semantic Scholar Open Research",
+      "order": 144,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "D. S. 2020. S2ORC: The Semantic Scholar Open Research"
+      ],
+      "char_start": 45976,
+      "char_end": 46029,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:d5b830bfb6851e3a083e3a386d08ea81",
+      "kind": "paragraph",
+      "text": "Corpus. InProceedings of the 58th Annual Meeting of the Association for Computational Linguistics, 4969–4983. Madaan, A.; Tandon, N.; Gupta, P.; Hallinan, S.; Gao, L.; Wiegreffe, S.; Alon, U.; Dziri, N.; Prabhumoye, S.; Yang, Y .; Gupta, S.; Majumder, B. P.; Hermann, K.; Welleck, S.; Yazdanbakhsh, A.; and Clark, P. 2023. SELF-REFINE: Iterative Refinement with Self-Feedback. InAdvances in Neural Information Processing Systems, volume 36. Packer, C.; Wooders, S.; Lin, K.; Fang, V .; Patil, S. G.; Stoica, I.; and Gonzalez, J. E. 2023. MemGPT: Towards LLMs as Operating Systems.arXiv preprint arXiv:2310.08560. Pan, H.; Zhang, Q.; Dragut, E.; Caragea, C.; and Latecki,",
+      "order": 145,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "D. S. 2020. S2ORC: The Semantic Scholar Open Research"
+      ],
+      "char_start": 46031,
+      "char_end": 46701,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eda48a0e9d0cbce52fbc7ddf9ad8fa8a",
+      "kind": "heading",
+      "text": "J. 2023. DMDD: A Large-Scale Dataset for Dataset Men-",
+      "order": 146,
+      "page_number": 10,
+      "heading_level": 3,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "D. S. 2020. S2ORC: The Semantic Scholar Open Research",
+        "J. 2023. DMDD: A Large-Scale Dataset for Dataset Men-"
+      ],
+      "char_start": 46703,
+      "char_end": 46756,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:2f54286b0021ba2140e1a502a952938a",
+      "kind": "paragraph",
+      "text": "tions Detection.Transactions of the Association for Computational Linguistics, 11: 1132–1146. Park, J. S.; O’Brien, J. C.; Cai, C. J.; Morris, M. R.; Liang, P.; and Bernstein, M. S. 2023. Generative Agents: Interactive Simulacra of Human Behavior. InProceedings of the 36th Annual ACM Symposium on User Interface Software and Technology, 1–22. Schick, T.; Dwivedi-Yu, J.; Dess`ı, R.; Raileanu, R.; Lomeli, M.; Zettlemoyer, L.; Cancedda, N.; and Scialom, T. 2023.",
+      "order": 147,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "D. S. 2020. S2ORC: The Semantic Scholar Open Research",
+        "J. 2023. DMDD: A Large-Scale Dataset for Dataset Men-"
+      ],
+      "char_start": 46758,
+      "char_end": 47220,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:426ad47a3d33153b09e5e6f3ca58e496",
+      "kind": "heading",
+      "text": "Toolformer: Language Models Can Teach Themselves to",
+      "order": 148,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Toolformer: Language Models Can Teach Themselves to"
+      ],
+      "char_start": 47222,
+      "char_end": 47273,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:24ee6524142bbb7b3f6314e9d073ef92",
+      "kind": "heading",
+      "text": "Use Tools. InAdvances in Neural Information Processing",
+      "order": 149,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Use Tools. InAdvances in Neural Information Processing"
+      ],
+      "char_start": 47275,
+      "char_end": 47329,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:727e7e22dc0089e555c8a5c7b8d8bcf3",
+      "kind": "paragraph",
+      "text": "Systems, volume 36.",
+      "order": 150,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Use Tools. InAdvances in Neural Information Processing"
+      ],
+      "char_start": 47331,
+      "char_end": 47350,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:56a6e4f4ed010ecf3d3b2921053133a8",
+      "kind": "heading",
+      "text": "Shinn, N.; Cassano, F.; Gopinath, A.; Narasimhan, K.; and",
+      "order": 151,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Shinn, N.; Cassano, F.; Gopinath, A.; Narasimhan, K.; and"
+      ],
+      "char_start": 47352,
+      "char_end": 47409,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:eef5d4cba61134240c490b6607e38e77",
+      "kind": "paragraph",
+      "text": "Yao, S. 2023. Reflexion: Language Agents with Verbal Reinforcement Learning. InAdvances in Neural Information Processing Systems, volume 36. Yao, S.; Zhao, J.; Yu, D.; Du, N.; Shafran, I.; Narasimhan, K.; and Cao, Y . 2023. ReAct: Synergizing Reasoning and",
+      "order": 152,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Shinn, N.; Cassano, F.; Gopinath, A.; Narasimhan, K.; and"
+      ],
+      "char_start": 47411,
+      "char_end": 47667,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:c562eb95a8c779a4d387455722ed9f01",
+      "kind": "heading",
+      "text": "Acting in Language Models. InInternational Conference",
+      "order": 153,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Acting in Language Models. InInternational Conference"
+      ],
+      "char_start": 47669,
+      "char_end": 47722,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:a59cf77900ae78813080d41d29654c89",
+      "kind": "paragraph",
+      "text": "on Learning Representations. Zhou, S.; Xu, F. F.; Zhu, H.; Zhou, X.; Lo, R.; Sridhar, A.; Cheng, X.; Ou, T.; Bisk, Y .; Fried, D.; Alon, U.; and",
+      "order": 154,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Acting in Language Models. InInternational Conference"
+      ],
+      "char_start": 47724,
+      "char_end": 47868,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:1649e123d15e670ba91037e5dccc7a9b",
+      "kind": "heading",
+      "text": "Neubig, G. 2023. WebArena: A Realistic Web Environ-",
+      "order": 155,
+      "page_number": 10,
+      "heading_level": 2,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Neubig, G. 2023. WebArena: A Realistic Web Environ-"
+      ],
+      "char_start": 47870,
+      "char_end": 47921,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    },
+    {
+      "block_id": "block:8df0b55da9406686dc0bdeeab3b073c5",
+      "kind": "paragraph",
+      "text": "ment for Building Autonomous Agents.arXiv preprint arXiv:2307.13854.",
+      "order": 156,
+      "page_number": 10,
+      "heading_level": null,
+      "heading_path": [
+        "From Fixed Workflows to Reflective Agents",
+        "Neubig, G. 2023. WebArena: A Realistic Web Environ-"
+      ],
+      "char_start": 47923,
+      "char_end": 47991,
+      "extraction_method": "native_text",
+      "extraction_confidence": null,
+      "bbox": null,
+      "metadata": {}
+    }
+  ],
+  "metadata": {
+    "page_count": 10,
+    "removed_repeated_edge_lines": 0,
+    "extraction_method_counts": {
+      "native_text": 10
+    },
+    "empty_page_count": 0,
+    "source_type": "arxiv",
+    "arxiv_id": "2607.15715",
+    "arxiv_version": 1,
+    "ocr_extractor_revision": "pdf-text-only-v1",
+    "pdf_text_pages": 10,
+    "vision_ocr_pages": 0,
+    "unresolved_low_text_pages": 0
+  }
+}

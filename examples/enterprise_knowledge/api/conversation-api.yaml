@@ -1,0 +1,77 @@
+openapi: 3.1.0
+info:
+  title: Atlas Conversation API
+  version: 1.6.0
+  description: Public conversation contract exposed by Gatehouse and implemented by Relay.
+servers:
+  - url: https://atlas.internal.example/v1
+paths:
+  /conversations/{conversation_id}/messages:
+    post:
+      summary: Start an idempotent Atlas run
+      operationId: startConversationRun
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema: {type: string, minLength: 8, maxLength: 128}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [input, idempotency_key]
+              properties:
+                input: {type: string, minLength: 1, maxLength: 20000}
+                idempotency_key: {type: string, minLength: 16, maxLength: 200}
+                mode:
+                  type: string
+                  enum: [general, research, software_engineering]
+      responses:
+        "202":
+          description: Run accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [run_id, status, events_url]
+                properties:
+                  run_id: {type: string, format: uuid}
+                  status: {type: string, enum: [running]}
+                  events_url: {type: string}
+        "401": {description: Invalid or expired access token}
+        "409": {description: Idempotency key reused with different input}
+  /runs/{run_id}/events:
+    get:
+      summary: Resume public run events after a cursor
+      operationId: streamRunEvents
+      parameters:
+        - name: run_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+        - name: after_cursor
+          in: query
+          required: false
+          schema: {type: integer, minimum: 0, default: 0}
+      responses:
+        "200":
+          description: text/event-stream containing public run stages and final answer
+          content:
+            text/event-stream: {}
+        "404": {description: Run does not exist in the authenticated scope}
+  /runs/{run_id}:
+    delete:
+      summary: Cancel a running task without deleting conversation history
+      operationId: cancelRun
+      parameters:
+        - name: run_id
+          in: path
+          required: true
+          schema: {type: string, format: uuid}
+      responses:
+        "200": {description: Cancelled trajectory}
+        "404": {description: Run does not exist in the authenticated scope}
+

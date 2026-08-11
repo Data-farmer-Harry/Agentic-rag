@@ -8,7 +8,7 @@ from typing import Any
 
 from app.config import get_settings
 from app.domain.models import RunContext, WebSearchRequest
-from app.web_search.openai_hosted import OpenAIHostedWebSearch
+from app.web_search.openai_web_search import OpenAIHostedWebSearch
 
 
 async def _run(query: str, max_results: int) -> int:

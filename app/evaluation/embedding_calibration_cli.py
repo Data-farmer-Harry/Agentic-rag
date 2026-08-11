@@ -26,15 +26,19 @@ from app.evaluation.retrieval import (
 )
 from app.infra.postgres import PostgresDatabase
 from app.infra.postgres_knowledge import PostgresKnowledgeRepository
-from app.knowledge.store import FileKnowledgeObjectStore
-from app.retrieval.agentic import (
+from app.knowledge.knowledge_repository import FileKnowledgeObjectStore
+from app.retrieval.agentic_retrieval import (
     AgenticRetrievalController,
     DeterministicQueryPlanner,
     OpenAIStructuredQueryPlanner,
 )
-from app.retrieval.embeddings import EmbeddingUsage, HashedSparseEmbedder, OpenAIDenseEmbedder
-from app.retrieval.pipeline import RetrievalPipeline
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.retrieval.embedding_providers import (
+    EmbeddingUsage,
+    OpenAIDenseEmbedder,
+    build_sparse_embedder,
+)
+from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -106,7 +110,12 @@ async def _run(args: argparse.Namespace) -> int:
     store = QdrantHybridStore(
         qdrant_client,
         embedder,
-        HashedSparseEmbedder(),
+        build_sparse_embedder(
+            settings.qdrant_sparse_encoder,
+            bm25_k1=settings.qdrant_bm25_k1,
+            bm25_b=settings.qdrant_bm25_b,
+            bm25_average_document_tokens=settings.qdrant_bm25_average_document_tokens,
+        ),
         collection_name=args.target_collection,
         prefetch_limit=settings.qdrant_prefetch_limit,
         rrf_k=settings.qdrant_rrf_k,

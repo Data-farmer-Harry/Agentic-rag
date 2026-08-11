@@ -15,7 +15,7 @@ from app.domain.models import (
     SkillReplayStepResult,
     ToolEvent,
 )
-from app.skills.registry import (
+from app.skills.skill_registry import (
     SkillActivationRegistry,
     SkillExecutionError,
     SkillExecutionRegistry,

@@ -37,8 +37,8 @@ from app.domain.models import (
     StrictModel,
     utc_now,
 )
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.jobs import IngestionJobService
+from app.knowledge.ingestion_jobs import IngestionJobService
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
 
 
 class EnterpriseFixtureError(ValueError):
@@ -428,6 +428,25 @@ class EnterpriseFixtureService:
         requested_by: str,
         dry_run: bool = False,
     ) -> EnterpriseFixtureRun:
+        # Reset and all import finalization share one lifecycle boundary.  A
+        # reset therefore cannot miss a just-submitted job or be followed by a
+        # stale graph seed.
+        async with self._lifecycle_lock:
+            return await self._start_locked(
+                tenant_id=tenant_id,
+                project_id=project_id,
+                requested_by=requested_by,
+                dry_run=dry_run,
+            )
+
+    async def _start_locked(
+        self,
+        *,
+        tenant_id: str,
+        project_id: str,
+        requested_by: str,
+        dry_run: bool,
+    ) -> EnterpriseFixtureRun:
         generation = self._lifecycle_generation
         fixture = self._validator.load()
         self._assert_scope(fixture, tenant_id=tenant_id, project_id=project_id)
@@ -491,6 +510,10 @@ class EnterpriseFixtureService:
                 }
             )
             self._runs.replace(run)
+            # Keep the submitted job durable before the conditional lifecycle
+            # check so a future caller can always cancel or compensate it.
+            if generation != self._lifecycle_generation:
+                return await self._fail_reset_run(run)
 
         if not job_ids:
             failed = run.model_copy(
@@ -505,6 +528,22 @@ class EnterpriseFixtureService:
         return run
 
     async def get_status(
+        self,
+        run_id: UUID,
+        *,
+        tenant_id: str,
+        project_id: str,
+    ) -> EnterpriseFixtureRun | None:
+        # Finalization can archive predecessors and publish curated graph
+        # evidence, so it must serialize with reset as well.
+        async with self._lifecycle_lock:
+            return await self._get_status_locked(
+                run_id,
+                tenant_id=tenant_id,
+                project_id=project_id,
+            )
+
+    async def _get_status_locked(
         self,
         run_id: UUID,
         *,
@@ -588,34 +627,34 @@ class EnterpriseFixtureService:
                 )
                 self._runs.replace(cancelled)
                 await self._cancel_run_jobs(cancelled)
-        documents = await self._knowledge.list_documents(
-            tenant_id=tenant_id,
-            project_id=project_id,
-            include_archived=True,
-        )
-        archived: list[UUID] = []
-        for document in documents:
-            if (
-                document.source.fixture_id != self.FIXTURE_ID
-                or document.status == DocumentStatus.ARCHIVED
-            ):
-                continue
-            if await self._ingestion.archive(
-                document.document_id,
+            documents = await self._knowledge.list_documents(
                 tenant_id=tenant_id,
                 project_id=project_id,
-            ):
-                archived.append(document.document_id)
-        await self._deactivate_curated_graph(
-            tenant_id=tenant_id,
-            project_id=project_id,
-        )
-        return EnterpriseFixtureResetResult(
-            fixture_id=self.FIXTURE_ID,
-            tenant_id=tenant_id,
-            project_id=project_id,
-            archived_document_ids=archived,
-        )
+                include_archived=True,
+            )
+            archived: list[UUID] = []
+            for document in documents:
+                if (
+                    document.source.fixture_id != self.FIXTURE_ID
+                    or document.status == DocumentStatus.ARCHIVED
+                ):
+                    continue
+                if await self._ingestion.archive(
+                    document.document_id,
+                    tenant_id=tenant_id,
+                    project_id=project_id,
+                ):
+                    archived.append(document.document_id)
+            await self._deactivate_curated_graph(
+                tenant_id=tenant_id,
+                project_id=project_id,
+            )
+            return EnterpriseFixtureResetResult(
+                fixture_id=self.FIXTURE_ID,
+                tenant_id=tenant_id,
+                project_id=project_id,
+                archived_document_ids=archived,
+            )
 
     async def _plan(
         self,
@@ -727,6 +766,8 @@ class EnterpriseFixtureService:
         self,
         run: EnterpriseFixtureRun,
     ) -> EnterpriseFixtureRun:
+        # Callers hold _lifecycle_lock through predecessor archival and graph
+        # publication so reset cannot leave a stale curated release active.
         archived = set(run.archived_predecessor_ids)
         plan_by_source = {item.source_id: item for item in run.plan}
         fixture = self._validator.load()
@@ -1028,30 +1069,33 @@ class EnterpriseFixtureService:
     ) -> None:
         if self._graph_candidates is None or self._semantic_graph_index is None:
             return
-        fixture = self._validator.load()
-        if fixture.graph_seed is None:
-            return
-        document_id = self._graph_seed_document_id(
-            revision=fixture.graph_seed.revision,
+        curated_entities = await self._graph_candidates.list_entities(
             tenant_id=tenant_id,
             project_id=project_id,
         )
-        entities = await self._graph_candidates.list_entities(
-            tenant_id=tenant_id,
-            project_id=project_id,
-            document_id=document_id,
-        )
-        relations = await self._graph_candidates.list_relations(
-            tenant_id=tenant_id,
-            project_id=project_id,
-            document_id=document_id,
-        )
-        await self._archive_semantic_candidates(entities, relations)
-        await self._graph_candidates.archive_document(
-            document_id,
-            tenant_id=tenant_id,
-            project_id=project_id,
-        )
+        document_ids = {
+            item.document_id
+            for item in curated_entities
+            if item.extractor_revision.startswith("curated-enterprise-fixture:")
+            and item.status != GraphCandidateStatus.ARCHIVED
+        }
+        for document_id in sorted(document_ids, key=str):
+            entities = await self._graph_candidates.list_entities(
+                tenant_id=tenant_id,
+                project_id=project_id,
+                document_id=document_id,
+            )
+            relations = await self._graph_candidates.list_relations(
+                tenant_id=tenant_id,
+                project_id=project_id,
+                document_id=document_id,
+            )
+            await self._archive_semantic_candidates(entities, relations)
+            await self._graph_candidates.archive_document(
+                document_id,
+                tenant_id=tenant_id,
+                project_id=project_id,
+            )
 
     async def _archive_semantic_candidates(
         self,

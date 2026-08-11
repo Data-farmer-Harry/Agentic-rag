@@ -1,6 +1,6 @@
 # HermesGraph Progress
 
-最后更新：2026-08-03
+最后更新：2026-08-05
 
 ## 当前阶段
 
@@ -10,7 +10,8 @@
 长期记忆、会话重命名/归档/恢复、聊天附件、带说明反馈和失败重试、可跳过的 Persona 首次设置、
 历史会话搜索、真实运行耗时反馈、聊天快速记录任务/日程/笔记、按日回顾和本地到期提醒已完成。
 提醒从现有 Task `due_at` 确定性投影，支持未读、延后、任务跳转和显式授权后的浏览器桌面通知。
-复杂 Pattern 自动回滚保留设计但延期，不再占用近期交互主线。
+聊天页现已直接展示同会话历史上限、当前长期记忆、最近记忆摘要和知识范围，已保存消息刷新后仍可
+识别并跳转统一记忆库。复杂 Pattern 自动回滚保留设计但延期，不再占用近期交互主线。
 
 ## 进度
 
@@ -22,7 +23,7 @@
 | 意图锁定 | 完成 | `docs/INTENT.md` | 架构不变量已记录 |
 | 个人多模态需求重对齐 | 完成（文档基线） | Intent v2026-07-15、PRD v0.3、TECH v0.5 | 明确计算机优先、OpenAI 原语、Vision、arXiv 与自进化验收 |
 | LangChain 职责修正 | 完成 | 技术设计 0、1、8、18、21 节 | 禁止双 Agent Loop |
-| 工程骨架 | 完成 | `app/`、`tests/`、`pyproject.toml`、两个 dependency lock | 332 collected：315 passed、17 个环境型 skip；Ruff 全绿，163 个应用源码 strict mypy 通过 |
+| 工程骨架 | 完成 | `app/`、`tests/`、`pyproject.toml`、两个 dependency lock | 411 collected：395 passed、16 个环境型 skip；Ruff 全绿，173 个应用源码 strict mypy 通过 |
 | Hermes Agent 主运行时 | 完成（0.19 contract/sidecar/live 主回合）/待补最终握手 live 重验 | `app/agent/hermes_runtime.py`、`app/agent/hermes_bridge.py`、`deploy/hermes/` | Hermes 0.19.0 healthy；真实 Agent 首发约 12 秒返回、主 run 正常 completed、后台 review 实际调用 memory/skills；completion 握手 contract 通过，最后 live 被 provider 429 阻断 |
 | OpenAI 模型能力层 | 完成（SDK 原语） | 官方 `openai` Python SDK、Responses/Structured Outputs/Vision/Embeddings/Web Search adapters | 不拥有 Agent Loop；`openai-agents`、`RUNTIME_MODE=openai` 和 SDK session 已删除 |
 | OpenAI-compatible provider | 可用（批量长尾仍需重试） | 共享 model client、宿主/Docker base URL | v6 的 5-case/18-case Structured Outputs 门禁通过；固定 12 并发两批分别 13/20、15/20，失败均为 timeout |
@@ -43,7 +44,7 @@
 | API 与示例 | 完成（P0） | FastAPI、CLI、offline demo | ASGI test 与真实离线 smoke 通过 |
 | SSE 流式协议 | 完成（P1 v3） | 幂等 start、持久 event log、SSE cursor/resume、run-scoped tool subscription、显式 cancel | 观察断开不取消、cursor 重放、scope、幂等、刷新恢复和 cancelled 终态合同通过 |
 | Agent 工作台 | 完成（P1） | React、TypeScript、Lucide、Markdown、响应式布局 | 构建、桌面/390×844 视觉与界面任务闭环通过 |
-| 会话与显式记忆交互 | 完成（v1） | 会话列表/恢复 API、独立 session、草稿、显式记忆、反馈说明、失败重试 | API scope/顺序/幂等合同、真实浏览器新建/切换/刷新恢复通过 |
+| 会话与显式记忆交互 | 完成（v2） | 会话列表/恢复、独立 session、草稿、显式记忆、上下文面板、刷新后记忆识别、统一记忆库跳转 | API scope/顺序/幂等合同；真实浏览器保存→上下文更新→刷新恢复→记忆管理；1280/390 无溢出 |
 | 会话管理与聊天附件 | 完成（v2） | 持久标题/归档元数据、管理菜单、最多 5 个附件、durable ingestion 状态、历史附件标签 | API scope/归档合同、真实浏览器重命名/归档/恢复/附件入库、桌面与 390 x 844 通过 |
 | 首次设置、会话搜索与运行反馈 | 完成（v1） | Persona onboarding、命令面板历史搜索、heartbeat/完成耗时元数据 | production build、桌面/390 x 844、历史恢复和 633 ms 真实问候通过 |
 | 长任务活动时间线 | 完成（v1） | 中文阶段/工具投影、实时耗时、停止状态、按 retryable 重试 | 离线真实工具增量流、provider busy、主动停止、桌面/390 x 844 通过 |
@@ -133,8 +134,8 @@
 
 ## 2026-07-29 Agentic RAG 冻结与成熟度审计
 
-- 对 `app/retrieval/agentic.py`、`app/retrieval/pipeline.py`、`app/graph/toolkit.py`、
-  `app/agent/hermes_bridge.py`、`app/evidence/publisher.py`、当前数据规模和固定评测做了事实审计。
+- 对 `app/retrieval/agentic_retrieval.py`、`app/retrieval/hybrid_retrieval_pipeline.py`、`app/graph/graph_retrieval_tools.py`、
+  `app/agent/hermes_bridge.py`、`app/agent/answer_publisher.py`、当前数据规模和固定评测做了事实审计。
 - 结论锁定为“有界、证据优先的 Agentic RAG v1”：已有 typed plan、多查询并行混合检索、
   evidence gap、有界第二轮、GraphRAG 工具、partial failure trace 和服务端引用发布门禁。
 - 单独建立 `docs/AGENTIC_RAG_LOCK.md`，记录普通 RAG 对比、模块成熟度、代码映射、真实评测、
@@ -275,7 +276,7 @@
 - Desktop-Claw 有真实 10 轮 ReAct-like loop、六层 Persona Prompt、按天归档和文件工具，但无
   GraphRAG/向量 RAG；后台 interpret、memory correction、脚本 Skill 安全和持久任务恢复仍有明显
   边界。它真正领先的是桌面 Companion、首次引导和日记连续感。
-- 新增 `app/computer/workspace.py`：显式 root alias、固定 tenant/project、只读 list/read/search，
+- 新增 `app/agent/workspace_file_tools.py`：显式 root alias、固定 tenant/project、只读 list/read/search，
   支持文本/代码/PDF/DOCX/XLSX。阻断绝对路径、`..`、隐藏/凭据文件、私钥后缀和全部 symlink；
   使用 `O_NOFOLLOW`、文件/页数/ZIP 解压/扫描/输出预算。读取与搜索生成 run-scoped
   `workspace_file` EvidenceRef，可由严格 publisher 引用。
@@ -299,7 +300,7 @@
 - DomainPack 从后期迁移能力前移为 Phase 0 核心合同。
 - 新增 `CapabilitySpec`、`RunSnapshot`、`LearningChangeSet`，用于跨框架、回放与学习审计。
 - P0 不启用 handoff 或 nested specialist，先验证单一根 Runner。
-- 所有检索和图谱调用统一经过 `IntegrationRuntime -> CapabilityRegistry`，不允许 Agent 直连 driver。
+- 所有检索和图谱调用统一经过 `AgentToolRuntime -> CapabilityRegistry`，不允许 Agent 直连 driver。
 - Capability 输入和输出均执行 JSON Schema 校验；LangChain tool 必须显式声明 effect。
 - 检索结果执行强制 tenant/project 二次过滤，分支失败进入 trace 而不是污染结果。
 - Memory 和 Skill repository 均按 tenant/project 隔离，Skill miner 对能力采用 fail-closed allowlist。
@@ -332,7 +333,7 @@
 - ingestion job 的 durable 状态只由 Postgres repository 管理；worker 通过 `FOR UPDATE SKIP LOCKED` 领取、owner-bound lease 与 heartbeat 续约，不能依赖进程内队列假装可靠。
 - 同 scope/content hash 的并发提交使用事务 advisory lock 与 partial unique index 合并；上传内容先原子写入 scope-hashed staging，再提交 job，数据库失败会清理孤立 staging。
 - 当前异步控制面不等于全项目已经 Postgres 化。trajectory、change-set、knowledge metadata、graph candidate 审计仍有本地 repository，后续必须通过逐个 adapter 和 migration 替换，不能绕过现有 contract。
-- hosted Web Search 不直接挂在根 Agent；它先经过 `IntegrationRuntime -> CapabilityRegistry`
+- hosted Web Search 不直接挂在根 Agent；它先经过 `AgentToolRuntime -> CapabilityRegistry`
   的 `web:read` 边界，再把 provider URL annotation 转成当前 run 的 `EvidenceRef`，确保最终回答
   继续使用同一 `AnswerPublisher` allowlist。
 - Web 查询发网前阻断疑似密钥；返回端拒绝私网/userinfo URL，并二次执行 domain allowlist。
@@ -755,7 +756,7 @@
   `tools=[{"type":"web_search"}]`。端点 `gpt-5.6-sol` 实测返回
   `web_search_call + message.url_citation`；`action.sources` 可能为空，因此实现不依赖该可选列表。
 - 新增 `WebSearchRequest/WebSearchResult/WebSearchSource` 与 `WebSearchPort`，并在
-  `IntegrationRuntime` 注册 `search_web@1.0.0`。能力固定为 read effect、`web:read` scope、
+  `AgentToolRuntime` 注册 `search_web@1.0.0`。能力固定为 read effect、`web:read` scope、
   45 秒默认 timeout、100 KB 输出上限和 provenance required；在该阶段根 Agent 仍只有一个
   OpenAI Agents SDK Runner，2026-07-20 已迁移为 Hermes 单循环。
 - `OpenAIHostedWebSearch` 使用 `tool_choice=required`、`store=false`、有界 output tokens 和
@@ -1027,10 +1028,10 @@
   revision/scope/run/pattern-version 稳定分桶；bank/ledger/projection 异常 fail closed 到 baseline。
 - 第一版只开放 `capsule_memory_limit`、`memory_min_confidence`、`retrieval_profile`、
   `max_subqueries`、`max_retrieval_rounds` 和 `graph_hops`。Capsule、Agentic Retrieval Controller、
-  IntegrationRuntime 和 Hermes Bridge 只读取 run-local frozen policy，不修改全局实例，也不能提高
+  AgentToolRuntime 和 Hermes Bridge 只读取 run-local frozen policy，不修改全局实例，也不能提高
   工具预算、timeout、scope 或 publisher 权限。
 - 并发测试确认同一个 Retrieval Controller 可同时处理 baseline 与 1-subquery/1-round policy，
-  不发生配置串扰；IntegrationRuntime 与 Bridge 对 graph hop 做双层 clamp，fingerprint 使用规范化
+  不发生配置串扰；AgentToolRuntime 与 Bridge 对 graph hop 做双层 clamp，fingerprint 使用规范化
   payload。
 - 部署后 PostgreSQL v14 和三表均存在，App/Hermes/Postgres/Neo4j healthy，Qdrant running。
   真实问候 run `960d833f-e7e1-47e7-b0ae-aee73456a600` 约 45 ms、零工具，Observe policy 完整冻结
@@ -1189,3 +1190,249 @@
   Retrieval、Graph、Answer 三层门禁。
 - 本检查点只完成产品与交付设计、测试语料和静态验收合同，未把 23 份 fixture 导入正在运行的
   Postgres/Qdrant/Neo4j，也未宣称新前端体验已经实现。实现必须按交付文档逐阶段完成并回写真实结果。
+
+## 2026-08-05 研发 Agentic RAG 交付实现与审计收口
+
+- Northstar Labs / Atlas fixture 已从静态设计进入可执行产品链路：23 份版本化研发文档可经标准
+  ingestion 导入；策展图谱固定为 16 个实体、16 条关系，候选均为 approved、带 Chunk 证据、reviewer、
+  revision 和时间。重复导入幂等，旧文档 revision 与旧策展图谱会归档，reset 会停用所有历史策展
+  release，而不是只清理当前磁盘 revision。
+- fixture 生命周期完成并发加固：`start`、异步终态 finalization 和 `reset` 共享线性化边界；reset 不会
+  漏掉刚提交的 durable job，也不会被旧 finalizer 在返回后重新激活图谱。新增 submit barrier、graph
+  seed barrier 和 seed revision changed 三组确定性交错测试。
+- fixture CLI 新增 `--status RUN_ID`，import/status/reset 输出 lifecycle generation、fixture fingerprint、
+  当前与归档策展实体/关系以及本次 run 计数；保留旧输出 envelope，运维无需解析内部 JSON 仓库。
+- 图谱查询只遍历 `SEMANTIC_RELATION`，在 evidence join 前先限制候选路径，每条关系最多投影 5 个
+  evidence Chunk；tenant/project/layer/personal user 条件在 Cypher 下推，缺少 layer context 时外层
+  fail closed。GraphSearch、resolve、subgraph、compare 的输出使用与 Capability 完全相同的 UTF-8 JSON
+  序列化预算，临界中文 payload 不再出现“运行时认为合格、Capability 再次拒绝”。四个图 API 的后端
+  故障统一返回 503，输入校验仍为 400。
+- 工作台修复会话切换竞态：慢响应不能覆盖后来选择的 session，失败时保留当前内容并提供可见重试；
+  workspace overview 仍是核心门禁，其余运行、文档、记忆、技能、学习和会话资源改为独立降级，单个
+  辅助接口失败不会清空整个工作区。
+- 对话领域入口明确为“通用协作 / 个人学习 / 技术文档 / 团队研发”，不再出现两个同名“团队研发”。
+  当前启用知识层以“团队 + 个人”等只读范围标签展示，移动端也可见；授权仍由服务端 WorkspaceProfile
+  决定，客户端不能自行扩大检索权限。
+- 系统地图会展示所选实体相关路径的真实证据标题、片段、source ID 和 trust；自由搜索可拆分逗号实体，
+  比较查询必须恰好两个实体，错误查询不会保留旧图伪装成新结果。移动端示例导入 CTA 保留完整文字。
+- 1280 x 720 浏览器发现并修复 inspector 覆盖发送按钮：chat grid 显式使用 `minmax(0, 1fr)`，输入区
+  不再突破主列。最终鼠标点击“发送”约 306 ms 完成普通“你好”，服务端答案耗时显示 6 ms，返回
+  conversational answer，无 `INSUFFICIENT`、无知识检索阶段。390 x 844 下页面 `scrollWidth=390`，
+  知识范围、示例导入、系统地图与比较校验均可见，console error/warn 为 0。
+- 离线企业评测重新编译 23 份文档和 10 个 required case；fixture retrieval 10/10，Recall@K=1.0、
+  MRR=0.8533。未提供 live answer/graph artifacts，因此 combined production gate 按设计为 false；没有把
+  离线 lexical 结果包装成生产成绩。
+- 最终本地门禁更新为 414 collected、397 passed、17 个环境型 skip；Ruff 全绿，173 个应用源码
+  strict mypy 通过，React/TypeScript production build 与 `docker compose config --quiet` 通过。
+- Docker Desktop 已恢复并完成最终镜像重建；镜像内 `pip check` 通过。app、Hermes、PostgreSQL、
+  Neo4j healthy，Qdrant running；应用首页、应用健康接口和 Hermes 健康接口均正常。Live Answer 已
+  完成正式 Compose 浏览器纵向，Graph combined gate 与异步入库浏览器纵向仍保留为下一检查点。
+
+## 2026-08-05 聊天上下文与长期记忆体验
+
+- 运行时事实不变：`TrajectoryConversationHistory` 只读取同 tenant/project/user/session 的已完成回合，
+  默认最多最近 8 轮、12,000 字符；Hermes 回合使用 `RuntimeCapsuleProvider` 按当前问题从 scoped
+  MemoryRepository 检索相关记忆，而不是把全部记忆无条件塞入 Prompt。
+- 聊天工具栏新增“当前上下文”面板，直接显示当前会话轮数、历史参考上限、服务端有效长期记忆数量、
+  最近三条记忆摘要和 WorkspaceProfile 授权的知识范围。面板提供“新建对话”和“管理记忆”，不维护
+  第二份上下文或记忆状态。
+- 用户消息和 Agent 回答的书签保存继续走内容哈希幂等 upsert。前端现在会用服务端 active memories
+  识别已经保存的消息，因此刷新、切换回来后仍显示“已记住 · 查看”，并可直接进入统一记忆库纠错
+  或撤回。
+- 真实离线浏览器完成“你好 -> 4 ms conversational answer -> 记住用户消息 -> 上下文 1 轮/1 条 ->
+  刷新 -> 已记住状态恢复 -> 查看记忆库”的纵向流程。桌面 1280 x 720 面板为 360 x 307 且完全在
+  viewport 内；移动端首次验收发现工具栏被挤出屏幕，已改为稳定两行布局，最终四个领域入口全部
+  可见，390 x 844 下工具栏和页面 `scrollWidth=390`、面板 370 x 306 且无横向溢出。
+- 当前门禁：411 collected、395 passed、16 个仅因未配置 `HERMESGRAPH_TEST_POSTGRES_DSN` 的环境型
+  skip；Ruff、173 文件 strict mypy、TypeScript/Vite production build、Compose config 全绿。
+
+## 2026-08-05 专业问答进度与慢任务反馈
+
+- SSE 心跳不再只有 elapsed time。服务端在不暴露模型推理的前提下投影“判断是否需要工具 -> 规划
+  知识与工具 -> 等待模型或工具 -> 长任务仍在运行”四级真实等待状态；30 秒后明确说明结果会自动
+  保留。状态与 cursor 一起持久化，刷新或重连仍读取同一 run event log。
+- 每个受控工具完成后立即投影用户可理解的下一步，例如“已完成知识库检索，正在分析证据”“已完成
+  图谱查询，正在分析关系”“已读取相关记忆，正在结合当前问题”。失败工具显示可否继续判断，不
+  暴露输入参数、原始输出或模型思维。
+- 活动时间线在 10 秒后说明复杂任务可能需要多轮检索，30 秒后说明刷新可恢复并保留停止入口；连接
+  中断显示第几次恢复。完整回答经发布检查后才产生 `answer.delta`，前端文案改为“正在显示回答”，
+  不再把完整答案的分段展示伪装成模型实时 token 生成。
+- 修复前端丢弃安全服务端错误的问题：provider busy、timeout、authentication failed 和进程重启中断
+  现在分别显示稳定中文提示，不会统一退化成“任务失败”，也不会回显网关内部详情。
+- 新增确定性等待阶段/工具阶段单元测试与真实协调器 heartbeat 测试。浏览器使用隔离离线实例完成
+  专业查询：约 9 秒显示“正在规划需要的知识与工具”，20 秒完成 1 次知识检索并展示 3 个证据来源；
+  刷新后回答和活动记录完整恢复。390 x 844 下活动时间线宽 362px，页面 `scrollWidth=390`。
+- 当前全量门禁为 411 collected、395 passed、16 个 PostgreSQL DSN 环境型 skip；Ruff、173 文件
+  strict mypy、TypeScript/Vite build 和 Compose config 全绿。
+
+## 2026-08-05 知识首次使用与立即提问闭环
+
+- 空对话“上传资料”改为直接打开聊天附件选择，不再先切到知识页；“管理知识库”保留为独立入口。
+  用户可在同一上下文看到上传、解析、就绪和发送状态。
+- 附件状态下方增加明确下一步：处理中说明完成后可发送；全部就绪后提示可以输入问题或直接让 Agent
+  阅读总结；失败时保留安全错误原因，文件旁提供原位重试和移除，并可跳到知识任务队列。发送按钮只
+  在所有附件就绪后启用。
+- 示例导入成功后提供“立即提问”。聊天页直接填入可编辑的 Atlas 问题，知识页返回聊天时也会持久化
+  草稿并聚焦输入框。标准 KnowledgeDocument 前端合同补齐 `source`；示例状态依据
+  `source.fixture_id=enterprise_knowledge`，因此先上传个人资料不会误隐藏示例，导入成功后也不会继续
+  展示重复入口。
+- 隔离空数据浏览器完成真实纵向：上传 `polaris.md` 后显示 1 份资料就绪、2 个 Chunk，带附件问题在
+  4.8 秒内完成 1 次知识检索并保留 2 条证据；损坏 PDF 显示失败、重试、移除和知识任务入口；23 份
+  示例计划导入后当前 active 文档为 22 份（1 份与手工上传内容按 hash 去重，1 份历史 ADR 非 active），
+  “立即提问”预填 `梳理 Atlas 平台的核心服务和依赖关系` 且输入框获得焦点。
+- 390 x 844 下页面 `scrollWidth=390`；附件错误提示宽 368 px，输入框和两个空态知识入口均完整可见。
+  异步浏览器纵向因现有持久队列要求 PostgreSQL 而未在无 DSN 环境启动；未绕过该生产约束，异步提交、
+  状态轮询、失败和重试继续由 6 个 ingestion job 合同测试覆盖。
+- 最新门禁为 411 collected、394 passed、17 个环境型 skip：16 个缺少
+  `HERMESGRAPH_TEST_POSTGRES_DSN`，1 个因当前沙箱禁止本地 socket；Ruff、173 文件 strict mypy、
+  TypeScript/Vite production build、`git diff --check` 和 Compose config 全绿。
+
+## 2026-08-05 本轮实际记忆反馈与移动端输入区修复
+
+- `PromptCapsuleCompiler.compile_result` 现在同时返回有界 Prompt 文本、实际进入文本的 MemoryRecord
+  和 omitted 数量；`RuntimeCapsule` 保持完整 `str` 兼容，旧 LangChain/consumer 无需重构，同时让
+  Hermes runtime 能把精确记忆白名单交给 Capability Bridge。
+- `hermesgraph_publish_answer` 新增可选 `memory_ids`。模型只能声明胶囊中真实纳入或本 run 调用
+  `recall_project_memory` 返回的记忆；Bridge 在发布前验证 run 白名单和 tenant/project/user 作用域，
+  项目共享 `user_id=None` 可用，其他用户和凭空构造的 ID 被拒绝。轨迹与 SSE 只保存 ID，不复制记忆
+  详情或暴露 Prompt。
+- 聊天回答仅在 `memory_ids` 非空时显示“本轮使用 N 条记忆”。展开后从当前作用域记忆库映射摘要，
+  提供统一管理入口；后来撤回的记录在历史回答中标记“现已撤回”，既不继续进入新回合，也不伪造
+  历史回答当时没有使用。
+- 新增胶囊精确成员、Bridge 白名单/越权、工具动态召回、Hermes runtime 透传、插件 schema 和 SSE
+  序列化合同测试。全量门禁为 `414 collected / 397 passed / 17 skipped`；16 个 skip 缺少
+  `HERMESGRAPH_TEST_POSTGRES_DSN`，1 个因沙箱禁止本地 socket。Ruff、173 文件 strict mypy 和
+  TypeScript/Vite production build 全绿。
+- 隔离浏览器验收覆盖 1280 x 720 与 390 x 844：标准历史回答合同可展开实际记忆，撤回后正确显示
+  状态；页面 `scrollWidth` 分别为 1280/390。移动端验收发现 `.chat-view` 按固有内容高度越出父容器，
+  输入框与 64px 固定底栏重叠 31.5px；现已将聊天视图约束为父容器 100% 高度，复验重叠为 0。
+  本次浏览器展示使用隔离本地轨迹验证 UI 合同；实际模型声明行为由 Hermes runtime/bridge 合同测试
+  覆盖，未把离线 fixture 冒充真实 provider 结果。
+- Docker 29.5.3 下重新执行 `docker compose up -d --build`，最终 app/Hermes 镜像构建与镜像内
+  `pip check` 通过；app、Hermes、PostgreSQL、Neo4j healthy，Qdrant running。应用 `/health`、首页和
+  Hermes `/health` 均正常，正式服务继续运行在 `http://127.0.0.1:8001/`。
+- 正式服务全新会话发送“你好”：服务端 30 ms，`response_mode=conversational`、
+  `routing_lane=deterministic`、`tool_events=[]`，没有误触发 RAG。查询“Atlas 现在使用什么访问令牌
+  签名算法？”在 23 秒完成，状态 verified，执行 3 个受控工具并引用 2 个来源，回答为 EdDSA/Ed25519
+  （替代 RS256，令牌有效期 15 分钟）。这证明基础聊天和真实知识检索已可用，但单个样本不作为
+  P50/P95 性能结论。
+
+## 下一检查点（2026-08-05）
+
+1. 扩大真实专业问答样本并统计 P50/P95，继续缩短首个可见工具阶段；当前 Atlas 单次 live 样本为
+   23 秒，只证明生产链路可用，不代表稳定性能分布。
+2. 执行 live Graph combined gate 与异步入库浏览器纵向，补齐图谱组合检索和首次上传的正式生产
+   体验证据。
+   多副本协调、复杂自动回滚和额外治理面板继续延期，不占用当前交互主线。
+
+## 2026-08-06 企业计算机研发知识库 v2
+
+- Northstar Labs / Atlas fixture 从 23 份扩展到 53 份版本化文档，其中 52 份 active、1 份历史 ADR
+  superseded。新增 30 份均为计算机技术研发资料，不增加行政、人事或营销填充内容。
+- 新语料覆盖事件驱动摄取与 Transactional Outbox、PostgreSQL/Qdrant/Neo4j 数据模型、Embedding
+  生命周期、Agent Runtime、Prompt Registry、模型服务、Kubernetes、CI/CD、可观测性、容量与性能、
+  灾难恢复、Schema Migration、威胁模型、Secrets 和软件供应链。
+- 新增 `INC-2026-0712` 模型配额事故与 Provider 退化 Runbook，明确 48 并发回填挤占 64 个槽位、
+  online 保留 70% 容量、图谱回填默认并发 12 等可验证事实。
+- 人工策展图谱从 16 个实体/16 条关系扩展到 28 个实体/33 条关系，增加 Outbox Dispatcher、Learning
+  Worker、Capability Bridge、Prompt Registry、Kubernetes、Object Storage、平台团队、事故与 Runbook
+  的证据关系。
+- 企业 required set 从 10 个扩展到 16 个 case，新增最终一致性、图谱候选治理、模型配额事故、
+  embedding 灰度切换、Kubernetes 安全边界和区域灾备顺序。编译器生成 53-document/16-case 标准
+  retrieval fixture；相关 37 个 fixture/evaluation/graph 合同测试和全量 414-case pytest 均通过，Ruff、
+  173 文件 strict mypy 与 `git diff --check` 全绿。
+- 正式 Docker app 镜像已重建。v2 preview 精确返回 23 unchanged + 30 create；异步 run
+  `7fd01a70-ad4c-4751-9505-f7d7fd1e262e` 完成 30/30 job，错误为 0，并发布 28 个策展实体和 33 条关系。
+  当前工作区为 54 份 active 文档（含 52 份企业 fixture 和 2 份其他资料）、123 个 Chunk、0 active
+  ingestion job、0 unpublished outbox。
+- 新增资料 live smoke `a0d49397-79c1-4079-bc82-a3c237c30500` 查询 INC-2026-0712，Agent 返回
+  verified，引用新事故、Provider Runbook、容量规划和系统架构，正确区分 48/64 provider 槽位争用与
+  Neo4j 42 ms 健康指标，并给出 online 70% 预留、回填默认 12/最大 16 的永久修复。端到端约 30 秒，
+  证明新增资料可由 Qdrant 真实召回和模型综合；该单样本不替代 P50/P95。
+
+## 2026-08-09 Adaptive-RAG + 条件式 Self-RAG 路由
+
+- 删除生产请求对问候正则、技术关键词和 domain pack 的路由依赖；一次模型调用同时完成复杂度分类与
+  `no_retrieval` 直接回答，“哈哈你好”一类表达不再因未命中正则进入完整 Agent/RAG。
+- 新增 `no_retrieval / single_step / multi_step` 严格路由合同。路由在运行持久化前产生并缓存，执行
+  阶段复用，不重复调用分类模型；真实策略随 `run.route` 和 `run.completed` 返回前端。
+- 单步检索在 LangChain 检索控制器内强制限制为 1 subquery、1 round；无检索路由调用知识控制器会被
+  拒绝。只有 multi-step 设置 `self_reflection=true`，允许一次证据相关性/结论支持度检查和一次纠偏
+  检索，仍不足时必须降置信度并披露限制。
+- 路由模型不可用时快速返回 provider 错误，不再 fail-open 到耗时 Hermes RAG。新增模糊问候、路由
+  失败不降级、决策只调用一次、单步上限、无检索门禁和条件式 Self-RAG 合同测试。
+- 全量 pytest 通过（17 个既有环境型 skip），Ruff、174 文件 strict mypy、TypeScript/Vite build 和
+  `git diff --check` 全绿。Docker app/Hermes 镜像完成重建，app、Hermes、PostgreSQL、Neo4j 健康，
+  Qdrant running。网关离线实测“哈哈你好”在 0.73 秒返回可重试 503，未创建 run、未进入 RAG；
+  `127.0.0.1:55523` 当前无监听，因此在线直接回答的 live success 留待网关恢复后复验。
+
+## 2026-08-10 模型网关迁移与 Adaptive-RAG 在线复验
+
+- OpenAI-compatible provider 已从本地 `127.0.0.1:55523/v1` 切换到外部 HTTPS 网关；访问凭证仅保存在
+  gitignored `.env`，未进入示例配置、技术文档或进度记录。
+- 通过 `/v1/models` 核对服务端模型目录，主 Agent、Adaptive-RAG 路由和 Hermes 统一使用准确模型 ID
+  `gpt-5.6-luna`。供应商直连冷启动样本较慢，随后热请求约 2.95 秒，因此保留 12 秒路由超时作为延迟
+  与失败隔离边界。
+- Docker app/Hermes 已按新环境变量重新创建并恢复 healthy。生产 API 实测“哈哈你好”HTTP 200，约
+  3.62 秒返回“哈哈，你好！有什么想聊的吗？”，路由为 `no_retrieval/conversation`，图谱、向量检索、
+  Self-RAG、引用和工具调用均未启动。
+
+## 2026-08-10 仓库结构与冗余代码审计
+
+- 完成 Python/TypeScript 模块引用图、正式 CLI、动态前端入口、脚本、prompt、ADR、知识资产和本地
+  Markdown 链接审计。174 个后端模块全部有运行入口或入站引用，前端全部视图由静态或 lazy import
+  使用；`.data/` 内论文、OCR/IR、企业知识库、manifest、黄金集和迁移资产全部保留。
+- 删除已经退出生产路径的正则社交/关键词路由及过时测试，Adaptive-RAG 模型路由成为唯一在线决策
+  实现；删除 2 个未加载 prompt 和 2 个仅转发正式 CLI 的包装脚本。
+- 删除误提交的 `.DS_Store`、数据锁、TypeScript/Vite 编译副产物，并清理约 162 MB 可再生成缓存。
+  前端新增 `noUnusedLocals/noUnusedParameters` 门禁，TypeScript 增量状态固定写入 ignored cache。
+- 新增 `docs/PROJECT_STRUCTURE.md` 与 `scripts/README.md`，明确 bounded context、运行数据保留规则、
+  新文件归属和脚本职责；Semantic GraphRAG ADR 从重复的 ADR-010 调整为唯一 ADR-012。
+- 清理后全量门禁为 `409 passed / 17 skipped`；Ruff、174 文件 strict mypy、TypeScript typecheck、
+  Vite production build、Markdown 链接、Compose 配置与 `git diff --check` 全绿。当前 Compose 五个
+  服务均运行，app、Hermes、PostgreSQL、Neo4j healthy，Qdrant running；本次未重建镜像。
+
+## 2026-08-10 架构级代码收敛
+
+- 在文件引用图基础上进行第二阶段瘦身：顶层业务包从 24 个降至 19 个，Python 文件从 174 个降至
+  163 个。`context`、`evidence`、`observability`、`computer`、`vision` 五个单实现包分别归入 Agent、
+  Application 和 Knowledge owner，不保留旧路径兼容壳。
+- `integration` 重命名为 `capabilities`，`IntegrationRuntime` 重命名为 `AgentToolRuntime`；
+  `domains` 重命名为 `domain_packs`，四个内置领域包合并到 `built_in.py`。运行预算、Skill canary
+  策略和回答 replay 指标三个单一 owner 薄文件并回其实际服务。
+- Agent/RAG/KG/Knowledge 主链使用职责完整的文件名，包括 `adaptive_rag_router.py`、
+  `agent_tool_runtime.py`、`agentic_retrieval.py`、`hybrid_retrieval_pipeline.py`、
+  `qdrant_hybrid_retriever.py`、`graph_retrieval_tools.py`、`neo4j_evidence_graph.py`、
+  `knowledge_ingestion.py` 和 `knowledge_repository.py`。测试文件同步按被测职责重命名。
+- `docs/PROJECT_STRUCTURE.md` 新增在线问答与知识入库两条唯一主调用链。模块/CLI 审计结果为
+  163 modules、21 CLI roots、0 orphan；旧模块导入和旧文档路径均为 0。
+- Dockerfile 改为 frontend-builder/runtime 多阶段构建，镜像不再依赖宿主机预生成且被忽略的
+  `frontend/dist`。app 镜像在干净 build context 下构建成功，wheel 安装和 `pip check` 通过；前端
+  production dependency audit 为 0 vulnerability。
+- 重构后门禁为 `409 passed / 17 skipped`、163 文件 strict mypy、Ruff、TypeScript typecheck、Vite
+  production build、本地 Markdown 链接和 `git diff --check` 全绿。
+
+## 2026-08-10 Context Engine v2
+
+- 将旧的字符截断会话历史与运行胶囊收敛为 `app/agent/context_engine.py`。Adaptive-RAG 和 Hermes
+  复用同一 run-scoped 上下文缓存；默认总预算 8,000 token，其中历史 3,500、Memory 2,200、Skill
+  700、个人状态 1,200，配置启动时校验分项总和，禁止静默超配。
+- 最近回合继续按 tenant/project/user/session 二次隔离；超过近期窗口的已完成回合生成确定性、
+  无模型幻觉的滚动摘要，连同已摘要 run ID 和 revision 持久化在 `ConversationMetadata`。会话重命名
+  或归档不会覆盖摘要状态。
+- Memory 召回从 repository 词面搜索升级为 scoped 全量候选上的 BM25 + dense-hash 混合排序，叠加
+  confidence、最低 provenance trust 与 90 天半衰期；同逻辑键冲突优先当前用户、高信任、高置信和
+  新记录，等价内容去重，无关非 Policy 记忆不进入 prompt。Harness 的置信阈值与条数上限仍在排序前
+  生效。
+- `AnswerResponse.context_trace` 记录总预算、分项 token、纳入 Memory ID、省略/重复/冲突数量、近期
+  与摘要回合数、截断项和 revision；无检索直聊与 Hermes Agent 两条回答路径均会随 trajectory/SSE
+  持久化该 trace，不暴露 Memory 正文或系统 Prompt。
+- 抽出 `app/tokenization.py` 作为 Context Engine 与 Document chunking 的唯一 `o200k_base` 加载入口，
+  优先使用仓库内置缓存，避免运行时访问公网编码文件。新增 Context Engine 混合记忆、冲突去重、
+  摘要持久化、token 上限和直聊 trace 合同测试。
+- 交付门禁为 `411 passed / 17 skipped`、164 文件 strict mypy、Ruff、前端 TypeScript/Vite production
+  build、Compose 配置与 `git diff --check` 全绿；17 个 skip 仍是既有外部 Postgres/socket 环境项。
+- Docker app/Hermes 镜像已重建，五个服务恢复运行，app/Hermes/PostgreSQL/Neo4j healthy。正式服务
+  新会话“你好”返回 conversational/no_retrieval，工具和 RAG 均未启动；持久化回答包含
+  `context-engine-v2` trace（本轮无历史，history token=0）。该次 provider 端到端约 23 秒，说明路由
+  正确但外部模型延迟仍需单独做 P50/P95 与超时治理，不能归因于 Context Engine。

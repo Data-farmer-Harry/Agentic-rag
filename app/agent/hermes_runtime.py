@@ -10,19 +10,28 @@ from typing import Any
 
 import httpx
 
-from app.agent.conversation_router import ConversationHistoryProvider, ConversationTurn
+from app.agent.adaptive_rag_router import ConversationHistoryProvider, ConversationTurn
+from app.agent.context_engine import RuntimeCapsule
 from app.agent.hermes_bridge import HermesCapabilityBridge
 from app.agent.instructions import load_hermes_instructions
 from app.config import Settings
-from app.domain.models import AnswerResponse, RunContext
-from app.domains.registry import DomainPackRegistry
+from app.domain.models import AdaptiveRAGRoute, AnswerResponse, RunContext
+from app.domain_packs.registry import DomainPackRegistry
+from app.retrieval.knowledge_query_router import (
+    KnowledgeQueryRouteDecision,
+    adaptive_route_instruction,
+    route_knowledge_query,
+)
 
 
 class HermesRuntimeError(RuntimeError):
     pass
 
 
-RuntimeCapsuleProvider = Callable[[RunContext, str], Awaitable[str]]
+ContextCapsuleProvider = Callable[
+    [RunContext, str],
+    Awaitable[str | RuntimeCapsule],
+]
 logger = logging.getLogger(__name__)
 
 
@@ -35,7 +44,7 @@ class HermesAgentRuntime:
         settings: Settings,
         bridge: HermesCapabilityBridge,
         domain_packs: DomainPackRegistry | None = None,
-        capsule_provider: RuntimeCapsuleProvider | None = None,
+        capsule_provider: ContextCapsuleProvider | None = None,
         history_provider: ConversationHistoryProvider | None = None,
         client: httpx.AsyncClient | None = None,
     ) -> None:
@@ -73,18 +82,25 @@ class HermesAgentRuntime:
             await self._client.aclose()
 
     async def run(self, user_input: str, context: RunContext) -> AnswerResponse:
-        capsule = (
-            await self._capsule_provider(context, user_input)
-            if self._capsule_provider is not None
-            else ""
-        )
         history: Sequence[ConversationTurn] = ()
         if self._history_provider is not None:
             try:
                 history = await self._history_provider(context)
             except Exception:
                 logger.warning("Hermes conversation history could not be loaded")
-        bridge_id = await self._bridge.open_run(context)
+        raw_capsule = (
+            await self._capsule_provider(context, user_input)
+            if self._capsule_provider is not None
+            else ""
+        )
+        capsule = raw_capsule.text if isinstance(raw_capsule, RuntimeCapsule) else raw_capsule
+        capsule_memories = raw_capsule.memories if isinstance(raw_capsule, RuntimeCapsule) else ()
+        context_trace = raw_capsule.trace if isinstance(raw_capsule, RuntimeCapsule) else None
+        bridge_id = await self._bridge.open_run(
+            context,
+            allowed_memories=capsule_memories,
+        )
+        retrieval_route = context.adaptive_rag_route or route_knowledge_query(user_input)
         run_id: str | None = None
         try:
             response = await self._client.post(
@@ -95,7 +111,11 @@ class HermesAgentRuntime:
                 },
                 json={
                     "input": user_input,
-                    "instructions": self._instructions(context, capsule),
+                    "instructions": self._instructions(
+                        context,
+                        capsule,
+                        retrieval_route,
+                    ),
                     "session_id": bridge_id,
                     "model": self._settings.openai_model,
                     "conversation_history": self._serialize_history(history),
@@ -107,7 +127,8 @@ class HermesAgentRuntime:
             if not run_id:
                 raise HermesRuntimeError("Hermes did not return a run_id")
 
-            return await self._wait_for_answer_or_terminal(run_id, bridge_id)
+            answer = await self._wait_for_answer_or_terminal(run_id, bridge_id)
+            return answer.model_copy(update={"context_trace": context_trace})
         except asyncio.CancelledError:
             if run_id:
                 await self._stop_run(run_id)
@@ -319,6 +340,16 @@ class HermesAgentRuntime:
             messages.append({"role": "assistant", "content": turn.assistant_answer})
         return messages
 
-    def _instructions(self, context: RunContext, capsule: str = "") -> str:
+    def _instructions(
+        self,
+        context: RunContext,
+        capsule: str = "",
+        retrieval_route: AdaptiveRAGRoute | KnowledgeQueryRouteDecision | None = None,
+    ) -> str:
         domain_context = self._domain_packs.get(context.domain_pack).system_context()
-        return load_hermes_instructions(domain_context, capsule)
+        instructions = load_hermes_instructions(domain_context, capsule)
+        if retrieval_route is None:
+            return instructions
+        if isinstance(retrieval_route, AdaptiveRAGRoute):
+            return f"{instructions}\n\n{adaptive_route_instruction(retrieval_route)}"
+        return f"{instructions}\n\n{retrieval_route.as_instruction()}"

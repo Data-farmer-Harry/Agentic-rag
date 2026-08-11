@@ -4,15 +4,14 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.agent.budget import RunBudgetExceeded
-from app.agent.hermes_bridge import HermesCapabilityBridge
+from app.agent.hermes_bridge import HermesCapabilityBridge, RunBudgetExceeded
 from app.api.app import create_app
 from app.bootstrap import build_components
 from app.config import Settings
 from app.domain.enums import MemoryType, TrustLevel
 from app.domain.models import MemoryCandidate, Provenance, RunContext, utc_now
 from app.infra.local_repositories import JsonlTrajectoryRepository
-from app.memory.json_store import JsonMemoryStore
+from app.memory.json_memory_repository import JsonMemoryStore
 from app.personal.models import (
     ChecklistItemCreate,
     ChecklistItemPatch,
@@ -32,7 +31,7 @@ from app.personal.models import (
 )
 from app.personal.repository import JsonPersonalRepository, PersonalVersionConflict
 from app.personal.service import PersonalControlService
-from app.retrieval.memory import InMemoryRetriever
+from app.retrieval.in_memory_retriever import InMemoryRetriever
 
 
 def personal_service(tmp_path: Path) -> PersonalControlService:

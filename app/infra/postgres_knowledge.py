@@ -19,14 +19,14 @@ from app.domain.models import (
 )
 from app.infra.postgres import PostgresDatabase, PostgresMigration
 from app.infra.postgres_outbox import insert_outbox_event
-from app.knowledge.provenance import provenance_from_source, source_metadata
-from app.knowledge.store import (
+from app.knowledge.knowledge_provenance import provenance_from_source, source_metadata
+from app.knowledge.knowledge_repository import (
     FileKnowledgeObjectStore,
     JsonKnowledgeRepository,
     KnowledgeStoreError,
     _terms,
 )
-from app.knowledge.visibility import (
+from app.knowledge.knowledge_visibility import (
     evidence_is_visible,
     knowledge_layer_for_source,
     knowledge_layer_priority,

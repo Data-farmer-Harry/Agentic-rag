@@ -26,6 +26,9 @@
   finalizer、每回合原生 review 和 completion 握手。
 - [ADR-011](./ADR-011-harness-pattern-governance.md)：Pattern Evaluation/Promotion Evidence/
   Transition 三账本、状态机、稳定 Canary 分桶与 bounded `RunExecutionPolicy`。
+- [ADR-012](./ADR-012-semantic-graphrag-tools.md)：参数化 GraphRAG 工具、证据子图和禁止模型生成
+  任意 Cypher 的安全边界。
+- [项目目录结构](./PROJECT_STRUCTURE.md)：源码边界、运行数据、脚本职责、保留规则和新增文件放置约定。
 
 推荐阅读顺序：先读 Intent Lock，再读研发智能 Agent 完整交付设计，然后按其指定章节阅读 PRD、
 技术实现文档、Agentic RAG 冻结基线和 MemoHarness 专项规划，最后对照 Progress 执行。模拟企业

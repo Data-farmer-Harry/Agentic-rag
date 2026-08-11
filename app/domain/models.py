@@ -675,6 +675,7 @@ class AgentAnswerDraft(StrictModel):
     response_mode: AnswerMode = AnswerMode.GROUNDED
     claims: list[Claim] = Field(default_factory=list)
     citation_ids: list[UUID] = Field(default_factory=list)
+    memory_ids: list[UUID] = Field(default_factory=list, max_length=20)
     confidence: EvidenceLevel = EvidenceLevel.INSUFFICIENT
     limitations: list[str] = Field(default_factory=list)
     followup_queries: list[str] = Field(default_factory=list)
@@ -689,17 +690,76 @@ class FollowUpAction(StrictModel):
     query: str = Field(min_length=1, max_length=2_000)
 
 
+class AdaptiveRAGRoute(StrictModel):
+    """Model-authored, server-normalized retrieval strategy for one user turn."""
+
+    strategy: Literal["no_retrieval", "single_step", "multi_step"]
+    knowledge_route: Literal[
+        "conversation",
+        "tool_action",
+        "passage_lookup",
+        "relationship",
+        "global_summary",
+    ]
+    requires_graph: bool = False
+    requires_multi_source: bool = False
+    self_reflection: bool = False
+    confidence: Literal["high", "medium"] = "medium"
+    signals: list[str] = Field(default_factory=list, max_length=4)
+
+    @model_validator(mode="after")
+    def validate_strategy(self) -> Self:
+        if self.strategy == "no_retrieval":
+            if self.requires_graph or self.requires_multi_source or self.self_reflection:
+                raise ValueError("No-retrieval routes cannot request retrieval features")
+            if self.knowledge_route not in {"conversation", "tool_action"}:
+                raise ValueError("No-retrieval routes must be conversation or tool_action")
+        elif self.knowledge_route in {"conversation", "tool_action"}:
+            raise ValueError("Retrieval routes must select a knowledge strategy")
+        if self.self_reflection != (self.strategy == "multi_step"):
+            raise ValueError("Self-reflection is reserved for multi-step retrieval")
+        return self
+
+
+class ContextTrace(StrictModel):
+    """Auditable record of the bounded context assembled for one answer."""
+
+    revision: str = Field(default="context-engine-v2", min_length=1, max_length=100)
+    total_budget_tokens: int = Field(ge=0)
+    used_tokens: int = Field(ge=0)
+    component_tokens: dict[str, int] = Field(default_factory=dict)
+    selected_memory_ids: list[UUID] = Field(default_factory=list, max_length=20)
+    omitted_memory_count: int = Field(default=0, ge=0)
+    duplicate_memory_count: int = Field(default=0, ge=0)
+    conflicting_memory_count: int = Field(default=0, ge=0)
+    recent_turn_count: int = Field(default=0, ge=0)
+    summarized_turn_count: int = Field(default=0, ge=0)
+    summary_revision: str | None = Field(default=None, max_length=100)
+    truncated_components: list[str] = Field(default_factory=list, max_length=10)
+
+    @model_validator(mode="after")
+    def validate_budget(self) -> Self:
+        if self.used_tokens > self.total_budget_tokens:
+            raise ValueError("Context usage cannot exceed its total token budget")
+        if any(value < 0 for value in self.component_tokens.values()):
+            raise ValueError("Context component token counts cannot be negative")
+        return self
+
+
 class AnswerResponse(StrictModel):
     answer_markdown: str
     response_mode: AnswerMode = AnswerMode.GROUNDED
     routing_lane: RoutingLane | None = None
     claims: list[Claim] = Field(default_factory=list)
     citations: list[EvidenceRef] = Field(default_factory=list)
+    memory_ids: list[UUID] = Field(default_factory=list, max_length=20)
     confidence: EvidenceLevel = EvidenceLevel.INSUFFICIENT
     limitations: list[str] = Field(default_factory=list)
     followup_queries: list[str] = Field(default_factory=list)
     graph_paths: list[GraphPath] = Field(default_factory=list)
     follow_up_actions: list[FollowUpAction] = Field(default_factory=list)
+    adaptive_rag_route: AdaptiveRAGRoute | None = None
+    context_trace: ContextTrace | None = None
 
 
 class RunExecutionPolicy(StrictModel):
@@ -760,6 +820,7 @@ class RunContext(StrictModel):
     workspace_mode: WorkspaceMode | None = None
     skill_versions: dict[str, str] = Field(default_factory=dict)
     execution_policy: RunExecutionPolicy | None = None
+    adaptive_rag_route: AdaptiveRAGRoute | None = None
     started_at: datetime = Field(default_factory=utc_now)
 
 
@@ -827,6 +888,10 @@ class ConversationMetadata(StrictModel):
     session_id: str = Field(min_length=1, max_length=200)
     title: str | None = Field(default=None, min_length=1, max_length=200)
     archived: bool = False
+    context_summary: str = Field(default="", max_length=30_000)
+    summarized_run_ids: list[UUID] = Field(default_factory=list, max_length=200)
+    context_summary_revision: str | None = Field(default=None, max_length=100)
+    context_summary_updated_at: datetime | None = None
     created_at: datetime = Field(default_factory=utc_now)
     updated_at: datetime = Field(default_factory=utc_now)
 

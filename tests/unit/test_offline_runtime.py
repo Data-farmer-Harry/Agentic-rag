@@ -1,9 +1,9 @@
 import pytest
 
 from app.agent.offline_runtime import OfflineAgentRuntime
+from app.application.run_event_recorder import RunEventRecorder
 from app.domain.enums import EvidenceLevel, TrustLevel
 from app.domain.models import EvidenceRef, Provenance, RetrievalBundle, RunContext
-from app.observability.events import RunEventRecorder
 
 
 class FixtureRetrieval:

@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 from app.domain.contracts import KnowledgeRepository, OutboxRepository
 from app.domain.enums import DocumentStatus
 from app.domain.models import OutboxEvent
-from app.graph.candidate_service import KnowledgeGraphIngestionCoordinator
+from app.graph.graph_candidate_service import KnowledgeGraphIngestionCoordinator
 from app.infra.outbox_errors import OutboxLeaseLostError
 
 logger = logging.getLogger(__name__)

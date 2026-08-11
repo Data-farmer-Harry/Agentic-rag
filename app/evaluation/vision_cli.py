@@ -16,7 +16,7 @@ from app.evaluation.vision import (
     VisionEvaluator,
     VisionGoldenSet,
 )
-from app.vision import OpenAIVisionAnalyzer
+from app.knowledge.openai_vision_analyzer import OpenAIVisionAnalyzer
 
 
 def _parser() -> argparse.ArgumentParser:

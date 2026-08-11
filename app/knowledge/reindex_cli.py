@@ -14,9 +14,9 @@ from app.evaluation.embedding_calibration import (
 )
 from app.infra.postgres import PostgresDatabase
 from app.infra.postgres_knowledge import PostgresKnowledgeRepository
-from app.knowledge.store import FileKnowledgeObjectStore
-from app.retrieval.embeddings import DeterministicDenseEmbedder, HashedSparseEmbedder
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.knowledge.knowledge_repository import FileKnowledgeObjectStore
+from app.retrieval.embedding_providers import DeterministicDenseEmbedder, build_sparse_embedder
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 
 def parser() -> argparse.ArgumentParser:
@@ -97,7 +97,12 @@ async def run(args: argparse.Namespace) -> int:
             timeout=min(settings.agent_timeout_seconds, 60),
         ),
         DeterministicDenseEmbedder(dimensions),
-        HashedSparseEmbedder(),
+        build_sparse_embedder(
+            settings.qdrant_sparse_encoder,
+            bm25_k1=settings.qdrant_bm25_k1,
+            bm25_b=settings.qdrant_bm25_b,
+            bm25_average_document_tokens=settings.qdrant_bm25_average_document_tokens,
+        ),
         collection_name=collection,
         prefetch_limit=settings.qdrant_prefetch_limit,
         rrf_k=settings.qdrant_rrf_k,

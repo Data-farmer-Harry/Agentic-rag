@@ -1,3 +1,14 @@
+FROM nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b AS frontend-builder
+
+WORKDIR /frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN --mount=type=cache,target=/root/.npm npm ci
+COPY frontend/index.html frontend/tsconfig.json frontend/tsconfig.app.json \
+    frontend/tsconfig.node.json frontend/vite.config.ts ./
+COPY frontend/src/ ./src/
+RUN npm run build
+
+
 FROM nikolaik/python-nodejs:python3.13-nodejs20-slim@sha256:ef37897d6366a5e510782b6f708106c5e4e447975036d898295542647c155d6b AS runtime
 
 ARG PIP_INDEX_URL=https://pypi.org/simple
@@ -23,7 +34,7 @@ RUN pip install --no-deps . \
 COPY docs/ ./docs/
 COPY examples/ ./examples/
 COPY prompts/ ./prompts/
-COPY frontend/dist/ ./frontend/dist/
+COPY --from=frontend-builder /frontend/dist/ ./frontend/dist/
 
 RUN useradd --create-home --uid 10001 hermesgraph \
     && mkdir -p /data \

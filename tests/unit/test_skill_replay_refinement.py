@@ -9,7 +9,7 @@ from app.domain.enums import RunStatus, SkillStatus
 from app.domain.models import RunContext, RunTrajectory, SkillDefinition, SkillStep, ToolEvent
 from app.learning.refinement import SkillRefiner
 from app.learning.skill_replay import FrozenCapabilitySkillSandbox
-from app.skills.repository import SkillMarkdownRepository
+from app.skills.skill_markdown_repository import SkillMarkdownRepository
 
 
 def _trajectory(

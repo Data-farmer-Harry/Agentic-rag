@@ -6,8 +6,8 @@ import pytest
 
 from app.domain.enums import DocumentStatus, TrustLevel
 from app.domain.models import KnowledgeChunk, KnowledgeDocument, KnowledgeSource
-from app.knowledge.ingestion import KnowledgeIngestionError, KnowledgeIngestionService
-from app.knowledge.store import JsonKnowledgeRepository
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionError, KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
 
 
 class _RecordingGraphIndex:

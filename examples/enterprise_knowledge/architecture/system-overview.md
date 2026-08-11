@@ -1,7 +1,7 @@
 # Atlas 系统架构总览
 
-状态：Active  
-版本：2026.06  
+状态：Active
+版本：2026.06
 Owner：Architecture Council
 
 ## 系统目标

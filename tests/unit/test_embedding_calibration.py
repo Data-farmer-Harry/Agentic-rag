@@ -22,7 +22,7 @@ from app.evaluation.retrieval import (
     RetrievalGoldenCase,
     RetrievalGoldenSet,
 )
-from app.retrieval.embeddings import EmbeddingUsage
+from app.retrieval.embedding_providers import EmbeddingUsage
 
 
 def _document(*, status: DocumentStatus = DocumentStatus.ACTIVE) -> KnowledgeDocument:

@@ -4,7 +4,7 @@ from typing import Any, cast
 import pytest
 from neo4j import AsyncDriver, Query, RoutingControl
 
-from app.domain.enums import GraphCandidateStatus
+from app.domain.enums import GraphCandidateStatus, KnowledgeLayer
 from app.domain.models import (
     GraphEntityResolveRequest,
     GraphSearchRequest,
@@ -13,9 +13,9 @@ from app.domain.models import (
     RunContext,
     utc_now,
 )
-from app.graph.extraction import RuleBasedEntityRelationExtractor
-from app.graph.neo4j import Neo4jEvidenceGraph
-from app.graph.resolution import DeterministicEntityResolver
+from app.graph.entity_resolution import DeterministicEntityResolver
+from app.graph.graph_extraction_pipeline import RuleBasedEntityRelationExtractor
+from app.graph.neo4j_evidence_graph import Neo4jEvidenceGraph
 
 
 def _evidence() -> dict[str, Any]:
@@ -134,7 +134,10 @@ async def test_neo4j_adapter_uses_allowlisted_parameters_and_rechecks_scope() ->
             template="paths",
             max_hops=3,
         ),
-        RunContext(),
+        RunContext(
+            user_id="alice",
+            enabled_knowledge_layers=(KnowledgeLayer.TEAM_INTERNAL, KnowledgeLayer.PERSONAL),
+        ),
     )
 
     assert len(result.paths) == 1
@@ -143,11 +146,17 @@ async def test_neo4j_adapter_uses_allowlisted_parameters_and_rechecks_scope() ->
     call = fake.calls[0]
     query_text = str(call["query"])
     assert "[:SEMANTIC_RELATION*1..3]" in query_text
+    assert "WITH path\nLIMIT $limit" in query_text
+    assert "][..5]" in query_text
+    assert "chunk.knowledge_layer IN $knowledge_layers" in query_text
+    assert "chunk.user_id = $user_id" in query_text
     assert "$entities" in query_text
     assert malicious_entity not in query_text
     assert call["parameters_"]["entities"] == [malicious_entity.casefold()]
     assert call["parameters_"]["tenant_id"] == "local"
     assert call["parameters_"]["project_id"] == "default"
+    assert call["parameters_"]["knowledge_layers"] == ["team_internal", "personal"]
+    assert call["parameters_"]["user_id"] == "alice"
     assert call["routing_"] == RoutingControl.READ
     assert call["database_"] == "neo4j"
 

@@ -14,14 +14,14 @@ from app.domain.models import (
     KnowledgeDocument,
     utc_now,
 )
-from app.knowledge.ingestion import KnowledgeIndexError, KnowledgeIngestionError
-from app.knowledge.job_errors import IngestionJobLeaseLostError
-from app.knowledge.jobs import (
+from app.knowledge.ingestion_job_errors import IngestionJobLeaseLostError
+from app.knowledge.ingestion_jobs import (
     IngestionJobService,
     IngestionJobTransitionError,
     IngestionStagingError,
     IngestionStagingStore,
 )
+from app.knowledge.knowledge_ingestion import KnowledgeIndexError, KnowledgeIngestionError
 
 
 class _MemoryJobRepository:

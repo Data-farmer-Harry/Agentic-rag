@@ -4,7 +4,7 @@ import argparse
 import asyncio
 from pathlib import Path
 
-from app.agent.conversation_router import (
+from app.agent.adaptive_rag_router import (
     ConversationRoutedRuntime,
     OpenAIConversationResponder,
 )

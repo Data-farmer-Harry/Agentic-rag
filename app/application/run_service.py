@@ -8,17 +8,17 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
+from app.agent.answer_publisher import AnswerPublisher
+from app.application.run_event_recorder import RunEventRecorder
 from app.config import Settings
 from app.domain.contracts import AgentRuntime, TrajectoryRepository
 from app.domain.enums import RunStatus
 from app.domain.models import AnswerResponse, RunContext, RunSnapshot, RunTrajectory, ToolEvent
-from app.domains.registry import DomainPackRegistry
-from app.evidence.publisher import AnswerPublisher
+from app.domain_packs.registry import DomainPackRegistry
 from app.harness.consumer import BoundedHarnessConsumer
 from app.harness.selector import HarnessOverlaySelector
-from app.knowledge.visibility import WorkspaceProfileResolver
+from app.knowledge.knowledge_visibility import WorkspaceProfileResolver
 from app.learning.safety import annotate_trajectory_for_automatic_learning
-from app.observability.events import RunEventRecorder
 
 LearningTrigger = Literal["run_completed", "feedback_received"]
 LearningProcessor = Callable[[RunTrajectory, LearningTrigger], Awaitable[None]]
@@ -139,6 +139,13 @@ class RunService:
         if self._skill_version_provider is not None:
             skill_versions = dict(await self._skill_version_provider(context))
             context = context.model_copy(update={"skill_versions": skill_versions})
+        prepare_route = getattr(self._runtime, "prepare_route", None)
+        if callable(prepare_route):
+            adaptive_route = await prepare_route(user_input, context)
+            if adaptive_route is not None:
+                context = context.model_copy(
+                    update={"adaptive_rag_route": adaptive_route}
+                )
         snapshot = RunSnapshot(
             model=self._settings.openai_model,
             prompt_hash=_stable_hash(pack.system_context()),
@@ -149,7 +156,8 @@ class RunService:
             corpus_snapshot="local",
             component_versions={
                 "core": "0.1.0",
-                "conversation_router": "2",
+                "conversation_router": "adaptive-rag-v1",
+                "context_engine": "context-engine-v2",
             },
             config_hash=_stable_hash(
                 {
@@ -159,10 +167,23 @@ class RunService:
                         self._settings.conversation_fast_path_enabled
                     ),
                     "conversation_fast_path_model": (
-                        self._settings.conversation_fast_path_model
+                        self._settings.adaptive_rag_router_model
+                        or self._settings.conversation_fast_path_model
                         or self._settings.openai_model
                     ),
+                    "adaptive_rag_router_enabled": (
+                        self._settings.adaptive_rag_router_enabled
+                    ),
+                    "adaptive_rag_router_timeout_seconds": (
+                        self._settings.adaptive_rag_router_timeout_seconds
+                    ),
                     "conversation_history_turns": self._settings.conversation_history_turns,
+                    "context_total_tokens": self._settings.context_total_tokens,
+                    "context_history_tokens": self._settings.context_history_tokens,
+                    "context_summary_tokens": self._settings.context_summary_tokens,
+                    "context_memory_tokens": self._settings.context_memory_tokens,
+                    "context_skill_tokens": self._settings.context_skill_tokens,
+                    "context_personal_tokens": self._settings.context_personal_tokens,
                     "learning_mode": self._settings.learning_mode,
                     "harness_overlay_mode": self._settings.harness_overlay_mode,
                     "harness_bounded_consumer_enabled": (

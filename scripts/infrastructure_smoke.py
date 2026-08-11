@@ -15,9 +15,9 @@ from app.domain.models import (
     KnowledgeDocument,
     RunContext,
 )
-from app.graph.neo4j import Neo4jEvidenceGraph
-from app.retrieval.embeddings import DeterministicDenseEmbedder, HashedSparseEmbedder
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.graph.neo4j_evidence_graph import Neo4jEvidenceGraph
+from app.retrieval.embedding_providers import DeterministicDenseEmbedder, HashedSparseEmbedder
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 TENANT_ID = "smoke"
 PROJECT_ID = "adapter-smoke"

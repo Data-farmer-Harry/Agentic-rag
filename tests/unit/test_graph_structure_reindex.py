@@ -8,8 +8,8 @@ import pytest
 
 from app.domain.models import KnowledgeChunk, KnowledgeDocument
 from app.graph.structure_reindex import GraphStructureReindexService
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.store import JsonKnowledgeRepository
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
 
 
 class _RecordingGraph:

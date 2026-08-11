@@ -57,9 +57,9 @@ def test_enterprise_dataset_validates_and_compiles_existing_retrieval_contract(
 ) -> None:
     fixture = compile_enterprise_retrieval_fixture(enterprise_dataset)
 
-    assert fixture.revision == "2026-08-03-v1"
-    assert len(fixture.documents) == 23
-    assert len(fixture.cases) == 10
+    assert fixture.revision == "2026-08-06-v2"
+    assert len(fixture.documents) == 53
+    assert len(fixture.cases) == 16
     assert fixture.required_case_ids == enterprise_dataset.golden.required_case_ids
     assert all(case.required_case for case in fixture.cases)
     current_token = next(
@@ -139,7 +139,7 @@ def test_answer_evaluator_passes_complete_grounded_answers_and_keeps_judge_advis
     )
 
     assert report.passed is True
-    assert report.passed_count == report.total == 10
+    assert report.passed_count == report.total == 16
     assert report.required_failed_case_ids == []
     assert report.category_metrics["temporal_conflict"].passed == 1
     injection = next(
@@ -222,7 +222,7 @@ def test_graph_evaluator_accepts_active_evidence_backed_expected_paths(
 
     assert report.passed is True
     assert report.required_failed_case_ids == []
-    assert report.applicable_total == 4
+    assert report.applicable_total == 7
     assert report.category_metrics["architecture"].passed == 1
 
 
@@ -325,7 +325,7 @@ async def test_offline_enterprise_fixture_retrieval_passes_every_required_case(
         compile_enterprise_retrieval_fixture(enterprise_dataset)
     )
 
-    assert report.passed == report.total == 10
+    assert report.passed == report.total == 16
     assert report.required_gate_passed is True
     assert report.required_failed_case_ids == []
     assert gate_enterprise_retrieval(report).passed is True
@@ -565,7 +565,7 @@ async def test_read_only_qdrant_store_refuses_late_collection_deletion() -> None
     store = enterprise_cli.ReadOnlyEnterpriseQdrantStore(
         client,
         enterprise_cli.DeterministicDenseEmbedder(64),
-        enterprise_cli.HashedSparseEmbedder(),
+        enterprise_cli.build_sparse_embedder("hashed"),
         collection_name="enterprise_live",
         create_payload_indexes=False,
     )
@@ -750,6 +750,54 @@ def _perfect_graphs(dataset: EnterpriseEvaluationDataset) -> list[EnterpriseGrap
                     [("Relay", "Sentinel", "DEPENDS_ON")],
                     source_id="northstar:adr:012",
                 ),
+            ],
+        ),
+        EnterpriseGraphObservation(
+            case_id="enterprise-outbox-convergence",
+            paths=[
+                _graph_path(
+                    [("Foundry", "Transactional Outbox", "PUBLISHES_TO")],
+                    source_id="northstar:architecture:event-driven-ingestion",
+                ),
+                _graph_path(
+                    [("Outbox Dispatcher", "Transactional Outbox", "CONSUMES_FROM")],
+                    source_id="northstar:data:transactional-outbox",
+                ),
+            ],
+        ),
+        EnterpriseGraphObservation(
+            case_id="enterprise-provider-overload-incident",
+            paths=[
+                _graph_path(
+                    [
+                        ("INC-2026-0712", "Prism", "AFFECTED"),
+                        ("Prism", "AI Runtime", "OWNED_BY"),
+                    ],
+                    source_id="northstar:incident:2026-0712",
+                ),
+                _graph_path(
+                    [
+                        (
+                            "INC-2026-0712",
+                            "Model Provider Degradation Runbook",
+                            "MITIGATED_BY",
+                        )
+                    ],
+                    source_id="northstar:runbook:model-provider-degradation",
+                ),
+            ],
+        ),
+        EnterpriseGraphObservation(
+            case_id="enterprise-kubernetes-security",
+            paths=[
+                _graph_path(
+                    [
+                        ("Kubernetes", "Relay", "HOSTS"),
+                        ("Relay", "Polaris", "CALLS"),
+                        ("Polaris", "Qdrant", "READS_FROM"),
+                    ],
+                    source_id="northstar:infrastructure:kubernetes-platform",
+                )
             ],
         ),
     ]

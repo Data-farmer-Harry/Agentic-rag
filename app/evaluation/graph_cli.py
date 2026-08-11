@@ -18,8 +18,8 @@ from app.evaluation.graph_extraction import (
     GraphExtractionGoldenSet,
     OpenAIUsageAccumulator,
 )
-from app.graph.extraction import RuleBasedEntityRelationExtractor
-from app.graph.structured_extraction import (
+from app.graph.graph_extraction_pipeline import RuleBasedEntityRelationExtractor
+from app.graph.openai_graph_extractor import (
     HybridEntityRelationExtractor,
     OpenAIStructuredEntityRelationExtractor,
 )

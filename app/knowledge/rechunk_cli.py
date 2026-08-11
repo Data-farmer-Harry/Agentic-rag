@@ -12,11 +12,11 @@ from qdrant_client import AsyncQdrantClient
 from app.config import Settings
 from app.infra.postgres import PostgresDatabase
 from app.infra.postgres_knowledge import PostgresKnowledgeRepository
-from app.knowledge.chunking import HierarchicalDocumentChunker
+from app.knowledge.hierarchical_chunking import HierarchicalDocumentChunker
+from app.knowledge.knowledge_repository import FileKnowledgeObjectStore
 from app.knowledge.rechunk import KnowledgeRechunkService
-from app.knowledge.store import FileKnowledgeObjectStore
-from app.retrieval.embeddings import DeterministicDenseEmbedder, HashedSparseEmbedder
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.retrieval.embedding_providers import DeterministicDenseEmbedder, build_sparse_embedder
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 
 def parser() -> argparse.ArgumentParser:
@@ -119,7 +119,14 @@ async def run(args: argparse.Namespace) -> int:
         vector_store = QdrantHybridStore(
             qdrant_client,
             DeterministicDenseEmbedder(embedding_dimensions),
-            HashedSparseEmbedder(),
+            build_sparse_embedder(
+                settings.qdrant_sparse_encoder,
+                bm25_k1=settings.qdrant_bm25_k1,
+                bm25_b=settings.qdrant_bm25_b,
+                bm25_average_document_tokens=(
+                    settings.qdrant_bm25_average_document_tokens
+                ),
+            ),
             collection_name=qdrant_collection,
             prefetch_limit=settings.qdrant_prefetch_limit,
             rrf_k=settings.qdrant_rrf_k,

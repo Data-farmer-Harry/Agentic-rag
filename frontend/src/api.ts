@@ -528,6 +528,14 @@ export async function consumeRunEvents(
 
 function safeRunMessage(code?: string) {
   if (code === "forbidden") return "当前身份没有运行或查看这项任务的权限。";
+  if (code === "provider_busy") return "模型服务当前繁忙，请稍后重试。";
+  if (code === "provider_timeout") {
+    return "模型响应超时，请重新发送；复杂任务也可以稍后再试。";
+  }
+  if (code === "provider_authentication_failed") {
+    return "模型服务暂时不可用，请检查连接配置后重试。";
+  }
+  if (code === "run_interrupted") return "服务重启中断了这次任务，请重新发送。";
   if (code === "run_stream_unavailable" || code === "stream_connection_failed") {
     return "运行连接暂时不可用，已保留任务状态，可以稍后重试。";
   }

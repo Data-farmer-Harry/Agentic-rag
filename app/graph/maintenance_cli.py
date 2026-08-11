@@ -5,7 +5,7 @@ import asyncio
 
 from app.bootstrap import build_components
 from app.graph.maintenance import CandidateEvidenceReconciliationService
-from app.graph.neo4j import Neo4jEvidenceGraph
+from app.graph.neo4j_evidence_graph import Neo4jEvidenceGraph
 
 
 def parser() -> argparse.ArgumentParser:

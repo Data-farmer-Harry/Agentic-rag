@@ -31,7 +31,7 @@ from app.domain.models import (
 from app.learning.engine import LearningEngine
 from app.learning.safety import assess_automatic_learning
 from app.learning.skill_evaluator import DeterministicSkillEvaluator
-from app.skills.registry import SkillDiscoveryRegistry
+from app.skills.skill_registry import SkillDiscoveryRegistry
 
 
 class SkillEvolutionService:

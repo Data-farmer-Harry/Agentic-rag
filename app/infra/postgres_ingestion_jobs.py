@@ -11,7 +11,7 @@ from asyncpg import Pool, Record
 from app.domain.models import IngestionJob, OutboxEvent
 from app.infra.postgres import PostgresDatabase, PostgresDatabaseError, PostgresMigration
 from app.infra.postgres_outbox import insert_outbox_event
-from app.knowledge.job_errors import (
+from app.knowledge.ingestion_job_errors import (
     IngestionJobLeaseLostError,
     IngestionJobRepositoryError,
 )

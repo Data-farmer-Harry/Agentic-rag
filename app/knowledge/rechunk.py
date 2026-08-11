@@ -16,8 +16,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.domain.contracts import KnowledgeRepository, KnowledgeVectorIndexPort
 from app.domain.enums import DocumentStatus
 from app.domain.models import KnowledgeDocument, utc_now
-from app.knowledge.chunking import HierarchicalDocumentChunker
 from app.knowledge.document_ir import DocumentIR
+from app.knowledge.hierarchical_chunking import HierarchicalDocumentChunker
 from app.sources.arxiv_ocr import ArxivOcrEntry, ArxivOcrManifest
 
 

@@ -29,7 +29,8 @@ import type {
   TaskReminderFeed,
   ToolEvent,
   WorkspaceProfile,
-  RunCompletedEvent
+  RunCompletedEvent,
+  RetrievalRouteDecision
 } from "./types";
 
 const ActionsView = lazy(() => import("./components/ActionsView").then((module) => ({ default: module.ActionsView })));
@@ -165,6 +166,7 @@ function messagesFromRuns(runs: RunTrajectory[]): ConversationMessage[] {
       confidence: run.answer?.confidence,
       responseMode: run.answer?.response_mode,
       citations: run.answer?.citations ?? [],
+      memoryIds: run.answer?.memory_ids ?? [],
       graphPaths: run.answer?.graph_paths ?? [],
       followUpActions: run.answer?.follow_up_actions ?? [],
       limitations: run.answer?.limitations ?? [],
@@ -237,6 +239,7 @@ function App() {
   const [overview, setOverview] = useState<Overview>();
   const [workspaceProfile, setWorkspaceProfile] = useState<WorkspaceProfile>();
   const [workspaceError, setWorkspaceError] = useState<string>();
+  const [sessionError, setSessionError] = useState<string>();
   const [runs, setRuns] = useState<RunTrajectory[]>([]);
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
   const [memories, setMemories] = useState<MemoryRecord[]>([]);
@@ -270,8 +273,21 @@ function App() {
   const abortRef = useRef<AbortController | undefined>(undefined);
   const activeRunRef = useRef<ActiveRunState | undefined>(undefined);
   const recoveringRunsRef = useRef(new Set<string>());
+  const conversationRequestRef = useRef(0);
+  const loadedConversationSessionRef = useRef<string | undefined>(undefined);
+  const failedConversationRef = useRef<{
+    sessionId: string;
+    commitSession: boolean;
+  } | undefined>(undefined);
+  const workspaceRefreshRequestRef = useRef(0);
   const stopRequestedRef = useRef(false);
   const domainPackInitializedRef = useRef(false);
+
+  function invalidateAsyncWorkspaceLoads() {
+    conversationRequestRef.current += 1;
+    workspaceRefreshRequestRef.current += 1;
+    loadedConversationSessionRef.current = undefined;
+  }
 
   const sampleImportAvailable = Boolean(
     overview?.capabilities.includes("enterprise_fixture_import")
@@ -281,6 +297,7 @@ function App() {
     let active = true;
     function requireAuthentication() {
       if (!active) return;
+      invalidateAsyncWorkspaceLoads();
       setIdentity(undefined);
       setAuthRequired(true);
       setAuthChecking(false);
@@ -322,25 +339,12 @@ function App() {
 
   const refresh = useCallback(async () => {
     if (!identity) return;
+    const requestId = ++workspaceRefreshRequestRef.current;
     setRefreshing(true);
     try {
-      const [
-        overviewData,
-        runData,
-        documentData,
-        memoryData,
-        evolutionData,
-        changeData,
-        conversationData
-      ] = await Promise.all([
-        api.overview(),
-        api.runs(),
-        api.documents(true),
-        api.memories(true),
-        api.skillEvolution(),
-        api.changes(),
-        api.conversations()
-      ]);
+      const overviewData = await api.overview();
+      if (requestId !== workspaceRefreshRequestRef.current) return;
+
       setOverview(overviewData);
       const profile = overviewData.workspace_profile ?? undefined;
       setWorkspaceProfile(profile);
@@ -356,20 +360,52 @@ function App() {
         if (preferredDomainPack) setDomainPack(preferredDomainPack);
         domainPackInitializedRef.current = true;
       }
-      setRuns(runData);
-      setDocuments(documentData);
-      setMemories(memoryData);
-      setSkillEvolution(evolutionData);
-      setChanges(changeData);
-      setConversations(conversationData);
+
+      const [
+        runResult,
+        documentResult,
+        memoryResult,
+        evolutionResult,
+        changeResult,
+        conversationResult
+      ] = await Promise.allSettled([
+        api.runs(),
+        api.documents(true),
+        api.memories(true),
+        api.skillEvolution(),
+        api.changes(),
+        api.conversations()
+      ]);
+      if (requestId !== workspaceRefreshRequestRef.current) return;
+
+      const unavailableAreas: string[] = [];
+      if (runResult.status === "fulfilled") setRuns(runResult.value);
+      else unavailableAreas.push("运行记录");
+      if (documentResult.status === "fulfilled") setDocuments(documentResult.value);
+      else unavailableAreas.push("知识资料");
+      if (memoryResult.status === "fulfilled") setMemories(memoryResult.value);
+      else unavailableAreas.push("记忆");
+      if (evolutionResult.status === "fulfilled") setSkillEvolution(evolutionResult.value);
+      else unavailableAreas.push("技能治理");
+      if (changeResult.status === "fulfilled") setChanges(changeResult.value);
+      else unavailableAreas.push("学习变更");
+      if (conversationResult.status === "fulfilled") setConversations(conversationResult.value);
+      else unavailableAreas.push("对话列表");
+
+      if (unavailableAreas.length > 0) {
+        setWorkspaceError(
+          `部分工作区信息未能刷新（${unavailableAreas.join("、")}），正在保留上次可用数据。`
+        );
+      }
     } catch (error) {
+      if (requestId !== workspaceRefreshRequestRef.current) return;
       setWorkspaceError(
         error instanceof ApiRequestError
           ? error.message
           : "无法刷新工作区状态，请检查网络后重试。"
       );
     } finally {
-      setRefreshing(false);
+      if (requestId === workspaceRefreshRequestRef.current) setRefreshing(false);
     }
   }, [identity]);
 
@@ -401,30 +437,47 @@ function App() {
     }).catch((error) => console.error("Unable to load persona", error));
   }, [identity]);
 
-  const loadConversation = useCallback(async (nextSessionId: string) => {
+  const loadConversation = useCallback(async (
+    nextSessionId: string,
+    options: { commitSession?: boolean } = {}
+  ) => {
     if (!identity) return;
+    const requestId = ++conversationRequestRef.current;
+    const commitSession = options.commitSession === true;
     setConversationLoading(true);
-    setMessages([]);
-    setTraceTools([]);
-    setTraceEvidence([]);
-    setSelectedEvidence(undefined);
-    setSelectedRun(undefined);
+    setSessionError(undefined);
     try {
       const sessionRuns = await api.conversationRuns(nextSessionId);
+      if (requestId !== conversationRequestRef.current) return;
       setMessages(messagesFromRuns(sessionRuns));
+      setTraceTools([]);
+      setTraceEvidence([]);
+      setSelectedEvidence(undefined);
+      setSelectedRun(undefined);
       const latest = sessionRuns.at(-1);
       if (latest) setDomainPack(latest.context.domain_pack);
       setResumeCandidate(latest?.status === "running" ? latest : undefined);
+      loadedConversationSessionRef.current = nextSessionId;
+      failedConversationRef.current = undefined;
+      if (commitSession) setSessionId(nextSessionId);
     } catch (error) {
-      console.error("Unable to restore conversation", error);
+      if (requestId !== conversationRequestRef.current) return;
+      failedConversationRef.current = { sessionId: nextSessionId, commitSession };
+      setSessionError(
+        error instanceof ApiRequestError
+          ? `${error.message}，已保留当前会话内容。`
+          : "无法恢复所选对话，已保留当前会话内容。"
+      );
     } finally {
-      setConversationLoading(false);
+      if (requestId === conversationRequestRef.current) setConversationLoading(false);
     }
   }, [identity]);
 
   useEffect(() => {
     window.localStorage.setItem(ACTIVE_SESSION_KEY, sessionId);
-    if (identity) void loadConversation(sessionId);
+    if (identity && loadedConversationSessionRef.current !== sessionId) {
+      void loadConversation(sessionId);
+    }
   }, [identity, loadConversation, sessionId]);
 
   useEffect(() => {
@@ -464,6 +517,12 @@ function App() {
         phase: "accepted"
       }));
     }
+    if (event === "run.route") {
+      updateAssistant(assistantId, (message) => ({
+        ...message,
+        retrievalRoute: payload as RetrievalRouteDecision
+      }));
+    }
     if (event === "run.status") {
       setStatusLabel(payload.label);
       updateAssistant(assistantId, (message) => ({
@@ -474,6 +533,14 @@ function App() {
     }
     if (event === "run.heartbeat") {
       setElapsedMs(Number(payload.elapsed_ms) || 0);
+      if (typeof payload.label === "string" && payload.label) {
+        setStatusLabel(payload.label);
+        updateAssistant(assistantId, (message) => ({
+          ...message,
+          status: payload.label,
+          phase: payload.phase === "understanding" ? "understanding" : "executing"
+        }));
+      }
     }
     if (event === "tool.completed") {
       const tool = payload as ToolEvent;
@@ -496,9 +563,10 @@ function App() {
       updateAssistant(assistantId, (message) => ({
         ...message,
         content: message.content + payload.delta,
-        status: "正在生成答案",
+        status: "正在显示回答",
         phase: "synthesizing"
       }));
+      setStatusLabel("正在显示回答");
     }
     if (event === "evidence.added") {
       const evidence = payload as Evidence;
@@ -528,10 +596,12 @@ function App() {
         confidence: completed.answer.confidence,
         responseMode: completed.answer.response_mode,
         citations: completed.answer.citations,
+        memoryIds: completed.answer.memory_ids ?? [],
         graphPaths: completed.answer.graph_paths,
         followUpActions: completed.answer.follow_up_actions,
         limitations: completed.answer.limitations,
         toolEvents: completed.tool_events,
+        retrievalRoute: completed.retrieval_route ?? message.retrievalRoute,
         durationMs: completed.duration_ms,
         learningCount: completed.learning_change_count,
         status: "完成",
@@ -573,11 +643,12 @@ function App() {
       runId,
       afterCursor,
       (event, payload, cursor) => applyRunEvent(runId, assistantId, event, payload, cursor),
-      () => {
-        setStatusLabel("连接中断，正在恢复任务");
+      (attempt) => {
+        const label = `连接中断，正在第 ${attempt} 次恢复`;
+        setStatusLabel(label);
         updateAssistant(assistantId, (message) => ({
           ...message,
-          status: "正在恢复连接",
+          status: label,
           streaming: true
         }));
       },
@@ -633,7 +704,7 @@ function App() {
         role: "assistant",
         content: "",
         createdAt: now,
-        status: "正在规划任务",
+        status: "正在理解问题",
         phase: "accepted",
         streaming: true,
         citations: [],
@@ -642,7 +713,7 @@ function App() {
     ]);
     setRunning(true);
     setElapsedMs(0);
-    setStatusLabel("正在规划任务");
+    setStatusLabel("正在理解问题");
     setTraceTools([]);
     setTraceEvidence([]);
     setSelectedEvidence(undefined);
@@ -774,7 +845,19 @@ function App() {
 
   const startNewConversation = useCallback(() => {
     if (running) return;
-    setSessionId(createSessionId());
+    const nextSessionId = createSessionId();
+    conversationRequestRef.current += 1;
+    loadedConversationSessionRef.current = nextSessionId;
+    failedConversationRef.current = undefined;
+    setSessionId(nextSessionId);
+    setMessages([]);
+    setTraceTools([]);
+    setTraceEvidence([]);
+    setSelectedEvidence(undefined);
+    setSelectedRun(undefined);
+    setResumeCandidate(undefined);
+    setConversationLoading(false);
+    setSessionError(undefined);
     setStatusLabel("Ready");
     setElapsedMs(0);
     setView("chat");
@@ -783,12 +866,12 @@ function App() {
 
   const selectConversation = useCallback((nextSessionId: string) => {
     if (running || nextSessionId === sessionId) return;
-    setSessionId(nextSessionId);
+    void loadConversation(nextSessionId, { commitSession: true });
     setStatusLabel("Ready");
     setElapsedMs(0);
     setView("chat");
     setInspectorOpen(false);
-  }, [running, sessionId]);
+  }, [loadConversation, running, sessionId]);
 
   const renameConversation = useCallback(async (targetSessionId: string, title: string) => {
     await api.updateConversation(targetSessionId, { title });
@@ -851,13 +934,17 @@ function App() {
   }
 
   function signOut() {
+    invalidateAsyncWorkspaceLoads();
     setApiToken();
     setIdentity(undefined);
     setAuthRequired(true);
     setAuthError(undefined);
   }
 
-  const showInspector = view === "chat" || view === "runs";
+  const inspectorAvailable = view === "chat" || view === "runs";
+  const showInspector = inspectorAvailable && (
+    inspectorOpen || Boolean(selectedEvidence) || Boolean(selectedRun)
+  );
 
   return (
     <>
@@ -908,7 +995,15 @@ function App() {
             <a className="icon-button api-docs-button" href="/docs" target="_blank" title="API 文档">
               <ExternalLink size={17} />
             </a>
-            {showInspector && <button className="icon-button mobile-inspector-button" title="运行详情" onClick={() => setInspectorOpen(true)}><PanelRight size={17} /></button>}
+            {inspectorAvailable && (
+              <button
+                className="icon-button mobile-inspector-button"
+                title="打开任务详情"
+                onClick={() => setInspectorOpen(true)}
+              >
+                <PanelRight size={17} />
+              </button>
+            )}
           </div>
         </header>
 
@@ -928,6 +1023,32 @@ function App() {
             </button>
           </div>
         )}
+        {sessionError && (
+          <div className="workspace-refresh-error" role="alert">
+            <span>{sessionError}</span>
+            <button
+              className="text-button"
+              onClick={() => {
+                const failed = failedConversationRef.current;
+                if (failed) void loadConversation(failed.sessionId, { commitSession: failed.commitSession });
+              }}
+              disabled={!failedConversationRef.current || conversationLoading}
+            >
+              <RefreshCw size={14} className={conversationLoading ? "spin" : ""} />
+              重试
+            </button>
+            <button
+              className="icon-button"
+              title="关闭对话提示"
+              onClick={() => {
+                failedConversationRef.current = undefined;
+                setSessionError(undefined);
+              }}
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
 
         <div className={`content-grid ${showInspector ? "with-inspector" : ""}`}>
           {view === "chat" && (
@@ -939,6 +1060,7 @@ function App() {
               conversationLoading={conversationLoading}
               overview={overview}
               documents={documents}
+              memories={memories}
               workspaceMode={workspaceProfile?.workspace_mode}
               sampleImportAvailable={sampleImportAvailable}
               running={running}
@@ -957,6 +1079,7 @@ function App() {
               onOpenTask={openTask}
               onOpenReview={openReview}
               onOpenKnowledge={() => changeView("knowledge")}
+              onOpenMemory={() => changeView("memory")}
               onInspectEvidence={inspectEvidence}
             />
           )}
@@ -968,7 +1091,12 @@ function App() {
               ingestionMode={overview?.ingestion_mode ?? "sync"}
               sampleImportAvailable={sampleImportAvailable}
               onChanged={refresh}
-              onOpenChat={() => changeView("chat")}
+              onOpenChat={(suggestion) => {
+                if (suggestion) {
+                  window.localStorage.setItem(`hermesgraph:draft:${sessionId}`, suggestion);
+                }
+                changeView("chat");
+              }}
             />
           )}
           {view === "graph" && <GraphView onChanged={refresh} canReview={identity?.role === "owner"} />}

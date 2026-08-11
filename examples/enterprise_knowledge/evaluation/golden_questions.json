@@ -1,6 +1,6 @@
 {
   "name": "Northstar Labs Atlas engineering RAG golden set",
-  "revision": "2026-08-03-v1",
+  "revision": "2026-08-06-v2",
   "corpus_manifest": "../manifest.json",
   "required_case_ids": [
     "enterprise-architecture-main-path",
@@ -12,7 +12,13 @@
     "enterprise-onboarding-first-week",
     "enterprise-jwks-affected-services",
     "enterprise-nonexistent-component",
-    "enterprise-untrusted-ticket-injection"
+    "enterprise-untrusted-ticket-injection",
+    "enterprise-outbox-convergence",
+    "enterprise-graph-governance",
+    "enterprise-provider-overload-incident",
+    "enterprise-embedding-rollout",
+    "enterprise-kubernetes-security",
+    "enterprise-disaster-recovery-order"
   ],
   "cases": [
     {
@@ -231,6 +237,150 @@
       "min_citations": 1,
       "expect_insufficient": false,
       "must_refuse_embedded_instructions": true
+    },
+    {
+      "case_id": "enterprise-outbox-convergence",
+      "query": "Atlas 的事件驱动摄取和 Transactional Outbox 如何让 Foundry、PostgreSQL、Qdrant 与 Neo4j 最终收敛？部分写入失败时为什么不能回滚成一个事务？",
+      "category": "distributed_systems",
+      "difficulty": "multi_source",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": [
+        "northstar:architecture:event-driven-ingestion",
+        "northstar:data:transactional-outbox"
+      ],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "Document、Chunk 和 outbox 事件在同一个 PostgreSQL 事务提交",
+        "Qdrant 与 Neo4j 是可重建投影，不参与 PostgreSQL 原子事务",
+        "Dispatcher 提供至少一次投递，消费者用 event_id 或 revision 幂等",
+        "Reconciler 根据 PostgreSQL 真相补偿缺失投影"
+      ],
+      "forbidden_claims": ["PostgreSQL、Qdrant 和 Neo4j 使用同一个分布式事务", "重试时生成新 event_id"],
+      "required_entities": ["Foundry", "Transactional Outbox", "Outbox Dispatcher", "Qdrant", "Neo4j"],
+      "expected_graph_paths": [
+        {"nodes": ["Foundry", "Transactional Outbox"], "relation_types": ["PUBLISHES_TO"]},
+        {"nodes": ["Outbox Dispatcher", "Transactional Outbox"], "relation_types": ["CONSUMES_FROM"]}
+      ],
+      "min_citations": 2,
+      "expect_insufficient": false
+    },
+    {
+      "case_id": "enterprise-graph-governance",
+      "query": "Atlas 的知识图谱如何区分结构关系和语义关系，LLM 抽取结果什么时候能进入普通查询？",
+      "category": "knowledge_graph",
+      "difficulty": "governance",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": ["northstar:data:neo4j-graph-model"],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "Document、Chunk、HAS_CHUNK 和 MENTIONS 属于可重建结构层",
+        "业务语义关系标记为 SEMANTIC_RELATION 并关联 active Chunk 证据",
+        "LLM 或规则抽取只生成 pending candidate",
+        "候选经实体解析、去重和审核批准后才能进入普通图谱查询"
+      ],
+      "forbidden_claims": ["LLM 抽取关系会自动成为生产事实", "Constellation 接受模型生成的任意 Cypher"],
+      "required_entities": ["Neo4j", "Constellation", "SEMANTIC_RELATION", "Chunk"],
+      "expected_graph_paths": [],
+      "min_citations": 1,
+      "expect_insufficient": false
+    },
+    {
+      "case_id": "enterprise-provider-overload-incident",
+      "query": "INC-2026-0712 为什么导致知识问答变慢，为什么不是 Neo4j，之后如何隔离在线和图谱回填容量？",
+      "category": "incident",
+      "difficulty": "causal_and_runbook",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": [
+        "northstar:incident:2026-0712",
+        "northstar:runbook:model-provider-degradation"
+      ],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "48 并发图谱回填与在线请求共享 64 个 provider 槽位",
+        "Neo4j commit P95 只有 42 ms，因此不是根因",
+        "Prism 按 online、ingestion、evaluation 隔离并发",
+        "online 至少保留 70% 槽位，图谱回填默认并发 12"
+      ],
+      "forbidden_claims": ["根因是 Neo4j 写入锁", "解决办法是无限增加回填并发"],
+      "required_entities": ["INC-2026-0712", "Prism", "AI Runtime", "Model Provider Degradation Runbook"],
+      "expected_graph_paths": [
+        {"nodes": ["INC-2026-0712", "Prism", "AI Runtime"], "relation_types": ["AFFECTED", "OWNED_BY"]},
+        {"nodes": ["INC-2026-0712", "Model Provider Degradation Runbook"], "relation_types": ["MITIGATED_BY"]}
+      ],
+      "min_citations": 2,
+      "expect_insufficient": false
+    },
+    {
+      "case_id": "enterprise-embedding-rollout",
+      "query": "Atlas 升级 embedding 模型时如何避免不同向量空间混写，发布和回滚步骤是什么？",
+      "category": "ml_infrastructure",
+      "difficulty": "ordered_procedure",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": [
+        "northstar:ai:embedding-lifecycle",
+        "northstar:data:qdrant-index-design"
+      ],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "不同 embedding revision 不写入同一向量空间",
+        "先创建新 collection 并运行离线与影子评测",
+        "双写和存量回填达到 100% 后原子切换 alias",
+        "旧 collection 保留 7 天，回滚只切回 alias"
+      ],
+      "forbidden_claims": ["直接原地覆盖旧向量", "模型维度变化时静默截断"],
+      "required_entities": ["Qdrant", "Polaris", "Foundry"],
+      "expected_graph_paths": [],
+      "min_citations": 2,
+      "expect_insufficient": false
+    },
+    {
+      "case_id": "enterprise-kubernetes-security",
+      "query": "Atlas 在 Kubernetes 上如何限制 Pod 权限和服务间网络访问？Relay 能否直接访问 Qdrant？",
+      "category": "cloud_security",
+      "difficulty": "direct_and_negative",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": [
+        "northstar:infrastructure:kubernetes-platform",
+        "northstar:architecture:data-storage-boundaries"
+      ],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "容器使用非 root、只读根文件系统、禁止 privilege escalation 和 RuntimeDefault seccomp",
+        "每个服务使用独立 ServiceAccount 与最小权限 RBAC",
+        "NetworkPolicy 只允许声明的服务边",
+        "Relay 通过 Polaris 和 Constellation 访问知识，不能直连 Qdrant 或 Neo4j"
+      ],
+      "forbidden_claims": ["Relay 可以直接查询 Qdrant", "所有服务共享管理员 ServiceAccount"],
+      "required_entities": ["Kubernetes", "Relay", "Polaris", "Qdrant"],
+      "expected_graph_paths": [
+        {"nodes": ["Kubernetes", "Relay", "Polaris", "Qdrant"], "relation_types": ["HOSTS", "CALLS", "READS_FROM"]}
+      ],
+      "min_citations": 2,
+      "expect_insufficient": false
+    },
+    {
+      "case_id": "enterprise-disaster-recovery-order",
+      "query": "Atlas 区域灾难后按什么顺序恢复服务，为什么 Foundry 和 Learning Worker 最后恢复？",
+      "category": "disaster_recovery",
+      "difficulty": "ordered_procedure",
+      "expected_intent": "knowledge_query",
+      "required_source_ids": [
+        "northstar:infrastructure:disaster-recovery",
+        "northstar:architecture:multi-region-resilience"
+      ],
+      "forbidden_source_ids": [],
+      "required_facts": [
+        "先恢复 Sentinel、Gatehouse 和 PostgreSQL",
+        "随后恢复 Relay 与 Prism 并开放 conversation lane",
+        "Qdrant 验证 payload index 后开放 Polaris，Neo4j 验证证据后开放 Constellation",
+        "Foundry、outbox 和 Learning Worker 最后恢复，避免恢复期间产生新写入和后台负载",
+        "区域灾难目标 RTO 60 分钟、PostgreSQL RPO 小于 5 分钟"
+      ],
+      "forbidden_claims": ["先恢复批量 embedding 再恢复认证", "DNS 切换即可自动防止双写"],
+      "required_entities": ["Sentinel", "Gatehouse", "PostgreSQL", "Relay", "Polaris", "Foundry"],
+      "expected_graph_paths": [],
+      "min_citations": 2,
+      "expect_insufficient": false
     }
   ]
 }

@@ -151,7 +151,7 @@ LEARNING_JOB_WORKER_ENABLED=true
 验证当前 provider 的 Responses hosted Web Search、URL citation 和证据归一化合同：
 
 ```bash
-./.venv/bin/python scripts/check_web_search.py
+./.venv/bin/python -m app.web_search.cli
 ```
 
 Web Search 默认关闭；启用时会把查询发送给配置的模型 provider。不要把凭据、私有记录或无关个人信息放入联网查询。live gate 只输出 query hash、模型、provider revision、citation/source 数量和公开 URL，不打印 key。
@@ -393,13 +393,13 @@ docker compose exec -T app env \
 
 去掉 `--dry-run` 后应用。当前已归档 12,920 个旧 pending 实体、925 条旧 pending 关系和 4,989 个旧 pending 消歧候选；二次 dry-run 为全零。全量 v6 模型 backfill 仍未执行，恢复时必须在 app 容器内运行 `hermesgraph-backfill-graph`，确保 checkpoint 和候选审计仓都落在同一 `/data` 卷。
 
-仓库提供了 Docker 包装脚本。它默认只跑 20 篇并固定使用 12 并发，不接受其他并发值；脚本复用 `/data/graph_backfill_manifest.json`
+仓库提供了 Docker 包装脚本。它默认只跑 20 篇并使用 2 并发，可通过 `--concurrency 1..12` 调整；脚本复用 `/data/graph_backfill_manifest.json`
 断点，自动构建当前 app 代码，并显示完成数、成功/失败、实体/关系、耗时和 ETA 进度条；key 从 shell
 或 `.env` 读取，不写入脚本。先预览，再跑 pilot：
 
 ```bash
 ./scripts/run_kg_extraction.sh --dry-run
-./scripts/run_kg_extraction.sh --limit 20
+./scripts/run_kg_extraction.sh --limit 20 --concurrency 2
 ```
 
 pilot 的 `documents_failed=0` 且网关延迟稳定后，再运行全部未完成文档：
@@ -533,9 +533,11 @@ arXiv 数据接入遵守其[官方 API 指南](https://info.arxiv.org/help/api/i
 - [Progress](docs/PROGRESS.md)
 - [Product requirements](docs/PRD.md)
 - [Technical design](docs/TECHNICAL_DESIGN.md)
+- [Project structure and ownership](docs/PROJECT_STRUCTURE.md)
 - [Agentic RAG frozen baseline](docs/AGENTIC_RAG_LOCK.md)
 - [MemoHarness memory consolidation plan](docs/MEMOHARNESS_MEMORY_CONSOLIDATION_PLAN.md)
 - [Harness Pattern governance ADR](docs/ADR-011-harness-pattern-governance.md)
 - [Open-source Agentic RAG gap analysis](docs/OPEN_SOURCE_AGENTIC_RAG_GAP_ANALYSIS.md)
 - [Hermes-first ADR](docs/ADR-008-hermes-first-runtime.md)
 - [Hermes 0.19 native review lifecycle ADR](docs/ADR-010-hermes-019-native-review-lifecycle.md)
+- [Semantic GraphRAG tools ADR](docs/ADR-012-semantic-graphrag-tools.md)

@@ -4,6 +4,11 @@
 回答质量测试。Northstar Labs、Atlas、所有团队、服务、事件编号和模型名称均为虚构，不对应真实
 公司、系统、人员或凭据。
 
+当前 v2 manifest 包含 53 份版本化资料，其中 52 份为 active、1 份历史 ADR 为 superseded。新增的
+30 份计算机研发文档覆盖分布式摄取、Transactional Outbox、PostgreSQL/Qdrant/Neo4j 数据模型、
+LLM Runtime、Prompt Registry、Embedding 生命周期、Kubernetes、CI/CD、可观测性、性能工程、灾备、
+软件供应链和模型 provider 故障处理。
+
 ## 使用目标
 
 - 验证直接事实检索。
@@ -12,6 +17,7 @@
 - 验证事故、根因、缓解和 Runbook 的关系。
 - 验证无答案时拒绝编造。
 - 验证文档中的提示注入只能作为数据，不能成为 Agent 指令。
+- 验证分布式系统、AI 工程、云基础设施和安全运维问题的跨文档综合。
 
 ## 知识边界
 

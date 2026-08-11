@@ -5,7 +5,8 @@ from typing import Any
 import httpx
 import pytest
 
-from app.agent.conversation_router import ConversationTurn
+from app.agent.adaptive_rag_router import ConversationTurn
+from app.agent.context_engine import RuntimeCapsule
 from app.agent.hermes_bridge import (
     HermesAnswerNotPublishedError,
     HermesCapabilityBridge,
@@ -14,8 +15,8 @@ from app.agent.hermes_bridge import (
 from app.agent.hermes_runtime import HermesAgentRuntime
 from app.bootstrap import build_components
 from app.config import Settings
-from app.domain.enums import EvidenceLevel
-from app.domain.models import RetrievalBundle, RunContext
+from app.domain.enums import EvidenceLevel, MemoryType, TrustLevel
+from app.domain.models import MemoryRecord, Provenance, RetrievalBundle, RunContext
 
 
 class EmptyRetrieval:
@@ -49,6 +50,19 @@ async def test_runtime_correlates_task_and_requires_published_artifact() -> None
     observed: dict[str, Any] = {}
     requested_paths: list[str] = []
     release_terminal = asyncio.Event()
+    memory = MemoryRecord(
+        memory_type=MemoryType.POLICY,
+        key="answer-language",
+        summary="Prefer concise Chinese answers.",
+        confidence=0.95,
+        provenance=[
+            Provenance(
+                source_type="user_feedback",
+                source_id="memory-runtime",
+                trust=TrustLevel.USER_ASSERTED,
+            )
+        ],
+    )
 
     async def handler(request: httpx.Request) -> httpx.Response:
         requested_paths.append(request.url.path)
@@ -63,6 +77,8 @@ async def test_runtime_correlates_task_and_requires_published_artifact() -> None
                 "hermesgraph_publish_answer",
                 {
                     "answer_markdown": "No connected evidence.",
+                    "response_mode": "conversational",
+                    "memory_ids": [str(memory.memory_id)],
                     "confidence": "insufficient",
                 },
             )
@@ -84,10 +100,13 @@ async def test_runtime_correlates_task_and_requires_published_artifact() -> None
         base_url="http://hermes.test",
         transport=httpx.MockTransport(handler),
     )
-    async def capsule_provider(context: RunContext, query: str) -> str:
+    async def capsule_provider(context: RunContext, query: str) -> RuntimeCapsule:
         assert context.session_id == "personal"
         assert query == "hello"
-        return '<skill_index>[{"name":"learned_lookup","version":"1.0.0"}]</skill_index>'
+        return RuntimeCapsule(
+            text='<skill_index>[{"name":"learned_lookup","version":"1.0.0"}]</skill_index>',
+            memories=(memory,),
+        )
 
     async def history_provider(
         context: RunContext,
@@ -128,11 +147,14 @@ async def test_runtime_correlates_task_and_requires_published_artifact() -> None
     await client.aclose()
 
     assert answer.confidence == EvidenceLevel.INSUFFICIENT
+    assert answer.memory_ids == [memory.memory_id]
     assert observed["session_id"].startswith("hg_")
     assert observed["session_key"].startswith("hermesgraph-")
     assert observed["input"] == "hello"
     assert "hermesgraph_publish_answer` exactly once" in observed["instructions"]
     assert "learned_lookup" in observed["instructions"]
+    assert "route: passage_lookup" in observed["instructions"]
+    assert "primary_tool: search_knowledge" in observed["instructions"]
     assert observed["conversation_history"] == [
         {"role": "user", "content": "My preferred language is Chinese."},
         {"role": "assistant", "content": "我会记住这个偏好。"},

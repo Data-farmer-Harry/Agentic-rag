@@ -373,28 +373,31 @@ hermesgraph/
 │   │   └── workspace_service.py
 │   ├── domain/{models,enums,contracts}.py
 │   ├── agent/
+│   │   ├── adaptive_rag_router.py
+│   │   ├── answer_publisher.py
 │   │   ├── hermes_runtime.py
 │   │   ├── hermes_bridge.py
 │   │   ├── hermes_native_learning.py
 │   │   ├── offline_runtime.py
 │   │   ├── instructions.py
 │   │   ├── model_provider.py
-│   │   └── budget.py
-│   ├── integration/
-│   │   ├── runtime.py
-│   │   ├── capability.py
-│   │   ├── callbacks.py
-│   │   └── adapters.py
+│   │   ├── context_engine.py
+│   │   └── workspace_file_tools.py
+│   ├── capabilities/
+│   │   ├── agent_tool_runtime.py
+│   │   ├── capability_registry.py
+│   │   ├── langchain_callbacks.py
+│   │   └── langchain_adapters.py
 │   ├── retrieval/
-│   │   ├── agentic.py
-│   │   ├── pipeline.py
-│   │   ├── qdrant_hybrid.py
-│   │   └── embeddings.py
-│   ├── graph/{neo4j,local,extraction,structured_extraction,resolution}.py
-│   ├── knowledge/{ingestion,jobs,store,retriever,provenance}.py
-│   ├── evidence/publisher.py
-│   ├── memory/{write_gate,prompt_capsule,json_store}.py
-│   ├── skills/{registry,repository,rollout,parser}.py
+│   │   ├── agentic_retrieval.py
+│   │   ├── knowledge_query_router.py
+│   │   ├── hybrid_retrieval_pipeline.py
+│   │   ├── qdrant_hybrid_retriever.py
+│   │   └── embedding_providers.py
+│   ├── graph/{neo4j_evidence_graph,in_memory_evidence_graph,graph_retrieval_tools}.py
+│   ├── knowledge/{knowledge_ingestion,hierarchical_chunking,knowledge_repository}.py
+│   ├── memory/{memory_write_gate,memory_prompt_compiler,json_memory_repository}.py
+│   ├── skills/{skill_registry,skill_markdown_repository,skill_markdown_codec}.py
 │   ├── learning/
 │   │   ├── engine.py
 │   │   ├── jobs.py
@@ -404,8 +407,8 @@ hermesgraph/
 │   │   ├── skill_replay.py
 │   │   └── promotion.py
 │   ├── infra/{postgres*,local_repositories,outbox_*}.py
-│   ├── vision/openai_analyzer.py
-│   ├── web_search/openai_hosted.py
+│   ├── domain_packs/{built_in,registry}.py
+│   ├── web_search/openai_web_search.py
 │   ├── sources/{arxiv,arxiv_ocr}.py
 │   └── evaluation/
 ├── prompts/
@@ -491,6 +494,9 @@ MAX_WEB_SEARCH_TOOL_CALLS=3
 AGENT_TIMEOUT_SECONDS=90
 CONVERSATION_FAST_PATH_ENABLED=true
 CONVERSATION_FAST_PATH_TIMEOUT_SECONDS=20
+ADAPTIVE_RAG_ROUTER_ENABLED=true
+ADAPTIVE_RAG_ROUTER_TIMEOUT_SECONDS=12
+ADAPTIVE_RAG_ROUTER_MODEL=
 
 RETRIEVAL_BACKEND=qdrant
 EMBEDDING_PROVIDER=deterministic
@@ -524,33 +530,38 @@ Hermes -> HermesGraph bridge、HermesGraph -> Hermes native admin 三个 secret 
 
 ### 3.2.1 对话、Agent 与 RAG 的执行分流
 
-在线请求不是全部进入 RAG。`ConversationRoutedRuntime` 在 Hermes 之前执行三层保守路由：
+在线请求不是全部进入 RAG。`ConversationRoutedRuntime` 先用一次模型调用完成 Adaptive-RAG
+复杂度判断；不再用问候正则、技术关键词或领域包硬编码决定是否检索。路由结果在运行创建阶段固化，
+执行阶段复用同一次决策，不产生第二次分类调用：
 
-1. **确定性社交快速通道**：完整匹配的短问候、感谢和告别直接生成
-   `response_mode=conversational`；不调用模型、Hermes、Qdrant、Neo4j 或发布工具。确认词只有在
-   当前 session 没有可用历史时才能走这条通道；已有历史的“好的/继续”必须进入上下文判断，避免
-   丢失上一轮动作或事实任务。
-2. **通用轻量对话通道**：`domain_pack=general` 的其他请求先调用一次无知识工具的轻量
-   Chat Completions。它只能直接回答闲聊、情绪陪伴和非事实性创作，并且只暴露
-   `delegate_to_agent` 一个升级工具。事实、时效、专业知识、个人记忆、文件、引用、行动、持久化和
-   上下文不足的请求必须调用该工具；空响应、超时或 provider 错误也 fail-safe 升级到 Hermes。
-3. **Hermes Agent 通道**：研究/技术文档领域包直接进入，通用通道升级的请求也进入。进入 Hermes
-   不等于无条件检索；Hermes 根据任务选择 knowledge、graph、web、workspace、memory 或 personal
-   工具。只有需要证据的回答使用 `response_mode=grounded` 和 claim/citation 门禁。
+1. **`no_retrieval`**：问候、闲聊、情绪支持、对已有文本的改写、自包含推理和无需私有/时效/引用
+   来源的稳定常识，由路由模型直接生成自然回答。需要任务、计划、笔记等个人工具的请求进入 Hermes
+   `tool_action`，但知识检索控制器拒绝 Qdrant/Graph RAG 调用。
+2. **`single_step`**：一个聚焦的知识、图谱、记忆、文件或网页查询即可回答。检索控制器把上限强制
+   收紧为 1 个 subquery、1 个 retrieval round；即使通用 planner 给出更多查询也不会执行，不触发
+   Self-RAG 反思。
+3. **`multi_step`**：仅用于真正的多跳关系、跨文档综合、需要分解的比较和首次证据不足的复杂问题。
+   允许最多 4 个 subquery、2 个 round，并启用 Self-RAG 式反思：检查证据与问题的相关性、证据对
+   关键结论的支持度；仅在失败时执行一次 materially revised corrective retrieval。仍不足则降低
+   confidence 并公开 limitations，不得循环检索。
 
-因此，RAG 是按需能力而不是聊天入口。明确社交消息的目标延迟是本地亚秒级，普通模型闲聊目标是一次
-模型调用，专业研究任务允许多轮 Agent/tool 延迟。`CONVERSATION_FAST_PATH_ENABLED=false` 可关闭
-前两层；轻量模型调用由 `CONVERSATION_FAST_PATH_TIMEOUT_SECONDS` 限时，并通过
-`CONVERSATION_FAST_PATH_MODEL` 与 Hermes 主模型独立配置。当前部署使用 `gpt-5.6-luna` 处理快速
-通道，Hermes 继续使用 `gpt-5.6-sol`。
+Adaptive 路由器只暴露 `delegate_to_agent` 一个结构化工具；模型可以直接返回无检索答案，也可以提交
+`strategy/knowledge_route/requires_graph/requires_multi_source`。服务端派生
+`self_reflection = strategy == multi_step`，模型不能给简单问题自行开启昂贵反思。路由调用为空、超时、
+格式无效或 provider 错误时会快速失败，不再静默升级到完整 Hermes/RAG 链路。
 
-轻量通道读取 `TrajectoryRepository.list_session()`，严格按 tenant/project/user/session 隔离，
-只选择已经完成且有答案的运行，排除当前 running run。默认最多 8 轮、12,000 字符，并分别由
-`CONVERSATION_HISTORY_TURNS`、`CONVERSATION_HISTORY_MAX_CHARS` 限制。历史消息仍视为 untrusted
-data，不能覆盖系统路由规则。最终答案持久化 `routing_lane=deterministic|conversation|agent`；
+`ADAPTIVE_RAG_ROUTER_TIMEOUT_SECONDS` 默认 12 秒，`ADAPTIVE_RAG_ROUTER_MODEL` 可与 Hermes 主模型
+分开配置；为空时依次回退 `CONVERSATION_FAST_PATH_MODEL` 和 `OPENAI_MODEL`。旧
+`CONVERSATION_FAST_PATH_*` 变量暂时保留为部署兼容开关，不再代表硬规则快速通道。
+
+轻量通道与 Hermes 共用 `ContextEngine`。它读取 `TrajectoryRepository.list_session()`，严格按
+tenant/project/user/session 二次校验，只选择已经完成且有答案的运行并排除当前 run。默认保留最近
+8 轮；更旧回合压缩成可追溯的持久化摘要。历史、摘要、Memory、Skill 与个人状态使用统一 token
+预算，不再使用字符近似截断；历史消息与摘要仍视为 untrusted data，不能覆盖系统规则。最终答案
+持久化 `routing_lane=deterministic|conversation|agent` 和 `context_trace`；
 workspace overview 汇总各通道数量。`hermesgraph-eval-conversation-routing` 使用版本化黄金集并发
 评测 pass rate、P95、混淆矩阵、危险直答和过度升级；只要 Agent 期望用例被直接回答，门禁即失败。
-运行快照只有携带 `component_versions.conversation_router=2` 才进入分流统计；升级前的历史回答在
+运行快照携带 `component_versions.conversation_router=adaptive-rag-v1`；升级前的历史回答在
 overview 中单列为 `legacy`，即使旧版兼容默认值曾序列化为 `agent`，也不能伪装成 Agent 路由样本。
 
 `run.completed` 的纯 conversational 回合不进入自动 reflection/mining，避免把“你好”或普通闲聊
@@ -560,7 +571,7 @@ overview 中单列为 `legacy`，即使旧版兼容默认值曾序列化为 `age
 
 `WEB_SEARCH_MODE` 默认 `disabled`。设为 `openai` 时，官方 provider 需要
 `OPENAI_API_KEY`，兼容 provider 需要 `MODEL_BASE_URL/MODEL_API_KEY`，并且必须先运行
-`scripts/check_web_search.py` 验证 Responses `web_search` 与 URL annotation。domain allowlist
+`python -m app.web_search.cli` 验证 Responses `web_search` 与 URL annotation。domain allowlist
 是 JSON 数组，只接受 bare DNS domain；配置会发送给 provider，返回结果仍由应用层再次检查。
 
 ### 3.3 配置分层
@@ -1399,7 +1410,7 @@ projection 临时 evidence UUID 让同一来源重复扩张。对比工具只把
 联网检索不是把 provider hosted tool 直接挂到 Hermes 根 Agent。直接挂载会让 provider 生成的 citation
 绕过现有 `allowed_evidence -> AnswerPublisher` 白名单。当前实现把 Responses API
 `{"type": "web_search"}` 封装在 `OpenAIHostedWebSearch` 中，再由
-`IntegrationRuntime` 注册为 `search_web@1.0.0`：
+`AgentToolRuntime` 注册为 `search_web@1.0.0`：
 
 ```text
 Hermes plugin tool search_web
@@ -1914,7 +1925,7 @@ Hermes 0.19.0 的 full backup 遍历整个 `HERMES_HOME`，其排除目录不包
    HermesGraph publisher 从 allowlist 补全。
 6. Hermes native hook 会在用户可见 artifact 返回后由后台回顾触发。应用不重新打开已完成 run 的
    SSE 事件流，但用父 `session_id` 关联审计，并等待明确 completion event 后再释放 bridge。
-7. `RuntimeCapsuleProvider` 在 run start 使用已经钉住的 Skill version 构建相关 discovery index；
+7. `ContextEngine` 在 run start 使用已经钉住的 Skill version 构建相关 discovery index；
    Hermes 通过 `activate_governed_skill` 取回精确 Canary/Active 定义。服务端拒绝未钉住、版本漂移、
    scope 不符或非运行态 Skill。返回只包含声明式步骤/能力/约束，不执行脚本，也不建立第二循环。
 8. 激活工具受独立 run 预算，事件写入 trajectory；health gate 只把真实激活计入 Canary/Active
@@ -2074,7 +2085,7 @@ personal record/event 表，v15 扩展 reminder state 类型。Local/offline 使
 Hermes 通过 `manage_personal_tasks`、`manage_personal_plans`、`manage_personal_notes` 和
 `correct_personal_memory` 调用服务，继续经过 Bridge 的 run scope、总调用预算、独立 personal
 预算和 ToolEvent。Persona、Emotion、最多 8 个开放任务与 3 个活动计划进入
-`RuntimeCapsuleProvider`；Emotion 是确定性 style-only reducer，不能改变工具选择、事实、证据或
+`ContextEngine`；Emotion 是确定性 style-only reducer，不能改变工具选择、事实、证据或
 权限。Day Archive 和自然语言 Memory correction 都有无模型实现。
 
 工作台的 `QuickCapture` 不创建第二套事务仓。任务直接写 `PersonalTask`；“日程”同样写
@@ -2642,7 +2653,7 @@ async def process_completed_run(run_id: str) -> None:
 Hermes 只看到实体解析、证据子图、实体对比和固定模板遍历四类工具。Cypher 深度在代码中预编译，
 scope 来自 `RunContext`，关系必须 join 到 Chunk evidence；`GraphRetrievalToolkit` 在返回 Agent 前再次
 执行 scope/evidence 复核。这样既保留 Agent 对检索策略的选择权，又不把数据库查询语言和隔离边界
-交给模型。详见 [`ADR-010`](./ADR-010-graphrag-tools.md)。
+交给模型。详见 [`ADR-012`](./ADR-012-semantic-graphrag-tools.md)。
 
 ### ADR-009：删除 OpenAI Agents SDK fallback
 

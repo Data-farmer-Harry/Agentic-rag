@@ -17,19 +17,19 @@ from app.evaluation.retrieval import (
     RetrievalGoldenSet,
     load_retrieval_golden_set,
 )
-from app.retrieval.agentic import (
+from app.retrieval.agentic_retrieval import (
     AgenticRetrievalController,
     DeterministicQueryPlanner,
     OpenAIStructuredQueryPlanner,
 )
-from app.retrieval.embeddings import (
+from app.retrieval.embedding_providers import (
     DeterministicDenseEmbedder,
-    HashedSparseEmbedder,
     OpenAIDenseEmbedder,
+    build_sparse_embedder,
 )
-from app.retrieval.memory import InMemoryRetriever
-from app.retrieval.pipeline import RetrievalPipeline
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
+from app.retrieval.in_memory_retriever import InMemoryRetriever
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -116,7 +116,14 @@ async def _run(args: argparse.Namespace) -> int:
                 timeout=min(settings.agent_timeout_seconds, 60),
             ),
             dense,
-            HashedSparseEmbedder(),
+            build_sparse_embedder(
+                settings.qdrant_sparse_encoder,
+                bm25_k1=settings.qdrant_bm25_k1,
+                bm25_b=settings.qdrant_bm25_b,
+                bm25_average_document_tokens=(
+                    settings.qdrant_bm25_average_document_tokens
+                ),
+            ),
             collection_name=settings.qdrant_collection,
             prefetch_limit=settings.qdrant_prefetch_limit,
             rrf_k=settings.qdrant_rrf_k,

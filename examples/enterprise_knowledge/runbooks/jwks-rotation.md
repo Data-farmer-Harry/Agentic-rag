@@ -1,8 +1,8 @@
 # Runbook：Sentinel JWKS 轮换
 
-版本：2.1  
-状态：Active  
-Owner：Trust Foundations  
+版本：2.1
+状态：Active
+Owner：Trust Foundations
 最近演练：2026-07-22
 
 ## 正常轮换

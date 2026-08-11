@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.domain.contracts import RetrievalPort
 from app.domain.models import RunContext
-from app.retrieval.agentic import PlannerUsage
+from app.retrieval.agentic_retrieval import PlannerUsage
 
 
 class RetrievalFixtureDocument(BaseModel):

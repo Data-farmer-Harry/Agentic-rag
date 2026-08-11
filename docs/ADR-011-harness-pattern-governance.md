@@ -45,7 +45,7 @@ observe/shadow overlay，但 Pattern 定义中的 `status` 不能被原地覆写
 - 历史运行可依赖 Snapshot 中的 exact policy/hash 重放，不依赖 Pattern Bank 当前状态。
 - Required case 失败不能被平均质量分掩盖。
 - 同一 Pattern version rollback 后不能重新激活；修复必须产生新版本。
-- Capsule、retrieval controller、IntegrationRuntime 和 Hermes Bridge 只读取冻结策略，不拥有
+- Capsule、retrieval controller、AgentToolRuntime 和 Hermes Bridge 只读取冻结策略，不拥有
   学习或晋级逻辑。
 - 当前完成的是可治理的离线晋级和有界消费；Canary health 聚合与自动 rollback 属于 MH-015。
 

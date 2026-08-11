@@ -155,7 +155,7 @@
 
 ### 5.2 Governed Skill 在线激活
 
-- `RuntimeCapsuleProvider` 已接入 `HermesAgentRuntime`，每轮只注入当前 run 钉住版本的相关
+- `ContextEngine` 已接入 `HermesAgentRuntime`，每轮只注入当前 run 钉住版本的相关
   Memory 和 Skill discovery index。
 - 新增 `activate_governed_skill`；服务端从 run snapshot 解析精确版本，只允许 Canary/Active，
   调用方不能换成另一版本。

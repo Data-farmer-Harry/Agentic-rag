@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState, type DragEvent } from "react"
 import {
   Archive,
   Activity,
-  ArrowRight,
   BookOpenText,
   Check,
   CheckCircle2,
@@ -15,6 +14,7 @@ import {
   GitMerge,
   LoaderCircle,
   ListChecks,
+  MessageSquareText,
   Image as ImageIcon,
   Network,
   RefreshCw,
@@ -31,6 +31,7 @@ import type {
   GraphResult,
   GraphCandidateCollection,
   GraphCandidateStatus,
+  Evidence,
   GraphNode,
   GraphRelationship,
   IngestionJob,
@@ -184,7 +185,7 @@ export function KnowledgeView({
   ingestionMode: "sync" | "async";
   sampleImportAvailable: boolean;
   onChanged: () => Promise<void> | void;
-  onOpenChat: () => void;
+  onOpenChat: (suggestion?: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -198,7 +199,7 @@ export function KnowledgeView({
   const [query, setQuery] = useState("");
   const [sampleImport, setSampleImport] = useState<SampleWorkspaceImport>();
   const [sampleImportState, setSampleImportState] = useState<
-    "idle" | "confirming" | "starting" | "unavailable" | "error"
+    "idle" | "confirming" | "starting" | "succeeded" | "unavailable" | "error"
   >("idle");
   const [sampleImportMessage, setSampleImportMessage] = useState<string>();
   const knownJobStatuses = useRef(new Map<string, IngestionJob["status"]>());
@@ -246,7 +247,7 @@ export function KnowledgeView({
       void api.enterpriseFixtureImportStatus(sampleImport.run_id).then((next) => {
         setSampleImport(next);
         if (next.status === "succeeded") {
-          setSampleImportState("idle");
+          setSampleImportState("succeeded");
           setSampleImportMessage(
             Object.keys(next.completed_document_ids).length
               ? `示例工作区已完成导入 ${Object.keys(next.completed_document_ids).length} 份资料。`
@@ -362,7 +363,7 @@ export function KnowledgeView({
       const started = await api.startEnterpriseFixtureImport();
       setSampleImport(started);
       if (started.status === "succeeded") {
-        setSampleImportState("idle");
+        setSampleImportState("succeeded");
         setSampleImportMessage("示例工作区已就绪。");
         await onChanged();
       } else if (started.status === "failed") {
@@ -376,6 +377,10 @@ export function KnowledgeView({
   }
 
   const activeCount = documents.filter((item) => item.status === "active").length;
+  const sampleWorkspaceReady = documents.some(
+    (document) =>
+      document.status === "active" && document.source.fixture_id === "enterprise_knowledge"
+  );
   const visibleDocuments = documents.filter((document) => {
     const layerMatches = sourceFilter === "all" || documentSourceLayer(document) === sourceFilter;
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -401,15 +406,28 @@ export function KnowledgeView({
           {uploading ? <LoaderCircle className="spin" size={16} /> : <Upload size={16} />}
           上传
         </button>
-        <button
-          className="text-button knowledge-sample-button"
-          disabled={!sampleImportAvailable || sampleImportState === "starting"}
-          title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
-          onClick={() => setSampleImportState("confirming")}
-        >
-          <BookOpenText size={15} />
-          载入示例
-        </button>
+        {activeCount > 0 && (
+          <button className="text-button" onClick={() => onOpenChat()}>
+            <MessageSquareText size={15} />
+            开始提问
+          </button>
+        )}
+        {!sampleWorkspaceReady ? (
+          <button
+            className="text-button knowledge-sample-button"
+            disabled={!sampleImportAvailable || sampleImportState === "starting"}
+            title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
+            onClick={() => setSampleImportState("confirming")}
+          >
+            <BookOpenText size={15} />
+            载入示例
+          </button>
+        ) : (
+          <span className="knowledge-sample-ready">
+            <CheckCircle2 size={14} />
+            示例已载入
+          </span>
+        )}
         <label className="knowledge-filter">
           <span>来源</span>
           <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value as SourceLayerLabel | "all")}>
@@ -433,7 +451,7 @@ export function KnowledgeView({
           onChange={(event) => void upload(event.target.files?.[0])}
         />
       </div>
-      {!sampleImportAvailable && (
+      {!sampleImportAvailable && !sampleWorkspaceReady && (
         <div className="sample-import-availability" role="status">
           示例工作区导入服务尚未启用；可以直接上传团队或个人资料。
         </div>
@@ -446,7 +464,10 @@ export function KnowledgeView({
           </div>
           <div>
             <button className="text-button" onClick={() => setSampleImportState("idle")}>取消</button>
-            <button className="primary-button" onClick={() => void startSampleImport()}>开始载入</button>
+            <button className="primary-button" onClick={() => void startSampleImport()}>
+              <BookOpenText size={15} />
+              开始载入
+            </button>
           </div>
         </div>
       )}
@@ -457,7 +478,24 @@ export function KnowledgeView({
         </div>
       )}
       {sampleImportMessage && (
-        <div className={`sample-import-message is-${sampleImportState}`} role="status">{sampleImportMessage}</div>
+        <div className={`sample-import-message is-${sampleImportState}`} role="status">
+          {sampleImportState === "succeeded" && <CheckCircle2 size={14} />}
+          <span>{sampleImportMessage}</span>
+          {sampleImportState === "succeeded" && (
+            <button
+              className="text-button"
+              onClick={() => onOpenChat("梳理 Atlas 平台的核心服务和依赖关系")}
+            >
+              立即提问
+            </button>
+          )}
+          {sampleImportState === "error" && (
+            <button className="text-button" onClick={() => void startSampleImport()}>
+              <RefreshCw size={13} />
+              重新载入
+            </button>
+          )}
+        </div>
       )}
       {notice && <div className="notice-banner">{notice}</div>}
       {error && <div className="error-banner">{error}</div>}
@@ -526,7 +564,7 @@ export function KnowledgeView({
       {documents.length === 0 ? (
         <div className="knowledge-empty-state">
           <EmptyState icon={FileText} label="还没有资料可参与检索" />
-          <button className="text-button" onClick={onOpenChat}>返回对话</button>
+          <button className="text-button" onClick={() => onOpenChat()}>返回对话</button>
         </div>
       ) : visibleDocuments.length === 0 ? (
         <div className="knowledge-empty-state">
@@ -941,7 +979,7 @@ const systemMapQueries: Array<{ kind: SystemMapQueryKind; label: string; fallbac
   { kind: "ownership", label: "负责人和团队", fallbackEntity: "Atlas" },
   { kind: "incidents", label: "事故关联", fallbackEntity: "Sentinel" },
   { kind: "decisions", label: "决策演化", fallbackEntity: "ADR" },
-  { kind: "compare", label: "两个实体比较", fallbackEntity: "Atlas" }
+  { kind: "compare", label: "两个实体比较", fallbackEntity: "Atlas,Polaris" }
 ];
 
 function mapEntities(result?: GraphResult) {
@@ -1062,10 +1100,13 @@ export function GraphView({
     setSearchLoading(true);
     setError(undefined);
     try {
-      const next = await api.graphSearch([query.trim()], template);
+      const entities = query.split(/[，,]/).map((item) => item.trim()).filter(Boolean);
+      const next = await api.graphSearch(entities, template);
       setResult(next);
       setSelectedNodeId(next.paths[0]?.nodes[0]?.node_id);
     } catch (reason) {
+      setResult(undefined);
+      setSelectedNodeId(undefined);
       setError(reason instanceof Error ? reason.message : "无法查询系统地图。");
     } finally {
       setSearchLoading(false);
@@ -1078,6 +1119,10 @@ export function GraphView({
       ? rawInput.split(/[，,]/).map((item) => item.trim()).filter(Boolean).slice(0, 2)
       : [rawInput];
     if (entities.length === 0) return;
+    if (definition.kind === "compare" && entities.length !== 2) {
+      setError("比较查询需要两个实体，请用逗号分隔。");
+      return;
+    }
     setQuery(rawInput);
     setSearchLoading(true);
     setError(undefined);
@@ -1086,6 +1131,8 @@ export function GraphView({
       setResult(next);
       setSelectedNodeId(next.paths[0]?.nodes[0]?.node_id);
     } catch (reason) {
+      setResult(undefined);
+      setSelectedNodeId(undefined);
       setError(reason instanceof Error ? reason.message : "无法查询系统地图");
     } finally {
       setSearchLoading(false);
@@ -1146,6 +1193,14 @@ export function GraphView({
     ? mapData.relationships.filter((relationship) =>
         relationship.source_node_id === selectedNode.node_id || relationship.target_node_id === selectedNode.node_id
       )
+    : [];
+  const selectedEvidence: Evidence[] = selectedNode
+    ? Array.from(new Map(
+        (displayedResult?.paths ?? [])
+          .filter((path) => path.nodes.some((node) => node.node_id === selectedNode.node_id))
+          .flatMap((path) => path.evidence)
+          .map((item) => [item.evidence_id, item])
+      ).values()).slice(0, 4)
     : [];
 
   return (
@@ -1249,7 +1304,19 @@ export function GraphView({
                       </div>
                     )}
                     <h3>支持来源</h3>
-                    <span className="muted-text">本次地图结果有 {displayedResult.evidence.length} 项可追溯来源。</span>
+                    {selectedEvidence.length === 0 ? (
+                      <span className="muted-text">当前实体没有可展示的关系证据。</span>
+                    ) : (
+                      <div className="system-map-evidence-list">
+                        {selectedEvidence.map((evidence) => (
+                          <article key={evidence.evidence_id}>
+                            <strong>{evidence.title || evidence.provenance.source_id}</strong>
+                            <p>{evidence.text.slice(0, 180)}</p>
+                            <small>{evidence.provenance.source_id} · {evidence.provenance.trust}</small>
+                          </article>
+                        ))}
+                      </div>
+                    )}
                   </>
                 ) : <span className="muted-text">选择一个实体查看详情。</span>}
               </aside>

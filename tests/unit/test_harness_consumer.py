@@ -4,7 +4,8 @@ from uuid import NAMESPACE_URL, uuid5
 
 import pytest
 
-from app.context.capsule import RuntimeCapsuleProvider
+from app.agent.context_engine import ContextEngine
+from app.capabilities.agent_tool_runtime import AgentToolRuntime
 from app.domain.enums import MemoryType, TrustLevel
 from app.domain.models import (
     GraphSearchRequest,
@@ -25,8 +26,7 @@ from app.harness.models import (
     RunHarnessOverlay,
     canonical_hash,
 )
-from app.integration.runtime import IntegrationRuntime
-from app.retrieval.agentic import AgenticRetrievalController, QueryPlanDraft
+from app.retrieval.agentic_retrieval import AgenticRetrievalController, QueryPlanDraft
 
 
 class StubMemoryRepository:
@@ -147,8 +147,23 @@ def _memory(key: str, confidence: float) -> MemoryRecord:
 
 @pytest.mark.asyncio
 async def test_capsule_consumer_is_noop_in_shadow_and_bounded_when_active() -> None:
-    provider = RuntimeCapsuleProvider(
-        StubMemoryRepository([_memory("high", 0.9), _memory("low", 0.7)]),
+    class EmptyTrajectories:
+        async def list_session(self, **kwargs):
+            del kwargs
+            return []
+
+    class EmptyConversations:
+        async def get(self, **kwargs):
+            del kwargs
+            return None
+
+        async def save(self, metadata):
+            del metadata
+
+    provider = ContextEngine(
+        EmptyTrajectories(),  # type: ignore[arg-type]
+        EmptyConversations(),  # type: ignore[arg-type]
+        StubMemoryRepository([_memory("high", 0.9), _memory("low", 0.7)]),  # type: ignore[arg-type]
         StubSkillRepository(),  # type: ignore[arg-type]
     )
     baseline = RunContext(project_id="consumer")
@@ -167,9 +182,9 @@ async def test_capsule_consumer_is_noop_in_shadow_and_bounded_when_active() -> N
         applied=True,
     )
 
-    baseline_capsule = await provider(baseline, "memory")
-    shadow_capsule = await provider(shadow, "memory")
-    active_capsule = await provider(active, "memory")
+    baseline_capsule = await provider.capsule(baseline, "high")
+    shadow_capsule = await provider.capsule(shadow, "high")
+    active_capsule = await provider.capsule(active, "high")
 
     assert shadow_capsule == baseline_capsule
     assert "summary-high" in active_capsule
@@ -218,7 +233,7 @@ async def test_retrieval_consumer_is_run_local_under_concurrency() -> None:
 @pytest.mark.asyncio
 async def test_integration_runtime_clamps_graph_hops_only_for_applied_policy() -> None:
     graph = RecordingGraph()
-    runtime = IntegrationRuntime(RecordingRetrieval(), graph=graph)
+    runtime = AgentToolRuntime(RecordingRetrieval(), graph=graph)
     active = _context_with_policy(
         HarnessConfigDelta(tool=HarnessToolConfig(graph_hops=1)),
         applied=True,

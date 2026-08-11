@@ -1,7 +1,7 @@
 {
-  "revision": "2026-08-03-v1",
+  "revision": "2026-08-06-v2",
   "reviewed_by": "northstar-fixture-curation",
-  "reviewed_at": "2026-08-03T00:00:00Z",
+  "reviewed_at": "2026-08-06T00:00:00Z",
   "nodes": [
     {"node_id":"service:gatehouse","name":"Gatehouse","entity_type":"Service","evidence_source_id":"northstar:service:gatehouse"},
     {"node_id":"service:relay","name":"Relay","entity_type":"Service","evidence_source_id":"northstar:service:relay"},
@@ -18,7 +18,19 @@
     {"node_id":"decision:adr-009","name":"ADR-009","entity_type":"Decision","evidence_source_id":"northstar:adr:012"},
     {"node_id":"incident:2026-0527","name":"INC-2026-0527","entity_type":"Incident","evidence_source_id":"northstar:incident:2026-0527"},
     {"node_id":"runbook:jwks-rotation","name":"JWKS Rotation Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:jwks-rotation"},
-    {"node_id":"runbook:retrieval-degradation","name":"Polaris Retrieval Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:retrieval-degradation"}
+    {"node_id":"runbook:retrieval-degradation","name":"Polaris Retrieval Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:retrieval-degradation"},
+    {"node_id":"service:dispatcher","name":"Outbox Dispatcher","entity_type":"Service","evidence_source_id":"northstar:architecture:event-driven-ingestion","aliases":["Dispatcher"]},
+    {"node_id":"service:learning-worker","name":"Learning Worker","entity_type":"Service","evidence_source_id":"northstar:architecture:agent-runtime-design"},
+    {"node_id":"component:outbox","name":"Transactional Outbox","entity_type":"Component","evidence_source_id":"northstar:data:transactional-outbox","aliases":["outbox","事务性 outbox"]},
+    {"node_id":"component:capability-bridge","name":"Capability Bridge","entity_type":"Component","evidence_source_id":"northstar:architecture:agent-runtime-design","aliases":["Bridge"]},
+    {"node_id":"component:prompt-registry","name":"Prompt Registry","entity_type":"Component","evidence_source_id":"northstar:ai:prompt-registry"},
+    {"node_id":"platform:kubernetes","name":"Kubernetes","entity_type":"Platform","evidence_source_id":"northstar:infrastructure:kubernetes-platform"},
+    {"node_id":"database:object-storage","name":"Object Storage","entity_type":"Database","evidence_source_id":"northstar:architecture:data-storage-boundaries","aliases":["对象存储"]},
+    {"node_id":"team:cloud-platform","name":"Cloud Platform","entity_type":"Team","evidence_source_id":"northstar:infrastructure:kubernetes-platform"},
+    {"node_id":"team:data-foundations","name":"Data Foundations","entity_type":"Team","evidence_source_id":"northstar:data:postgres-schema"},
+    {"node_id":"team:ai-runtime","name":"AI Runtime","entity_type":"Team","evidence_source_id":"northstar:ai:model-serving-routing"},
+    {"node_id":"incident:2026-0712","name":"INC-2026-0712","entity_type":"Incident","evidence_source_id":"northstar:incident:2026-0712"},
+    {"node_id":"runbook:model-provider-degradation","name":"Model Provider Degradation Runbook","entity_type":"Runbook","evidence_source_id":"northstar:runbook:model-provider-degradation","aliases":["模型 Provider 退化"]}
   ],
   "relations": [
     {"relation_id":"gatehouse-routes-relay","source":"service:gatehouse","target":"service:relay","relation_type":"routes_to","evidence_source_id":"northstar:architecture:request-data-flow"},
@@ -36,6 +48,23 @@
     {"relation_id":"incident-affects-gatehouse","source":"incident:2026-0527","target":"service:gatehouse","relation_type":"affected","evidence_source_id":"northstar:incident:2026-0527"},
     {"relation_id":"incident-affects-relay","source":"incident:2026-0527","target":"service:relay","relation_type":"affected","evidence_source_id":"northstar:incident:2026-0527"},
     {"relation_id":"incident-mitigated-runbook","source":"incident:2026-0527","target":"runbook:jwks-rotation","relation_type":"mitigated_by","evidence_source_id":"northstar:runbook:jwks-rotation"},
-    {"relation_id":"polaris-documented-runbook","source":"service:polaris","target":"runbook:retrieval-degradation","relation_type":"documented_by","evidence_source_id":"northstar:runbook:retrieval-degradation"}
+    {"relation_id":"polaris-documented-runbook","source":"service:polaris","target":"runbook:retrieval-degradation","relation_type":"documented_by","evidence_source_id":"northstar:runbook:retrieval-degradation"},
+    {"relation_id":"foundry-publishes-outbox","source":"service:foundry","target":"component:outbox","relation_type":"publishes_to","evidence_source_id":"northstar:architecture:event-driven-ingestion"},
+    {"relation_id":"dispatcher-consumes-outbox","source":"service:dispatcher","target":"component:outbox","relation_type":"consumes_from","evidence_source_id":"northstar:data:transactional-outbox"},
+    {"relation_id":"dispatcher-stores-qdrant","source":"service:dispatcher","target":"database:qdrant","relation_type":"stores_in","evidence_source_id":"northstar:architecture:event-driven-ingestion"},
+    {"relation_id":"dispatcher-stores-neo4j","source":"service:dispatcher","target":"database:neo4j","relation_type":"stores_in","evidence_source_id":"northstar:architecture:event-driven-ingestion"},
+    {"relation_id":"foundry-stores-object-storage","source":"service:foundry","target":"database:object-storage","relation_type":"stores_in","evidence_source_id":"northstar:architecture:data-storage-boundaries"},
+    {"relation_id":"relay-uses-capability-bridge","source":"service:relay","target":"component:capability-bridge","relation_type":"uses","evidence_source_id":"northstar:architecture:agent-runtime-design"},
+    {"relation_id":"learning-worker-learns-relay","source":"service:learning-worker","target":"service:relay","relation_type":"learns_from","evidence_source_id":"northstar:architecture:agent-runtime-design"},
+    {"relation_id":"prompt-registry-configures-relay","source":"component:prompt-registry","target":"service:relay","relation_type":"configures","evidence_source_id":"northstar:ai:prompt-registry"},
+    {"relation_id":"prompt-registry-configures-prism","source":"component:prompt-registry","target":"service:prism","relation_type":"configures","evidence_source_id":"northstar:ai:prompt-registry"},
+    {"relation_id":"kubernetes-hosts-relay","source":"platform:kubernetes","target":"service:relay","relation_type":"hosts","evidence_source_id":"northstar:infrastructure:kubernetes-platform"},
+    {"relation_id":"kubernetes-hosts-foundry","source":"platform:kubernetes","target":"service:foundry","relation_type":"hosts","evidence_source_id":"northstar:infrastructure:kubernetes-platform"},
+    {"relation_id":"cloud-platform-operates-kubernetes","source":"team:cloud-platform","target":"platform:kubernetes","relation_type":"operates","evidence_source_id":"northstar:infrastructure:kubernetes-platform"},
+    {"relation_id":"data-foundations-owns-postgres","source":"team:data-foundations","target":"database:postgres","relation_type":"operates","evidence_source_id":"northstar:data:postgres-schema"},
+    {"relation_id":"prism-owned-by-ai-runtime","source":"service:prism","target":"team:ai-runtime","relation_type":"owned_by","evidence_source_id":"northstar:ai:model-serving-routing"},
+    {"relation_id":"incident-0712-affects-prism","source":"incident:2026-0712","target":"service:prism","relation_type":"affected","evidence_source_id":"northstar:incident:2026-0712"},
+    {"relation_id":"incident-0712-mitigated-runbook","source":"incident:2026-0712","target":"runbook:model-provider-degradation","relation_type":"mitigated_by","evidence_source_id":"northstar:runbook:model-provider-degradation"},
+    {"relation_id":"prism-documented-provider-runbook","source":"service:prism","target":"runbook:model-provider-degradation","relation_type":"documented_by","evidence_source_id":"northstar:runbook:model-provider-degradation"}
   ]
 }

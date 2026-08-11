@@ -8,9 +8,9 @@ import pytest
 
 from app.domain.models import KnowledgeChunk, KnowledgeDocument
 from app.knowledge.document_ir import DocumentBlock, DocumentIR
-from app.knowledge.ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
 from app.knowledge.rechunk import KnowledgeRechunkService, RechunkManifest
-from app.knowledge.store import JsonKnowledgeRepository
 from app.sources.arxiv_ocr import (
     ArxivOcrEntry,
     ArxivOcrManifest,

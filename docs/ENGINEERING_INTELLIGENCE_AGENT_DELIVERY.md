@@ -204,7 +204,7 @@ registry、Learning log 可以作为“运行/高级”中的标签页，不继�
 个人模式替换为论文阅读、知识回顾、学习计划和个人记忆示例。示例点击后只填入输入框，用户仍可
 编辑后发送；不得自动消耗模型调用。
 
-空会话同时显示紧凑的知识状态：`23 份团队资料 · 图谱已就绪 · 最近更新 2026-08-03`。实际产品必须
+空会话同时显示紧凑的知识状态，例如：`52 份有效团队资料 · 图谱已就绪 · 最近更新 2026-08-06`。实际产品必须
 读取后端统计值，不能硬编码该数字。若无文档，
 显示“上传资料”和“载入示例工作区”两个明确操作。
 
@@ -256,7 +256,9 @@ Hero 字号。代码块、表格和长 URL 必须横向滚动或换行，不得�
 导入队列必须在当前页面持续更新。上传成功但尚不可检索时，聊天附件状态不能显示“可提问”。
 
 “载入示例工作区”只在未加载 fixture 时出现。点击后展示将导入的虚构资料数量和类型；确认后进入
-可取消的后台导入，并在成功后提供“开始提问”。重复执行必须幂等，不产生副本。
+可取消的后台导入，并在成功后提供“开始提问”。该操作应带入一条可编辑示例问题并聚焦输入框；
+是否已加载必须读取标准化 KnowledgeSource 的 `fixture_id`，不能用“是否存在任意文档”替代。重复
+执行必须幂等，不产生副本。
 
 ### 6.3 系统地图页
 
@@ -692,8 +694,8 @@ tests/integration/
 
 ### 核心体验
 
-- [ ] 简单聊天不误触发 RAG。
-- [ ] 专业问题显示检索阶段和真实引用。
+- [x] 简单聊天不误触发 RAG。
+- [x] 专业问题显示检索阶段和真实引用。
 - [ ] 多跳问题显示图谱路径及其证据。
 - [ ] 无答案、冲突、过期、部分失败各有正确表现。
 - [ ] 上传、取消、重试、刷新恢复、历史切换完整可用。
@@ -704,7 +706,7 @@ tests/integration/
 - [ ] fixture manifest 全部通过 schema/hash 校验。
 - [ ] 导入幂等，revision replacement 不残留 active 旧 Chunk。
 - [ ] Qdrant/Neo4j/Postgres scope 一致。
-- [ ] 10 个 required enterprise case 全部通过。
+- [ ] 16 个 required enterprise case 全部通过。
 - [ ] 图谱 active 关系全部有来源证据。
 - [ ] 提示注入和 hard negative 均失败关闭。
 
@@ -796,3 +798,29 @@ provenance 目前是评测 harness 的声明，报告也会明确保留该限制
 偏好和经验，但不会悄悄改写事实。它同时仍是个人学习 Agent，只是企业研发是默认业务主线。
 
 任何实现若增加了更多页面、Agent、连接器或抽取数量，却没有改善上述核心任务，都视为偏离本次交付。
+
+## 17. 实现状态（2026-08-05）
+
+本文不再是纯设计稿。Phase 1-4 的产品主线、fixture、三层评测合同、知识层隔离、证据化系统地图和
+前端核心体验已经落地；详细变更和实测数字以 `docs/PROGRESS.md` 的 2026-08-05 检查点为准。
+
+| 门禁 | 当前状态 | 证据或边界 |
+|---|---|---|
+| 研发定位与个人通用能力 | 已实现 | 同一 Agent Loop；四个领域入口；WorkspaceProfile 控制知识层 |
+| 企业 fixture | 已实现 | v2 共 53 份文档、52 份 active、1 份 superseded；幂等导入、revision replacement、reset、fingerprint/generation |
+| 策展研发图谱 | 已实现 | 28 个实体、33 条关系；approved、evidence-backed、历史 release 可归档 |
+| Agentic Retrieval 离线门禁 | 已通过 | 10/10 required，Recall@K=1.0，MRR=0.8533 |
+| Live Answer/Graph combined gate | Live Answer 已通过 / Graph combined 待复验 | 正式 Compose 浏览器查询 Atlas：23 秒、verified、3 个受控工具、2 个证据来源；本轮未执行 Graph combined case |
+| 简单聊天 | 已通过 | 全新会话“你好”服务端 30 ms；conversational/deterministic lane；`tool_events=[]`，无 RAG/INSUFFICIENT |
+| 上下文与长期记忆体验 | 已实现 | 聊天内展示会话轮数、8 轮历史上限、知识范围、有效记忆与最近摘要；回答只展示 run 白名单内且 Agent 明确声明实际使用的记忆，撤回后历史标记“现已撤回” |
+| 专业问答等待与恢复 | 已实现 | 有界等待阶段、工具完成后的下一步、10/30 秒慢任务说明、重连次数、安全错误分类；离线浏览器 20 秒知识查询完成并可刷新恢复 |
+| 知识首次使用闭环 | 已实现 | 聊天内上传、解析/就绪反馈、失败原位重试、示例来源识别、成功后预填并聚焦问题；同步浏览器纵向通过，异步队列由合同测试覆盖 |
+| 系统地图体验 | 已实现 | 固定模板、比较校验、实体详情、路径证据片段、source ID/trust |
+| 桌面与移动端 | 已通过本地验收 | 1280 x 720、390 x 844，无页面横向溢出，console 0 error/warn |
+| Python/TypeScript 质量 | 已通过 | 414 collected、397 passed、17 skip；Ruff；173-file mypy；production build；16 个 skip 缺 PostgreSQL DSN，1 个 skip 因沙箱禁止 socket |
+| Compose 静态配置 | 已通过 | `docker compose config --quiet` |
+| 最终镜像与五服务 | 已通过 | Docker 29.5.3；最终镜像完成 `pip check`；app/Hermes/PostgreSQL/Neo4j healthy，Qdrant running；应用首页与健康接口均为 200 |
+
+当前仍不得宣称多副本线性一致：fixture lifecycle lock 是单进程边界，适配当前 Compose 单 worker；多
+worker/多副本需先把 generation/run state 迁移到 PostgreSQL 条件更新或租约。图候选 audit repository
+与 Neo4j 也应继续增加 revision/CAS、outbox 和 reconciliation，避免把跨存储补偿描述成原子事务。

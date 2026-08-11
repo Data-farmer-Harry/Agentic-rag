@@ -22,7 +22,7 @@ from app.domain.models import (
     StrictModel,
     utc_now,
 )
-from app.graph.identity import normalized_entity_key
+from app.graph.graph_identity import normalized_entity_key
 
 ChunkText = Annotated[str, Field(min_length=1, max_length=20_000)]
 

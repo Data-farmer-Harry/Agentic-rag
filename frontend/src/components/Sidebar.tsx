@@ -76,13 +76,9 @@ interface SidebarProps {
 export function Sidebar({ view, onViewChange, overview }: SidebarProps) {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
   const [desktopMoreOpen, setDesktopMoreOpen] = useState(false);
-  const runtimeLive = overview?.runtime_mode === "hermes" || overview?.runtime_mode === "openai";
-  const runtimeLabel =
-    overview?.runtime_mode === "hermes"
-      ? "Hermes 在线"
-      : overview?.runtime_mode === "openai"
-        ? "OpenAI 在线"
-        : "离线模式";
+  const documentCount = overview?.counts.documents ?? 0;
+  const chunkCount = overview?.counts.chunks ?? 0;
+  const knowledgeReady = documentCount > 0 && chunkCount > 0;
 
   function selectView(next: ViewName) {
     setMobileMoreOpen(false);
@@ -157,10 +153,14 @@ export function Sidebar({ view, onViewChange, overview }: SidebarProps) {
         </div>
 
         <div className="sidebar-runtime">
-          <span className={`runtime-dot ${runtimeLive ? "is-live" : ""}`} />
+          <span className={`runtime-dot ${knowledgeReady ? "is-live" : ""}`} />
           <div>
-            <strong>{runtimeLabel}</strong>
-            <span>运行详情在“运行”中查看</span>
+            <strong>{knowledgeReady ? "知识库已就绪" : "等待添加资料"}</strong>
+            <span>
+              {knowledgeReady
+                ? `${documentCount} 份资料 · ${chunkCount} 个分块`
+                : "从知识页添加研发资料"}
+            </span>
           </div>
         </div>
 

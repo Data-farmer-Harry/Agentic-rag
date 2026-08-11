@@ -8,7 +8,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.domain.contracts import KnowledgeRepository
-from app.graph.candidate_store import JsonGraphCandidateRepository
+from app.graph.graph_candidate_repository import JsonGraphCandidateRepository
 
 
 class StaleCandidateGraphArchiver(Protocol):

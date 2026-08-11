@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.domains.registry import DomainPackRegistry
+from app.domain_packs.registry import DomainPackRegistry
 
 
 def test_all_domain_packs_satisfy_manifest_contract() -> None:

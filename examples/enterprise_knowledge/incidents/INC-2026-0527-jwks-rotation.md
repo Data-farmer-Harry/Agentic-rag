@@ -1,8 +1,8 @@
 # INC-2026-0527：JWKS 轮换导致认证失败
 
-严重级别：SEV-1  
-状态：Closed  
-发生时间：2026-05-27 14:05-14:16 UTC  
+严重级别：SEV-1
+状态：Closed
+发生时间：2026-05-27 14:05-14:16 UTC
 Incident Commander：Atlas Trust on-call
 
 ## 影响

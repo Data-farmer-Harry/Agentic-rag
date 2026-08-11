@@ -6,8 +6,7 @@ from app.evaluation.graph_extraction import (
     GraphExtractionGoldenSet,
     OpenAIUsageAccumulator,
 )
-from app.evaluation.metrics import evaluate_answer
-from app.evaluation.replay import GoldenCase, ReplayReport, ReplayRunner
+from app.evaluation.replay import GoldenCase, ReplayReport, ReplayRunner, evaluate_answer
 from app.evaluation.vision import (
     VisionEvalReport,
     VisionEvalThresholds,

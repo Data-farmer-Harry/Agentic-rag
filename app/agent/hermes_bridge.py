@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import json
 import secrets
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from time import perf_counter
@@ -12,13 +13,14 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.agent.budget import RunBudget, RunBudgetExceeded
+from app.agent.answer_publisher import AnswerPublisher, EvidencePublicationError
 from app.agent.hermes_native_learning import (
     HermesNativeAdminClient,
     HermesNativeAdminPort,
     HermesNativeLearningConflict,
     HermesNativeLearningUnavailable,
 )
+from app.application.run_event_recorder import RunEventRecorder
 from app.config import Settings
 from app.domain.contracts import (
     ComputerWorkspacePort,
@@ -43,6 +45,7 @@ from app.domain.models import (
     GraphRAGRequest,
     GraphSearchRequest,
     LearningChangeSet,
+    MemoryRecord,
     RunContext,
     RunTrajectory,
     ToolEvent,
@@ -51,10 +54,27 @@ from app.domain.models import (
     WorkspaceListRequest,
     WorkspaceSearchRequest,
 )
-from app.evidence.publisher import AnswerPublisher
 from app.learning.safety import AutomaticLearningDecision, assess_automatic_learning
-from app.observability.events import RunEventRecorder
 from app.personal.service import PersonalControlService
+
+
+class RunBudgetExceeded(RuntimeError):
+    pass
+
+
+@dataclass
+class RunBudget:
+    max_tool_calls: int
+    tool_calls: int = 0
+    fingerprints: set[str] = field(default_factory=set)
+
+    def consume(self, fingerprint: str) -> None:
+        if fingerprint in self.fingerprints:
+            raise RunBudgetExceeded("Repeated tool call blocked")
+        if self.tool_calls >= self.max_tool_calls:
+            raise RunBudgetExceeded("Tool call budget exhausted")
+        self.fingerprints.add(fingerprint)
+        self.tool_calls += 1
 
 
 class HermesBridgeError(RuntimeError):
@@ -99,6 +119,7 @@ class _RunState:
     context: RunContext
     budget: RunBudget
     allowed_evidence: dict[str, EvidenceRef] = field(default_factory=dict)
+    allowed_memories: dict[str, MemoryRecord] = field(default_factory=dict)
     graph_paths: dict[str, GraphPath] = field(default_factory=dict)
     retrieval_calls: int = 0
     graph_calls: int = 0
@@ -153,13 +174,24 @@ class HermesCapabilityBridge:
         self._runs: dict[str, _RunState] = {}
         self._lock = asyncio.Lock()
 
-    async def open_run(self, context: RunContext) -> str:
+    async def open_run(
+        self,
+        context: RunContext,
+        *,
+        allowed_memories: Sequence[MemoryRecord] = (),
+    ) -> str:
         bridge_id = f"hg_{context.run_id.hex}_{secrets.token_urlsafe(12)}"
+        scoped_memories: dict[str, MemoryRecord] = {}
+        for memory in allowed_memories:
+            self._validate_memory_scope(memory, context)
+            if memory.revoked_at is None:
+                scoped_memories[str(memory.memory_id)] = memory
         async with self._lock:
             self._prune_locked()
             self._runs[bridge_id] = _RunState(
                 context=context,
                 budget=RunBudget(max_tool_calls=self._settings.max_tool_calls),
+                allowed_memories=scoped_memories,
             )
         return bridge_id
 
@@ -337,6 +369,7 @@ class HermesCapabilityBridge:
                     "answer_unchanged": True,
                     "citation_count": len(answer.citations),
                     "graph_path_count": len(answer.graph_paths),
+                    "memory_count": len(answer.memory_ids),
                     "confidence": answer.confidence.value,
                     "message": (
                         "The final answer was already published and remains unchanged. "
@@ -345,10 +378,23 @@ class HermesCapabilityBridge:
                     ),
                 }
             draft = AgentAnswerDraft.model_validate(payload)
+            unknown_memories = {
+                str(memory_id)
+                for memory_id in draft.memory_ids
+                if str(memory_id) not in state.allowed_memories
+            }
+            if unknown_memories:
+                raise EvidencePublicationError(
+                    "Answer referred to memory outside this run: "
+                    f"{unknown_memories}"
+                )
             answer = self._publisher.publish(
                 draft,
                 allowed_evidence=list(state.allowed_evidence.values()),
                 graph_paths=list(state.graph_paths.values()),
+            )
+            answer = answer.model_copy(
+                update={"memory_ids": list(dict.fromkeys(draft.memory_ids))}
             )
             state.published_answer = answer
             state.published_at = datetime.now(UTC)
@@ -359,7 +405,8 @@ class HermesCapabilityBridge:
                 input_hash=hashlib.sha256(draft.model_dump_json().encode()).hexdigest(),
                 output_summary=(
                     f"claims={len(answer.claims)},citations={len(answer.citations)},"
-                    f"graph_paths={len(answer.graph_paths)},confidence={answer.confidence.value}"
+                    f"graph_paths={len(answer.graph_paths)},memories={len(answer.memory_ids)},"
+                    f"confidence={answer.confidence.value}"
                 ),
             ),
         )
@@ -369,6 +416,7 @@ class HermesCapabilityBridge:
             "published": True,
             "citation_count": len(answer.citations),
             "graph_path_count": len(answer.graph_paths),
+            "memory_count": len(answer.memory_ids),
             "confidence": answer.confidence.value,
         }
 
@@ -504,6 +552,11 @@ class HermesCapabilityBridge:
                 user_id=context.user_id,
                 limit=limit,
             )
+            async with state.lock:
+                for record in records:
+                    self._validate_memory_scope(record, context)
+                    if record.revoked_at is None:
+                        state.allowed_memories[str(record.memory_id)] = record
             return (
                 [item.model_dump(mode="json", exclude_none=True) for item in records],
                 [],
@@ -896,6 +949,15 @@ class HermesCapabilityBridge:
         if not query.strip() or len(query) > 2_000 or "\x00" in query:
             raise ValueError("query must contain 1-2000 safe text characters")
         return query
+
+    @staticmethod
+    def _validate_memory_scope(memory: MemoryRecord, context: RunContext) -> None:
+        if (
+            memory.tenant_id != context.tenant_id
+            or memory.project_id != context.project_id
+            or memory.user_id not in {None, context.user_id}
+        ):
+            raise HermesBridgeError("Memory does not belong to the active run scope")
 
     @staticmethod
     def _result_summary(tool_name: str, result: Any, evidence_count: int) -> str:

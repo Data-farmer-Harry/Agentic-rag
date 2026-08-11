@@ -114,8 +114,21 @@ class Settings(BaseSettings):
         le=60.0,
     )
     conversation_fast_path_model: str | None = None
+    adaptive_rag_router_enabled: bool = True
+    adaptive_rag_router_timeout_seconds: float = Field(default=12.0, ge=1.0, le=60.0)
+    adaptive_rag_router_model: str | None = None
     conversation_history_turns: int = Field(default=8, ge=0, le=50)
-    conversation_history_max_chars: int = Field(default=12_000, ge=1_000, le=100_000)
+    context_total_tokens: int = Field(default=8_000, ge=1_000, le=100_000)
+    context_history_tokens: int = Field(default=3_500, ge=0, le=50_000)
+    context_summary_tokens: int = Field(default=1_200, ge=0, le=20_000)
+    context_memory_tokens: int = Field(default=2_200, ge=160, le=30_000)
+    context_skill_tokens: int = Field(default=700, ge=100, le=10_000)
+    context_personal_tokens: int = Field(default=1_200, ge=100, le=20_000)
+    context_memory_recency_half_life_days: float = Field(
+        default=90.0,
+        ge=1.0,
+        le=3_650.0,
+    )
     skill_min_similar_runs: int = Field(default=3, ge=2, le=100)
     skill_min_successful_runs: int = Field(default=2, ge=1, le=100)
     skill_canary_percent: int = Field(default=10, ge=0, le=100)
@@ -201,6 +214,14 @@ class Settings(BaseSettings):
     qdrant_prefetch_limit: int = Field(default=40, ge=1, le=1_000)
     qdrant_rrf_k: int = Field(default=60, ge=1, le=1_000)
     qdrant_sparse_idf: bool = False
+    qdrant_sparse_encoder: Literal["hashed", "bm25"] = "hashed"
+    qdrant_bm25_k1: float = Field(default=1.2, ge=0.1, le=10.0)
+    qdrant_bm25_b: float = Field(default=0.75, ge=0.0, le=1.0)
+    qdrant_bm25_average_document_tokens: float = Field(
+        default=150.0,
+        gt=0.0,
+        le=100_000.0,
+    )
     agentic_retrieval_enabled: bool = True
     retrieval_planner_mode: Literal["deterministic", "openai"] = "deterministic"
     retrieval_planner_model: str | None = None
@@ -226,6 +247,7 @@ class Settings(BaseSettings):
         le=100_000,
     )
     graph_extraction_max_output_tokens: int = Field(default=4_000, ge=512, le=100_000)
+    graph_extraction_timeout_seconds: int = Field(default=300, ge=30, le=1_800)
     graph_extraction_max_entities: int = Field(default=25, ge=1, le=1_000)
     graph_extraction_max_relations: int = Field(default=25, ge=1, le=1_000)
     neo4j_database: str = "neo4j"
@@ -304,6 +326,20 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_backend_configuration(self) -> Self:
+        if self.context_summary_tokens > self.context_history_tokens:
+            raise ValueError(
+                "CONTEXT_SUMMARY_TOKENS must not exceed CONTEXT_HISTORY_TOKENS"
+            )
+        context_allocations = (
+            self.context_history_tokens
+            + self.context_memory_tokens
+            + self.context_skill_tokens
+            + self.context_personal_tokens
+        )
+        if context_allocations > self.context_total_tokens:
+            raise ValueError(
+                "Context component token budgets must not exceed CONTEXT_TOTAL_TOKENS"
+            )
         for field_name, value in (
             ("API_TENANT_ID", self.api_tenant_id),
             ("API_USER_ID", self.api_user_id),
@@ -399,6 +435,8 @@ class Settings(BaseSettings):
         if self.retrieval_backend == "qdrant":
             if not self.qdrant_url:
                 raise ValueError("QDRANT_URL is required for the qdrant retrieval backend")
+            if self.qdrant_sparse_encoder == "bm25" and not self.qdrant_sparse_idf:
+                raise ValueError("QDRANT_SPARSE_IDF must be enabled for BM25 retrieval")
             if self.embedding_provider == "openai":
                 if self.model_provider == "openai" and self.openai_api_key is None:
                     raise ValueError("OPENAI_API_KEY is required for OpenAI document embeddings")

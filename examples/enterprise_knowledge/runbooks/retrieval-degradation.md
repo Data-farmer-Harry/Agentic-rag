@@ -1,8 +1,8 @@
 # Runbook：Polaris 检索退化
 
-版本：3.2  
-状态：Active  
-Owner：Knowledge Systems  
+版本：3.2
+状态：Active
+Owner：Knowledge Systems
 最近演练：2026-07-25
 
 ## 触发条件

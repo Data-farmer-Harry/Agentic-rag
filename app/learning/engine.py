@@ -42,7 +42,7 @@ from app.learning.safety import (
     annotate_trajectory_for_automatic_learning,
 )
 from app.learning.skill_miner import RepeatedTrajectorySkillMiner, SkillMiningDecision
-from app.memory.write_gate import MemoryWriteDecision, MemoryWriteGate
+from app.memory.memory_write_gate import MemoryWriteDecision, MemoryWriteGate
 
 
 @dataclass(frozen=True, slots=True)

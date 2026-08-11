@@ -37,12 +37,29 @@ export interface Answer {
   routing_lane?: RoutingLane;
   claims: Claim[];
   citations: Evidence[];
+  memory_ids?: string[];
+  context_trace?: ContextTrace | null;
   /** Optional until the answer view model exposes evidence-backed graph paths. */
   graph_paths?: GraphPath[];
   confidence: EvidenceLevel;
   limitations: string[];
   followup_queries: string[];
   follow_up_actions: FollowUpAction[];
+}
+
+export interface ContextTrace {
+  revision: string;
+  total_budget_tokens: number;
+  used_tokens: number;
+  component_tokens: Record<string, number>;
+  selected_memory_ids: string[];
+  omitted_memory_count: number;
+  duplicate_memory_count: number;
+  conflicting_memory_count: number;
+  recent_turn_count: number;
+  summarized_turn_count: number;
+  summary_revision?: string | null;
+  truncated_components: string[];
 }
 
 /** Payload sent for `run.completed` and persisted with a completed run. */
@@ -53,6 +70,19 @@ export interface RunCompletedEvent {
   tool_events: ToolEvent[];
   learning_change_count: number;
   duration_ms: number;
+  retrieval_route?: RetrievalRouteDecision;
+}
+
+export interface RetrievalRouteDecision {
+  route: "conversation" | "tool_action" | "passage_lookup" | "relationship" | "global_summary";
+  strategy?: "no_retrieval" | "single_step" | "multi_step";
+  primary_tool?: "search_knowledge" | "retrieve_evidence_subgraph";
+  fallback_tool?: "search_knowledge" | "retrieve_evidence_subgraph";
+  requires_graph: boolean;
+  requires_multi_source: boolean;
+  self_reflection?: boolean;
+  confidence: "high" | "medium";
+  signals: string[];
 }
 
 /** Deterministic, read-only next-query projection from AnswerResponse. */
@@ -254,6 +284,25 @@ export interface KnowledgeDocument {
   status: "active" | "archived" | "failed";
   chunk_count: number;
   parser_version: string;
+  source: {
+    source_type: string;
+    source_id: string;
+    title?: string;
+    source_revision?: string;
+    canonical_uri?: string;
+    license_uri?: string;
+    privacy: "private" | "public_reference";
+    trust: string;
+    source_status: "draft" | "active" | "superseded" | "archived";
+    owner?: string;
+    last_reviewed_at?: string;
+    effective_from?: string;
+    effective_to?: string;
+    supersedes_source_id?: string;
+    superseded_by_source_id?: string;
+    fixture_id?: string;
+    acquired_at: string;
+  };
   error?: string;
   metadata: Record<string, unknown>;
   created_at: string;
@@ -480,6 +529,7 @@ export interface GraphCandidateCollection {
 
 export type StreamEventName =
   | "run.accepted"
+  | "run.route"
   | "run.status"
   | "run.heartbeat"
   | "tool.completed"
@@ -511,7 +561,9 @@ export interface ConversationMessage {
   graphPaths?: GraphPath[];
   followUpActions?: FollowUpAction[];
   toolEvents?: ToolEvent[];
+  retrievalRoute?: RetrievalRouteDecision;
   limitations?: string[];
+  memoryIds?: string[];
   durationMs?: number;
   learningCount?: number;
   feedbackScore?: number;

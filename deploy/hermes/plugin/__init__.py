@@ -843,6 +843,15 @@ def register(ctx: Any) -> None:
                     "type": "array",
                     "items": {"type": "string", "format": "uuid"},
                 },
+                "memory_ids": {
+                    "type": "array",
+                    "description": (
+                        "IDs of capsule or recalled project memories actually used in the answer. "
+                        "Do not include merely available memories."
+                    ),
+                    "items": {"type": "string", "format": "uuid"},
+                    "maxItems": 20,
+                },
                 "confidence": {
                     "type": "string",
                     "enum": [

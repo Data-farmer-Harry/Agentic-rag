@@ -295,16 +295,16 @@ Hermes 是唯一在线 Agent Loop。`AgenticRetrievalController` 是有界检索
 
 | 能力 | 主要代码 |
 | --- | --- |
-| Agentic planner/controller | `app/retrieval/agentic.py` |
-| LangChain parallel + RRF | `app/retrieval/pipeline.py` |
-| Qdrant hybrid | `app/retrieval/qdrant_hybrid.py` |
-| GraphRAG semantic tools | `app/graph/toolkit.py` |
-| Neo4j scoped adapter | `app/graph/neo4j.py` |
-| Structured KG extraction | `app/graph/structured_extraction.py` |
-| KG candidate governance | `app/graph/candidate_service.py`、`candidate_store.py` |
-| Capability integration | `app/integration/runtime.py` |
+| Agentic planner/controller | `app/retrieval/agentic_retrieval.py` |
+| LangChain parallel + RRF | `app/retrieval/hybrid_retrieval_pipeline.py` |
+| Qdrant hybrid | `app/retrieval/qdrant_hybrid_retriever.py` |
+| GraphRAG semantic tools | `app/graph/graph_retrieval_tools.py` |
+| Neo4j scoped adapter | `app/graph/neo4j_evidence_graph.py` |
+| Structured KG extraction | `app/graph/openai_graph_extractor.py` |
+| KG candidate governance | `app/graph/graph_candidate_service.py`、`candidate_store.py` |
+| Capability integration | `app/capabilities/runtime.py` |
 | Hermes tool boundary | `app/agent/hermes_bridge.py` |
-| Strict answer publishing | `app/evidence/publisher.py` |
+| Strict answer publishing | `app/agent/answer_publisher.py` |
 | Run instructions | `app/agent/instructions.py`、`prompts/hermes_runtime.md` |
 | Retrieval evaluation | `app/evaluation/retrieval_cli.py`、`retrieval.py` |
 | Graph evaluation | `app/evaluation/graph_cli.py`、`graph_extraction.py` |

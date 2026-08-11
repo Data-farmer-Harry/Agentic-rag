@@ -11,6 +11,7 @@ from app.agent.hermes_native_learning import (
     HermesNativeLearningAudit,
     HermesNativeLearningService,
 )
+from app.capabilities.agent_tool_runtime import AgentToolRuntime
 from app.config import Settings
 from app.domain.contracts import (
     ConversationRepository,
@@ -66,8 +67,8 @@ from app.domain.models import (
     WorkspaceProfile,
     utc_now,
 )
-from app.domains.registry import DomainPackRegistry
-from app.graph.candidate_service import GraphCandidateService
+from app.domain_packs.registry import DomainPackRegistry
+from app.graph.graph_candidate_service import GraphCandidateService
 from app.harness.evolution import HarnessPatternEvolutionService
 from app.harness.models import (
     HarnessExperienceEntry,
@@ -81,10 +82,12 @@ from app.harness.models import (
     RunHarnessOverlay,
 )
 from app.infra.local_repositories import JsonlTrajectoryRepository
-from app.integration.runtime import IntegrationRuntime
-from app.knowledge.ingestion import KnowledgeIngestionError, KnowledgeIngestionService
-from app.knowledge.jobs import IngestionJobService, IngestionJobsUnavailableError
-from app.knowledge.visibility import WorkspaceProfileResolver, document_is_visible
+from app.knowledge.ingestion_jobs import (
+    IngestionJobService,
+    IngestionJobsUnavailableError,
+)
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionError, KnowledgeIngestionService
+from app.knowledge.knowledge_visibility import WorkspaceProfileResolver, document_is_visible
 from app.learning.engine import LearningEngine
 from app.learning.evolution import SkillEvolutionService
 from app.learning.jobs import LearningJobService, LearningJobsUnavailableError
@@ -127,7 +130,7 @@ class WorkspaceService:
         memories: MemoryRepository,
         skills: SkillRepository,
         change_sets: LearningChangeSetRepository,
-        integration_runtime: IntegrationRuntime,
+        integration_runtime: AgentToolRuntime,
         learning_engine: LearningEngine,
         skill_evolution: SkillEvolutionService,
         knowledge_repository: KnowledgeRepository,
@@ -241,10 +244,12 @@ class WorkspaceService:
             "runtime_mode": self._settings.runtime_mode,
             "model": self._settings.openai_model,
             "conversation_fast_path_model": (
-                self._settings.conversation_fast_path_model
+                self._settings.adaptive_rag_router_model
+                or self._settings.conversation_fast_path_model
                 or self._settings.openai_model
             ),
             "conversation_history_turns": self._settings.conversation_history_turns,
+            "context_total_tokens": self._settings.context_total_tokens,
             "model_provider": self._settings.model_provider,
             "learning_mode": self._settings.learning_mode,
             "learning_reflector_mode": self._settings.learning_reflector_mode,
@@ -258,6 +263,12 @@ class WorkspaceService:
             "embedding_provider": self._settings.embedding_provider,
             "qdrant_collection": self._settings.qdrant_collection,
             "qdrant_sparse_idf": self._settings.qdrant_sparse_idf,
+            "qdrant_sparse_encoder": self._settings.qdrant_sparse_encoder,
+            "qdrant_bm25_k1": self._settings.qdrant_bm25_k1,
+            "qdrant_bm25_b": self._settings.qdrant_bm25_b,
+            "qdrant_bm25_average_document_tokens": (
+                self._settings.qdrant_bm25_average_document_tokens
+            ),
             "graph_backend": self._settings.graph_backend,
             "graph_extractor_mode": self._settings.graph_extractor_mode,
             "knowledge_repository_backend": self._settings.knowledge_repository_backend,
@@ -478,6 +489,16 @@ class WorkspaceService:
             session_id=normalized_session,
             title=(normalized_title if title is not None else current.title if current else None),
             archived=(archived if archived is not None else current.archived if current else False),
+            context_summary=current.context_summary if current is not None else "",
+            summarized_run_ids=(
+                current.summarized_run_ids if current is not None else []
+            ),
+            context_summary_revision=(
+                current.context_summary_revision if current is not None else None
+            ),
+            context_summary_updated_at=(
+                current.context_summary_updated_at if current is not None else None
+            ),
             created_at=current.created_at if current is not None else utc_now(),
             updated_at=utc_now(),
         )

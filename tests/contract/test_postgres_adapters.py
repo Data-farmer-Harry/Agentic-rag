@@ -94,11 +94,11 @@ from app.infra.postgres_outbox import (
     PostgresOutboxRepository,
     insert_outbox_event,
 )
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.store import FileKnowledgeObjectStore
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import FileKnowledgeObjectStore
 from app.learning.execution import LearningExecutionFence, learning_execution
 from app.learning.job_errors import LearningJobLeaseLostError
-from app.memory.json_store import JsonMemoryStore
+from app.memory.json_memory_repository import JsonMemoryStore
 from app.personal.models import TaskCreate, TaskPatch, TaskStatus
 from app.personal.postgres import (
     PERSONAL_CONTROL_MIGRATIONS,

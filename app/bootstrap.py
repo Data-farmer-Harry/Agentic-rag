@@ -7,11 +7,11 @@ from typing import Any, cast
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.agent.conversation_router import (
+from app.agent.adaptive_rag_router import (
     ConversationRoutedRuntime,
     OpenAIConversationResponder,
-    TrajectoryConversationHistory,
 )
+from app.agent.context_engine import ContextEngine
 from app.agent.hermes_bridge import HermesCapabilityBridge
 from app.agent.hermes_native_learning import (
     HermesNativeAdminClient,
@@ -19,11 +19,12 @@ from app.agent.hermes_native_learning import (
 )
 from app.agent.hermes_runtime import HermesAgentRuntime
 from app.agent.offline_runtime import OfflineAgentRuntime
+from app.agent.workspace_file_tools import WorkspaceFileTools
+from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService
 from app.application.workspace_service import WorkspaceService
-from app.computer import ComputerWorkspaceTools
+from app.capabilities.agent_tool_runtime import AgentToolRuntime
 from app.config import Settings, get_settings
-from app.context import RuntimeCapsuleProvider
 from app.demo.enterprise_fixture import EnterpriseFixtureService
 from app.domain.contracts import (
     AgentRuntime,
@@ -54,20 +55,20 @@ from app.domain.models import (
     RunContext,
     RunTrajectory,
 )
-from app.domains.registry import DomainPackRegistry
-from app.graph.candidate_service import (
+from app.domain_packs.registry import DomainPackRegistry
+from app.graph.entity_resolution import DeterministicEntityResolver
+from app.graph.graph_candidate_repository import JsonGraphCandidateRepository
+from app.graph.graph_candidate_service import (
     GraphCandidateService,
     KnowledgeGraphIngestionCoordinator,
 )
-from app.graph.candidate_store import JsonGraphCandidateRepository
-from app.graph.extraction import RuleBasedEntityRelationExtractor
-from app.graph.local import InMemoryEvidenceGraph
-from app.graph.resolution import DeterministicEntityResolver
-from app.graph.structured_extraction import (
+from app.graph.graph_extraction_pipeline import RuleBasedEntityRelationExtractor
+from app.graph.graph_visibility import VisibilityFilteredGraph
+from app.graph.in_memory_evidence_graph import InMemoryEvidenceGraph
+from app.graph.openai_graph_extractor import (
     HybridEntityRelationExtractor,
     OpenAIStructuredEntityRelationExtractor,
 )
-from app.graph.visibility import VisibilityFilteredGraph
 from app.harness.consumer import BoundedHarnessConsumer, HarnessConsumerLimits
 from app.harness.evaluation import DeterministicPatternEvaluator
 from app.harness.evolution import HarnessPatternEvolutionService
@@ -83,12 +84,11 @@ from app.infra.local_repositories import (
     JsonlConversationRepository,
     JsonlTrajectoryRepository,
 )
-from app.integration.runtime import IntegrationRuntime
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.jobs import IngestionJobService, IngestionStagingStore
-from app.knowledge.retriever import KnowledgeBaseRetriever
-from app.knowledge.store import JsonKnowledgeRepository
-from app.knowledge.visibility import SettingsWorkspaceProfileResolver
+from app.knowledge.ingestion_jobs import IngestionJobService, IngestionStagingStore
+from app.knowledge.knowledge_base_retriever import KnowledgeBaseRetriever
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
+from app.knowledge.knowledge_visibility import SettingsWorkspaceProfileResolver
 from app.learning.change_set import JsonLearningChangeSetRepository
 from app.learning.engine import LearningEngine
 from app.learning.evolution import SkillEvolutionService
@@ -107,22 +107,21 @@ from app.learning.skill_evaluator import DeterministicSkillEvaluator
 from app.learning.skill_miner import RepeatedTrajectorySkillMiner
 from app.learning.skill_replay import FrozenCapabilitySkillSandbox
 from app.learning.transition_store import JsonSkillTransitionRepository
-from app.memory.json_store import JsonMemoryStore
-from app.observability.events import RunEventRecorder
+from app.memory.json_memory_repository import JsonMemoryStore
 from app.personal import (
     JsonPersonalRepository,
     PersonalControlService,
     PersonalRepository,
 )
-from app.retrieval.agentic import (
+from app.retrieval.agentic_retrieval import (
     AgenticRetrievalController,
     DeterministicQueryPlanner,
     OpenAIStructuredQueryPlanner,
 )
-from app.retrieval.memory import InMemoryRetriever
-from app.retrieval.pipeline import RetrievalPipeline
-from app.skills.repository import SkillMarkdownRepository
-from app.skills.rollout import skill_is_eligible
+from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
+from app.retrieval.in_memory_retriever import InMemoryRetriever
+from app.skills.skill_markdown_repository import SkillMarkdownRepository
+from app.skills.skill_registry import skill_is_eligible
 from app.web_search import OpenAIHostedWebSearch
 
 
@@ -136,7 +135,7 @@ class ApplicationComponents:
     memory_store: MemoryRepository
     skill_repository: SkillRepository
     trajectory_repository: JsonlTrajectoryRepository
-    integration_runtime: IntegrationRuntime
+    integration_runtime: AgentToolRuntime
     change_set_repository: LearningChangeSetRepository
     workspace_service: WorkspaceService
     knowledge_repository: KnowledgeRepository
@@ -215,12 +214,12 @@ def _build_vector_index(
     from qdrant_client import AsyncQdrantClient
 
     from app.agent.model_provider import build_embedding_client
-    from app.retrieval.embeddings import (
+    from app.retrieval.embedding_providers import (
         DeterministicDenseEmbedder,
-        HashedSparseEmbedder,
         OpenAIDenseEmbedder,
+        build_sparse_embedder,
     )
-    from app.retrieval.qdrant_hybrid import QdrantHybridStore
+    from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
     if settings.qdrant_url == ":memory:":
         client = AsyncQdrantClient(location=":memory:")
@@ -252,7 +251,14 @@ def _build_vector_index(
     return QdrantHybridStore(
         client,
         dense,
-        HashedSparseEmbedder(),
+        build_sparse_embedder(
+            settings.qdrant_sparse_encoder,
+            bm25_k1=settings.qdrant_bm25_k1,
+            bm25_b=settings.qdrant_bm25_b,
+            bm25_average_document_tokens=(
+                settings.qdrant_bm25_average_document_tokens
+            ),
+        ),
         collection_name=settings.qdrant_collection,
         prefetch_limit=settings.qdrant_prefetch_limit,
         rrf_k=settings.qdrant_rrf_k,
@@ -274,7 +280,7 @@ def _build_graph_extractor(settings: Settings) -> EntityRelationExtractorPort:
 
     client = build_model_client(
         settings,
-        timeout=min(settings.agent_timeout_seconds, 120),
+        timeout=settings.graph_extraction_timeout_seconds,
         max_retries=2,
     )
     structured_extractor = OpenAIStructuredEntityRelationExtractor(
@@ -297,7 +303,7 @@ def _build_vision_analyzer(settings: Settings) -> VisionAnalyzerPort | None:
     if not settings.vision_enabled:
         return None
     from app.agent.model_provider import build_model_client
-    from app.vision import OpenAIVisionAnalyzer
+    from app.knowledge.openai_vision_analyzer import OpenAIVisionAnalyzer
 
     client = build_model_client(
         settings,
@@ -360,7 +366,7 @@ def _build_graph_backend(
         return _build_reference_graph(texts, metadata)
     from neo4j import AsyncGraphDatabase
 
-    from app.graph.neo4j import Neo4jEvidenceGraph
+    from app.graph.neo4j_evidence_graph import Neo4jEvidenceGraph
 
     auth: tuple[str, str] | None = None
     if settings.neo4j_user and settings.neo4j_password is not None:
@@ -571,7 +577,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             LegacyKnowledgeMetadataMigrator,
             PostgresKnowledgeRepository,
         )
-        from app.knowledge.store import FileKnowledgeObjectStore
+        from app.knowledge.knowledge_repository import FileKnowledgeObjectStore
 
         if postgres is None:
             raise ValueError("Postgres knowledge backend requires a database")
@@ -844,7 +850,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         lifecycle_resources_list.append(outbox_dispatcher)
     web_search = OpenAIHostedWebSearch(resolved) if resolved.web_search_mode == "openai" else None
     computer_workspace = (
-        ComputerWorkspaceTools(
+        WorkspaceFileTools(
             resolved.computer_workspace_roots,
             tenant_id=resolved.computer_workspace_tenant_id,
             project_id=resolved.computer_workspace_project_id,
@@ -857,7 +863,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         if resolved.computer_workspace_enabled
         else None
     )
-    integration_runtime = IntegrationRuntime(
+    integration_runtime = AgentToolRuntime(
         retrieval,
         graph=graph,
         web_search=web_search,
@@ -1034,6 +1040,23 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
 
     runtime: AgentRuntime
     hermes_bridge: HermesCapabilityBridge | None = None
+    context_engine = ContextEngine(
+        trajectories,
+        conversations,
+        memories,
+        skills,
+        personal=personal,
+        max_turns=resolved.conversation_history_turns,
+        total_tokens=resolved.context_total_tokens,
+        history_tokens=resolved.context_history_tokens,
+        summary_tokens=resolved.context_summary_tokens,
+        memory_tokens=resolved.context_memory_tokens,
+        skill_tokens=resolved.context_skill_tokens,
+        personal_tokens=resolved.context_personal_tokens,
+        memory_recency_half_life_days=(
+            resolved.context_memory_recency_half_life_days
+        ),
+    )
     hermes_native_learning = HermesNativeLearningService(
         change_sets=change_sets,
         admin_client=None,
@@ -1062,27 +1085,22 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             change_set_repository=change_sets,
             personal=personal,
         )
-        conversation_history = TrajectoryConversationHistory(
-            trajectories,
-            max_turns=resolved.conversation_history_turns,
-            max_chars=resolved.conversation_history_max_chars,
-        )
         hermes_runtime = HermesAgentRuntime(
             settings=resolved,
             bridge=hermes_bridge,
-            capsule_provider=RuntimeCapsuleProvider(
-                memories,
-                skills,
-                personal=personal,
-            ),
-            history_provider=conversation_history,
+            capsule_provider=context_engine.capsule,
+            history_provider=context_engine.history,
         )
         runtime = hermes_runtime
         lifecycle_resources_list.append(hermes_runtime)
     else:
         runtime = OfflineAgentRuntime(integration_runtime, event_recorder=event_recorder)
     direct_conversation = None
-    if resolved.runtime_mode == "hermes" and resolved.conversation_fast_path_enabled:
+    adaptive_router_enabled = (
+        resolved.conversation_fast_path_enabled
+        and resolved.adaptive_rag_router_enabled
+    )
+    if resolved.runtime_mode == "hermes" and adaptive_router_enabled:
         from app.agent.model_provider import build_model_client
 
         try:
@@ -1090,9 +1108,13 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
                 build_model_client(
                     resolved,
                     max_retries=1,
-                    timeout=resolved.conversation_fast_path_timeout_seconds,
+                    timeout=resolved.adaptive_rag_router_timeout_seconds,
                 ),
-                model=resolved.conversation_fast_path_model or resolved.openai_model,
+                model=(
+                    resolved.adaptive_rag_router_model
+                    or resolved.conversation_fast_path_model
+                    or resolved.openai_model
+                ),
             )
         except ValueError:
             direct_conversation = None
@@ -1100,17 +1122,10 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             lifecycle_resources_list.append(direct_conversation)
     runtime = ConversationRoutedRuntime(
         runtime,
-        enabled=resolved.conversation_fast_path_enabled,
+        enabled=adaptive_router_enabled,
         direct_responder=direct_conversation,
-        history_provider=(
-            conversation_history
-            if resolved.runtime_mode == "hermes"
-            else TrajectoryConversationHistory(
-                trajectories,
-                max_turns=resolved.conversation_history_turns,
-                max_chars=resolved.conversation_history_max_chars,
-            )
-        ),
+        history_provider=context_engine.history,
+        context_trace_provider=context_engine.trace,
     )
 
     async def learn_after_run(

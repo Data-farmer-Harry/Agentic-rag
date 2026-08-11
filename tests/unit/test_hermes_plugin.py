@@ -107,6 +107,8 @@ def test_hermes_plugin_registers_bounded_graph_rag_tool_schemas(
         "conversational",
         "action",
     ]
+    assert "memory_ids" not in publish_schema["required"]
+    assert publish_schema["properties"]["memory_ids"]["maxItems"] == 20
 
 
 def test_hermes_plugin_registers_bounded_computer_workspace_tools(

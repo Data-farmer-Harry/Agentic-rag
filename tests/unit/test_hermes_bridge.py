@@ -5,33 +5,36 @@ from uuid import uuid4
 
 import pytest
 
-from app.agent.budget import RunBudgetExceeded
+from app.agent.answer_publisher import EvidencePublicationError
 from app.agent.hermes_bridge import (
     HermesBridgeError,
     HermesCapabilityBridge,
     HermesNativeSnapshotAudit,
     HermesNativeToolAudit,
+    RunBudgetExceeded,
 )
 from app.agent.hermes_native_learning import HermesNativeRollbackResult
+from app.application.run_event_recorder import RunEventRecorder
+from app.capabilities import AgentToolRuntime
 from app.config import Settings
-from app.domain.enums import SkillStatus, TrustLevel
+from app.domain.enums import MemoryType, SkillStatus, TrustLevel
 from app.domain.models import (
     EvidenceRef,
     GraphNode,
     GraphRelationship,
+    MemoryCandidate,
+    MemoryRecord,
     Provenance,
     RetrievalBundle,
     RunContext,
     SkillDefinition,
     SkillStep,
 )
-from app.evidence.publisher import EvidencePublicationError
 from app.graph import InMemoryEvidenceGraph
-from app.integration import IntegrationRuntime
 from app.learning.change_set import JsonLearningChangeSetRepository
-from app.observability.events import RunEventRecorder
+from app.memory import JsonMemoryStore
 from app.retrieval import InMemoryRetriever, RetrievalPipeline
-from app.skills.repository import SkillMarkdownRepository
+from app.skills.skill_markdown_repository import SkillMarkdownRepository
 
 
 class FixtureRetrieval:
@@ -59,6 +62,24 @@ def evidence() -> EvidenceRef:
             trust=TrustLevel.VERIFIED,
         ),
         metadata={"knowledge_layer": "team_internal"},
+    )
+
+
+def memory_candidate(*, user_id: str | None = "local-user") -> MemoryCandidate:
+    return MemoryCandidate(
+        user_id=user_id,
+        memory_type=MemoryType.POLICY,
+        key=f"answer-language:{user_id}",
+        summary="Prefer concise Chinese answers.",
+        detail={"language": "zh-CN", "style": "concise"},
+        confidence=0.95,
+        provenance=[
+            Provenance(
+                source_type="user_feedback",
+                source_id=f"memory-{user_id}",
+                trust=TrustLevel.USER_ASSERTED,
+            )
+        ],
     )
 
 
@@ -118,6 +139,83 @@ async def test_bridge_rejects_foreign_evidence_and_tools_after_publication() -> 
                 "confidence": "supported",
             },
         )
+
+
+@pytest.mark.asyncio
+async def test_bridge_publishes_only_memories_allowlisted_for_the_run() -> None:
+    context = RunContext(user_id="user-a")
+    personal = MemoryRecord(**memory_candidate(user_id="user-a").model_dump())
+    shared = MemoryRecord(**memory_candidate(user_id=None).model_dump())
+    foreign = MemoryRecord(**memory_candidate(user_id="user-b").model_dump())
+    bridge = HermesCapabilityBridge(
+        settings=Settings(app_env="test", hermes_bridge_token="bridge-secret"),
+        retrieval=FixtureRetrieval(evidence()),
+    )
+    bridge_id = await bridge.open_run(
+        context,
+        allowed_memories=[personal, shared],
+    )
+
+    result = await bridge.invoke(
+        bridge_id,
+        "hermesgraph_publish_answer",
+        {
+            "answer_markdown": "我会使用简洁中文回答。",
+            "response_mode": "conversational",
+            "memory_ids": [str(personal.memory_id), str(shared.memory_id)],
+            "confidence": "insufficient",
+        },
+    )
+    answer = await bridge.published_answer(bridge_id)
+
+    assert result["memory_count"] == 2
+    assert answer.memory_ids == [personal.memory_id, shared.memory_id]
+    with pytest.raises(HermesBridgeError, match="active run scope"):
+        await bridge.open_run(context, allowed_memories=[foreign])
+
+    unknown_bridge_id = await bridge.open_run(context)
+    with pytest.raises(EvidencePublicationError, match="memory outside this run"):
+        await bridge.invoke(
+            unknown_bridge_id,
+            "hermesgraph_publish_answer",
+            {
+                "answer_markdown": "Invented memory attribution.",
+                "memory_ids": [str(uuid4())],
+                "confidence": "insufficient",
+            },
+        )
+
+
+@pytest.mark.asyncio
+async def test_bridge_allows_memory_returned_by_recall_tool(tmp_path: Path) -> None:
+    store = JsonMemoryStore(tmp_path / "memories.json")
+    memory = await store.upsert(memory_candidate())
+    bridge = HermesCapabilityBridge(
+        settings=Settings(app_env="test", hermes_bridge_token="bridge-secret"),
+        retrieval=FixtureRetrieval(evidence()),
+        memory_repository=store,
+    )
+    bridge_id = await bridge.open_run(RunContext())
+
+    recalled = await bridge.invoke(
+        bridge_id,
+        "recall_project_memory",
+        {"query": "concise Chinese", "limit": 5},
+    )
+    await bridge.invoke(
+        bridge_id,
+        "hermesgraph_publish_answer",
+        {
+            "answer_markdown": "我会简洁作答。",
+            "response_mode": "conversational",
+            "memory_ids": [str(memory.memory_id)],
+            "confidence": "insufficient",
+        },
+    )
+    answer = await bridge.published_answer(bridge_id)
+
+    assert recalled["result"][0]["memory_id"] == str(memory.memory_id)
+    assert answer.memory_ids == [memory.memory_id]
 
     await bridge.invoke(
         bridge_id,
@@ -244,7 +342,7 @@ async def test_bridge_exposes_graph_rag_tools_with_budget_and_citation_hydration
             )
         ],
     )
-    runtime = IntegrationRuntime(
+    runtime = AgentToolRuntime(
         RetrievalPipeline({"fixture": InMemoryRetriever([item])}),
         graph=graph,
     )

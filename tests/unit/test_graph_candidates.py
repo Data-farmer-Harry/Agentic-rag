@@ -15,14 +15,14 @@ from app.domain.models import (
     KnowledgeDocument,
     KnowledgeSource,
 )
-from app.graph.candidate_service import (
+from app.graph.entity_resolution import DeterministicEntityResolver
+from app.graph.graph_candidate_repository import JsonGraphCandidateRepository
+from app.graph.graph_candidate_service import (
     GraphCandidateReviewError,
     GraphCandidateService,
     KnowledgeGraphIngestionCoordinator,
 )
-from app.graph.candidate_store import JsonGraphCandidateRepository
-from app.graph.extraction import RuleBasedEntityRelationExtractor
-from app.graph.resolution import DeterministicEntityResolver
+from app.graph.graph_extraction_pipeline import RuleBasedEntityRelationExtractor
 
 
 def _write_candidate_batches(

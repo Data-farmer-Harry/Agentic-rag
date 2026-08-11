@@ -5,8 +5,14 @@ from typing import Any
 import pytest
 
 from app.domain.enums import TrustLevel
-from app.domain.models import EvidenceRef, Provenance, RetrievalBundle, RunContext
-from app.retrieval.agentic import (
+from app.domain.models import (
+    AdaptiveRAGRoute,
+    EvidenceRef,
+    Provenance,
+    RetrievalBundle,
+    RunContext,
+)
+from app.retrieval.agentic_retrieval import (
     AgenticRetrievalController,
     DeterministicQueryPlanner,
     OpenAIStructuredQueryPlanner,
@@ -47,6 +53,18 @@ def test_deterministic_planner_decomposes_with_comparisons() -> None:
         "RAGU typed consolidation",
     ]
     assert plan.minimum_evidence == 2
+    assert plan.minimum_distinct_sources == 2
+
+
+def test_deterministic_planner_decomposes_named_chinese_comparison() -> None:
+    plan = asyncio.run(
+        DeterministicQueryPlanner().plan(
+            "Relay 和 Foundry 各自负责什么？为什么二者不能合并成一个同步服务？"
+        )
+    )
+
+    assert plan.intent == "compare"
+    assert plan.subqueries == ["Relay 服务职责", "Foundry 服务职责"]
     assert plan.minimum_distinct_sources == 2
 
 
@@ -209,6 +227,60 @@ def test_controller_runs_second_round_only_for_a_measured_gap() -> None:
         ]
         assert result.trace["stop_reason"] == "coverage_satisfied"
         assert len(result.trace["rounds"]) == 2
+
+    asyncio.run(scenario())
+
+
+def test_adaptive_single_step_clamps_queries_and_rounds() -> None:
+    async def scenario() -> None:
+        planner = FixturePlanner(
+            QueryPlanDraft(
+                intent="synthesis",
+                subqueries=["first query", "second query"],
+                fallback_queries=["corrective query"],
+                required_terms=["missing"],
+                minimum_evidence=2,
+            )
+        )
+        retrieval = RecordingRetrieval({"first query": [evidence("one", "partial")]})
+        controller = AgenticRetrievalController(retrieval, planner=planner)
+        context = RunContext(
+            tenant_id="tenant-a",
+            project_id="project-a",
+            adaptive_rag_route=AdaptiveRAGRoute(
+                strategy="single_step",
+                knowledge_route="passage_lookup",
+                self_reflection=False,
+                signals=["adaptive_model"],
+            ),
+        )
+
+        result = await controller.retrieve("focused lookup", context)
+
+        assert [call[0] for call in retrieval.calls] == ["first query"]
+        assert result.trace["effective_max_subqueries"] == 1
+        assert result.trace["effective_max_retrieval_rounds"] == 1
+        assert result.trace["stop_reason"] == "round_limit"
+
+    asyncio.run(scenario())
+
+
+def test_no_retrieval_route_blocks_rag_controller() -> None:
+    async def scenario() -> None:
+        retrieval = RecordingRetrieval({})
+        controller = AgenticRetrievalController(retrieval)
+        context = RunContext(
+            adaptive_rag_route=AdaptiveRAGRoute(
+                strategy="no_retrieval",
+                knowledge_route="tool_action",
+                self_reflection=False,
+                signals=["adaptive_model"],
+            )
+        )
+
+        with pytest.raises(PermissionError, match="does not permit"):
+            await controller.retrieve("do not search", context)
+        assert retrieval.calls == []
 
     asyncio.run(scenario())
 

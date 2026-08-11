@@ -43,7 +43,7 @@ flowchart LR
 - `app/personal/repository.py`：repository protocol、JSON 原子实现、乐观并发。
 - `app/personal/postgres.py`：Postgres migration v11/v15、记录表、append-only 事件表与提醒状态类型。
 - `app/api/personal_router.py`：项目作用域 API。
-- `app/context/capsule.py`：每次 run start 冻结 bounded personal context。
+- `app/agent/context_engine.py`：每次 run start 在统一 token 预算内冻结 personal context。
 - `app/agent/hermes_bridge.py`：personal tool 预算、scope 与审计边界。
 - `deploy/hermes/plugin/__init__.py`：Hermes strict tool schemas。
 
@@ -98,7 +98,7 @@ Hermes 原生 `todo` 可继续服务于单次推理过程；Personal Task 是用
 ## 5. Persona 与运行时胶囊
 
 首次读取 persona 会创建作用域默认配置；用户保存个人设置时完成 onboarding。每次 Hermes run
-开始时，`RuntimeCapsuleProvider` 冻结以下 bounded 状态：
+开始时，`ContextEngine` 冻结以下 bounded 状态：
 
 - Persona 沟通偏好、兴趣与边界。
 - 当前 emotion state 与 expression hint。

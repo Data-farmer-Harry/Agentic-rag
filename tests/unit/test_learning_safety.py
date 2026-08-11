@@ -18,8 +18,8 @@ from app.learning.safety import (
     annotate_trajectory_for_automatic_learning,
     assess_automatic_learning,
 )
-from app.memory.json_store import JsonMemoryStore
-from app.skills.repository import SkillMarkdownRepository
+from app.memory.json_memory_repository import JsonMemoryStore
+from app.skills.skill_markdown_repository import SkillMarkdownRepository
 
 
 def _evidence(

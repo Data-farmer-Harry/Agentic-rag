@@ -36,18 +36,18 @@ from app.evaluation.retrieval import (
     RetrievalEvalReport,
     RetrievalGoldenSet,
 )
-from app.retrieval.agentic import (
+from app.retrieval.agentic_retrieval import (
     AgenticRetrievalController,
     DeterministicQueryPlanner,
     OpenAIStructuredQueryPlanner,
 )
-from app.retrieval.embeddings import (
+from app.retrieval.embedding_providers import (
     DeterministicDenseEmbedder,
-    HashedSparseEmbedder,
     OpenAIDenseEmbedder,
+    build_sparse_embedder,
 )
-from app.retrieval.pipeline import RetrievalPipeline
-from app.retrieval.qdrant_hybrid import QdrantHybridStore
+from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
+from app.retrieval.qdrant_hybrid_retriever import QdrantHybridStore
 
 _ASCII_TERM_PATTERN = re.compile(r"[a-z0-9][a-z0-9_.-]*", re.IGNORECASE)
 _CJK_SEQUENCE_PATTERN = re.compile(r"[\u4e00-\u9fff]+")
@@ -299,7 +299,14 @@ async def _evaluate_qdrant_retrieval(
         qdrant_store = ReadOnlyEnterpriseQdrantStore(
             qdrant_client,
             dense,
-            HashedSparseEmbedder(),
+            build_sparse_embedder(
+                settings.qdrant_sparse_encoder,
+                bm25_k1=settings.qdrant_bm25_k1,
+                bm25_b=settings.qdrant_bm25_b,
+                bm25_average_document_tokens=(
+                    settings.qdrant_bm25_average_document_tokens
+                ),
+            ),
             collection_name=collection_name,
             prefetch_limit=settings.qdrant_prefetch_limit,
             rrf_k=settings.qdrant_rrf_k,

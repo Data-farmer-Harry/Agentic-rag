@@ -9,11 +9,12 @@ from time import perf_counter
 from typing import Any
 from uuid import UUID, uuid4
 
+from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService, answer_from_trajectory
 from app.application.workspace_service import WorkspaceService
 from app.domain.enums import RunStatus
 from app.domain.models import RunStreamEvent, RunTrajectory, ToolEvent
-from app.observability.events import RunEventRecorder
+from app.retrieval.knowledge_query_router import public_adaptive_route, route_knowledge_query
 
 TERMINAL_STREAM_EVENTS = {"run.completed", "run.error", "run.cancelled"}
 
@@ -127,6 +128,7 @@ class RunStreamCoordinator:
                     "domain_pack": resolved_domain_pack,
                 },
             )
+            await self._emit(trajectory, "run.route", _public_route(trajectory))
             await self._emit(
                 trajectory,
                 "run.status",
@@ -258,11 +260,12 @@ class RunStreamCoordinator:
                 {
                     "status": "working",
                     "phase": "executing",
-                    "label": "Agent 正在处理，必要时会调用工具",
+                    "label": "正在选择处理路径",
                 },
             )
             execution = asyncio.create_task(self._runs.execute_run(trajectory))
             heartbeat = 0
+            last_tool: ToolEvent | None = None
             while not execution.done():
                 event = None
                 if tool_queue is None:
@@ -273,20 +276,28 @@ class RunStreamCoordinator:
                     except TimeoutError:
                         pass
                 if event is not None:
+                    last_tool = event
                     emitted_tools.add(tool_key(event))
                     await self._emit(
                         trajectory,
                         "tool.completed",
                         event.model_dump(mode="json"),
                     )
+                    await self._emit(
+                        trajectory,
+                        "run.status",
+                        _tool_progress(event),
+                    )
                     continue
                 heartbeat += 1
+                elapsed_ms = int((perf_counter() - started) * 1000)
                 await self._emit(
                     trajectory,
                     "run.heartbeat",
                     {
                         "sequence": heartbeat,
-                        "elapsed_ms": int((perf_counter() - started) * 1000),
+                        "elapsed_ms": elapsed_ms,
+                        **_waiting_progress(elapsed_ms, last_tool=last_tool),
                     },
                 )
             if tool_queue is not None:
@@ -300,6 +311,11 @@ class RunStreamCoordinator:
                         trajectory,
                         "tool.completed",
                         event.model_dump(mode="json"),
+                    )
+                    await self._emit(
+                        trajectory,
+                        "run.status",
+                        _tool_progress(event),
                     )
             completed = await execution
             answer = answer_from_trajectory(completed)
@@ -491,6 +507,66 @@ def _answer_chunks(text: str, size: int = 24) -> list[str]:
     return [text[index : index + size] for index in range(0, len(text), size)]
 
 
+def _waiting_progress(
+    elapsed_ms: int,
+    *,
+    last_tool: ToolEvent | None = None,
+) -> dict[str, object]:
+    """Project truthful, bounded wait guidance without exposing model reasoning."""
+
+    if elapsed_ms >= 30_000:
+        return {
+            "phase": "executing",
+            "label": "任务仍在运行，结果会自动保留",
+            "slow": True,
+        }
+    if last_tool is not None:
+        return _tool_progress(last_tool)
+    if elapsed_ms >= 12_000:
+        return {
+            "phase": "executing",
+            "label": "正在等待模型或工具返回",
+            "slow": True,
+        }
+    if elapsed_ms >= 4_000:
+        return {
+            "phase": "executing",
+            "label": "正在规划需要的知识与工具",
+            "slow": False,
+        }
+    return {
+        "phase": "understanding",
+        "label": "正在判断是否需要检索或调用工具",
+        "slow": False,
+    }
+
+
+def _tool_progress(event: ToolEvent) -> dict[str, object]:
+    name = event.tool_name.casefold()
+    if not event.success:
+        return {
+            "phase": "executing",
+            "label": "一个步骤未完成，正在判断是否可以继续",
+        }
+    if "publish_answer" in name:
+        label = "回答已通过检查，正在准备展示"
+    elif "graph" in name:
+        label = "已完成图谱查询，正在分析关系"
+    elif "web" in name or "search_online" in name:
+        label = "已完成网页搜索，正在核对来源"
+    elif "retriev" in name or "knowledge" in name or "rag" in name:
+        label = "已完成知识库检索，正在分析证据"
+    elif "memory" in name:
+        label = "已读取相关记忆，正在结合当前问题"
+    elif "vision" in name or "image" in name:
+        label = "已完成图片分析，正在整理结果"
+    elif "computer" in name or "workspace" in name or "file" in name:
+        label = "已读取工作区资料，正在分析内容"
+    else:
+        label = "已完成一个受控步骤，正在继续处理"
+    return {"phase": "executing", "label": label}
+
+
 def _trajectory_duration_ms(trajectory: RunTrajectory) -> int:
     end = trajectory.completed_at or datetime.now(UTC)
     return max(0, int((end - trajectory.context.started_at).total_seconds() * 1000))
@@ -510,4 +586,17 @@ def _completed_payload(
         "tool_events": [item.model_dump(mode="json") for item in trajectory.tool_events],
         "learning_change_count": learning_change_count,
         "duration_ms": duration_ms,
+        "retrieval_route": _public_route(trajectory),
     }
+
+
+def _public_route(trajectory: RunTrajectory) -> dict[str, object]:
+    """Expose the application lane and bounded retrieval policy, never model reasoning."""
+
+    route = trajectory.context.adaptive_rag_route
+    if route is None and trajectory.answer is not None:
+        route = trajectory.answer.adaptive_rag_route
+    if route is not None:
+        return public_adaptive_route(route)
+    # Offline/test runtimes have no model router. Keep their projection explicit and isolated.
+    return route_knowledge_query(trajectory.user_input).model_dump(mode="json")

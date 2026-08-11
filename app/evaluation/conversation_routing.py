@@ -9,7 +9,7 @@ from time import perf_counter
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.agent.conversation_router import ConversationHistoryProvider, ConversationTurn
+from app.agent.adaptive_rag_router import ConversationHistoryProvider, ConversationTurn
 from app.domain.contracts import AgentRuntime
 from app.domain.enums import EvidenceLevel, RoutingLane
 from app.domain.models import AnswerResponse, RunContext

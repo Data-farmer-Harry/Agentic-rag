@@ -3,8 +3,8 @@ from __future__ import annotations
 import hashlib
 from uuid import NAMESPACE_URL, uuid5
 
-from app.knowledge.chunking import HierarchicalDocumentChunker
 from app.knowledge.document_ir import parse_markdown_document_ir
+from app.knowledge.hierarchical_chunking import HierarchicalDocumentChunker
 
 
 def _source_hash(text: str) -> str:

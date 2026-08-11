@@ -6,8 +6,10 @@ from uuid import UUID
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.agent.adaptive_rag_router import AdaptiveRAGRouterError
 from app.agent.hermes_bridge import HermesCapabilityBridge
 from app.api.app import create_app
+from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService
 from app.bootstrap import build_components
 from app.config import Settings
@@ -22,7 +24,6 @@ from app.domain.models import (
     RunTrajectory,
 )
 from app.infra.local_repositories import JsonlTrajectoryRepository
-from app.observability.events import RunEventRecorder
 
 
 class StubRuntime:
@@ -34,6 +35,12 @@ class BusyRuntime:
     async def run(self, user_input: str, context: RunContext) -> AnswerResponse:
         del user_input, context
         raise RuntimeError("HTTP 429 model_cooldown with private provider details")
+
+
+class UnavailableAdaptiveRouterRuntime(StubRuntime):
+    async def prepare_route(self, user_input: str, context: RunContext) -> None:
+        del user_input, context
+        raise AdaptiveRAGRouterError("private upstream routing failure")
 
 
 class EmptyRetrieval:
@@ -192,6 +199,24 @@ class _LearningWorkspaceStub:
         return retried
 
 
+class _UnavailableGraphWorkspace:
+    async def graph_search(self, *args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise RuntimeError("graph backend is unavailable")
+
+    async def resolve_graph_entities(self, *args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise RuntimeError("graph backend is unavailable")
+
+    async def retrieve_evidence_subgraph(self, *args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise RuntimeError("graph backend is unavailable")
+
+    async def compare_graph_entities(self, *args: object, **kwargs: object) -> object:
+        del args, kwargs
+        raise RuntimeError("graph backend is unavailable")
+
+
 @pytest.mark.asyncio
 async def test_health_and_run(tmp_path: Path) -> None:
     service = RunService(
@@ -210,6 +235,27 @@ async def test_health_and_run(tmp_path: Path) -> None:
     assert health.json()["status"] == "ok"
     assert response.status_code == 200
     assert response.json()["answer"]["answer_markdown"] == "hello"
+
+
+@pytest.mark.asyncio
+async def test_adaptive_router_failure_is_a_public_retryable_503(tmp_path: Path) -> None:
+    service = RunService(
+        runtime=UnavailableAdaptiveRouterRuntime(),
+        trajectories=JsonlTrajectoryRepository(tmp_path / "runs.jsonl"),
+        settings=Settings(app_env="test", data_dir=tmp_path),
+    )
+    transport = ASGITransport(app=create_app(service))
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/v1/projects/default/runs/start",
+            json={
+                "input": "哈哈你好",
+                "idempotency_key": "adaptive-router-unavailable-1234",
+            },
+        )
+
+    assert response.status_code == 503
+    assert response.json() == {"detail": "模型路由服务暂时不可用，请稍后重试。"}
 
 
 @pytest.mark.asyncio
@@ -479,6 +525,48 @@ async def test_learning_job_api_is_scoped_and_hides_snapshot_and_lease(
     assert hidden.status_code == 404
     assert cancelled.json()["status"] == "cancelled"
     assert retried.json()["status"] == "queued"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("path", "payload"),
+    [
+        (
+            "/v1/projects/default/graph/search",
+            {"entities": ["Alpha Service"], "template": "neighbors"},
+        ),
+        (
+            "/v1/projects/default/graph/entities/resolve",
+            {"mentions": ["Alpha Service"]},
+        ),
+        (
+            "/v1/projects/default/graph/retrieve",
+            {"query": "Alpha Service dependencies"},
+        ),
+        (
+            "/v1/projects/default/graph/compare",
+            {"left_entity": "Alpha Service", "right_entity": "Beta Service"},
+        ),
+    ],
+)
+async def test_graph_api_maps_backend_runtime_errors_to_service_unavailable(
+    tmp_path: Path,
+    path: str,
+    payload: dict[str, object],
+) -> None:
+    service = RunService(
+        runtime=StubRuntime(),
+        trajectories=JsonlTrajectoryRepository(tmp_path / "runs.jsonl"),
+        settings=Settings(app_env="test", data_dir=tmp_path),
+    )
+    transport = ASGITransport(
+        app=create_app(service, _UnavailableGraphWorkspace())  # type: ignore[arg-type]
+    )
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(path, json=payload)
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Graph service unavailable"
 
 
 @pytest.mark.asyncio

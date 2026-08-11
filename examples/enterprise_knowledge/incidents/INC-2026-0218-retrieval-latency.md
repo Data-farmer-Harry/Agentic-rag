@@ -1,8 +1,8 @@
 # INC-2026-0218：Polaris workspace 检索延迟
 
-严重级别：SEV-1  
-状态：Closed  
-发生时间：2026-02-18 09:42-10:31 UTC  
+严重级别：SEV-1
+状态：Closed
+发生时间：2026-02-18 09:42-10:31 UTC
 Incident Commander：Atlas Knowledge on-call
 
 ## 影响

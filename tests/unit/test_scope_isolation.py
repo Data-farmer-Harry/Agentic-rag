@@ -5,7 +5,7 @@ import pytest
 from app.domain.enums import RunStatus
 from app.domain.models import RunContext, RunTrajectory, SkillDefinition, SkillStep
 from app.infra.local_repositories import JsonlTrajectoryRepository
-from app.skills.repository import SkillMarkdownRepository
+from app.skills.skill_markdown_repository import SkillMarkdownRepository
 
 
 @pytest.mark.asyncio

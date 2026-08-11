@@ -8,7 +8,7 @@ from app.evaluation.retrieval import (
     RetrievalGoldenSet,
     source_root,
 )
-from app.retrieval.agentic import PlannerUsage
+from app.retrieval.agentic_retrieval import PlannerUsage
 
 
 class FixtureController:

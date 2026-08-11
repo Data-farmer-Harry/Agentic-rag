@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   Archive,
   ArrowUp,
+  ArrowUpRight,
   BookmarkPlus,
   Bot,
   BookOpenText,
+  Brain,
   Check,
   ChevronDown,
   CircleStop,
@@ -14,6 +16,7 @@ import {
   GitCompareArrows,
   LoaderCircle,
   ListPlus,
+  Layers3,
   MessageSquareText,
   MoreHorizontal,
   Paperclip,
@@ -34,6 +37,7 @@ import type {
   ConversationSummary,
   Evidence,
   KnowledgeDocument,
+  MemoryRecord,
   Overview,
   SampleWorkspaceImport,
   WorkspaceMode
@@ -48,6 +52,7 @@ interface ChatViewProps {
   conversationLoading: boolean;
   overview?: Overview;
   documents: KnowledgeDocument[];
+  memories: MemoryRecord[];
   workspaceMode?: WorkspaceMode;
   sampleImportAvailable: boolean;
   running: boolean;
@@ -66,6 +71,7 @@ interface ChatViewProps {
   onOpenTask: (taskId: string) => void;
   onOpenReview: (date: string) => void;
   onOpenKnowledge: () => void;
+  onOpenMemory: () => void;
   onInspectEvidence: (evidence: Evidence) => void;
 }
 
@@ -83,6 +89,10 @@ const ATTACHMENT_ACCEPT = ".pdf,.md,.markdown,.txt,.json,.csv,.html,.htm,.png,.j
 
 function delay(milliseconds: number) {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
+
+function normalizeMemoryText(value: string) {
+  return value.trim().replace(/\s+/g, " ");
 }
 
 const teamSuggestions = [
@@ -136,8 +146,14 @@ const domainLabels: Record<string, string> = {
   research: "个人学习",
   research_reference: "个人学习",
   software_engineering: "团队研发",
-  software_docs: "团队研发",
-  software_docs_reference: "团队研发"
+  software_docs: "技术文档",
+  software_docs_reference: "技术文档"
+};
+
+const knowledgeLayerLabels: Record<string, string> = {
+  team_internal: "团队",
+  personal: "个人",
+  public_reference: "公共参考"
 };
 
 function sampleImportProgressLabel(sampleImport?: SampleWorkspaceImport) {
@@ -168,6 +184,33 @@ function graphPathLabel(message: ConversationMessage) {
   return first.nodes.map((node) => node.name).join(" -> ");
 }
 
+function graphPathText(path: NonNullable<ConversationMessage["graphPaths"]>[number]) {
+  return path.nodes.map((node, index) => {
+    const relation = path.relationships[index]?.relation_type.replaceAll("_", " ");
+    return relation ? `${node.name} --${relation}--> ` : node.name;
+  }).join("");
+}
+
+const confidenceLabels: Record<string, string> = {
+  verified: "已核验",
+  supported: "有依据",
+  inferred: "推断",
+  insufficient: "依据不足",
+  conflicting: "存在冲突"
+};
+
+const sourceTypeLabels: Record<string, string> = {
+  document: "文档",
+  knowledge_chunk: "知识片段",
+  graph: "知识图谱",
+  memory: "长期记忆",
+  web: "网页"
+};
+
+function relevanceLabel(score: number) {
+  return `${Math.round(Math.max(0, Math.min(1, score)) * 100)}%`;
+}
+
 function taskSeedFromAnswer(content: string) {
   const line = content
     .replace(/^#{1,6}\s*/gm, "")
@@ -188,6 +231,7 @@ export function ChatView({
   conversationLoading,
   overview,
   documents,
+  memories,
   workspaceMode,
   sampleImportAvailable,
   running,
@@ -206,6 +250,7 @@ export function ChatView({
   onOpenTask,
   onOpenReview,
   onOpenKnowledge,
+  onOpenMemory,
   onInspectEvidence
 }: ChatViewProps) {
   const draftKey = `hermesgraph:draft:${sessionId}`;
@@ -227,12 +272,14 @@ export function ChatView({
   const [captureResult, setCaptureResult] = useState<QuickCaptureResult>();
   const [sampleImport, setSampleImport] = useState<SampleWorkspaceImport>();
   const [sampleImportState, setSampleImportState] = useState<
-    "idle" | "confirming" | "starting" | "unavailable" | "error"
+    "idle" | "confirming" | "starting" | "succeeded" | "unavailable" | "error"
   >("idle");
   const [sampleImportMessage, setSampleImportMessage] = useState<string>();
   const [expandedGraphPaths, setExpandedGraphPaths] = useState<Record<string, boolean>>({});
   const [expandedLimitations, setExpandedLimitations] = useState<Record<string, boolean>>({});
+  const [expandedMemories, setExpandedMemories] = useState<Record<string, boolean>>({});
   const [conversationMenuOpen, setConversationMenuOpen] = useState(false);
+  const [contextPanelOpen, setContextPanelOpen] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [renameTitle, setRenameTitle] = useState("");
   const [conversationAction, setConversationAction] = useState<"rename" | "archive" | "restore">();
@@ -240,6 +287,7 @@ export function ChatView({
   const bottomRef = useRef<HTMLDivElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const conversationMenuRef = useRef<HTMLDivElement>(null);
+  const contextPanelRef = useRef<HTMLDivElement>(null);
   const mountedRef = useRef(true);
   const composerTextRef = useRef<HTMLTextAreaElement>(null);
   const activeConversations = conversations.filter((item) => !item.archived);
@@ -250,6 +298,12 @@ export function ChatView({
     if (input) window.localStorage.setItem(draftKey, input);
     else window.localStorage.removeItem(draftKey);
   }, [draftKey, input]);
+
+  useEffect(() => {
+    if (!input) return;
+    const frame = window.requestAnimationFrame(() => composerTextRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -274,12 +328,30 @@ export function ChatView({
   }, [conversationMenuOpen]);
 
   useEffect(() => {
+    if (!contextPanelOpen) return;
+    function closePanel(event: PointerEvent) {
+      if (!contextPanelRef.current?.contains(event.target as Node)) {
+        setContextPanelOpen(false);
+      }
+    }
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setContextPanelOpen(false);
+    }
+    window.addEventListener("pointerdown", closePanel);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      window.removeEventListener("pointerdown", closePanel);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [contextPanelOpen]);
+
+  useEffect(() => {
     if (!sampleImport || !["queued", "running"].includes(sampleImport.status)) return;
     const timer = window.setInterval(() => {
       void api.enterpriseFixtureImportStatus(sampleImport.run_id).then((next) => {
         setSampleImport(next);
         if (next.status === "succeeded") {
-          setSampleImportState("idle");
+          setSampleImportState("succeeded");
           setSampleImportMessage(
             "示例工作区已导入" +
               (Object.keys(next.completed_document_ids).length
@@ -329,17 +401,29 @@ export function ChatView({
           await delay(1_000);
           job = await api.ingestionJob(job.job_id);
         }
-        throw new Error("附件处理时间较长，请稍后在知识库查看状态");
+        throw new Error("资料仍在后台处理。你可以移除附件继续聊天，并在知识页查看进度。");
       }
       await api.uploadDocument(attachment.file);
       updateAttachment(attachment.id, { status: "ready" });
       await onWorkspaceChanged();
-    } catch {
+    } catch (reason) {
       updateAttachment(attachment.id, {
         status: "error",
-        error: "附件上传没有完成，请检查文件或稍后再试。"
+        error: reason instanceof Error
+          ? reason.message
+          : "附件上传没有完成，请检查文件或稍后再试。"
       });
     }
+  }
+
+  function retryAttachment(attachment: ChatAttachment) {
+    const retrying = { ...attachment, status: "uploading" as const, error: undefined };
+    updateAttachment(attachment.id, { status: "uploading", error: undefined });
+    void uploadAttachment(retrying);
+  }
+
+  function removeAttachment(id: string) {
+    setAttachments((current) => current.filter((item) => item.id !== id));
   }
 
   function addAttachments(files: FileList | File[]) {
@@ -378,7 +462,7 @@ export function ChatView({
       const started = await api.startEnterpriseFixtureImport();
       setSampleImport(started);
       if (started.status === "succeeded") {
-        setSampleImportState("idle");
+        setSampleImportState("succeeded");
         setSampleImportMessage("示例工作区已就绪，可以开始提问。");
         await onWorkspaceChanged();
       } else if (started.status === "failed") {
@@ -449,7 +533,8 @@ export function ChatView({
   }
 
   async function rememberMessage(message: ConversationMessage) {
-    if (!message.content.trim() || memoryState[message.id] === "pending") return;
+    const state = memoryStatus(message);
+    if (!message.content.trim() || state === "pending" || state === "saved") return;
     setMemoryState((current) => ({ ...current, [message.id]: "pending" }));
     try {
       await api.remember(message.content, sessionId);
@@ -478,12 +563,43 @@ export function ChatView({
   const attachmentBlocked = attachments.some(
     (attachment) => attachment.status !== "ready"
   );
+  const attachmentErrors = attachments.filter((attachment) => attachment.status === "error");
+  const processingAttachments = attachments.filter(
+    (attachment) => attachment.status === "uploading" || attachment.status === "processing"
+  );
+  const readyAttachments = attachments.filter((attachment) => attachment.status === "ready");
   const canSubmit = Boolean(input.trim() || attachments.length > 0) && !attachmentBlocked;
   const isPersonalLearning = workspaceMode === "personal" || (
     !workspaceMode && ["research", "research_reference"].includes(domainPack)
   );
   const suggestedPrompts = isPersonalLearning ? personalSuggestions : teamSuggestions;
+  const activeKnowledgeLayers = overview?.workspace_profile?.enabled_knowledge_layers
+    .map((layer) => knowledgeLayerLabels[layer] ?? layer)
+    .join(" + ") || (isPersonalLearning ? "个人" : "团队");
+  const activeMemories = memories.filter((memory) => !memory.revoked_at);
+  const activeMemorySummaries = new Set(
+    activeMemories.map((memory) => normalizeMemoryText(memory.summary))
+  );
+  const recentMemories = [...activeMemories]
+    .sort((left, right) => right.updated_at.localeCompare(left.updated_at))
+    .slice(0, 3);
+  const conversationTurns = currentConversation?.run_count
+    ?? messages.filter((message) => message.role === "user").length;
+  const historyTurnLimit = overview?.conversation_history_turns ?? 0;
+
+  function memoryStatus(message: ConversationMessage) {
+    return memoryState[message.id]
+      ?? (activeMemorySummaries.has(normalizeMemoryText(message.content)) ? "saved" : undefined);
+  }
+
+  function usedMemories(message: ConversationMessage) {
+    const ids = new Set(message.memoryIds ?? []);
+    return memories.filter((memory) => ids.has(memory.memory_id));
+  }
   const activeDocuments = documents.filter((document) => document.status === "active");
+  const sampleWorkspaceReady = activeDocuments.some(
+    (document) => document.source.fixture_id === "enterprise_knowledge"
+  );
   const graphCandidateCount =
     (overview?.counts.graph_entity_candidates ?? 0) +
     (overview?.counts.graph_relation_candidates ?? 0);
@@ -555,18 +671,43 @@ export function ChatView({
                       ? "可提问"
                       : "失败"}
               </small>
+              {attachment.status === "error" && (
+                <button
+                  title={`重新上传 ${attachment.file.name}`}
+                  aria-label={`重新上传 ${attachment.file.name}`}
+                  onClick={() => retryAttachment(attachment)}
+                >
+                  <RotateCcw size={12} />
+                </button>
+              )}
               <button
-                title="移除附件"
-                onClick={() =>
-                  setAttachments((current) =>
-                    current.filter((item) => item.id !== attachment.id)
-                  )
-                }
+                title={`移除 ${attachment.file.name}`}
+                aria-label={`移除 ${attachment.file.name}`}
+                onClick={() => removeAttachment(attachment.id)}
               >
                 <X size={12} />
               </button>
             </div>
           ))}
+        </div>
+      )}
+      {attachments.length > 0 && (
+        <div
+          className={`attachment-guidance ${attachmentErrors.length > 0 ? "is-error" : readyAttachments.length === attachments.length ? "is-ready" : ""}`}
+          role="status"
+        >
+          {attachmentErrors.length > 0 ? (
+            <>
+              <span>{attachmentErrors[0].error}</span>
+              <button className="text-button" onClick={onOpenKnowledge}>查看知识任务</button>
+            </>
+          ) : processingAttachments.length > 0 ? (
+            <span>正在解析 {processingAttachments.length} 份资料；完成后即可随问题一起发送。</span>
+          ) : (
+            <span>
+              {readyAttachments.length} 份资料已就绪。输入问题，或直接发送让 Agent 阅读并总结。
+            </span>
+          )}
         </div>
       )}
       <div
@@ -684,6 +825,7 @@ export function ChatView({
               aria-expanded={conversationMenuOpen}
               onClick={() => {
                 setConversationMenuOpen((current) => !current);
+                setContextPanelOpen(false);
                 setConversationActionError(undefined);
               }}
             >
@@ -778,9 +920,97 @@ export function ChatView({
               </div>
             )}
           </div>
-          <div className="chat-workspace-mode" title="当前默认知识范围">
-            <span className="status-indicator" />
-            <span>{isPersonalLearning ? "个人学习" : "团队研发"}</span>
+          <div className="chat-context-menu" ref={contextPanelRef}>
+            <button
+              className={`chat-context-button ${contextPanelOpen ? "is-active" : ""}`}
+              title="查看当前上下文"
+              aria-label="查看当前上下文"
+              aria-expanded={contextPanelOpen}
+              onClick={() => {
+                setContextPanelOpen((current) => !current);
+                setConversationMenuOpen(false);
+              }}
+            >
+              <Brain size={14} />
+              <span>上下文</span>
+              {activeMemories.length > 0 && <small>{activeMemories.length}</small>}
+            </button>
+            {contextPanelOpen && (
+              <div className="context-panel" role="dialog" aria-label="当前上下文">
+                <header>
+                  <div>
+                    <strong>当前上下文</strong>
+                    <span>随对话自动更新</span>
+                  </div>
+                  <button
+                    className="icon-button"
+                    title="关闭上下文"
+                    onClick={() => setContextPanelOpen(false)}
+                  >
+                    <X size={14} />
+                  </button>
+                </header>
+                <div className="context-summary-grid">
+                  <div>
+                    <MessageSquareText size={15} />
+                    <span>当前对话</span>
+                    <strong>{conversationTurns} 轮</strong>
+                  </div>
+                  <div>
+                    <Brain size={15} />
+                    <span>长期记忆</span>
+                    <strong>{activeMemories.length} 条</strong>
+                  </div>
+                </div>
+                <div className="context-detail-row">
+                  <span>历史参考</span>
+                  <strong>
+                    {historyTurnLimit > 0
+                      ? `最多最近 ${historyTurnLimit} 轮已完成对话`
+                      : "当前未启用"}
+                  </strong>
+                </div>
+                <div className="context-detail-row">
+                  <span>知识范围</span>
+                  <strong>{activeKnowledgeLayers}</strong>
+                </div>
+                <section className="context-memory-preview">
+                  <div className="context-section-heading">
+                    <strong>可按问题召回的记忆</strong>
+                    <span>{activeMemories.length > 0 ? "最近更新" : "尚未保存"}</span>
+                  </div>
+                  {recentMemories.length > 0 ? (
+                    recentMemories.map((memory) => (
+                      <p key={memory.memory_id} title={memory.summary}>{memory.summary}</p>
+                    ))
+                  ) : (
+                    <p className="is-empty">在任意消息下点击书签，即可保存长期记忆。</p>
+                  )}
+                </section>
+                <footer>
+                  <button
+                    className="text-button"
+                    onClick={() => {
+                      setContextPanelOpen(false);
+                      onNewConversation();
+                    }}
+                  >
+                    <SquarePen size={14} />
+                    新建对话
+                  </button>
+                  <button
+                    className="primary-button"
+                    onClick={() => {
+                      setContextPanelOpen(false);
+                      onOpenMemory();
+                    }}
+                  >
+                    <Brain size={14} />
+                    管理记忆
+                  </button>
+                </footer>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -808,48 +1038,58 @@ export function ChatView({
             </div>
             <div className="empty-composer-slot">{composer}</div>
 
-            <div className="workspace-pulse knowledge-pulse" aria-label="当前知识状态">
-              <div>
-                <strong>{activeDocuments.length}</strong>
-                <span>可检索资料</span>
-              </div>
-              <div>
-                <strong>{overview?.counts.chunks ?? 0}</strong>
-                <span>可用分块</span>
-              </div>
-              <div>
-                <strong>{graphCandidateCount}</strong>
-                <span>图谱候选</span>
-              </div>
-              <div>
-                <strong>{overview?.counts.active_ingestion_jobs ?? 0}</strong>
-                <span>处理中</span>
-              </div>
+            <div className="suggestion-heading">
+              <MessageSquareText size={15} />
+              <span>{isPersonalLearning ? "常用学习任务" : "常用研发任务"}</span>
             </div>
-            <div className="knowledge-state-note">
-              {activeDocuments.length > 0
-                ? "资料状态来自当前工作区；回答会按问题需要检索。"
-                : "还没有可检索资料。上传团队资料，或载入示例工作区后再开始提问。"}
+            <div className="suggestion-list">
+              {suggestedPrompts.map(({ icon: Icon, label, text }) => (
+                <button key={text} onClick={() => applySuggestion(text)} disabled={running}>
+                  <Icon size={17} />
+                  <span>
+                    <small>{label}</small>
+                    <strong>{text}</strong>
+                  </span>
+                  <ArrowUpRight size={15} className="suggestion-arrow" />
+                </button>
+              ))}
             </div>
 
-            <div className="empty-source-actions">
-              <button className="text-button" onClick={onOpenKnowledge}>
-                <Paperclip size={14} />
-                {activeDocuments.length > 0 ? "查看知识资料" : "上传资料"}
-              </button>
-              {activeDocuments.length === 0 && (
-                <button
-                  className="text-button"
-                  disabled={!sampleImportAvailable || sampleImportState === "starting"}
-                  title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
-                  onClick={() => setSampleImportState("confirming")}
-                >
-                  {sampleImportState === "starting" ? <LoaderCircle className="spin" size={14} /> : <BookOpenText size={14} />}
-                  载入示例工作区
+            <div className="knowledge-readiness" aria-label="当前知识状态">
+              <div className="knowledge-readiness-summary">
+                <span className="knowledge-readiness-icon"><Layers3 size={16} /></span>
+                <span>
+                  <strong>{activeDocuments.length > 0 ? `${activeDocuments.length} 份资料可检索` : "知识库尚未添加资料"}</strong>
+                  <small>
+                    {activeDocuments.length > 0
+                      ? `${overview?.counts.chunks ?? 0} 个分块 · ${graphCandidateCount} 个图谱候选 · ${activeKnowledgeLayers}`
+                      : "上传团队资料，或载入示例工作区"}
+                  </small>
+                </span>
+              </div>
+              <div className="empty-source-actions">
+                <button className="text-button" onClick={() => attachmentInputRef.current?.click()}>
+                  <Paperclip size={14} />
+                  上传资料
                 </button>
-              )}
+                <button className="text-button" onClick={onOpenKnowledge}>
+                  <BookOpenText size={14} />
+                  管理知识库
+                </button>
+                {!sampleWorkspaceReady && (
+                  <button
+                    className="text-button"
+                    disabled={!sampleImportAvailable || sampleImportState === "starting"}
+                    title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
+                    onClick={() => setSampleImportState("confirming")}
+                  >
+                    {sampleImportState === "starting" ? <LoaderCircle className="spin" size={14} /> : <BookOpenText size={14} />}
+                    载入示例
+                  </button>
+                )}
+              </div>
             </div>
-            {!sampleImportAvailable && activeDocuments.length === 0 && (
+            {!sampleImportAvailable && !sampleWorkspaceReady && activeDocuments.length === 0 && (
               <div className="sample-import-availability" role="status">
                 示例工作区导入服务尚未启用；可先上传团队资料开始体验。
               </div>
@@ -858,7 +1098,7 @@ export function ChatView({
               <div className="sample-import-confirm" role="status">
                 <div>
                   <strong>载入虚构研发资料</strong>
-                  <span>将导入架构、服务、ADR、事故和 Runbook；重复执行应由服务端幂等处理。</span>
+                  <span>将导入架构、服务、ADR、事故和 Runbook。</span>
                 </div>
                 <div>
                   <button className="text-button" onClick={() => setSampleImportState("idle")}>取消</button>
@@ -874,26 +1114,21 @@ export function ChatView({
             )}
             {sampleImportMessage && (
               <div className={`sample-import-message is-${sampleImportState}`} role="status">
-                {sampleImportMessage}
+                {sampleImportState === "succeeded" && <Check size={14} />}
+                <span>{sampleImportMessage}</span>
+                {sampleImportState === "succeeded" && (
+                  <button className="text-button" onClick={() => applySuggestion(teamSuggestions[0].text)}>
+                    立即提问
+                  </button>
+                )}
+                {sampleImportState === "error" && (
+                  <button className="text-button" onClick={() => void startSampleWorkspaceImport()}>
+                    <RotateCcw size={13} />
+                    重新载入
+                  </button>
+                )}
               </div>
             )}
-
-            <div className="suggestion-heading">
-              <MessageSquareText size={15} />
-              <span>可编辑的示例问题</span>
-            </div>
-            <div className="suggestion-list">
-              {suggestedPrompts.map(({ icon: Icon, label, text }) => (
-                <button key={text} onClick={() => applySuggestion(text)} disabled={running}>
-                  <Icon size={17} />
-                  <span>
-                    <small>{label}</small>
-                    <strong>{text}</strong>
-                  </span>
-                  <Pencil size={15} className="suggestion-arrow" />
-                </button>
-              ))}
-            </div>
           </div>
         ) : (
           <div className="messages">
@@ -914,7 +1149,7 @@ export function ChatView({
                     message.responseMode !== "conversational" &&
                     message.responseMode !== "action" && (
                     <span className={`confidence confidence-${message.confidence}`}>
-                      {message.confidence}
+                      {confidenceLabels[message.confidence] ?? message.confidence}
                     </span>
                     )}
                 </div>
@@ -929,6 +1164,24 @@ export function ChatView({
                       ))}
                     </div>
                   )}
+                  {message.role === "assistant" && (
+                    message.streaming ||
+                    (message.toolEvents?.length ?? 0) > 0 ||
+                    Boolean(message.retrievalRoute) ||
+                    Boolean(message.error)
+                  ) && (
+                    <RunActivityTimeline
+                      status={message.status ?? statusLabel}
+                      streaming={message.streaming}
+                      cancelled={message.cancelled}
+                      error={message.error}
+                      elapsedMs={message.streaming ? elapsedMs : message.durationMs}
+                      toolEvents={message.toolEvents ?? []}
+                      route={message.retrievalRoute}
+                      evidence={message.citations ?? []}
+                      graphPathCount={message.graphPaths?.length ?? 0}
+                    />
+                  )}
                   {message.role === "assistant" ? (
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
                   ) : (
@@ -937,13 +1190,14 @@ export function ChatView({
                   {message.role === "assistant" && !message.streaming && (
                     (message.citations?.length ?? 0) > 0 ||
                     (message.graphPaths?.length ?? 0) > 0 ||
+                    (message.memoryIds?.length ?? 0) > 0 ||
                     (message.limitations?.length ?? 0) > 0
                   ) && (
                     <section className="answer-evidence-strip" aria-label="回答依据与限制">
                       {(message.citations?.length ?? 0) > 0 && (
                         <button
                           onClick={() => message.citations?.[0] && onInspectEvidence(message.citations[0])}
-                          title="打开 Evidence Inspector"
+                          title="查看来源详情"
                         >
                           <FileText size={14} />
                           {message.citations?.length} 个来源
@@ -959,6 +1213,18 @@ export function ChatView({
                         >
                           <GitCompareArrows size={14} />
                           {message.graphPaths?.length} 条关系路径
+                        </button>
+                      )}
+                      {(message.memoryIds?.length ?? 0) > 0 && (
+                        <button
+                          className="is-memory"
+                          onClick={() => setExpandedMemories((current) => ({
+                            ...current,
+                            [message.id]: !current[message.id]
+                          }))}
+                        >
+                          <Brain size={14} />
+                          本轮使用 {message.memoryIds?.length} 条记忆
                         </button>
                       )}
                       {(message.limitations?.length ?? 0) > 0 && (
@@ -977,9 +1243,23 @@ export function ChatView({
                         <div className="answer-evidence-detail">
                           {message.graphPaths?.map((path, index) => (
                             <span key={`${message.id}:path:${index}`}>
-                              {path.nodes.map((node) => node.name).join(" -> ")}
+                              {graphPathText(path)}
                             </span>
                           ))}
+                        </div>
+                      )}
+                      {expandedMemories[message.id] && (
+                        <div className="answer-evidence-detail is-memory">
+                          {usedMemories(message).map((memory) => (
+                            <span key={memory.memory_id}>
+                              {memory.summary}
+                              {memory.revoked_at ? "（现已撤回）" : ""}
+                            </span>
+                          ))}
+                          {usedMemories(message).length < (message.memoryIds?.length ?? 0) && (
+                            <span>部分历史记忆当前不可查看。</span>
+                          )}
+                          <button className="text-button" onClick={onOpenMemory}>管理记忆</button>
                         </div>
                       )}
                   {expandedLimitations[message.id] && (
@@ -988,6 +1268,35 @@ export function ChatView({
                         </div>
                       )}
                     </section>
+                  )}
+                  {message.role === "assistant" && !message.streaming && (message.citations?.length ?? 0) > 0 && (
+                    <div className="answer-source-list" aria-label="回答来源">
+                      {message.citations?.slice(0, 3).map((evidence, index) => (
+                        <button
+                          key={evidence.evidence_id}
+                          onClick={() => onInspectEvidence(evidence)}
+                          title={evidence.title ?? evidence.provenance.source_id}
+                        >
+                          <span className="answer-source-index">{index + 1}</span>
+                          <span>
+                            <strong>{evidence.title ?? evidence.provenance.source_id}</strong>
+                            <small>
+                              {sourceTypeLabels[evidence.provenance.source_type] ?? evidence.provenance.source_type}
+                              {" · "}相关度 {relevanceLabel(evidence.score)}
+                            </small>
+                          </span>
+                          <ArrowUpRight size={14} />
+                        </button>
+                      ))}
+                      {(message.citations?.length ?? 0) > 3 && (
+                        <button
+                          className="answer-source-more"
+                          onClick={() => message.citations?.[3] && onInspectEvidence(message.citations[3])}
+                        >
+                          查看其余 {(message.citations?.length ?? 0) - 3} 个来源
+                        </button>
+                      )}
+                    </div>
                   )}
                   {message.role === "assistant" && !message.streaming && (
                     message.followUpActions?.length ?? 0
@@ -1004,20 +1313,6 @@ export function ChatView({
                         </button>
                       ))}
                     </div>
-                  )}
-                  {message.role === "assistant" && (
-                    message.streaming ||
-                    (message.toolEvents?.length ?? 0) > 0 ||
-                    Boolean(message.error)
-                  ) && (
-                    <RunActivityTimeline
-                      status={message.status ?? statusLabel}
-                      streaming={message.streaming}
-                      cancelled={message.cancelled}
-                      error={message.error}
-                      elapsedMs={message.streaming ? elapsedMs : message.durationMs}
-                      toolEvents={message.toolEvents ?? []}
-                    />
                   )}
                   {message.error && (
                     <div className="error-banner message-error">
@@ -1055,30 +1350,20 @@ export function ChatView({
                     <div className="feedback-actions">
                       <button
                         title="记住这条消息"
-                        className={memoryState[message.id] === "saved" ? "is-selected" : ""}
-                        disabled={memoryState[message.id] === "pending"}
+                        className={memoryStatus(message) === "saved" ? "is-selected" : ""}
+                        disabled={memoryStatus(message) === "pending" || memoryStatus(message) === "saved"}
                         onClick={() => void rememberMessage(message)}
                       >
-                        {memoryState[message.id] === "saved" ? <Check size={15} /> : <BookmarkPlus size={15} />}
+                        {memoryStatus(message) === "saved" ? <Check size={15} /> : <BookmarkPlus size={15} />}
                       </button>
-                      {memoryState[message.id] === "saved" && <span className="feedback-note">已记住</span>}
-                      {memoryState[message.id] === "error" && <span className="feedback-note is-error">保存失败</span>}
+                      {memoryStatus(message) === "saved" && <button className="feedback-note is-link" onClick={onOpenMemory}>已记住 · 查看</button>}
+                      {memoryStatus(message) === "error" && <span className="feedback-note is-error">保存失败</span>}
                     </div>
                   </div>
                 )}
                 {message.role === "assistant" && !message.streaming && message.content && (
                   <div className="message-footer">
-                    <div className="citation-buttons">
-                      {(message.citations ?? []).map((evidence, index) => (
-                        <button
-                          key={evidence.evidence_id}
-                          onClick={() => onInspectEvidence(evidence)}
-                          title={evidence.title ?? evidence.provenance.source_id}
-                        >
-                          <FileText size={14} />
-                          证据 {index + 1}
-                        </button>
-                      ))}
+                    <div className="message-completion-meta">
                       {message.durationMs !== undefined && (
                         <span className="run-completion-meta">
                           {formatDuration(message.durationMs)}
@@ -1095,11 +1380,11 @@ export function ChatView({
                       <div className="feedback-actions">
                         <button
                           title="记住这条回答"
-                          className={memoryState[message.id] === "saved" ? "is-selected" : ""}
-                          disabled={memoryState[message.id] === "pending"}
+                          className={memoryStatus(message) === "saved" ? "is-selected" : ""}
+                          disabled={memoryStatus(message) === "pending" || memoryStatus(message) === "saved"}
                           onClick={() => void rememberMessage(message)}
                         >
-                          {memoryState[message.id] === "saved" ? <Check size={15} /> : <BookmarkPlus size={15} />}
+                          {memoryStatus(message) === "saved" ? <Check size={15} /> : <BookmarkPlus size={15} />}
                         </button>
                         <button
                           title="根据回答生成任务"
@@ -1142,8 +1427,8 @@ export function ChatView({
                         </button>
                         {feedbackState[message.id] === "error" && <span className="feedback-note is-error">提交失败</span>}
                         {(feedbackState[message.id] === "up" || feedbackState[message.id] === "down") && <span className="feedback-note">已记录</span>}
-                        {memoryState[message.id] === "saved" && <span className="feedback-note">已记住</span>}
-                        {memoryState[message.id] === "error" && <span className="feedback-note is-error">保存失败</span>}
+                        {memoryStatus(message) === "saved" && <button className="feedback-note is-link" onClick={onOpenMemory}>已记住 · 查看</button>}
+                        {memoryStatus(message) === "error" && <span className="feedback-note is-error">保存失败</span>}
                       </div>
                     )}
                   </div>

@@ -301,6 +301,31 @@ def test_prompt_capsule_is_bounded_and_escapes_memory_delimiters() -> None:
     assert "untrusted reference data" in capsule
 
 
+def test_prompt_capsule_reports_only_records_that_fit_the_rendered_capsule() -> None:
+    concise = MemoryRecord(
+        **memory_candidate(
+            uuid4(),
+            summary="Graph retrieval should prefer verified internal sources.",
+        ).model_dump()
+    )
+    oversized = MemoryRecord(
+        **memory_candidate(
+            uuid4(),
+            summary="Unrelated historical detail " + ("x" * 2_000),
+        ).model_dump()
+    )
+
+    result = PromptCapsuleCompiler(max_chars=600).compile_result(
+        [oversized, concise],
+        query="graph retrieval",
+    )
+
+    assert result.records == (concise,)
+    assert str(concise.memory_id) in result.text
+    assert str(oversized.memory_id) not in result.text
+    assert result.omitted == 1
+
+
 def test_skill_markdown_round_trip_and_rejects_executable_actions() -> None:
     original = skill()
     restored = parse_skill_markdown(serialize_skill_markdown(original))

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import shutil
@@ -14,7 +15,13 @@ from app.api.app import create_app
 from app.bootstrap import build_components
 from app.config import Settings
 from app.demo.enterprise_fixture import EnterpriseFixtureService
-from app.domain.enums import DocumentStatus, IngestionJobStatus, KnowledgeLayer, WorkspaceMode
+from app.domain.enums import (
+    DocumentStatus,
+    GraphCandidateStatus,
+    IngestionJobStatus,
+    KnowledgeLayer,
+    WorkspaceMode,
+)
 from app.domain.models import (
     EntityResolutionCandidate,
     EvidenceRef,
@@ -30,13 +37,13 @@ from app.domain.models import (
     RunContext,
     utc_now,
 )
-from app.graph.candidate_store import JsonGraphCandidateRepository
-from app.graph.local import InMemoryEvidenceGraph
-from app.graph.visibility import VisibilityFilteredGraph
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.retriever import KnowledgeBaseRetriever
-from app.knowledge.store import JsonKnowledgeRepository
-from app.knowledge.visibility import SettingsWorkspaceProfileResolver
+from app.graph.graph_candidate_repository import JsonGraphCandidateRepository
+from app.graph.graph_visibility import VisibilityFilteredGraph
+from app.graph.in_memory_evidence_graph import InMemoryEvidenceGraph
+from app.knowledge.knowledge_base_retriever import KnowledgeBaseRetriever
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
+from app.knowledge.knowledge_visibility import SettingsWorkspaceProfileResolver
 
 _FIXTURE_ROOT = Path(__file__).resolve().parents[2] / "examples" / "enterprise_knowledge"
 
@@ -249,7 +256,7 @@ async def test_fixture_compatibility_routes_match_workbench_contract(
         assert overview.status_code == 200
         assert "enterprise_fixture_import" in overview.json()["capabilities"]
         assert canonical_preview.status_code == 200
-        assert len(canonical_preview.json()["documents"]) == 23
+        assert len(canonical_preview.json()["documents"]) == 53
         assert started.json()["dry_run"] is True
         assert compatibility_status.status_code == 200
         assert canonical_status.status_code == 200
@@ -408,13 +415,13 @@ async def test_fixture_preview_is_complete_and_reimport_is_idempotent(
     reset = await service.reset(tenant_id="local", project_id="default")
     remaining = await repository.get_document(unrelated.document.document_id)
 
-    assert len(initial.documents) == 23
-    assert initial.counts == {"create": 22, "historical": 1}
+    assert len(initial.documents) == 53
+    assert initial.counts == {"create": 52, "historical": 1}
     assert imported.status == "succeeded"
     assert isinstance(imported.created_at, datetime)
-    assert len(imported.completed_document_ids) == 23
-    assert len(repeated_preview.documents) == 23
-    assert repeated_preview.counts == {"unchanged": 23}
+    assert len(imported.completed_document_ids) == 53
+    assert len(repeated_preview.documents) == 53
+    assert repeated_preview.counts == {"unchanged": 53}
     assert repeated.status == "succeeded"
     assert repeated.completed_document_ids == {}
     fixture_documents_before_reset = [
@@ -429,7 +436,7 @@ async def test_fixture_preview_is_complete_and_reimport_is_idempotent(
     ]
     assert (
         sum(document.status == DocumentStatus.ACTIVE for document in fixture_documents_before_reset)
-        == 22
+        == 52
     )
     assert (
         sum(
@@ -446,7 +453,7 @@ async def test_fixture_preview_is_complete_and_reimport_is_idempotent(
         sum(
             document.status == DocumentStatus.ARCHIVED for document in fixture_documents_after_reset
         )
-        == 23
+        == 53
     )
     yaml_document = next(
         document
@@ -501,19 +508,19 @@ async def test_fixture_curated_graph_is_approved_evidence_backed_and_repeatable(
     }
 
     assert imported.status == repeated.status == "succeeded"
-    assert imported.curated_graph_entities == repeated.curated_graph_entities == 16
-    assert imported.curated_graph_relations == repeated.curated_graph_relations == 16
-    assert len(entities) == 16
-    assert len(relations) == 16
+    assert imported.curated_graph_entities == repeated.curated_graph_entities == 28
+    assert imported.curated_graph_relations == repeated.curated_graph_relations == 33
+    assert len(entities) == 28
+    assert len(relations) == 33
     assert all(item.status.value == "approved" for item in [*entities, *relations])
     assert all(set(item.source_chunk_ids) <= active_chunk_ids for item in [*entities, *relations])
     assert len(semantic.batches) == 2
-    assert len(semantic.batches[-1].entities) == 16
+    assert len(semantic.batches[-1].entities) == 28
 
     await service.reset(tenant_id="local", project_id="default")
 
-    assert len(semantic.entity_statuses) == 16
-    assert len(semantic.relation_statuses) == 16
+    assert len(semantic.entity_statuses) == 28
+    assert len(semantic.relation_statuses) == 33
     assert all(item.status.value == "archived" for item in semantic.entity_statuses)
     assert all(item.status.value == "archived" for item in semantic.relation_statuses)
 
@@ -531,7 +538,8 @@ async def test_fixture_curated_graph_is_approved_evidence_backed_and_repeatable(
         project_id="default",
     )
     assert restored.status == "succeeded"
-    assert len(restored_entities) == len(restored_relations) == 16
+    assert len(restored_entities) == 28
+    assert len(restored_relations) == 33
     assert all(item.status.value == "approved" for item in restored_entities)
     assert all(item.status.value == "approved" for item in restored_relations)
 
@@ -596,12 +604,57 @@ async def test_fixture_graph_revision_archives_the_previous_curated_release(
     relations = await candidates.list_relations(tenant_id="local", project_id="default")
 
     assert second.status == "succeeded"
-    assert sum(item.status.value == "approved" for item in entities) == 16
-    assert sum(item.status.value == "archived" for item in entities) == 16
-    assert sum(item.status.value == "approved" for item in relations) == 16
-    assert sum(item.status.value == "archived" for item in relations) == 16
-    assert len(semantic.entity_statuses) == 16
-    assert len(semantic.relation_statuses) == 16
+    assert sum(item.status.value == "approved" for item in entities) == 28
+    assert sum(item.status.value == "archived" for item in entities) == 28
+    assert sum(item.status.value == "approved" for item in relations) == 33
+    assert sum(item.status.value == "archived" for item in relations) == 33
+    assert len(semantic.entity_statuses) == 28
+    assert len(semantic.relation_statuses) == 33
+
+
+@pytest.mark.asyncio
+async def test_fixture_reset_archives_curated_graph_after_seed_revision_changes(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "fixture"
+    shutil.copytree(_FIXTURE_ROOT, root)
+    repository = JsonKnowledgeRepository(tmp_path / "knowledge")
+    ingestion = KnowledgeIngestionService(repository, chunk_size=200, chunk_overlap=20)
+    candidates = JsonGraphCandidateRepository(tmp_path / "graph_candidates.json")
+    semantic = _RecordingSemanticGraphIndex()
+    service = EnterpriseFixtureService(
+        root=root,
+        data_dir=tmp_path / "runs",
+        knowledge_repository=repository,
+        ingestion=ingestion,
+        graph_candidate_repository=candidates,
+        semantic_graph_index=semantic,
+    )
+    imported = await service.start(
+        tenant_id="local",
+        project_id="default",
+        requested_by="owner",
+    )
+    assert imported.status == "succeeded"
+
+    graph_seed_path = root / "graph_seed.json"
+    graph_seed = json.loads(graph_seed_path.read_text(encoding="utf-8"))
+    graph_seed["revision"] = "not-yet-imported-v2"
+    graph_seed_path.write_text(
+        json.dumps(graph_seed, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    await service.reset(tenant_id="local", project_id="default")
+    entities = await candidates.list_entities(tenant_id="local", project_id="default")
+    relations = await candidates.list_relations(tenant_id="local", project_id="default")
+
+    assert len(entities) == 28
+    assert len(relations) == 33
+    assert all(item.status == GraphCandidateStatus.ARCHIVED for item in entities)
+    assert all(item.status == GraphCandidateStatus.ARCHIVED for item in relations)
+    assert len(semantic.entity_statuses) == 28
+    assert len(semantic.relation_statuses) == 33
 
 
 @pytest.mark.asyncio
@@ -787,6 +840,62 @@ class _ResettableFixtureJobs(_TerminalFixtureJobs):
         return cancelled
 
 
+class _SubmitBarrierFixtureJobs(_ResettableFixtureJobs):
+    def __init__(self) -> None:
+        super().__init__()
+        self.submit_started = asyncio.Event()
+        self.release_submit = asyncio.Event()
+        self._blocked_once = False
+
+    async def submit(
+        self,
+        *,
+        filename: str,
+        content: bytes,
+        media_type: str | None,
+        tenant_id: str,
+        project_id: str,
+        user_id: str,
+        source: KnowledgeSource,
+    ) -> IngestionJobSubmission:
+        if not self._blocked_once:
+            self._blocked_once = True
+            self.submit_started.set()
+            await self.release_submit.wait()
+        return await super().submit(
+            filename=filename,
+            content=content,
+            media_type=media_type,
+            tenant_id=tenant_id,
+            project_id=project_id,
+            user_id=user_id,
+            source=source,
+        )
+
+
+class _SeedBarrierFixtureService(EnterpriseFixtureService):
+    def __init__(self, **kwargs: object) -> None:
+        super().__init__(**kwargs)  # type: ignore[arg-type]
+        self.seed_started = asyncio.Event()
+        self.release_seed = asyncio.Event()
+        self.graph_active = False
+
+    async def _seed_curated_graph(self, *_: object, **__: object) -> tuple[int, int]:
+        self.seed_started.set()
+        await self.release_seed.wait()
+        self.graph_active = True
+        return 1, 1
+
+    async def _deactivate_curated_graph(
+        self,
+        *,
+        tenant_id: str,
+        project_id: str,
+    ) -> None:
+        del tenant_id, project_id
+        self.graph_active = False
+
+
 def _write_small_fixture(root: Path) -> None:
     root.mkdir(parents=True)
     documents = []
@@ -894,6 +1003,79 @@ async def test_fixture_reset_cancels_pending_async_imports(tmp_path: Path) -> No
     assert completed is not None and completed.status == "failed"
     assert completed.errors["__reset__"] == "fixture_reset"
     assert all(job.status == IngestionJobStatus.CANCELLED for job in jobs._jobs.values())
+
+
+@pytest.mark.asyncio
+async def test_fixture_reset_serializes_with_inflight_async_submission(tmp_path: Path) -> None:
+    root = tmp_path / "fixture"
+    _write_small_fixture(root)
+    jobs = _SubmitBarrierFixtureJobs()
+    service, _, _ = _fixture_service(tmp_path / "data", root=root, ingestion_jobs=jobs)
+
+    start_task = asyncio.create_task(
+        service.start(
+            tenant_id="local",
+            project_id="default",
+            requested_by="owner",
+        )
+    )
+    await asyncio.wait_for(jobs.submit_started.wait(), timeout=1)
+    reset_task = asyncio.create_task(service.reset(tenant_id="local", project_id="default"))
+    await asyncio.sleep(0)
+    assert not reset_task.done()
+
+    jobs.release_submit.set()
+    started = await asyncio.wait_for(start_task, timeout=1)
+    await asyncio.wait_for(reset_task, timeout=1)
+    completed = await service.get_status(
+        started.run_id,
+        tenant_id="local",
+        project_id="default",
+    )
+
+    assert completed is not None and completed.status == "failed"
+    assert completed.errors["__reset__"] == "fixture_reset"
+    assert all(job.status == IngestionJobStatus.CANCELLED for job in jobs._jobs.values())
+
+
+@pytest.mark.asyncio
+async def test_fixture_reset_serializes_with_curated_graph_finalization(tmp_path: Path) -> None:
+    root = tmp_path / "fixture"
+    _write_small_fixture(root)
+    jobs = _AllSuccessFixtureJobs()
+    repository = JsonKnowledgeRepository(tmp_path / "knowledge")
+    ingestion = KnowledgeIngestionService(repository, chunk_size=200, chunk_overlap=20)
+    service = _SeedBarrierFixtureService(
+        root=root,
+        data_dir=tmp_path / "runs",
+        knowledge_repository=repository,
+        ingestion=ingestion,
+        ingestion_jobs=jobs,
+    )
+    started = await service.start(
+        tenant_id="local",
+        project_id="default",
+        requested_by="owner",
+    )
+
+    finalization_task = asyncio.create_task(
+        service.get_status(
+            started.run_id,
+            tenant_id="local",
+            project_id="default",
+        )
+    )
+    await asyncio.wait_for(service.seed_started.wait(), timeout=1)
+    reset_task = asyncio.create_task(service.reset(tenant_id="local", project_id="default"))
+    await asyncio.sleep(0)
+    assert not reset_task.done()
+
+    service.release_seed.set()
+    finalized = await asyncio.wait_for(finalization_task, timeout=1)
+    await asyncio.wait_for(reset_task, timeout=1)
+
+    assert finalized is not None and finalized.status == "succeeded"
+    assert service.graph_active is False
 
 
 @pytest.mark.asyncio

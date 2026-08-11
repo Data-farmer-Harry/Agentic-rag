@@ -1,8 +1,8 @@
 """Offline memory persistence, admission control, and prompt compilation."""
 
-from app.memory.json_store import JsonMemoryStore, MemoryStoreError
-from app.memory.prompt_capsule import PromptCapsuleCompiler
-from app.memory.write_gate import (
+from app.memory.json_memory_repository import JsonMemoryStore, MemoryStoreError
+from app.memory.memory_prompt_compiler import PromptCapsuleCompiler
+from app.memory.memory_write_gate import (
     MemoryWriteDecision,
     MemoryWriteGate,
     MemoryWriteRejected,

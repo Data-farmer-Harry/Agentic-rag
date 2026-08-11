@@ -51,6 +51,28 @@ def test_qdrant_backend_requires_url_and_embedding_key() -> None:
     assert settings.qdrant_collection == "hermesgraph_chunks"
 
 
+def test_bm25_qdrant_configuration_requires_idf() -> None:
+    with pytest.raises(ValidationError, match="QDRANT_SPARSE_IDF"):
+        Settings(
+            retrieval_backend="qdrant",
+            qdrant_url=":memory:",
+            embedding_provider="deterministic",
+            embedding_dimensions=64,
+            qdrant_sparse_encoder="bm25",
+            qdrant_sparse_idf=False,
+        )
+
+    settings = Settings(
+        retrieval_backend="qdrant",
+        qdrant_url=":memory:",
+        embedding_provider="deterministic",
+        embedding_dimensions=64,
+        qdrant_sparse_encoder="bm25",
+        qdrant_sparse_idf=True,
+    )
+    assert settings.qdrant_bm25_average_document_tokens == 150
+
+
 def test_compatible_qdrant_embeddings_use_model_provider_credentials() -> None:
     with pytest.raises(ValidationError, match="MODEL_BASE_URL and MODEL_API_KEY"):
         Settings(
@@ -189,6 +211,14 @@ def test_graph_extraction_window_must_fit_model_batch() -> None:
             graph_extraction_input_char_budget=5_000,
             graph_extraction_public_reference_char_budget=6_000,
         )
+
+
+def test_graph_extraction_has_an_independent_bounded_timeout() -> None:
+    assert Settings().graph_extraction_timeout_seconds == 300
+    with pytest.raises(ValidationError):
+        Settings(graph_extraction_timeout_seconds=29)
+    with pytest.raises(ValidationError):
+        Settings(graph_extraction_timeout_seconds=1_801)
 
 
 def test_async_ingestion_requires_postgres_and_valid_worker_bounds() -> None:

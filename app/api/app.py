@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
+from app.agent.adaptive_rag_router import AdaptiveRAGRouterError
 from app.agent.hermes_bridge import (
     HermesBridgeError,
     HermesBridgeRunNotFoundError,
@@ -56,15 +57,15 @@ from app.domain.models import (
     GraphSearchRequest,
     KnowledgeSource,
 )
-from app.graph.candidate_service import GraphCandidateReviewError
+from app.graph.graph_candidate_service import GraphCandidateReviewError
 from app.harness.models import HarnessPatternStatus
-from app.knowledge.ingestion import KnowledgeIndexError, KnowledgeIngestionError
-from app.knowledge.job_errors import IngestionJobRepositoryError
-from app.knowledge.jobs import (
+from app.knowledge.ingestion_job_errors import IngestionJobRepositoryError
+from app.knowledge.ingestion_jobs import (
     IngestionJobsUnavailableError,
     IngestionJobTransitionError,
     IngestionStagingError,
 )
+from app.knowledge.knowledge_ingestion import KnowledgeIndexError, KnowledgeIngestionError
 from app.learning.job_errors import LearningJobRepositoryError
 from app.learning.jobs import (
     LearningJobsUnavailableError,
@@ -204,6 +205,11 @@ def create_app(
             )
         except KeyError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except AdaptiveRAGRouterError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="模型路由服务暂时不可用，请稍后重试。",
+            ) from exc
         return RunResponse(
             run_id=str(trajectory.context.run_id),
             status="completed",
@@ -224,6 +230,11 @@ def create_app(
             )
         except ValueError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except AdaptiveRAGRouterError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="模型路由服务暂时不可用，请稍后重试。",
+            ) from exc
         return RunStartResponse(
             run_id=str(result.run_id),
             status=result.status.value,
@@ -739,8 +750,10 @@ def create_app(
                     project_id=project_id,
                     user_id=bind_user_id(user_id),
                 )
-            except (RuntimeError, ValueError) as exc:
+            except ValueError as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
+            except RuntimeError as exc:
+                raise HTTPException(status_code=503, detail="Graph service unavailable") from exc
 
         @app.post("/v1/projects/{project_id}/graph/retrieve")
         async def retrieve_evidence_subgraph(
@@ -755,8 +768,10 @@ def create_app(
                     project_id=project_id,
                     user_id=bind_user_id(user_id),
                 )
-            except (RuntimeError, ValueError) as exc:
+            except ValueError as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
+            except RuntimeError as exc:
+                raise HTTPException(status_code=503, detail="Graph service unavailable") from exc
 
         @app.post("/v1/projects/{project_id}/graph/compare")
         async def compare_graph_entities(
@@ -771,8 +786,10 @@ def create_app(
                     project_id=project_id,
                     user_id=bind_user_id(user_id),
                 )
-            except (RuntimeError, ValueError) as exc:
+            except ValueError as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
+            except RuntimeError as exc:
+                raise HTTPException(status_code=503, detail="Graph service unavailable") from exc
 
         @app.get("/v1/projects/{project_id}/graph/candidates")
         async def list_graph_candidates(

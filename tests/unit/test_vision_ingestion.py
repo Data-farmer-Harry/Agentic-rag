@@ -9,9 +9,9 @@ from app.domain.models import (
     VisionAnalysis,
     VisualRegionDraft,
 )
-from app.knowledge.ingestion import KnowledgeIngestionError, KnowledgeIngestionService
-from app.knowledge.store import JsonKnowledgeRepository
-from app.vision import OpenAIVisionAnalyzer, VisionAnalysisError
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionError, KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
+from app.knowledge.openai_vision_analyzer import OpenAIVisionAnalyzer, VisionAnalysisError
 
 _ONE_PIXEL_PNG = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="

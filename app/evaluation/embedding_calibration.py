@@ -12,7 +12,7 @@ from app.domain.contracts import KnowledgeRepository
 from app.domain.enums import DocumentStatus
 from app.domain.models import KnowledgeChunk, KnowledgeDocument, utc_now
 from app.evaluation.retrieval import RetrievalEvalReport, RetrievalGoldenSet
-from app.retrieval.embeddings import EmbeddingUsage
+from app.retrieval.embedding_providers import EmbeddingUsage
 
 
 class KnowledgeIndexPort(Protocol):

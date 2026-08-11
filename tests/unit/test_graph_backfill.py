@@ -7,9 +7,9 @@ import pytest
 
 from app.domain.models import GraphExtractionBatch, KnowledgeChunk, KnowledgeDocument
 from app.graph.backfill import GraphBackfillProgress, GraphBackfillService
-from app.graph.candidate_store import JsonGraphCandidateRepository
-from app.knowledge.ingestion import KnowledgeIngestionService
-from app.knowledge.store import JsonKnowledgeRepository
+from app.graph.graph_candidate_repository import JsonGraphCandidateRepository
+from app.knowledge.knowledge_ingestion import KnowledgeIngestionService
+from app.knowledge.knowledge_repository import JsonKnowledgeRepository
 
 
 class _RecordingEnricher:

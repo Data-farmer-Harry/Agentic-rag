@@ -978,7 +978,7 @@ tests/integration/test_harness_learning_flow.py
 | --- | --- |
 | `app/domain/models.py` | 只添加 RunSnapshot 对 overlay identity/version/hash 的稳定字段，或引用新 schema |
 | `app/application/run_service.py` | run start 调 selector，冻结 overlay；终态仍只提交 durable job |
-| `app/context/capsule.py` | 只消费已 clamp 的 D1/D5 配置 |
+| `app/agent/context_engine.py` | 只消费已 clamp 的 D1/D5 配置，并统一上下文 token 预算 |
 | `app/learning/jobs.py` | 增加 experience checkpoint，distillation 作为可分离 stage/job |
 | `app/learning/engine.py` | 调用 Experience assembler，不重写现有 Memory/Skill 流程 |
 | `app/learning/evaluator.py` | 复用质量信号，不让 model 自评成为最终 reward |

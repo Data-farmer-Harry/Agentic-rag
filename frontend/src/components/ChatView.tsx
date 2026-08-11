@@ -306,6 +306,7 @@ export function ChatView({
   }, []);
 
   useEffect(() => {
+    if (messages.length === 0) return;
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, statusLabel]);
 
@@ -600,10 +601,6 @@ export function ChatView({
   const sampleWorkspaceReady = activeDocuments.some(
     (document) => document.source.fixture_id === "enterprise_knowledge"
   );
-  const graphCandidateCount =
-    (overview?.counts.graph_entity_candidates ?? 0) +
-    (overview?.counts.graph_relation_candidates ?? 0);
-
   const composer = (
     <div className="composer-wrap">
       {running && (
@@ -777,7 +774,7 @@ export function ChatView({
   );
 
   return (
-    <section className="chat-view">
+    <section className={`chat-view ${messages.length === 0 ? "is-empty" : ""}`}>
       <div className="chat-toolbar">
         <div className="segmented-control" aria-label="领域包">
           {(overview?.domain_packs ?? ["general", "research", "software_docs"]).map((pack) => (
@@ -1023,72 +1020,60 @@ export function ChatView({
           </div>
         ) : messages.length === 0 ? (
           <div className="empty-conversation">
-            <div className="empty-status">
-              <span />
-              {activeDocuments.length > 0 ? "知识范围已就绪" : "等待添加知识资料"}
-            </div>
-            <div className="empty-heading">
-              <div className="empty-icon">
-                <Bot size={22} />
-              </div>
+            <header className="empty-workspace-header">
               <div>
-                <h1>{isPersonalLearning ? "从一个学习问题开始" : "从一个研发问题开始"}</h1>
-                <p>{isPersonalLearning ? "个人资料与公开参考会按需参与回答。" : "查询架构、服务、事故或技术决策，并查看证据来源。"}</p>
+                <h1>{isPersonalLearning ? "个人智能工作台" : "研发智能工作台"}</h1>
+                <p>{isPersonalLearning ? "围绕你的资料、记忆与学习目标持续协作。" : "连接团队知识、系统关系与研发工作流。"}</p>
+              </div>
+              <button className="empty-page-action" onClick={onOpenKnowledge}>
+                更多操作
+                <ChevronDown size={13} />
+              </button>
+            </header>
+
+            <div className="workspace-summary-grid" aria-label="工作区数据概览">
+              <div className="workspace-summary-card is-documents">
+                <span className="workspace-summary-icon"><FileText size={15} /></span>
+                <span>知识文档</span>
+                <strong>{overview?.counts.documents ?? 0}</strong>
+              </div>
+              <div className="workspace-summary-card is-chunks">
+                <span className="workspace-summary-icon"><Layers3 size={15} /></span>
+                <span>可检索分块</span>
+                <strong>{overview?.counts.chunks ?? 0}</strong>
+              </div>
+              <div className="workspace-summary-card is-graph">
+                <span className="workspace-summary-icon"><GitCompareArrows size={15} /></span>
+                <span>图谱关系</span>
+                <strong>{overview?.counts.graph_relation_candidates ?? 0}</strong>
+              </div>
+              <div className="workspace-summary-card is-memory">
+                <span className="workspace-summary-icon"><Brain size={15} /></span>
+                <span>长期记忆</span>
+                <strong>{overview?.counts.memories ?? 0}</strong>
               </div>
             </div>
+
+            <section className="assistant-start-panel" aria-label="开始对话">
+              <div className="empty-illustration" aria-hidden="true">
+                <span />
+                <span />
+                <span><Bot size={24} /></span>
+              </div>
+              <div className="empty-heading">
+                <div>
+                  <h2>{isPersonalLearning ? "从一个学习问题开始" : "今天要解决什么研发问题？"}</h2>
+                  <p>{isPersonalLearning ? "个人资料与公开参考会按需参与回答。" : "普通交流会直接回答，复杂问题才会按需检索知识与系统图谱。"}</p>
+                </div>
+              </div>
+              <button
+                className="empty-primary-action"
+                onClick={() => applySuggestion(suggestedPrompts[0].text)}
+              >
+                开始对话
+              </button>
+            </section>
             <div className="empty-composer-slot">{composer}</div>
-
-            <div className="suggestion-heading">
-              <MessageSquareText size={15} />
-              <span>{isPersonalLearning ? "常用学习任务" : "常用研发任务"}</span>
-            </div>
-            <div className="suggestion-list">
-              {suggestedPrompts.map(({ icon: Icon, label, text }) => (
-                <button key={text} onClick={() => applySuggestion(text)} disabled={running}>
-                  <Icon size={17} />
-                  <span>
-                    <small>{label}</small>
-                    <strong>{text}</strong>
-                  </span>
-                  <ArrowUpRight size={15} className="suggestion-arrow" />
-                </button>
-              ))}
-            </div>
-
-            <div className="knowledge-readiness" aria-label="当前知识状态">
-              <div className="knowledge-readiness-summary">
-                <span className="knowledge-readiness-icon"><Layers3 size={16} /></span>
-                <span>
-                  <strong>{activeDocuments.length > 0 ? `${activeDocuments.length} 份资料可检索` : "知识库尚未添加资料"}</strong>
-                  <small>
-                    {activeDocuments.length > 0
-                      ? `${overview?.counts.chunks ?? 0} 个分块 · ${graphCandidateCount} 个图谱候选 · ${activeKnowledgeLayers}`
-                      : "上传团队资料，或载入示例工作区"}
-                  </small>
-                </span>
-              </div>
-              <div className="empty-source-actions">
-                <button className="text-button" onClick={() => attachmentInputRef.current?.click()}>
-                  <Paperclip size={14} />
-                  上传资料
-                </button>
-                <button className="text-button" onClick={onOpenKnowledge}>
-                  <BookOpenText size={14} />
-                  管理知识库
-                </button>
-                {!sampleWorkspaceReady && (
-                  <button
-                    className="text-button"
-                    disabled={!sampleImportAvailable || sampleImportState === "starting"}
-                    title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
-                    onClick={() => setSampleImportState("confirming")}
-                  >
-                    {sampleImportState === "starting" ? <LoaderCircle className="spin" size={14} /> : <BookOpenText size={14} />}
-                    载入示例
-                  </button>
-                )}
-              </div>
-            </div>
             {!sampleImportAvailable && !sampleWorkspaceReady && activeDocuments.length === 0 && (
               <div className="sample-import-availability" role="status">
                 示例工作区导入服务尚未启用；可先上传团队资料开始体验。

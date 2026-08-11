@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { ExternalLink, LogOut, PanelRight, RefreshCw, Search, X } from "lucide-react";
+import { ExternalLink, LogOut, PanelRight, RefreshCw, Search, UserRound, X } from "lucide-react";
 import {
   api,
   AUTH_REQUIRED_EVENT,
@@ -195,16 +195,16 @@ function messagesFromRuns(runs: RunTrajectory[]): ConversationMessage[] {
 }
 
 const viewTitles: Record<ViewName, string> = {
-  chat: "对话",
+  chat: "智能助理",
   runs: "运行",
   knowledge: "知识",
   graph: "系统地图",
-  memory: "我的记忆",
+  memory: "长期记忆",
   actions: "工作",
   review: "日历回顾",
   profile: "个人设置",
   skills: "技能治理",
-  learning: "学习"
+  learning: "进化记录"
 };
 
 const viewSections: Record<ViewName, string> = {
@@ -960,11 +960,15 @@ function App() {
             <i>/</i>
             <strong>{viewTitles[view]}</strong>
           </div>
-          <button className="command-trigger" onClick={() => setCommandOpen(true)}>
-            <Search size={15} />
-            <span>搜索或执行命令</span>
-          </button>
           <div className="topbar-actions">
+            <button
+              className="icon-button topbar-command-button"
+              onClick={() => setCommandOpen(true)}
+              title="搜索或执行命令"
+              aria-label="搜索或执行命令"
+            >
+              <Search size={16} />
+            </button>
             <span className="learning-badge">
               <i />
               {learningModeLabel(overview?.learning_mode)}
@@ -995,6 +999,14 @@ function App() {
             <a className="icon-button api-docs-button" href="/docs" target="_blank" title="API 文档">
               <ExternalLink size={17} />
             </a>
+            <button
+              className={`topbar-profile-button ${view === "profile" ? "is-active" : ""}`}
+              onClick={() => changeView("profile")}
+              title="账户与工作区设置"
+              aria-label="账户与工作区设置"
+            >
+              <UserRound size={16} />
+            </button>
             {inspectorAvailable && (
               <button
                 className="icon-button mobile-inspector-button"

@@ -60,6 +60,200 @@ function formatBytes(value: number) {
   return `${(value / 1_000_000).toFixed(1)} MB`;
 }
 
+function readRecordText(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function readRecordNumber(record: Record<string, unknown>, key: string) {
+  const value = record[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+function compactText(value: string, limit = 110) {
+  const cleaned = value
+    .replace(/\n\n<attachments>[\s\S]*?<\/attachments>\s*$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned.length > limit ? `${cleaned.slice(0, limit)}...` : cleaned;
+}
+
+const memoryTypeLabels: Record<string, string> = {
+  episodic: "任务经验",
+  semantic: "长期事实",
+  preference: "个人偏好",
+  procedural: "操作习惯",
+  profile: "个人信息"
+};
+
+const outcomeLabels: Record<string, string> = {
+  success: "成功完成",
+  partial: "部分完成",
+  failure: "未完成"
+};
+
+function memoryTitle(memory: MemoryRecord) {
+  const userInput = readRecordText(memory.detail, "user_input");
+  if (userInput) return compactText(userInput, 92);
+  if (!/^Run\s+[0-9a-f-]{20,}\s+had outcome/i.test(memory.summary)) {
+    return compactText(memory.summary, 92);
+  }
+  return memory.memory_type === "episodic" ? "一次可复用的任务经验" : "一条长期记忆";
+}
+
+function memoryDescription(memory: MemoryRecord) {
+  const outcome = readRecordText(memory.detail, "outcome");
+  const quality = readRecordNumber(memory.detail, "quality_score");
+  const coverage = readRecordNumber(memory.detail, "citation_coverage");
+  const parts = [outcome ? outcomeLabels[outcome] ?? outcome : undefined];
+  if (quality !== undefined) parts.push(`回答质量 ${Math.round(quality * 100)}%`);
+  if (coverage !== undefined) parts.push(`引用覆盖 ${Math.round(coverage * 100)}%`);
+  if (parts.filter(Boolean).length > 0) return parts.filter(Boolean).join(" · ");
+  return "这条信息会在相关问题中按需召回，不会参与无关对话。";
+}
+
+function memorySourceLabel(memory: MemoryRecord) {
+  const sourceType = memory.provenance[0]?.source_type;
+  const labels: Record<string, string> = {
+    run_trajectory: "真实任务",
+    user_feedback: "用户反馈",
+    explicit_user_input: "用户明确保存",
+    conversation: "对话内容",
+    document: "知识文档"
+  };
+  return labels[sourceType ?? ""] ?? "系统观察";
+}
+
+function memoryToolLabels(memory: MemoryRecord) {
+  const tools = Array.isArray(memory.detail.tool_sequence)
+    ? memory.detail.tool_sequence.filter((item): item is string => typeof item === "string")
+    : [];
+  const labels: Record<string, string> = {
+    search_knowledge: "知识检索",
+    retrieve_evidence_subgraph: "图谱检索",
+    "hermes.skill_view": "读取技能",
+    hermesgraph_publish_answer: "组织回答"
+  };
+  return tools.map((tool) => labels[tool] ?? humanizeTarget(tool));
+}
+
+function isLightweightSocialInput(value?: string) {
+  if (!value) return false;
+  const normalized = value
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/[!！,.，。?？~～\s]/g, "");
+  return /^(你好|您好|哈+|哈哈哈*|在吗|谢谢|多谢|早上好|下午好|晚上好|晚安|hello|hi|hey|thanks|thankyou)$/.test(normalized);
+}
+
+function memoryIsReusable(memory: MemoryRecord) {
+  if (memory.revoked_at) return false;
+  if (memory.memory_type !== "episodic") return true;
+  const outcome = readRecordText(memory.detail, "outcome");
+  const quality = readRecordNumber(memory.detail, "quality_score") ?? memory.confidence;
+  const userInput = readRecordText(memory.detail, "user_input");
+  return outcome !== "failure" && quality >= 0.65 && !isLightweightSocialInput(userInput);
+}
+
+function memoryNeedsCleanup(memory: MemoryRecord) {
+  return !memory.revoked_at && !memoryIsReusable(memory);
+}
+
+function memoryFingerprint(memory: MemoryRecord) {
+  return memoryTitle(memory)
+    .toLocaleLowerCase()
+    .replace(/[!！,.，。?？:：;；\s]/g, "");
+}
+
+function humanizeTarget(value: string) {
+  const known: Record<string, string> = {
+    "constraint-following-responses": "约束遵循回答",
+    "tool-selection": "工具选择",
+    "retrieval-planning": "检索规划",
+    add: "新增记忆",
+    update: "更新记忆",
+    user: "用户记忆"
+  };
+  if (/^[0-9a-f]{8}-?[0-9a-f-]{20,}$/i.test(value)) return "候选能力";
+  return known[value] ?? value.replaceAll("_", " ").replaceAll("-", " ");
+}
+
+function readableBenefit(value?: string) {
+  if (!value) return "系统记录了一项可解释、可回滚的能力改进。";
+  const known: Record<string, string> = {
+    "Preserve a reusable Hermes learning artifact": "保留一项可复用、可审计的 Hermes 学习成果。",
+    "Recall verified experience in later runs": "在后续相关任务中召回已经验证的处理经验。",
+    "Gate skill promotion with reproducible source-run replay": "使用可复现的真实运行回放作为技能晋级门禁。",
+    "Reuse a repeated successful action sequence": "复用经过多次成功验证的操作序列。"
+  };
+  return known[value] ?? value;
+}
+
+function relatedMemory(change: LearningChange, memories: MemoryRecord[]) {
+  return memories.find((memory) =>
+    memory.memory_id === change.target_id
+    || memory.provenance.some((source) => change.source_run_ids.includes(source.source_id))
+  );
+}
+
+function learningChangePresentation(change: LearningChange, memories: MemoryRecord[]) {
+  const memory = relatedMemory(change, memories);
+  const sourceQuestion = memory ? memoryTitle(memory) : undefined;
+  const target = humanizeTarget(change.target_id);
+  const nativeApplied = change.structured_diff.state === "native_applied"
+    || change.evaluation_report.native_applied === true;
+  const passed = change.evaluation_report.passed === true;
+  if (change.target_type === "hermes_native_skill") {
+    return {
+      title: `改进“${target}”技能`,
+      description: sourceQuestion
+        ? `Hermes 根据“${sourceQuestion}”的真实执行结果，更新了可复用的回答策略。`
+        : "Hermes 根据真实执行结果更新了可复用的回答策略。",
+      kind: "技能进化",
+      status: nativeApplied ? "已应用 · 待审计" : "等待评测"
+    };
+  }
+  if (change.target_type === "hermes_native_memory") {
+    return {
+      title: "同步一条 Hermes 长期记忆",
+      description: sourceQuestion
+        ? `从“${sourceQuestion}”中保留可复用信息，并纳入后续相关问题的召回范围。`
+        : "将真实交互中的可复用信息同步到长期记忆。",
+      kind: "记忆同步",
+      status: nativeApplied ? "已写入 · 可回滚" : "等待写入"
+    };
+  }
+  if (change.target_type.includes("memory")) {
+    return {
+      title: sourceQuestion ? `沉淀任务经验：${sourceQuestion}` : "沉淀一条任务经验",
+      description: memory ? memoryDescription(memory) : "把一次真实运行提炼成以后可以按需召回的经验。",
+      kind: "经验沉淀",
+      status: passed ? "评测通过" : "已记录"
+    };
+  }
+  if (change.target_type.includes("skill")) {
+    return {
+      title: target === "候选能力" ? "提出一项候选技能改进" : `改进“${target}”技能`,
+      description: readableBenefit(change.expected_benefits[0]),
+      kind: "技能改进",
+      status: passed ? "评测通过" : nativeApplied ? "已应用 · 待审计" : "待确认"
+    };
+  }
+  return {
+    title: target === "候选能力" ? "提出一项候选能力改进" : `改进“${target}”`,
+    description: readableBenefit(change.expected_benefits[0]),
+    kind: "知识改进",
+    status: passed ? "评测通过" : nativeApplied ? "已应用 · 待审计" : "待确认"
+  };
+}
+
+function learningKindTone(kind: string) {
+  if (kind.includes("技能")) return "skill";
+  if (kind.includes("记忆")) return "memory";
+  if (kind.includes("经验")) return "experience";
+  return "knowledge";
+}
+
 type SourceLayerLabel = "团队内部" | "个人资料" | "公共参考" | "未标注";
 
 function readMetadataText(metadata: Record<string, unknown>, ...keys: string[]) {
@@ -628,11 +822,44 @@ export function MemoryView({
   onChanged: () => void;
 }) {
   const [showRevoked, setShowRevoked] = useState(false);
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [qualityFilter, setQualityFilter] = useState<"reusable" | "all" | "cleanup">("reusable");
+  const [expandedMemory, setExpandedMemory] = useState<string>();
   const [correctionRequest, setCorrectionRequest] = useState("");
   const [correctionResult, setCorrectionResult] = useState<MemoryCorrectionResult>();
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const [correcting, setCorrecting] = useState(false);
-  const visible = showRevoked ? memories : memories.filter((item) => !item.revoked_at);
+  const availableTypes = Array.from(new Set(memories.map((memory) => memory.memory_type)));
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const visible = memories.filter((memory) => {
+    if (!showRevoked && memory.revoked_at) return false;
+    if (qualityFilter === "reusable" && !memoryIsReusable(memory)) return false;
+    if (qualityFilter === "cleanup" && !memoryNeedsCleanup(memory)) return false;
+    if (typeFilter !== "all" && memory.memory_type !== typeFilter) return false;
+    if (!normalizedQuery) return true;
+    return [memoryTitle(memory), memoryDescription(memory), memoryTypeLabels[memory.memory_type]]
+      .filter(Boolean)
+      .some((value) => value!.toLocaleLowerCase().includes(normalizedQuery));
+  });
+  const activeMemories = memories.filter((memory) => !memory.revoked_at);
+  const reusableMemories = activeMemories.filter(memoryIsReusable);
+  const reusableMemoryTopics = new Set(reusableMemories.map(memoryFingerprint));
+  const cleanupMemories = activeMemories.filter(memoryNeedsCleanup);
+  const reliableMemories = activeMemories.filter((memory) => memory.confidence >= 0.85);
+  const successfulExperiences = activeMemories.filter(
+    (memory) => readRecordText(memory.detail, "outcome") === "success"
+  );
+  const displayedMemories = qualityFilter === "reusable"
+    ? visible.filter((memory, index) =>
+      visible.findIndex((candidate) => memoryFingerprint(candidate) === memoryFingerprint(memory)) === index
+    )
+    : visible;
+
+  function occurrenceCount(memory: MemoryRecord) {
+    if (qualityFilter !== "reusable") return 1;
+    return visible.filter((candidate) => memoryFingerprint(candidate) === memoryFingerprint(memory)).length;
+  }
 
   async function revoke(memoryId: string) {
     await api.revokeMemory(memoryId);
@@ -657,15 +884,36 @@ export function MemoryView({
   }
 
   return (
-    <section className="data-view">
+    <section className="data-view memory-workspace">
       <header className="view-header">
-        <div><span className="eyebrow">Long-term context</span><h1>记忆库</h1></div>
+        <div><span className="eyebrow">按需召回的个人上下文</span><h1>长期记忆</h1></div>
+        <span className="view-count">{reusableMemoryTopics.size} 个可复用主题</span>
+      </header>
+      <div className="memory-overview" aria-label="记忆概览">
+        <div><span>可复用主题</span><strong>{reusableMemoryTopics.size}</strong><small>相同经验已自动归并</small></div>
+        <div><span>高可信</span><strong>{reliableMemories.length}</strong><small>可信度不低于 85%</small></div>
+        <div><span>成功经验</span><strong>{successfulExperiences.length}</strong><small>来自完成质量较高的任务</small></div>
+      </div>
+      <div className="memory-toolbar">
+        <label className="memory-search">
+          <Search size={15} />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索记住的问题、偏好或经验" />
+        </label>
+        <select aria-label="记忆质量" value={qualityFilter} onChange={(event) => setQualityFilter(event.target.value as "reusable" | "all" | "cleanup")}>
+          <option value="reusable">可复用记忆</option>
+          <option value="all">全部历史</option>
+          <option value="cleanup">需要清理 ({cleanupMemories.length})</option>
+        </select>
+        <select aria-label="记忆类型" value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+          <option value="all">全部类型</option>
+          {availableTypes.map((type) => <option key={type} value={type}>{memoryTypeLabels[type] ?? type}</option>)}
+        </select>
         <label className="toggle-control">
           <input type="checkbox" checked={showRevoked} onChange={(event) => setShowRevoked(event.target.checked)} />
           <span />
           显示已撤回
         </label>
-      </header>
+      </div>
       <form
         className="memory-correction"
         onSubmit={(event) => {
@@ -728,19 +976,44 @@ export function MemoryView({
           </div>
         )}
       </form>
-      {visible.length === 0 ? <EmptyState icon={Database} label="暂无长期记忆" /> : (
+      {qualityFilter === "reusable" && cleanupMemories.length > 0 && (
+        <div className="memory-quality-note">
+          已收起 {cleanupMemories.length} 条失败任务或低价值交互，可在“需要清理”中审计和撤回。
+        </div>
+      )}
+      {displayedMemories.length === 0 ? <EmptyState icon={Database} label="当前筛选下没有长期记忆" /> : (
         <div className="memory-list">
-          {visible.map((memory) => (
+          {displayedMemories.map((memory) => (
             <article className={`memory-row ${memory.revoked_at ? "is-revoked" : ""}`} key={memory.memory_id}>
               <div className={`memory-type type-${memory.memory_type}`}><Database size={17} /></div>
               <div className="memory-body">
-                <div className="row-title"><strong>{memory.summary}</strong><span>{memory.memory_type}</span></div>
-                <div className="memory-meta">
-                  <span>confidence {Math.round(memory.confidence * 100)}%</span>
-                  <span>{memory.provenance[0]?.source_type}</span>
-                  <span>{formatDate(memory.updated_at)}</span>
+                <div className="row-title">
+                  <strong>{memoryTitle(memory)}</strong>
+                  <span>{memoryTypeLabels[memory.memory_type] ?? "长期记忆"}</span>
                 </div>
+                <p className="memory-description">{memoryDescription(memory)}</p>
+                <div className="memory-meta">
+                  <span>可信度 {Math.round(memory.confidence * 100)}%</span>
+                  <span>来源：{memorySourceLabel(memory)}</span>
+                  {occurrenceCount(memory) > 1 && <span>已归并 {occurrenceCount(memory)} 次同类经验</span>}
+                  <span>更新于 {formatDate(memory.updated_at)}</span>
+                </div>
+                {expandedMemory === memory.memory_id && (
+                  <div className="memory-readable-detail">
+                    <div><span>记忆用途</span><strong>仅在语义相关的问题中按需召回</strong></div>
+                    <div><span>处理过程</span><strong>{memoryToolLabels(memory).join(" → ") || "由用户明确保存"}</strong></div>
+                    <div><span>当前状态</span><strong>{memory.revoked_at ? "已撤回，不再参与召回" : "有效，可随时更正或撤回"}</strong></div>
+                  </div>
+                )}
               </div>
+              <button
+                className={`memory-expand ${expandedMemory === memory.memory_id ? "is-open" : ""}`}
+                title={expandedMemory === memory.memory_id ? "收起详情" : "查看记忆详情"}
+                aria-expanded={expandedMemory === memory.memory_id}
+                onClick={() => setExpandedMemory((current) => current === memory.memory_id ? undefined : memory.memory_id)}
+              >
+                <ChevronRight size={16} />
+              </button>
               {!memory.revoked_at && (
                 <button className="icon-button danger" title="撤回记忆" onClick={() => revoke(memory.memory_id)}><Trash2 size={16} /></button>
               )}
@@ -879,13 +1152,6 @@ export function SkillsView({
   );
 }
 
-function learningChangeTitle(change: LearningChange) {
-  const name = String(change.structured_diff.name ?? change.structured_diff.key ?? "").trim();
-  if (change.target_type.includes("skill")) return name ? `系统建议复用“${name}”工作流` : "系统建议复用一个工作流";
-  if (change.target_type.includes("memory")) return name ? `系统记录了“${name}”这条长期信息` : "系统记录了一条长期信息";
-  return name ? `系统提出“${name}”的知识改进` : "系统提出了一项知识改进";
-}
-
 export function LearningView({
   changes,
   memories,
@@ -899,49 +1165,132 @@ export function LearningView({
   onOpenMemory: () => void;
   onOpenSkills: () => void;
 }) {
-  const [tab, setTab] = useState<"memory" | "learned" | "review">("memory");
-  const visibleMemories = memories.filter((memory) => !memory.revoked_at);
+  const [tab, setTab] = useState<"memory" | "learned" | "review">("learned");
+  const visibleMemories = memories.filter(memoryIsReusable);
+  const meaningfulChanges = changes.filter((change) => {
+    const memory = relatedMemory(change, memories);
+    return !memory || memoryIsReusable(memory);
+  });
+  const hiddenLowValueChanges = changes.length - meaningfulChanges.length;
+  const timelineGroups = Array.from(meaningfulChanges.reduce((groups, change) => {
+    const memory = relatedMemory(change, memories);
+    const key = memory
+      ? `memory:${memoryFingerprint(memory)}`
+      : change.source_run_ids.length > 0
+        ? `runs:${[...change.source_run_ids].sort().join(":")}`
+        : `change:${change.change_set_id}`;
+    const current = groups.get(key) ?? [];
+    current.push(change);
+    groups.set(key, current);
+    return groups;
+  }, new Map<string, LearningChange[]>()).values());
   const reviewSkills = skillEvolution.filter((snapshot) =>
     ["draft", "security_review", "offline_pass", "shadow", "canary"].includes(snapshot.skill.status)
   );
-  const reviewChanges = changes.filter((change) => change.risks.length > 0);
+  const reviewChanges = meaningfulChanges.filter((change) => change.risks.length > 0);
+  const appliedChanges = meaningfulChanges.filter((change) =>
+    change.structured_diff.state === "native_applied"
+    || change.evaluation_report.native_applied === true
+    || change.evaluation_report.passed === true
+  );
+  const skillChanges = meaningfulChanges.filter((change) => change.target_type.includes("skill"));
 
   return (
     <section className="data-view learning-workspace">
       <header className="view-header">
-        <div><span className="eyebrow">可解释、可回滚的学习</span><h1>学习</h1></div>
-        <span className="view-count">{visibleMemories.length} 条记忆 · {changes.length} 项改进</span>
+        <div><span className="eyebrow">每次能力变化都有来源与回滚路径</span><h1>进化记录</h1></div>
+        <span className="view-count">{meaningfulChanges.length} 项有效变化</span>
       </header>
+      <div className="learning-overview" aria-label="进化概览">
+        <div><span>有效变化</span><strong>{meaningfulChanges.length}</strong><small>全部有真实运行来源</small></div>
+        <div><span>已应用</span><strong>{appliedChanges.length}</strong><small>仍受审计与回滚门禁保护</small></div>
+        <div><span>技能改进</span><strong>{skillChanges.length}</strong><small>可复用的工作流与策略</small></div>
+        <div><span>待确认</span><strong>{reviewSkills.length + reviewChanges.length}</strong><small>高影响变化需要人工复核</small></div>
+      </div>
       <div className="learning-tabs" role="tablist" aria-label="学习视图">
-        <button role="tab" aria-selected={tab === "memory"} className={tab === "memory" ? "is-selected" : ""} onClick={() => setTab("memory")}>我的记忆</button>
-        <button role="tab" aria-selected={tab === "learned"} className={tab === "learned" ? "is-selected" : ""} onClick={() => setTab("learned")}>系统学到</button>
+        <button role="tab" aria-selected={tab === "learned"} className={tab === "learned" ? "is-selected" : ""} onClick={() => setTab("learned")}>进化图谱</button>
+        <button role="tab" aria-selected={tab === "memory"} className={tab === "memory" ? "is-selected" : ""} onClick={() => setTab("memory")}>长期记忆</button>
         <button role="tab" aria-selected={tab === "review"} className={tab === "review" ? "is-selected" : ""} onClick={() => setTab("review")}>待我确认</button>
       </div>
+      {hiddenLowValueChanges > 0 && tab === "learned" && (
+        <div className="learning-quality-note">
+          已收起 {hiddenLowValueChanges} 项低价值历史；其余 {meaningfulChanges.length} 项变化按 {timelineGroups.length} 个学习主题绘制。
+        </div>
+      )}
       {tab === "memory" && (
         visibleMemories.length === 0 ? <EmptyState icon={Database} label="还没有保存的长期记忆" /> : (
           <div className="learning-list">
             {visibleMemories.slice(0, 12).map((memory) => (
               <article className="learning-item" key={memory.memory_id}>
-                <div><strong>{memory.summary}</strong><span>来自 {memory.provenance.length} 个来源 · 更新于 {formatDate(memory.updated_at)}</span></div>
-                <span className="learning-kind">我的记忆</span>
+                <span className="learning-item-icon"><Database size={16} /></span>
+                <div>
+                  <strong>{memoryTitle(memory)}</strong>
+                  <span>{memoryDescription(memory)}</span>
+                  <small>{memorySourceLabel(memory)} · 更新于 {formatDate(memory.updated_at)}</small>
+                </div>
+                <span className="learning-kind">{memoryTypeLabels[memory.memory_type] ?? "长期记忆"}</span>
               </article>
             ))}
           </div>
         )
       )}
       {tab === "learned" && (
-        changes.length === 0 ? <EmptyState icon={GitCommitHorizontal} label="系统还没有记录可展示的改进" /> : (
-          <div className="learning-list">
-            {changes.map((change) => (
-              <article className="learning-item" key={change.change_set_id}>
-                <div>
-                  <strong>{learningChangeTitle(change)}</strong>
-                  <span>{change.expected_benefits[0] ?? "系统会先通过评测和反馈门禁，再应用这项改进。"}</span>
-                  <small>{change.source_run_ids.length} 次真实使用反馈 · {formatDate(change.created_at)}</small>
-                </div>
-                <span className="learning-kind is-system">系统学到</span>
-              </article>
-            ))}
+        meaningfulChanges.length === 0 ? <EmptyState icon={GitCommitHorizontal} label="系统还没有记录可展示的有效改进" /> : (
+          <div className="evolution-graph" role="list" aria-label="能力进化图谱">
+            <div className="evolution-legend" aria-label="图例">
+              <span><i className="legend-source" />真实任务</span>
+              <span><i className="legend-skill" />技能</span>
+              <span><i className="legend-memory" />记忆</span>
+              <span><i className="legend-experience" />经验</span>
+            </div>
+            {timelineGroups.map((group) => {
+              const firstChange = group[0];
+              const presentations = group.map((change) => learningChangePresentation(change, memories));
+              const memory = group.map((change) => relatedMemory(change, memories)).find(Boolean);
+              const sourceQuestion = memory ? memoryTitle(memory) : undefined;
+              const kinds = Array.from(new Set(presentations.map((presentation) => presentation.kind)));
+              const sourceRuns = new Set(group.flatMap((change) => change.source_run_ids));
+              const latestChange = [...group].sort((left, right) =>
+                new Date(right.created_at).getTime() - new Date(left.created_at).getTime()
+              )[0];
+              const latestDate = new Date(latestChange.created_at);
+              return (
+                <article className="evolution-graph-row" role="listitem" key={firstChange.change_set_id}>
+                  <time className="evolution-time" dateTime={latestChange.created_at}>
+                    <strong>{new Intl.DateTimeFormat("zh-CN", { month: "2-digit", day: "2-digit" }).format(latestDate)}</strong>
+                    <span>{new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit" }).format(latestDate)}</span>
+                  </time>
+                  <div className="evolution-axis" aria-hidden="true">
+                    <span><GitMerge size={14} /></span>
+                  </div>
+                  <div className="evolution-flow">
+                    <div className="evolution-source-node">
+                      <span><MessageSquareText size={14} />真实任务</span>
+                      <strong>{sourceQuestion ?? presentations[0].title}</strong>
+                      <small>{sourceRuns.size} 次运行 · 来源与评测已保留</small>
+                    </div>
+                    <div className="evolution-connector" aria-hidden="true"><ChevronRight size={15} /></div>
+                    <div className="evolution-results">
+                      {kinds.map((kind) => {
+                        const matching = presentations.filter((presentation) => presentation.kind === kind);
+                        const tone = learningKindTone(kind);
+                        return (
+                          <div className={`evolution-result-node is-${tone}`} key={kind} title={matching[0].description}>
+                            <span className="evolution-result-icon">
+                              {tone === "skill" ? <Sparkles size={15} /> : tone === "memory" ? <Database size={15} /> : <GitCommitHorizontal size={15} />}
+                            </span>
+                            <div>
+                              <strong>{kind}</strong>
+                              <small>{matching.length > 1 ? `${matching.length} 项变化已归并` : matching[0].status}</small>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )
       )}
@@ -950,16 +1299,21 @@ export function LearningView({
           <div className="learning-list">
             {reviewSkills.map((snapshot) => (
               <article className="learning-item" key={snapshot.skill.skill_id}>
-                <div><strong>建议评估“{snapshot.skill.name}”工作流</strong><span>当前处于 {snapshot.skill.status}，尚未自动变更在线能力。</span></div>
+                <span className="learning-item-icon is-review"><ShieldAlert size={16} /></span>
+                <div><strong>评估“{snapshot.skill.name}”工作流</strong><span>当前处于候选阶段，尚未改变在线能力。</span><small>需要通过安全、回归与质量门禁</small></div>
                 <button className="text-button" onClick={onOpenSkills}>查看治理详情</button>
               </article>
             ))}
-            {reviewChanges.map((change) => (
-              <article className="learning-item" key={change.change_set_id}>
-                <div><strong>{learningChangeTitle(change)}</strong><span>{change.risks[0] || "需要先确认影响范围。"}</span></div>
-                <button className="text-button" onClick={onOpenSkills}>查看治理详情</button>
-              </article>
-            ))}
+            {reviewChanges.map((change) => {
+              const presentation = learningChangePresentation(change, memories);
+              return (
+                <article className="learning-item" key={change.change_set_id}>
+                  <span className="learning-item-icon is-review"><ShieldAlert size={16} /></span>
+                  <div><strong>{presentation.title}</strong><span>{presentation.description}</span><small>存在影响风险，需要确认后续治理动作</small></div>
+                  <button className="text-button" onClick={onOpenSkills}>查看治理详情</button>
+                </article>
+              );
+            })}
           </div>
         )
       )}

@@ -39,13 +39,26 @@ export interface NavigationItem {
 
 export const navigationGroups: Array<{ label: string; items: NavigationItem[] }> = [
   {
-    label: "工作区",
+    label: "工作台",
     items: [
-      { id: "chat", label: "对话", icon: MessageSquareText },
+      { id: "chat", label: "智能助理", icon: MessageSquareText },
+      { id: "actions", label: "研发任务", icon: ListTodo },
+      { id: "review", label: "日历回顾", icon: CalendarDays }
+    ]
+  },
+  {
+    label: "知识系统",
+    items: [
       { id: "knowledge", label: "知识", icon: Files, count: "documents" },
       { id: "graph", label: "系统地图", icon: Network },
-      { id: "actions", label: "工作", icon: ListTodo },
-      { id: "learning", label: "学习", icon: GitBranch, count: "change_sets" },
+      { id: "memory", label: "长期记忆", icon: Database, count: "memories" }
+    ]
+  },
+  {
+    label: "智能治理",
+    items: [
+      { id: "learning", label: "进化记录", icon: GitBranch, count: "change_sets" },
+      { id: "skills", label: "技能治理", icon: Sparkles, count: "skills" },
       { id: "runs", label: "运行", icon: History, count: "runs" }
     ]
   }
@@ -75,14 +88,12 @@ interface SidebarProps {
 
 export function Sidebar({ view, onViewChange, overview }: SidebarProps) {
   const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
-  const [desktopMoreOpen, setDesktopMoreOpen] = useState(false);
   const documentCount = overview?.counts.documents ?? 0;
   const chunkCount = overview?.counts.chunks ?? 0;
   const knowledgeReady = documentCount > 0 && chunkCount > 0;
 
   function selectView(next: ViewName) {
     setMobileMoreOpen(false);
-    setDesktopMoreOpen(false);
     onViewChange(next);
   }
 
@@ -125,33 +136,6 @@ export function Sidebar({ view, onViewChange, overview }: SidebarProps) {
           ))}
         </nav>
 
-        <div className="sidebar-advanced">
-          <button
-            className={`sidebar-advanced-trigger ${mobileSecondary.some((item) => item.id === view) ? "is-active" : ""}`}
-            onClick={() => setDesktopMoreOpen((current) => !current)}
-            aria-expanded={desktopMoreOpen}
-          >
-            <MoreHorizontal size={17} />
-            <span>更多工具</span>
-            <ChevronDown size={14} aria-hidden="true" />
-          </button>
-          {desktopMoreOpen && (
-            <div className="sidebar-advanced-menu" role="menu" aria-label="更多工具">
-              {mobileSecondary.map((item) => {
-                const Icon = item.icon;
-                const count = item.count && overview ? overview.counts[item.count] : undefined;
-                return (
-                  <button key={item.id} role="menuitem" onClick={() => selectView(item.id)}>
-                    <Icon size={15} />
-                    <span>{item.label}</span>
-                    {count !== undefined && <small>{count}</small>}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         <div className="sidebar-runtime">
           <span className={`runtime-dot ${knowledgeReady ? "is-live" : ""}`} />
           <div>
@@ -163,6 +147,19 @@ export function Sidebar({ view, onViewChange, overview }: SidebarProps) {
             </span>
           </div>
         </div>
+
+        <button
+          className={`sidebar-profile ${view === "profile" ? "is-active" : ""}`}
+          onClick={() => selectView("profile")}
+          title="账户与工作区设置"
+        >
+          <span className="profile-avatar"><UserRound size={15} /></span>
+          <span className="profile-copy">
+            <strong>研发工作区</strong>
+            <small>账户与设置</small>
+          </span>
+          <MoreHorizontal size={15} aria-hidden="true" />
+        </button>
 
         <nav className="mobile-navigation" aria-label="移动端主导航">
           {mobilePrimary.map((item) => {

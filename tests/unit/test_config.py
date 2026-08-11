@@ -6,6 +6,15 @@ from pydantic import ValidationError
 from app.config import Settings
 
 
+def test_adaptive_router_uses_latency_bounded_defaults() -> None:
+    settings = Settings()
+
+    assert settings.adaptive_rag_router_model == "gpt-4.1-nano"
+    assert settings.adaptive_rag_router_timeout_seconds == 12
+    assert settings.adaptive_rag_router_max_completion_tokens == 256
+    assert settings.adaptive_rag_router_reasoning_effort == "minimal"
+
+
 def test_hermes_runtime_requires_all_internal_credentials() -> None:
     with pytest.raises(ValidationError, match="HERMES_API_KEY"):
         Settings(runtime_mode="hermes")

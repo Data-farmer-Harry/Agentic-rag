@@ -250,6 +250,12 @@ class WorkspaceService:
             ),
             "conversation_history_turns": self._settings.conversation_history_turns,
             "context_total_tokens": self._settings.context_total_tokens,
+            "adaptive_rag_router_timeout_seconds": (
+                self._settings.adaptive_rag_router_timeout_seconds
+            ),
+            "adaptive_rag_router_max_completion_tokens": (
+                self._settings.adaptive_rag_router_max_completion_tokens
+            ),
             "model_provider": self._settings.model_provider,
             "learning_mode": self._settings.learning_mode,
             "learning_reflector_mode": self._settings.learning_reflector_mode,

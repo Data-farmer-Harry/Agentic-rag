@@ -550,9 +550,13 @@ Adaptive 路由器只暴露 `delegate_to_agent` 一个结构化工具；模型�
 `self_reflection = strategy == multi_step`，模型不能给简单问题自行开启昂贵反思。路由调用为空、超时、
 格式无效或 provider 错误时会快速失败，不再静默升级到完整 Hermes/RAG 链路。
 
-`ADAPTIVE_RAG_ROUTER_TIMEOUT_SECONDS` 默认 12 秒，`ADAPTIVE_RAG_ROUTER_MODEL` 可与 Hermes 主模型
-分开配置；为空时依次回退 `CONVERSATION_FAST_PATH_MODEL` 和 `OPENAI_MODEL`。旧
-`CONVERSATION_FAST_PATH_*` 变量暂时保留为部署兼容开关，不再代表硬规则快速通道。
+`ADAPTIVE_RAG_ROUTER_MODEL` 默认使用 `gpt-4.1-nano`，与 Hermes 主模型分离；为空时依次回退
+`CONVERSATION_FAST_PATH_MODEL` 和 `OPENAI_MODEL`。路由调用使用 strict tool schema、最低 reasoning、
+低 verbosity、256 completion-token 上限和 12 秒单次硬超时，且 SDK `max_retries=0`，防止一次超时被重试
+放大成约 24 秒。简单稳定知识由小模型简洁直答；复杂编码、数学、规划或多阶段推理以
+`no_retrieval/tool_action` 交给主 Agent，不误触发 RAG。每次路由记录 model、lane、strategy 和
+duration_ms，不记录用户正文或模型 reason。旧 `CONVERSATION_FAST_PATH_*` 变量暂时保留为部署兼容
+开关，不再代表硬规则快速通道。
 
 轻量通道与 Hermes 共用 `ContextEngine`。它读取 `TrajectoryRepository.list_session()`，严格按
 tenant/project/user/session 二次校验，只选择已经完成且有答案的运行并排除当前 run。默认保留最近

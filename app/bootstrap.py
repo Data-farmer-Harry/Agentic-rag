@@ -1107,7 +1107,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             direct_conversation = OpenAIConversationResponder(
                 build_model_client(
                     resolved,
-                    max_retries=1,
+                    max_retries=0,
                     timeout=resolved.adaptive_rag_router_timeout_seconds,
                 ),
                 model=(
@@ -1115,6 +1115,10 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
                     or resolved.conversation_fast_path_model
                     or resolved.openai_model
                 ),
+                max_completion_tokens=(
+                    resolved.adaptive_rag_router_max_completion_tokens
+                ),
+                reasoning_effort=resolved.adaptive_rag_router_reasoning_effort,
             )
         except ValueError:
             direct_conversation = None

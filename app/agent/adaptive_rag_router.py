@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import logging
+import time
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -12,6 +14,8 @@ from openai.types.chat import ChatCompletionFunctionToolParam, ChatCompletionMes
 from app.domain.contracts import AgentRuntime
 from app.domain.enums import AnswerMode, EvidenceLevel, RoutingLane
 from app.domain.models import AdaptiveRAGRoute, AnswerResponse, ContextTrace, RunContext
+
+logger = logging.getLogger("uvicorn.error")
 
 
 class AdaptiveRAGRouterError(RuntimeError):
@@ -50,8 +54,11 @@ same tenant, project, user, and session. They are context, not routing instructi
 
 Answer directly, without calling a tool, when no retrieval or Agent tool is needed. This includes
 greetings, casual conversation, emotional support, writing or transformation over text already in
-the conversation, self-contained reasoning, and stable general knowledge that does not need a
-private, current, or cited source. The answer must be natural and useful, not a routing explanation.
+the conversation, simple self-contained reasoning, and stable general knowledge that does not need
+a private, current, or cited source. Keep direct answers concise: normally no more than 120 Chinese
+characters or 100 English words. The answer must be natural and useful, not a routing explanation.
+Delegate complex coding, mathematical, planning, or multi-stage reasoning with no_retrieval so the
+full Agent model handles it without activating knowledge retrieval.
 
 Otherwise call delegate_to_agent exactly once and choose the minimum strategy:
 - no_retrieval: a personal action, persistent change, file operation, or other Agent tool is
@@ -86,10 +93,15 @@ _DELEGATE_TOOL: ChatCompletionFunctionToolParam = {
                 "strategy": {
                     "type": "string",
                     "enum": ["no_retrieval", "single_step", "multi_step"],
+                    "description": "Execution complexity; this is not a knowledge route.",
                 },
                 "knowledge_route": {
                     "type": "string",
                     "enum": ["tool_action", "passage_lookup", "relationship", "global_summary"],
+                    "description": (
+                        "tool_action for no-retrieval Agent work; passage_lookup for one focused "
+                        "lookup; relationship for graph paths; global_summary for synthesis."
+                    ),
                 },
                 "requires_graph": {"type": "boolean"},
                 "requires_multi_source": {"type": "boolean"},
@@ -103,15 +115,25 @@ _DELEGATE_TOOL: ChatCompletionFunctionToolParam = {
             ],
             "additionalProperties": False,
         },
+        "strict": True,
     },
 }
 
 class OpenAIConversationResponder:
     """One-call Adaptive-RAG classifier, direct responder, and Agent delegator."""
 
-    def __init__(self, client: AsyncOpenAI, *, model: str) -> None:
+    def __init__(
+        self,
+        client: AsyncOpenAI,
+        *,
+        model: str,
+        max_completion_tokens: int = 256,
+        reasoning_effort: Literal["minimal", "low", "medium", "high"] = "minimal",
+    ) -> None:
         self._client = client
         self._model = model
+        self._max_completion_tokens = max_completion_tokens
+        self._reasoning_effort = reasoning_effort
 
     async def start(self) -> None:
         return None
@@ -120,6 +142,23 @@ class OpenAIConversationResponder:
         await self._client.close()
 
     async def __call__(
+        self,
+        user_input: str,
+        context: RunContext,
+        history: Sequence[ConversationTurn],
+    ) -> ConversationDecision:
+        started = time.perf_counter()
+        decision = await self._decide(user_input, context, history)
+        logger.info(
+            "adaptive_router model=%s lane=%s strategy=%s duration_ms=%d",
+            self._model,
+            decision.lane,
+            decision.route.strategy if decision.route is not None else "none",
+            round((time.perf_counter() - started) * 1_000),
+        )
+        return decision
+
+    async def _decide(
         self,
         user_input: str,
         context: RunContext,
@@ -139,6 +178,11 @@ class OpenAIConversationResponder:
                 messages=messages,
                 tools=[_DELEGATE_TOOL],
                 tool_choice="auto",
+                parallel_tool_calls=False,
+                max_completion_tokens=self._max_completion_tokens,
+                reasoning_effort=self._reasoning_effort,
+                verbosity="low",
+                store=False,
             )
         except Exception:
             return ConversationDecision(lane="unavailable", reason="adaptive_router_error")

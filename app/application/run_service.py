@@ -177,6 +177,12 @@ class RunService:
                     "adaptive_rag_router_timeout_seconds": (
                         self._settings.adaptive_rag_router_timeout_seconds
                     ),
+                    "adaptive_rag_router_max_completion_tokens": (
+                        self._settings.adaptive_rag_router_max_completion_tokens
+                    ),
+                    "adaptive_rag_router_reasoning_effort": (
+                        self._settings.adaptive_rag_router_reasoning_effort
+                    ),
                     "conversation_history_turns": self._settings.conversation_history_turns,
                     "context_total_tokens": self._settings.context_total_tokens,
                     "context_history_tokens": self._settings.context_history_tokens,

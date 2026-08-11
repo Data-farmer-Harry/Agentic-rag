@@ -400,6 +400,13 @@ async def test_openai_router_maps_multi_step_to_self_rag() -> None:
     class Completions:
         async def create(self, **kwargs: object) -> object:
             assert kwargs["tool_choice"] == "auto"
+            assert kwargs["parallel_tool_calls"] is False
+            assert kwargs["max_completion_tokens"] == 256
+            assert kwargs["reasoning_effort"] == "minimal"
+            assert kwargs["verbosity"] == "low"
+            tools = kwargs["tools"]
+            assert isinstance(tools, list)
+            assert tools[0]["function"]["strict"] is True  # type: ignore[index]
             return response
 
     client = SimpleNamespace(

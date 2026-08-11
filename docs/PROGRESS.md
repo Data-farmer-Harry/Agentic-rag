@@ -1436,3 +1436,24 @@
   新会话“你好”返回 conversational/no_retrieval，工具和 RAG 均未启动；持久化回答包含
   `context-engine-v2` trace（本轮无历史，history token=0）。该次 provider 端到端约 23 秒，说明路由
   正确但外部模型延迟仍需单独做 P50/P95 与超时治理，不能归因于 Context Engine。
+
+## 2026-08-11 Adaptive Router 延迟治理
+
+- 定位 23 秒长尾的直接原因：延迟敏感路由使用 12 秒 timeout，同时 OpenAI SDK `max_retries=1`；
+  provider 首次超时后自动重试，最坏耗时接近 24 秒。路由现改为 `max_retries=0`，保留 12 秒单次
+  窗口覆盖 provider 抖动，但故障不再占用两份超时窗口。
+- 主 Agent 继续使用 `gpt-5.6-luna`；路由/简单直答默认切换到 provider 实测可用的
+  `gpt-4.1-nano`。工具 schema 开启 strict，补充 strategy 与 knowledge_route 的语义约束，修复小模型
+  把 `single_step` 错填到 knowledge_route 导致合法检索请求被判 unavailable 的问题。
+- 轻量调用固定 `reasoning_effort=minimal`、`verbosity=low`、`max_completion_tokens=256`、
+  `parallel_tool_calls=false` 和 `store=false`。直接回答默认限制为 120 个中文字符或 100 个英文词；
+  复杂自包含推理委派给 Luna 的 no-retrieval Agent 路径，兼顾简单问题延迟和复杂问题质量。
+- 优化前无重试探针：“你好”约 4.7 秒、“哈哈你好”约 2.1 秒，稳定技术问答达到 12 秒 timeout；
+  优化参数探针中“Python 列表和元组区别”约 4.6 秒，问候约 2–3 秒，虚构私有知识请求正确输出
+  `single_step/passage_lookup`。同一技术问答 5 次复测为 1.97–6.17 秒、中位数 3.53 秒；因此选择
+  12 秒单次 timeout 而不是 8 秒，避免偶发抖动把本可成功的直接回答变成 503。这些仍是小样本，
+  最终结论以持续 P50/P95 为准。
+- 最终 Docker 正式链路复验：冷启动后的“哈哈你好”在 2.59 秒返回 run，路由日志 provider 阶段
+  2.53 秒；随后“Python 中列表和元组有什么区别”在 4.18 秒返回 run，provider 阶段 4.09 秒。两者
+  均为 `no_retrieval/conversation`、HTTP 202 后正常 completed、0 tool event、未启动 RAG；主模型仍为
+  `gpt-5.6-luna`。全量回归更新为 `412 passed / 17 skipped`，164 文件 strict mypy 与 Ruff 全绿。

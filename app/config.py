@@ -116,7 +116,15 @@ class Settings(BaseSettings):
     conversation_fast_path_model: str | None = None
     adaptive_rag_router_enabled: bool = True
     adaptive_rag_router_timeout_seconds: float = Field(default=12.0, ge=1.0, le=60.0)
-    adaptive_rag_router_model: str | None = None
+    adaptive_rag_router_model: str | None = "gpt-4.1-nano"
+    adaptive_rag_router_max_completion_tokens: int = Field(
+        default=256,
+        ge=64,
+        le=2_000,
+    )
+    adaptive_rag_router_reasoning_effort: Literal[
+        "minimal", "low", "medium", "high"
+    ] = "minimal"
     conversation_history_turns: int = Field(default=8, ge=0, le=50)
     context_total_tokens: int = Field(default=8_000, ge=1_000, le=100_000)
     context_history_tokens: int = Field(default=3_500, ge=0, le=50_000)

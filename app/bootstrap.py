@@ -75,6 +75,7 @@ from app.harness.consumer import BoundedHarnessConsumer, HarnessConsumerLimits
 from app.harness.evaluation import DeterministicPatternEvaluator
 from app.harness.evolution import HarnessPatternEvolutionService
 from app.harness.experience import HarnessExperienceService
+from app.harness.health import HarnessPatternHealthMonitor
 from app.harness.mining import DeterministicPatternMiner
 from app.harness.models import HarnessOverlayMode
 from app.harness.repository import (
@@ -124,7 +125,13 @@ from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
 from app.retrieval.in_memory_retriever import InMemoryRetriever
 from app.skills.skill_markdown_repository import SkillMarkdownRepository
 from app.skills.skill_registry import skill_is_eligible
-from app.web_search import DuckDuckGoWebSearch, FallbackWebSearch, OpenAIHostedWebSearch
+from app.web_search import (
+    BraveWebSearch,
+    DuckDuckGoWebSearch,
+    OpenAIHostedWebSearch,
+    WebSearchProvider,
+    WebSearchProviderChain,
+)
 
 
 @dataclass(frozen=True)
@@ -204,6 +211,54 @@ class ApplicationComponents:
             result = close()
             if inspect.isawaitable(result):
                 await result
+
+
+def _build_web_search(settings: Settings) -> WebSearchPort | None:
+    """Construct the bounded public-search provider chain for the app runtime."""
+    if settings.web_search_mode != "openai":
+        return None
+
+    primary = OpenAIHostedWebSearch(settings)
+    providers = [
+        WebSearchProvider(
+            name="openai_responses",
+            provider=primary,
+            timeout_seconds=float(settings.web_search_primary_timeout_seconds),
+        )
+    ]
+    brave_api_key = (
+        settings.brave_search_api_key.get_secret_value().strip()
+        if settings.brave_search_api_key is not None
+        else ""
+    )
+    if brave_api_key:
+        providers.append(
+            WebSearchProvider(
+                name="brave_search_api",
+                provider=BraveWebSearch(
+                    api_key=brave_api_key,
+                    timeout_seconds=settings.brave_search_timeout_seconds,
+                    allowed_domains=settings.web_search_allowed_domains,
+                    country=settings.brave_search_country,
+                    search_lang=settings.brave_search_language,
+                    safesearch=settings.brave_search_safesearch,
+                ),
+                timeout_seconds=float(settings.brave_search_timeout_seconds),
+            )
+        )
+    if settings.web_search_fallback_mode == "duckduckgo":
+        public_timeout_seconds = min(8, settings.web_page_timeout_seconds)
+        providers.append(
+            WebSearchProvider(
+                name="public_html_search",
+                provider=DuckDuckGoWebSearch(
+                    timeout_seconds=public_timeout_seconds,
+                    allowed_domains=settings.web_search_allowed_domains,
+                ),
+                timeout_seconds=float(public_timeout_seconds),
+            )
+        )
+    return WebSearchProviderChain(providers) if len(providers) > 1 else primary
 
 
 def _build_vector_index(
@@ -848,20 +903,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         lifecycle_resources_list.append(learning_artifact_migrator)
     if outbox_dispatcher is not None:
         lifecycle_resources_list.append(outbox_dispatcher)
-    web_search: WebSearchPort | None = None
-    if resolved.web_search_mode == "openai":
-        primary_web_search = OpenAIHostedWebSearch(resolved)
-        if resolved.web_search_fallback_mode == "duckduckgo":
-            web_search = FallbackWebSearch(
-                primary_web_search,
-                DuckDuckGoWebSearch(
-                    timeout_seconds=min(8, resolved.web_page_timeout_seconds),
-                    allowed_domains=resolved.web_search_allowed_domains,
-                ),
-                primary_timeout_seconds=resolved.web_search_primary_timeout_seconds,
-            )
-        else:
-            web_search = primary_web_search
+    web_search = _build_web_search(resolved)
     general_tools = GeneralToolService(
         timeout_seconds=resolved.web_page_timeout_seconds,
         max_download_bytes=resolved.web_page_max_download_bytes,
@@ -996,6 +1038,21 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             min_support_cases=resolved.harness_repeated_failure_threshold,
         ),
     )
+    harness_health_monitor = HarnessPatternHealthMonitor(
+        harness_experiences,
+        harness_policies,
+        harness_pattern_evolution,
+        min_applied_cases=resolved.harness_health_min_applied_cases,
+        min_control_cases=resolved.harness_health_min_control_cases,
+        max_quality_regression=resolved.harness_health_max_quality_regression,
+        max_failure_rate_regression=resolved.harness_health_max_failure_rate_regression,
+        max_negative_feedback_rate_regression=(
+            resolved.harness_health_max_negative_feedback_rate_regression
+        ),
+        severe_negative_feedback_threshold=(
+            resolved.harness_health_severe_negative_feedback_threshold
+        ),
+    )
     harness_overlay_selector = (
         HarnessOverlaySelector(
             harness_experiences,
@@ -1014,6 +1071,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         learning_mode=resolved.learning_mode,
         harness_experiences=harness_experience_service,
         harness_pattern_miner=harness_pattern_miner,
+        harness_health_monitor=harness_health_monitor,
     )
     learning_jobs = (
         LearningJobService(

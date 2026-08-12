@@ -513,6 +513,13 @@ WEB_SEARCH_MODE=disabled
 WEB_SEARCH_MODEL=gpt-5.6
 WEB_SEARCH_CONTEXT_SIZE=medium
 WEB_SEARCH_MAX_RESULTS=8
+WEB_SEARCH_FALLBACK_MODE=duckduckgo
+WEB_SEARCH_PRIMARY_TIMEOUT_SECONDS=12
+BRAVE_SEARCH_API_KEY=
+BRAVE_SEARCH_TIMEOUT_SECONDS=8
+BRAVE_SEARCH_COUNTRY=
+BRAVE_SEARCH_LANGUAGE=
+BRAVE_SEARCH_SAFESEARCH=moderate
 WEB_SEARCH_ALLOWED_DOMAINS=[]
 
 INGESTION_MODE=async
@@ -1416,15 +1423,17 @@ projection 临时 evidence UUID 让同一来源重复扩张。对比工具只把
 
 联网检索不是把 provider hosted tool 直接挂到 Hermes 根 Agent。直接挂载会让 provider 生成的 citation
 绕过现有 `allowed_evidence -> AnswerPublisher` 白名单。当前实现优先调用 Responses API hosted
-`web_search`；兼容网关超时、失败或没有引用证据时，在 12 秒 primary deadline 后依次降级到
-DuckDuckGo HTML 和 Bing HTML。所有结果仍由 `AgentToolRuntime` 注册为 `search_web@1.0.0`：
+`web_search`；兼容网关超时、失败或没有引用证据时，在 12 秒 primary deadline 后优先调用配置的
+Brave Search API，最后才降级到 DuckDuckGo HTML 和 Bing HTML。Brave key 未配置时该层完全跳过，
+所以默认链路仍是 hosted -> DuckDuckGo -> Bing。所有结果仍由 `AgentToolRuntime` 注册为
+`search_web@1.0.0`：
 
 ```text
 Hermes plugin tool search_web
   -> WebSearchRequest(query, max_results)
   -> CapabilityRegistry(web:read, timeout, output bytes)
   -> OpenAI Responses hosted web_search (tool_choice=required, store=false)
-  -> timeout/unsupported/empty 时 DuckDuckGo -> Bing
+  -> timeout/unsupported/empty 时 Brave Search API (optional) -> DuckDuckGo -> Bing
   -> URL citation annotation 或公开搜索结果 snippet
   -> public URL + domain policy validation
   -> run-scoped EvidenceRef(untrusted)
@@ -1453,9 +1462,12 @@ Hermes plugin tool search_web
 10. `calculate` 使用 AST 运算符/函数白名单并限制深度、指数和结果范围；`current_time` 仅接受 IANA
     timezone。两者使用 `MAX_GENERAL_TOOL_CALLS`，不访问模型或网络。
 
-兼容 provider 的 hosted search 仍需单独质量门禁；它不可用时不会阻断公开搜索。2026-08-12 的
-双源降级 live probe 已返回 3 条 URL evidence（OpenAI 官方文档与 Microsoft 文档），但 HTML 搜索
-属于 best-effort transport，生产环境仍建议配置正式搜索 API 并保留当前证据与安全边界。
+兼容 provider 的 hosted search 仍需单独质量门禁；它不可用时不会阻断公开搜索。正式环境可配置
+`BRAVE_SEARCH_API_KEY` 启用 Brave API（`X-Subscription-Token` header，默认 8 秒 deadline，支持
+country/search language/safesearch 参数），并保留公开 HTML search 作为最后的 best-effort fallback。
+provider chain 对每次尝试只审计 provider 名、结果类型、错误类别与耗时，绝不记录 key、header、query
+原文或 provider response body。2026-08-12 的双源 HTML 降级 live probe 已返回 3 条 URL evidence
+（OpenAI 官方文档与 Microsoft 文档）；它不是正式 API 的质量背书。
 
 ### 6.7 Agentic RAG 冻结基线
 
@@ -2074,7 +2086,16 @@ deterministic Pattern Draft miner、E+/E- selector、Postgres v12/v13/v14、Patt
 Promotion Evidence、transition ledger、run-scoped overlay identity/hash、稳定 Canary 分桶和
 capsule/retrieval/graph bounded consumer。生产回填为 33 Experience、33 Evaluation，二次新增 0、
 冲突 0；真实样本未达到稳定阈值，所以生产仍为 0 Draft Pattern，没有 Pattern 被伪造晋级。
-Canary health 与 auto rollback 属于 MH-015，尚未实现，因此当前不能宣称无人监督的在线策略闭环已成熟。
+MH-015 已实现保守的在线 health gate：每个 Canary/Active Pattern 只在 trigger predicate 匹配的
+Experience 中比较 `applied_pattern_versions` treatment 与未应用 control；两组默认各至少 5 条后，才评估
+质量均值、失败率与显式负反馈率。质量回退超过 0.05、失败率或负反馈率增加超过 0.10，或 treatment
+出现严重负反馈时，系统先写 append-only `health_gate` 决策，再执行 `ROLLED_BACK` transition。严重负反馈
+不等待最小样本；其他波动在样本不足时只报告 observing，不自动提升或回滚。`harness/effectiveness` 的 `causal_evidence` 也只认可真实
+treatment/control 观测，不再使用离线 evaluator 的 counterfactual projection 作为线上增益。
+
+当前 default 项目仍为 0 Pattern，因此闭环能力已经具备，但实际学习效果状态仍是 `observing`，不能宣称
+无人监督在线策略已成熟；达到 `validated` 还必须有经审批进入 Canary/Active、两组样本达标且观测质量
+提升为正的 Pattern。
 
 ### 10.12 Personal Control Plane（已实现）
 

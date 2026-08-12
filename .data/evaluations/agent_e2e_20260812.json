@@ -1,0 +1,124 @@
+{
+  "revision": "agent-e2e-v1",
+  "generated_at": "2026-08-12T11:10:43.299545Z",
+  "base_url": "http://127.0.0.1:8001",
+  "project_id": "default",
+  "passed": true,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "greeting",
+      "input": "哈哈你好",
+      "passed": true,
+      "run_id": "4a80cb76-a6d9-439f-83e0-7f5c602dd6d6",
+      "route": "conversation",
+      "strategy": "no_retrieval",
+      "tool_names": [],
+      "expected_tools": [],
+      "forbidden_tools": [
+        "search_knowledge",
+        "search_web",
+        "read_web_page"
+      ],
+      "first_event_ms": 3915,
+      "first_tool_ms": null,
+      "total_ms": 3915,
+      "terminal_event": "run.completed",
+      "answer_preview": "你好。",
+      "error_code": null,
+      "attempts": 1
+    },
+    {
+      "case_id": "calculator",
+      "input": "请精确计算 sqrt(81) + 2 ** 8，只给出计算结果。",
+      "passed": true,
+      "run_id": "e4490525-a8d5-4e32-b943-c3d95d418d57",
+      "route": "tool_action",
+      "strategy": "no_retrieval",
+      "tool_names": [
+        "calculate",
+        "hermesgraph_publish_answer"
+      ],
+      "expected_tools": [
+        "calculate"
+      ],
+      "forbidden_tools": [],
+      "first_event_ms": 2965,
+      "first_tool_ms": 8491,
+      "total_ms": 12711,
+      "terminal_event": "run.completed",
+      "answer_preview": "265",
+      "error_code": null,
+      "attempts": 1
+    },
+    {
+      "case_id": "current-time",
+      "input": "现在 Asia/Shanghai 的准确时间是什么？",
+      "passed": true,
+      "run_id": "5abb0a9c-8924-40ba-b0e0-fafe63f4211c",
+      "route": "tool_action",
+      "strategy": "no_retrieval",
+      "tool_names": [
+        "current_time",
+        "hermesgraph_publish_answer"
+      ],
+      "expected_tools": [
+        "current_time"
+      ],
+      "forbidden_tools": [],
+      "first_event_ms": 2499,
+      "first_tool_ms": 5413,
+      "total_ms": 9914,
+      "terminal_event": "run.completed",
+      "answer_preview": "Asia/Shanghai 当前时间是 2026 年 8 月 12 日 19:09:33（UTC+08:00）。",
+      "error_code": null,
+      "attempts": 1
+    },
+    {
+      "case_id": "web-search",
+      "input": "搜索当前 OpenAI Responses API 的官方网页搜索文档，给出来源。",
+      "passed": true,
+      "run_id": "b4ede408-ad39-4f52-a952-cddedb08254b",
+      "route": "passage_lookup",
+      "strategy": "single_step",
+      "tool_names": [
+        "search_web",
+        "hermesgraph_publish_answer"
+      ],
+      "expected_tools": [
+        "search_web"
+      ],
+      "forbidden_tools": [],
+      "first_event_ms": 7043,
+      "first_tool_ms": 20315,
+      "total_ms": 33401,
+      "terminal_event": "run.completed",
+      "answer_preview": "当前检索到的 OpenAI 官方文档显示：Responses API 可通过在 `client.responses.create(...)` 的 `tools` 中加入 `{ type: \"web_search\" }` 来启用内置网页搜索。官方 API 参考还记录了网页搜索相关配置，包括 `allowed_domains`、`search_context_size` 和近似的 `user_location`。\n\n来源：\n1. OpenAI Developer Quickstart：https://platform.openai.com/docs/quickstart/make-your-first-api-request\n2. OpenAI API Reference（Responses API 流式事件）：https://platform.openai.com/docs/api-reference/responses-streaming/response/refusal/delta?lang=curl\n\n说明：第二个链接是 Responses API 的 API Reference ",
+      "error_code": null,
+      "attempts": 1
+    },
+    {
+      "case_id": "web-page",
+      "input": "读取 https://developers.openai.com/api/docs/guides/tools-web-search 的正文，概括网页搜索工具。",
+      "passed": true,
+      "run_id": "1fcf6a5b-a936-48ab-9392-dcba9b912890",
+      "route": "passage_lookup",
+      "strategy": "single_step",
+      "tool_names": [
+        "read_web_page",
+        "hermesgraph_publish_answer"
+      ],
+      "expected_tools": [
+        "read_web_page"
+      ],
+      "forbidden_tools": [],
+      "first_event_ms": 5343,
+      "first_tool_ms": 12087,
+      "total_ms": 31697,
+      "terminal_event": "run.completed",
+      "answer_preview": "网页搜索工具用于让模型在生成回答前访问互联网，获取最新信息，并返回带来源引用的答案。\n\n核心要点：\n1. 三种搜索方式：非推理搜索适合快速查找；推理模型的 Agentic Search 会主动分析结果并决定是否继续搜索，适合复杂任务但延迟更高；Deep Research 面向长时间、深度调查，可能访问数百个来源，适合配合后台模式运行。\n2. 新项目推荐使用 Responses API，在 `tools` 数组中配置 `{ \"type\": \"web_search\" }`。模型会根据提示自行决定是否搜索。`web_search_preview` 仍可用于旧集成，但不支持较新的控制项。\n3. 结果结构：Responses API 会返回 `web_search_call`，其中记录搜索、打开网页或页内查找等动作；随后返回消息内容及 URL 引用注解。Chat Completions 则使用 `gpt-5-search-api` 和 `web_search_options`，并在 `message.content` 与 `annotations` 中提供结果和引用。\n4. 引用要求：面向最终用",
+      "error_code": null,
+      "attempts": 1
+    }
+  ]
+}

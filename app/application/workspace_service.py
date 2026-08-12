@@ -68,6 +68,10 @@ from app.domain.models import (
     utc_now,
 )
 from app.domain_packs.registry import DomainPackRegistry
+from app.evaluation.self_learning import (
+    SelfLearningEffectEvaluator,
+    SelfLearningEffectReport,
+)
 from app.graph.graph_candidate_service import GraphCandidateService
 from app.harness.evolution import HarnessPatternEvolutionService
 from app.harness.models import (
@@ -547,6 +551,27 @@ class WorkspaceService:
             limit=limit,
             learnable=learnable,
             success=success,
+        )
+
+    async def self_learning_effectiveness(
+        self,
+        *,
+        tenant_id: str = "local",
+        project_id: str = "default",
+        limit: int = 500,
+        minimum_experiences: int = 20,
+        minimum_feedback: int = 5,
+    ) -> SelfLearningEffectReport:
+        evaluator = SelfLearningEffectEvaluator(
+            self._harness_experiences,
+            self._harness_policies,
+            minimum_experiences=minimum_experiences,
+            minimum_feedback=minimum_feedback,
+        )
+        return await evaluator.evaluate(
+            tenant_id=tenant_id,
+            project_id=project_id,
+            limit=limit,
         )
 
     async def get_harness_experience(

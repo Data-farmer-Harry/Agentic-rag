@@ -93,6 +93,16 @@ class Settings(BaseSettings):
     harness_max_patterns_per_run: int = Field(default=3, ge=1, le=3)
     harness_bounded_consumer_enabled: bool = True
     harness_canary_percentage: int = Field(default=10, ge=0, le=100)
+    harness_health_min_applied_cases: int = Field(default=5, ge=3, le=500)
+    harness_health_min_control_cases: int = Field(default=5, ge=3, le=500)
+    harness_health_max_quality_regression: float = Field(default=0.05, ge=0.0, le=1.0)
+    harness_health_max_failure_rate_regression: float = Field(default=0.10, ge=0.0, le=1.0)
+    harness_health_max_negative_feedback_rate_regression: float = Field(
+        default=0.10, ge=0.0, le=1.0
+    )
+    harness_health_severe_negative_feedback_threshold: float = Field(
+        default=-0.8, ge=-1.0, le=0.0
+    )
     harness_max_capsule_memories: int = Field(default=20, ge=0, le=20)
     harness_max_graph_hops: int = Field(default=3, ge=1, le=3)
     harness_max_subqueries: int = Field(default=4, ge=1, le=4)
@@ -196,6 +206,11 @@ class Settings(BaseSettings):
     web_search_timeout_seconds: int = Field(default=45, ge=5, le=300)
     web_search_fallback_mode: Literal["disabled", "duckduckgo"] = "duckduckgo"
     web_search_primary_timeout_seconds: int = Field(default=12, ge=3, le=60)
+    brave_search_api_key: SecretStr | None = None
+    brave_search_timeout_seconds: int = Field(default=8, ge=2, le=60)
+    brave_search_country: str | None = None
+    brave_search_language: str | None = None
+    brave_search_safesearch: Literal["off", "moderate", "strict"] = "moderate"
     web_search_allowed_domains: list[str] = Field(default_factory=list, max_length=100)
     web_page_timeout_seconds: int = Field(default=15, ge=3, le=60)
     web_page_max_download_bytes: int = Field(default=1_000_000, ge=10_000, le=10_000_000)
@@ -318,6 +333,41 @@ class Settings(BaseSettings):
         if len(set(values)) != len(values):
             raise ValueError("workspace_enabled_knowledge_layers entries must be unique")
         return values
+
+    @field_validator("brave_search_api_key", mode="before")
+    @classmethod
+    def normalize_optional_brave_search_api_key(
+        cls,
+        value: str | SecretStr | None,
+    ) -> str | SecretStr | None:
+        if value is None:
+            return None
+        raw_value = value.get_secret_value() if isinstance(value, SecretStr) else value
+        return None if not raw_value.strip() else value
+
+    @field_validator("brave_search_country", mode="before")
+    @classmethod
+    def validate_brave_search_country(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        country = value.strip().upper()
+        if not country:
+            return None
+        if re.fullmatch(r"[A-Z]{2}", country) is None:
+            raise ValueError("BRAVE_SEARCH_COUNTRY must be a two-letter country code")
+        return country
+
+    @field_validator("brave_search_language", mode="before")
+    @classmethod
+    def validate_brave_search_language(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        language = value.strip().lower()
+        if not language:
+            return None
+        if re.fullmatch(r"[a-z]{2,3}(?:-[a-z]{2,4})?", language) is None:
+            raise ValueError("BRAVE_SEARCH_LANGUAGE must be a safe language tag")
+        return language
 
     @field_validator("computer_workspace_roots")
     @classmethod

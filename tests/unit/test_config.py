@@ -186,6 +186,33 @@ def test_web_search_domain_filters_reject_urls_and_ports() -> None:
         Settings(web_search_allowed_domains=["openai.com:443"])
 
 
+def test_optional_brave_search_configuration_normalizes_empty_values_without_provider_key() -> None:
+    defaults = Settings(
+        brave_search_api_key="",
+        brave_search_country="",
+        brave_search_language="",
+    )
+    assert defaults.brave_search_api_key is None
+    assert defaults.brave_search_country is None
+    assert defaults.brave_search_language is None
+
+    configured = Settings(
+        brave_search_api_key="brave-test-key",
+        brave_search_country="us",
+        brave_search_language="EN-us",
+        brave_search_safesearch="strict",
+    )
+    assert configured.brave_search_api_key is not None
+    assert configured.brave_search_country == "US"
+    assert configured.brave_search_language == "en-us"
+    assert configured.brave_search_safesearch == "strict"
+
+    with pytest.raises(ValidationError, match="BRAVE_SEARCH_COUNTRY"):
+        Settings(brave_search_country="USA")
+    with pytest.raises(ValidationError, match="BRAVE_SEARCH_LANGUAGE"):
+        Settings(brave_search_language="en_US")
+
+
 def test_computer_workspace_is_opt_in_and_requires_valid_roots(tmp_path: Path) -> None:
     assert Settings().computer_workspace_enabled is False
 

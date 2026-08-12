@@ -47,7 +47,8 @@ observe/shadow overlay，但 Pattern 定义中的 `status` 不能被原地覆写
 - 同一 Pattern version rollback 后不能重新激活；修复必须产生新版本。
 - Capsule、retrieval controller、AgentToolRuntime 和 Hermes Bridge 只读取冻结策略，不拥有
   学习或晋级逻辑。
-- 当前完成的是可治理的离线晋级和有界消费；Canary health 聚合与自动 rollback 属于 MH-015。
+- 可治理的离线晋级、有界消费及 MH-015 Canary applied/control health 与自动 rollback 已完成；生产
+  Pattern Bank 仍为 0，因此实际线上增益保持 `observing`。
 
 ## Verification
 

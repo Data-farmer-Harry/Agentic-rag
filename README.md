@@ -27,8 +27,8 @@ HermesGraph 是一个 Hermes-first、OpenAI-powered 的自进化多模态 Engine
 - Hermes 原生长期记忆、Skill、Todo 与后台回顾；每个 Agent 回合都触发隔离的 Memory/Skill review，父 session 关联、完成握手和延迟 bridge 释放保证迟到写入可审计。Memory/Skill 写入先保存 file/tree 快照，再镜像为脱敏 `native_applied/requires_audit` ChangeSet，支持 append-only 接受、after-hash 条件回滚、分状态 retention/GC 和容量健康 API。
 - MemoHarness Experience/Pattern 控制面：不可变 Experience/Evaluation、D1-D6、E+/E-、
   Postgres v12-v14、Pattern miner、required-case evaluator、Promotion Evidence、append-only
-  transition、稳定 Canary 分桶和 bounded consumer 已实现；生产 Pattern Bank 仍保守为 0 Draft，
-  Canary health/auto rollback 尚待 MH-015。
+  transition、稳定 Canary 分桶、bounded consumer、真实 applied/control health gate 与 auto rollback
+  已实现；生产 Pattern Bank 仍保守为 0 Draft，当前效果状态为 `observing`。
 - HermesGraph 受治理 Prompt capsule、声明式 Skill、稳定模式挖掘、冻结能力反事实回放、SemVer refinement、shadow/canary 健康门禁和自动 rollback；在线只允许激活 run snapshot 钉住的 Canary/Active 精确版本，不执行任意 Skill 脚本或扩大工具权限。
 - Personal Control Plane：作用域 Task/Plan/Step/Checklist/Note、Persona/Onboarding、可编辑 Day Archive/Diary/Calendar、自然语言 Memory forget/replace 与确定性 Emotion reducer；JSON/Postgres v11+v15 双后端、乐观锁、append-only event、6 个 Hermes tools 和 bounded runtime capsule。聊天输入框可以无模型快速记录任务、带截止时间的日程和当天笔记，保存后精确跳转到行动中心或对应日期。
 - Responses Structured Reflection：Pydantic 严格输出、信号触发、服务端作用域/来源绑定、拒答/超时/协议错误确定性降级，模型不能直接写 Memory 或晋级 Skill。
@@ -131,6 +131,13 @@ WEB_SEARCH_MODEL=gpt-5.6-sol
 WEB_SEARCH_CONTEXT_SIZE=medium
 WEB_SEARCH_MAX_RESULTS=8
 MAX_WEB_SEARCH_TOOL_CALLS=3
+# Optional formal provider. The runtime order is Responses hosted -> Brave -> DuckDuckGo -> Bing.
+# Leave empty to skip Brave without changing the current fallback path.
+BRAVE_SEARCH_API_KEY=
+BRAVE_SEARCH_TIMEOUT_SECONDS=8
+BRAVE_SEARCH_COUNTRY=
+BRAVE_SEARCH_LANGUAGE=
+BRAVE_SEARCH_SAFESEARCH=moderate
 # 可选；必须是 JSON 数组，且只写 bare DNS domain
 WEB_SEARCH_ALLOWED_DOMAINS=[]
 LEARNING_REFLECTOR_MODE=openai
@@ -154,7 +161,11 @@ LEARNING_JOB_WORKER_ENABLED=true
 ./.venv/bin/python -m app.web_search.cli
 ```
 
-Web Search 默认关闭；启用时会把查询发送给配置的模型 provider。不要把凭据、私有记录或无关个人信息放入联网查询。live gate 只输出 query hash、模型、provider revision、citation/source 数量和公开 URL，不打印 key。
+Web Search 默认关闭；启用时会先调用配置模型 provider 的 Responses hosted search。若配置
+`BRAVE_SEARCH_API_KEY`，hosted tool 超时、失败或无证据时会转入 Brave Search API；随后才是
+DuckDuckGo/Bing 的 best-effort HTML fallback。没有 Brave key 时会自动跳过正式 API，不改变既有
+`hosted -> DuckDuckGo -> Bing` 链路。不要把凭据、私有记录或无关个人信息放入联网查询。运行 trace
+只记录 provider 名、错误类型、耗时和公开 URL，不打印 key、请求 header 或 provider error body。
 
 运行固定 Web Search 门禁。`contract` 不读取 provider 凭据，也不联网；`live` 才会执行真实
 Responses hosted tool。报告不保存原始 query 或网页正文，只保存 query fingerprint、公开域名、
@@ -509,7 +520,20 @@ docker compose config
 ./.venv/bin/python -m app.evaluation.vision_cli --report-only
 ./.venv/bin/python -m app.evaluation.retrieval_cli --planner-mode deterministic
 ./.venv/bin/python -m app.evaluation.web_search_cli --execution contract
+./.venv/bin/python scripts/agent_e2e.py \
+  --output .data/evaluations/agent_e2e.json
+./.venv/bin/python -m app.evaluation.answer_quality_cli \
+  --use-embedded-fixture \
+  --output .data/evaluations/answer_quality_fixture.json
+./.venv/bin/python -m app.evaluation.self_learning_cli \
+  --base-url http://127.0.0.1:8001 \
+  --output .data/evaluations/self_learning_live.json
 ```
+
+`answer_quality_fixture` 只验证评测器与门槛，不是在线质量成绩。真实比较必须通过 `--answers` 输入
+带 `live_run` provenance 的已录制 GraphRAG/vector-only 或 Self-RAG/single-step 成对 artifacts。
+自学习报告只有在 Pattern 经审批进入 Canary/Active、真实 applied/control 样本均达标且观测增益为正时
+才返回 `validated`；Experience 已采集但尚无这种证据时返回 `observing`。
 
 当前仍未完成的关键项包括公开 `/v1` 用户认证/scope 授权、交互 Run 的 SSE
 cursor/resume、DOCX/XLSX durable ingestion、开放分布 Skill replay 与真实 provider/tool 仿真、

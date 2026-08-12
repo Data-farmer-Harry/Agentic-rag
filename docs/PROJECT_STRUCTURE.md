@@ -45,9 +45,11 @@
 | `app/learning/` | 回合反思、Memory/Skill 候选、评估、晋升与后台任务 |
 | `app/harness/` | MemoHarness 固定化经验、诊断、pattern 治理和回填 |
 | `app/memory/` | 项目记忆存储、写入门禁和安全 prompt 编译 |
+| `app/evaluation/` | 检索、回答质量、Agent E2E 与自学习效果门禁 |
+| `app/harness/` | Experience/Pattern、受控消费、真实健康监控与自动回滚 |
 | `app/skills/` | governed skill registry、版本选择和激活 |
 | `app/personal/` | Task、Plan、Note、Persona、Emotion 和日归档控制面 |
-| `app/web_search/` | 外部网页检索 provider 与 live contract |
+| `app/web_search/` | Hosted、Brave API、HTML fallback provider 与 live contract |
 | `app/sources/` | arXiv 等离线知识源同步和 OCR 入口 |
 | `app/infra/` | Postgres 等持久化实现与 schema migration |
 | `app/capabilities/` | Capability Registry、LangChain 桥接和适配器 |

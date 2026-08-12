@@ -59,7 +59,7 @@ Letta 和 Graphiti 只作为能力设计参考，不并入第二个控制循环�
 
 - GraphRAG 有局部实体、多跳路径、冲突和向量图融合，但无 community report、global、DRIFT。
 - 自进化有 Hermes 原生直接学习与 HermesGraph 治理学习；批准后的 Pattern 已能影响低风险参数，
-  但生产 Pattern Bank 当前仍为 0 Draft，且 Canary health/auto rollback 尚未完成。
+  Canary health/auto rollback 已完成，但生产 Pattern Bank 当前仍为 0 Draft，尚无真实线上增益证据。
 - Qdrant hybrid 已上线，但 production embedding 和学习型 reranker 未完成。
 - Neo4j 结构图完整，当前 active 语义实体/关系受 KG backfill 进度限制。
 - durable learning job 可恢复；在线交互 run 仍缺持久 event cursor/resume。
@@ -100,7 +100,7 @@ Skill 天然正确。
 | P1 | GraphRAG communities + global/DRIFT | 补齐跨文档主题综述和探索式查询 |
 | P2 | durable interactive Run events/cursor | 支持断线恢复和长任务继续 |
 | P2 | 更多 connectors/MCP | 扩大个人知识来源，但不改变核心架构 |
-| 延后 | MH-015/016/017 | 保留设计，不再优先于用户可感知的 Agent 平台交互 |
+| 完成/延后 | MH-015 已完成；MH-016/017 延后 | health/rollback 已闭环，跨资产 fixation router 与 ownership audit 后续再做 |
 
 ## 6. 不采用的做法
 

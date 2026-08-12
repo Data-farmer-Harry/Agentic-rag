@@ -270,8 +270,8 @@ Hermes 是唯一在线 Agent Loop。`AgenticRetrievalController` 是有界检索
 
 受限项：
 
-- MemoHarness E/G 经验银行和 run overlay 只有专项设计，尚未实现。
-- RAG 参数不会根据 Experience Pattern 在线自动优化。
+- MemoHarness E/G 经验银行、run overlay、bounded consumer 与 health/auto rollback 已实现。
+- RAG 参数只会在 Pattern 通过离线门禁和人工 Canary/Active 后有界调整；当前 0 Pattern，不会伪造优化。
 - Memory 目前是单独能力，不是每次知识搜索都自动混入。
 
 ## 6. 成熟度矩阵

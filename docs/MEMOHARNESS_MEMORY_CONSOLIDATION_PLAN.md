@@ -23,8 +23,8 @@ Hermes-first 自进化架构，用于改进固定化记忆、检索策略和任�
 
 本文同时保留目标设计和实际实施状态。当前已完成 Experience/Evaluation、D1-D6、Postgres
 v12/v13/v14、Pattern Draft miner、E+/E-、Pattern evaluator、Promotion Evidence、append-only
-transition ledger、observe/shadow overlay 和 bounded Canary/Active consumer。Canary health 与
-auto rollback 尚未完成，并按 2026-07-31 产品决策暂停，当前优先完善会话、记忆和直接使用体验。
+transition ledger、observe/shadow overlay、bounded Canary/Active consumer，以及 applied/control
+Canary health 与 auto rollback。生产 Pattern Bank 仍为 0，因此能力完成不等于效果已验证。
 实际完成状态以本文件第 19、26 节、`PROGRESS.md` 和测试报告为准。
 
 ## 2. 结论先行
@@ -1087,8 +1087,8 @@ observe/shadow selector 和 exact hash 均已实现。
 
 ### Phase 5：有界 Canary 应用
 
-状态：部分完成：`MH-014` bounded consumer、稳定 Canary 分桶、RunContext/RunSnapshot 冻结和
-capsule/retrieval/graph 消费已完成；`MH-015` health 聚合与 auto rollback 待实现。
+状态：完成：`MH-014` bounded consumer、稳定 Canary 分桶、RunContext/RunSnapshot 冻结、
+capsule/retrieval/graph 消费，以及 `MH-015` applied/control health 聚合与 auto rollback 已实现。
 
 步骤：
 
@@ -1357,7 +1357,7 @@ Draft miner 时，应描述为“模式候选可生成”，不能描述为“Ag
 | MH-012 | shadow overlay selector | MH-009, MH-011 | 完成；effective status 来自 ledger，Shadow 不应用行为 |
 | MH-013 | RunSnapshot overlay identity/hash | MH-012 | 完成 |
 | MH-014 | capsule/retrieval bounded overlay consumer | MH-013 | 完成；稳定分桶、exact policy/hash、capsule/retrieval/graph |
-| MH-015 | canary health 与 auto rollback | MH-014 | 待实现 |
+| MH-015 | canary health 与 auto rollback | MH-014 | 完成；applied/control 最小样本、质量/失败率/负反馈门禁、严重负反馈即时回滚 |
 | MH-016 | Memory/Skill/Policy fixation router | MH-010, MH-015 | 待实现 |
 | MH-017 | Hermes native ownership-conflict audit | MH-016 | 待实现 |
 | MH-018 | scoped control APIs | MH-003, MH-011 | 后端完成：Experience/Pattern/Overlay、evaluate、transition、evidence ledger |
@@ -1377,9 +1377,9 @@ Draft miner 时，应描述为“模式候选可生成”，不能描述为“Ag
 
 当前结果包括双层经验银行底层 `E`、六维可解释诊断、Postgres durable learning、
 exact-version provenance、fencing/reconciliation 和无 API 离线回填；随后已完成 Pattern Draft
-miner、Pattern evaluator、Promotion Evidence、transition ledger、observe/shadow selector 和
-bounded consumer。该专项恢复后，其技术依赖顺序仍为 `MH-015 -> MH-016 -> MH-017`；这不是
-当前产品优先级。未通过 health gate 的 Canary 不得进入 Active，rollback 后同一版本不得重新激活。
+miner、Pattern evaluator、Promotion Evidence、transition ledger、observe/shadow selector、
+bounded consumer 和 MH-015 health/rollback。后续依赖顺序为 `MH-016 -> MH-017`；这不是当前产品
+优先级。未通过 health gate 的 Canary 不得进入 Active，rollback 后同一版本不得重新激活。
 
 ## 28. 论文方法与项目实现对照
 

@@ -208,6 +208,35 @@ class HarnessPatternEvolutionService:
             actor=actor,
         )
 
+    async def record_health_gate(
+        self,
+        pattern_id: UUID,
+        *,
+        reasons: list[str],
+        tenant_id: str = "local",
+        project_id: str = "default",
+        pattern_version: str | None = None,
+    ) -> HarnessPatternTransition:
+        pattern = await self._require_pattern(
+            pattern_id,
+            tenant_id=tenant_id,
+            project_id=project_id,
+            pattern_version=pattern_version,
+        )
+        current = await self.effective_status(pattern)
+        return await self._save_transition(
+            pattern,
+            current=current,
+            target=current,
+            transition_type="health_gate",
+            reasons=reasons or ["health_gate_failed_without_reason"],
+            allowed=False,
+            evaluation=await self.latest_evaluation(pattern),
+            promotion_evidence=await self.latest_promotion_evidence(pattern),
+            human_approved=False,
+            actor="health_monitor",
+        )
+
     async def effective_status(self, pattern: HarnessPattern) -> HarnessPatternStatus:
         transitions = await self._policies.list_pattern_transitions(
             pattern.pattern_id,

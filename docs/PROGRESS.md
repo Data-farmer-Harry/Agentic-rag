@@ -1,10 +1,10 @@
 # HermesGraph Progress
 
-最后更新：2026-08-05
+最后更新：2026-08-12
 
 ## 当前阶段
 
-产品北极星已锁定为 **Hermes-first、OpenAI-powered、自进化、多模态的 Engineering Intelligence Agent**。研发团队的内部知识问答、系统理解、事故复盘、影响分析和工程入职是默认业务主线；个人论文、笔记、任务和长期学习继续由同一套内核支持，不拆第二套 Agent。Hermes Agent `0.19.0` 是唯一在线 Agent Runtime；HermesGraph 继续拥有 Agentic RAG、Qdrant/Neo4j 证据层、Postgres durable learning、Vision/Structured Outputs 和严格答案发布。MemoHarness Experience Bank、D1-D6、Pattern evaluator、Promotion Evidence、transition ledger、稳定 Canary 分桶与 bounded consumer 已落地；生产数据仍保守为 0 Draft Pattern，MH-015 health/auto rollback 尚未完成。OpenAI Agents SDK fallback 已删除；OpenAI Python SDK 继续提供 Responses、Structured Outputs、Vision、Embeddings、Web Search、图谱抽取和反思。
+产品北极星已锁定为 **Hermes-first、OpenAI-powered、自进化、多模态的 Engineering Intelligence Agent**。研发团队的内部知识问答、系统理解、事故复盘、影响分析和工程入职是默认业务主线；个人论文、笔记、任务和长期学习继续由同一套内核支持，不拆第二套 Agent。Hermes Agent `0.19.0` 是唯一在线 Agent Runtime；HermesGraph 继续拥有 Agentic RAG、Qdrant/Neo4j 证据层、Postgres durable learning、Vision/Structured Outputs 和严格答案发布。MemoHarness Experience Bank、D1-D6、Pattern evaluator、Promotion Evidence、transition ledger、稳定 Canary 分桶、bounded consumer 与基于真实 treatment/control 的 health/auto rollback 已落地；生产数据当前仍保守为 0 Draft Pattern，效果门禁状态为 `observing`，不能宣称已验证学习增益。OpenAI Agents SDK fallback 已删除；OpenAI Python SDK 继续提供 Responses、Structured Outputs、Vision、Embeddings、Web Search、图谱抽取和反思。
 
 当前产品优先级已经切换为“可直接使用”：独立会话、新建/切换/刷新恢复、按 session 草稿、显式
 长期记忆、会话重命名/归档/恢复、聊天附件、带说明反馈和失败重试、可跳过的 Persona 首次设置、
@@ -28,7 +28,7 @@
 | OpenAI 模型能力层 | 完成（SDK 原语） | 官方 `openai` Python SDK、Responses/Structured Outputs/Vision/Embeddings/Web Search adapters | 不拥有 Agent Loop；`openai-agents`、`RUNTIME_MODE=openai` 和 SDK session 已删除 |
 | OpenAI-compatible provider | 可用（批量长尾仍需重试） | 共享 model client、宿主/Docker base URL | v6 的 5-case/18-case Structured Outputs 门禁通过；固定 12 并发两批分别 13/20、15/20，失败均为 timeout |
 | LangChain Integration Runtime | 完成（P0） | LCEL pipeline、Capability Registry、callbacks、adapters | scope/schema/timeout/partial failure 测试通过 |
-| 公共 Web 与通用工具 | 完成（v2） | hosted search + DuckDuckGo/Bing 降级、网页正文读取、计算器、时区时间、`web:read`/`utility:execute` | 2026-08-12 live 搜索返回 3 条 URL evidence；SSRF/redirect/secret/budget/AST 安全合同与全量回归通过；hosted provider gate 仍独立保留 |
+| 公共 Web 与通用工具 | 完成（v3；Brave live gate 待 key） | Responses hosted + 可选 Brave API + DuckDuckGo/Bing 降级、网页正文读取、计算器、时区时间、`web:read`/`utility:execute` | HTML 降级 live 搜索返回 3 条 URL evidence；Brave adapter/provider-chain/secret/URL policy/timeout trace 合同通过，正式 provider live 质量门禁待配置 key |
 | 本地知识图谱 | 完成（P0） | typed graph、evidence relationship、allowlisted traversal | 邻居、路径、冲突和租户隔离测试通过 |
 | GraphRAG Tool Suite | 完成（后端 v1） | 实体解析、证据子图、实体对比、固定模板遍历、Hermes/API/Capability 合同 | 本地拓扑、Neo4j 参数化/scope/evidence contract、Hermes schema/budget/citation、真实 Compose 三接口通过 |
 | Computer Workspace Toolset | 完成（安全只读 v1） | list/read/search、文本/代码/PDF/DOCX/XLSX、root/scope/symlink/secret/预算门禁 | capability/bridge/plugin/publisher/Office extraction 单元测试与真实 Compose capability 注册通过 |
@@ -37,7 +37,7 @@
 | Hermes 原生学习治理 | 完成（后端 v2） | 写前 file/tree 快照、before/after hash、append-only review、接受/条件回滚、retention/GC、容量/备份健康、内网 admin | 未审阅 fail-safe 保留、accepted/rolled-back/no-change 期限、1 GB 容量门禁、鉴权与 API scope 测试通过 |
 | 学习闭环 | 完成（P1 durable v10 + quantified promotion） | Structured reflection、稳定 miner、冻结能力 replay、SemVer refinement、不可变 promotion evidence、按 run 反馈覆盖、Shadow/Canary health、人工晋级、建议/自动 rollback、Postgres durable ledger | 轻度负反馈建议回滚、严重负反馈立即回滚、窗口退化回滚、证据 scope/version 校验和幂等审计通过；全套回归通过 |
 | 会话感知路由 | 完成（v2） | scope 隔离历史、独立 `gpt-5.6-luna` 快速通道、typed routing lane、22-case 黄金集与评测 CLI | 无历史确认确定性返回；有历史确认进入模型；事实/知识/行动 fail-safe Hermes；静态合同全绿，live gate 见 2026-07-30 记录 |
-| MemoHarness 固定化记忆 | Phase 1-4、MH-014 完成；MH-015 待实现 | `app/harness/`、Postgres v12-v14、ADR-011、专项规划 | 33 Experience + 33 Evaluation；0 Draft；required-case evaluator/Promotion Evidence/transition/bounded policy contract；16/16 真实 Postgres contract |
+| MemoHarness 固定化记忆 | Phase 1-5、MH-015 完成 | `app/harness/`、Postgres v12-v14、ADR-011、专项规划 | 41 Experience + 41 Evaluation；0 Draft；required-case evaluator/Promotion Evidence/transition/bounded policy、applied/control health 与 auto rollback contract |
 | 开源 Agentic RAG 差距审计 | 完成 | `docs/OPEN_SOURCE_AGENTIC_RAG_GAP_ANALYSIS.md` | 对照 GraphRAG、LightRAG、KAG、RAGFlow、LlamaIndex、Haystack、Graphiti、Mem0、Letta、Hermes；锁定四类 P0/P1 差距 |
 | OpenAI Structured Reflection | 完成（live contract） | Responses parse、Pydantic schema、信号触发、服务端 provenance、deterministic fallback | 本机 `gpt-5.6-sol` 返回 live structured；无持久经验时保守选择 none |
 | 外部存储适配器 | 完成（当前 P1 范围） | Qdrant、Neo4j、Postgres ingestion/learning jobs/artifacts/transitions/versioned links、knowledge/outbox | migration v1-v10、旧资产导入、reconciliation、真实 Postgres contract、双 worker 与重启通过 |
@@ -125,7 +125,8 @@
 19. MemoHarness 已有 Experience Bank、Pattern miner、Pattern Evaluation、Promotion Evidence、
     append-only transition、observe/shadow、人工 Canary/Active 和 bounded consumer。第一版只消费
     capsule memory limit/confidence、retrieval profile/subquery/round 和 graph hop；生产 Pattern
-    Bank 当前仍为 0 Draft，且 MH-015 health/auto rollback 未完成，不能宣称无人监督闭环已成熟。
+    Bank 当前仍为 0 Draft；MH-015 health/auto rollback 已完成，但尚无真实 applied/control 增益，
+    因此仍不能宣称无人监督闭环已成熟。
 20. 当前系统满足 Agentic RAG 的核心行为定义，但还不是生产级 Agentic GraphRAG。主要差距是
     deterministic dense 仍承载主索引、active 语义 KG 未完成、required-term gap 不是硬约束、
     Publisher 不做 claim-evidence entailment、没有学习型 reranker。Hermes 0.19 首发/正常收尾/
@@ -1049,7 +1050,8 @@
    补 Hermes 版本升级、容量耗尽、worker 强杀与恢复矩阵。
 4. 恢复 RAG 开发时按差距文档顺序实施 reranker/entailment、temporal fact、community/global/DRIFT；
    KG backfill 继续作为独立数据维护，不与这些架构工作混合。
-5. `MH-015` Pattern Canary health/auto rollback 延后，不再优先于用户可直接感知的交互闭环。
+5. `MH-015` Pattern Canary health/auto rollback 已于 2026-08-12 完成；下一阶段只在真实 Pattern 经审批
+   进入 Canary 后采集 applied/control 证据，不为演示伪造晋级数据。
 
 ## 2026-07-31 可恢复会话与显式记忆交互
 
@@ -1457,3 +1459,26 @@
   2.53 秒；随后“Python 中列表和元组有什么区别”在 4.18 秒返回 run，provider 阶段 4.09 秒。两者
   均为 `no_retrieval/conversation`、HTTP 202 后正常 completed、0 tool event、未启动 RAG；主模型仍为
   `gpt-5.6-luna`。全量回归更新为 `412 passed / 17 skipped`，164 文件 strict mypy 与 Ruff 全绿。
+
+## 2026-08-12 正式 Web Search Provider Chain
+
+- 新增 `BraveWebSearch`，使用 Brave Web Search API 的 `X-Subscription-Token` header，统一输出
+  run-scoped `UNTRUSTED` Web evidence；结果继续经过公开 URL、domain allowlist、tracking 参数清理和
+  secret-query 门禁。adapter 不记录 key、header、原始 provider response body 或 provider error text。
+- bootstrap 现在按 `Responses hosted -> Brave API (optional) -> DuckDuckGo HTML -> Bing HTML` 组装链路。
+  `BRAVE_SEARCH_API_KEY` 为空时不实例化 Brave，原 `hosted -> DuckDuckGo -> Bing` 路径与超时保持不变。
+- `WebSearchProviderChain` 将每次尝试的 provider 名、成功/空结果/错误类型和耗时写入 trace；它不会
+  将 query 原文或凭据带入运行审计。Brave 的正式 live 质量门禁尚未运行，因为仓库没有配置该 key。
+
+## 2026-08-12 Agent、回答质量与自学习效果门禁
+
+- 新增真实 `/runs/start + SSE` 五场景验收：普通寒暄不检索，计算器、时区时间、网页搜索和网页读取
+  均要求实际工具调用；当前报告为 5/5 通过，artifact 保存于 `.data/evaluations/`。
+- 新增 fail-closed 回答级评测，覆盖 claim support、citation coverage、citation-claim support 与
+  hallucination rate，并支持 GraphRAG/vector-only、Self-RAG/single-step 成对增益。仓库自带样本明确
+  标注为 `offline_fixture`，不会伪装成 live benchmark。
+- 新增 `GET /v1/projects/{project_id}/harness/effectiveness` 与 CLI。当前 default 项目真实数据为
+  41 Experience、100% evaluation coverage、0 Pattern，状态 `observing`；这表示采集链路正常，但尚无
+  真实在线学习增益证据。
+- 新增 Canary/Active Pattern health monitor：只比较匹配任务的真实 applied/control 经验；样本不足
+  时不动作，质量、失败率、负反馈或严重负反馈越界时写 append-only health gate 并自动 rollback。

@@ -1040,6 +1040,21 @@ def create_app(
                 success=success,
             )
 
+        @app.get("/v1/projects/{project_id}/harness/effectiveness")
+        async def get_self_learning_effectiveness(
+            project_id: str,
+            limit: int = Query(default=500, ge=1, le=500),
+            minimum_experiences: int = Query(default=20, ge=1, le=500),
+            minimum_feedback: int = Query(default=5, ge=0, le=500),
+        ) -> Any:
+            return await workspace.self_learning_effectiveness(
+                tenant_id=current_request_identity().tenant_id,
+                project_id=project_id,
+                limit=limit,
+                minimum_experiences=minimum_experiences,
+                minimum_feedback=minimum_feedback,
+            )
+
         @app.get(
             "/v1/projects/{project_id}/harness/experiences/{experience_id}"
         )

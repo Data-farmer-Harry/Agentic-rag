@@ -1,0 +1,169 @@
+{
+  "name": "HermesGraph answer-quality offline fixture",
+  "revision": "2026-08-12-v1",
+  "dataset_kind": "offline_fixture",
+  "fixture_notice": "This file contains deterministic offline fixture annotations and fixture answer artifacts. It is not live retrieval, live model output, or a benchmark result.",
+  "cases": [
+    {
+      "case_id": "graph-service-boundary",
+      "query": "Which service is the public entry point, and which service coordinates graph-aware knowledge answers?",
+      "category": "graph_relationship",
+      "expected_claims": [
+        {
+          "claim_id": "public-entry",
+          "text": "Gatehouse is the only public API entry point."
+        },
+        {
+          "claim_id": "graph-coordination",
+          "text": "Relay coordinates graph-aware knowledge answers through the graph service."
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "gatehouse-boundary",
+          "source_id": "fixture:architecture:system-overview",
+          "text": "Clients connect only to Gatehouse; no service may expose a public interface directly.",
+          "supports_claim_ids": ["public-entry"]
+        },
+        {
+          "evidence_id": "relay-graph-flow",
+          "source_id": "fixture:architecture:system-overview",
+          "text": "Relay coordinates knowledge queries and invokes the graph service for relationship and impact questions.",
+          "supports_claim_ids": ["graph-coordination"]
+        }
+      ],
+      "required_variants": ["graph_rag"],
+      "required_comparisons": ["graph_rag_vs_vector_only"],
+      "minimum_claim_support_rate": 1.0,
+      "minimum_citation_coverage": 1.0,
+      "minimum_citation_claim_support_rate": 1.0,
+      "maximum_hallucination_rate": 0.0,
+      "pair_policy": {
+        "minimum_claim_support_rate_gain": 0.0,
+        "minimum_citation_coverage_gain": 0.0,
+        "minimum_citation_claim_support_rate_gain": 0.0,
+        "minimum_hallucination_rate_reduction": 0.0
+      }
+    },
+    {
+      "case_id": "self-rag-second-round",
+      "query": "When may a second retrieval round run, and when must it stop?",
+      "category": "self_rag_reflection",
+      "expected_claims": [
+        {
+          "claim_id": "second-round-trigger",
+          "text": "A second retrieval round may run when required terms or source coverage are incomplete."
+        },
+        {
+          "claim_id": "second-round-stop",
+          "text": "Retrieval stops when evidence is sufficient, the budget is exhausted, the user cancels, or remaining queries cannot add evidence."
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "round-trigger",
+          "source_id": "fixture:architecture:request-data-flow",
+          "text": "The second round is allowed only when required terms are missing or source coverage is incomplete.",
+          "supports_claim_ids": ["second-round-trigger"]
+        },
+        {
+          "evidence_id": "round-stop",
+          "source_id": "fixture:architecture:request-data-flow",
+          "text": "Stop at evidence sufficiency, budget exhaustion, user cancellation, or when another query cannot add evidence.",
+          "supports_claim_ids": ["second-round-stop"]
+        }
+      ],
+      "required_variants": ["self_rag"],
+      "required_comparisons": ["self_rag_vs_single_step"],
+      "minimum_claim_support_rate": 1.0,
+      "minimum_citation_coverage": 1.0,
+      "minimum_citation_claim_support_rate": 1.0,
+      "maximum_hallucination_rate": 0.0,
+      "pair_policy": {
+        "minimum_claim_support_rate_gain": 0.0,
+        "minimum_citation_coverage_gain": 0.0,
+        "minimum_citation_claim_support_rate_gain": 0.0,
+        "minimum_hallucination_rate_reduction": 0.0
+      }
+    }
+  ],
+  "fixture_artifacts": {
+    "provenance": {
+      "kind": "offline_fixture",
+      "label": "deterministic answer-quality fixture artifacts",
+      "model_revision": "fixture-only"
+    },
+    "answers": [
+      {
+        "case_id": "graph-service-boundary",
+        "variant": "vector_only",
+        "answer_markdown": "Gatehouse is the only public API entry point.",
+        "claim_inventory_complete": true,
+        "citation_inventory_complete": true,
+        "claims": [
+          {
+            "claim_id": "public-entry",
+            "text": "Gatehouse is the only public API entry point.",
+            "citation_ids": ["gatehouse-boundary"]
+          }
+        ],
+        "cited_evidence_ids": ["gatehouse-boundary"]
+      },
+      {
+        "case_id": "graph-service-boundary",
+        "variant": "graph_rag",
+        "answer_markdown": "Gatehouse is the only public API entry point. Relay coordinates graph-aware knowledge answers through the graph service.",
+        "claim_inventory_complete": true,
+        "citation_inventory_complete": true,
+        "claims": [
+          {
+            "claim_id": "public-entry",
+            "text": "Gatehouse is the only public API entry point.",
+            "citation_ids": ["gatehouse-boundary"]
+          },
+          {
+            "claim_id": "graph-coordination",
+            "text": "Relay coordinates graph-aware knowledge answers through the graph service.",
+            "citation_ids": ["relay-graph-flow"]
+          }
+        ],
+        "cited_evidence_ids": ["gatehouse-boundary", "relay-graph-flow"]
+      },
+      {
+        "case_id": "self-rag-second-round",
+        "variant": "single_step",
+        "answer_markdown": "A second retrieval round may run when required terms or source coverage are incomplete.",
+        "claim_inventory_complete": true,
+        "citation_inventory_complete": true,
+        "claims": [
+          {
+            "claim_id": "second-round-trigger",
+            "text": "A second retrieval round may run when required terms or source coverage are incomplete.",
+            "citation_ids": ["round-trigger"]
+          }
+        ],
+        "cited_evidence_ids": ["round-trigger"]
+      },
+      {
+        "case_id": "self-rag-second-round",
+        "variant": "self_rag",
+        "answer_markdown": "A second retrieval round may run when required terms or source coverage are incomplete. Retrieval stops when evidence is sufficient, the budget is exhausted, the user cancels, or remaining queries cannot add evidence.",
+        "claim_inventory_complete": true,
+        "citation_inventory_complete": true,
+        "claims": [
+          {
+            "claim_id": "second-round-trigger",
+            "text": "A second retrieval round may run when required terms or source coverage are incomplete.",
+            "citation_ids": ["round-trigger"]
+          },
+          {
+            "claim_id": "second-round-stop",
+            "text": "Retrieval stops when evidence is sufficient, the budget is exhausted, the user cancels, or remaining queries cannot add evidence.",
+            "citation_ids": ["round-stop"]
+          }
+        ],
+        "cited_evidence_ids": ["round-trigger", "round-stop"]
+      }
+    ]
+  }
+}

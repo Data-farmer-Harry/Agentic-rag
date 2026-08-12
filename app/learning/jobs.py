@@ -25,6 +25,7 @@ from app.domain.models import (
     SkillObservation,
 )
 from app.harness.experience import HarnessExperienceService
+from app.harness.health import HarnessPatternHealthMonitor
 from app.harness.mining import DeterministicPatternMiner
 from app.learning.engine import LearningEngine
 from app.learning.evaluator import TrajectoryEvaluation
@@ -68,12 +69,14 @@ class LearningWorkflowProcessor:
         learning_mode: str,
         harness_experiences: HarnessExperienceService | None = None,
         harness_pattern_miner: DeterministicPatternMiner | None = None,
+        harness_health_monitor: HarnessPatternHealthMonitor | None = None,
     ) -> None:
         self._learning = learning
         self._skill_evolution = skill_evolution
         self._learning_mode = learning_mode
         self._harness_experiences = harness_experiences
         self._harness_pattern_miner = harness_pattern_miner
+        self._harness_health_monitor = harness_health_monitor
 
     async def __call__(self, trajectory: RunTrajectory) -> LearningJobResult:
         decision = assess_automatic_learning(trajectory)
@@ -125,6 +128,11 @@ class LearningWorkflowProcessor:
             harness_evaluation_ids.append(collected.evaluation.evaluation_id)
             if self._harness_pattern_miner is not None:
                 await self._harness_pattern_miner.mine_scope(
+                    tenant_id=trajectory.context.tenant_id,
+                    project_id=trajectory.context.project_id,
+                )
+            if self._harness_health_monitor is not None:
+                await self._harness_health_monitor.monitor_scope(
                     tenant_id=trajectory.context.tenant_id,
                     project_id=trajectory.context.project_id,
                 )
@@ -281,6 +289,11 @@ class LearningWorkflowProcessor:
                 )
                 if self._harness_pattern_miner is not None:
                     await self._harness_pattern_miner.mine_scope(
+                        tenant_id=stage_job.tenant_id,
+                        project_id=stage_job.project_id,
+                    )
+                if self._harness_health_monitor is not None:
+                    await self._harness_health_monitor.monitor_scope(
                         tenant_id=stage_job.tenant_id,
                         project_id=stage_job.project_id,
                     )

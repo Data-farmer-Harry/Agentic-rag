@@ -7,7 +7,11 @@ from uuid import UUID
 from app.domain.enums import DocumentStatus
 from app.domain.models import (
     AnswerResponse,
+    CalculationRequest,
+    CalculationResult,
     ConversationMetadata,
+    CurrentTimeRequest,
+    CurrentTimeResult,
     DomainPackManifest,
     EntityResolutionCandidate,
     EvidenceRef,
@@ -42,6 +46,8 @@ from app.domain.models import (
     SkillObservation,
     SkillTransitionEvent,
     VisionAnalysis,
+    WebPageReadRequest,
+    WebPageReadResult,
     WebSearchRequest,
     WebSearchResult,
     WorkspaceFileReadRequest,
@@ -126,6 +132,26 @@ class WebSearchPort(Protocol):
         request: WebSearchRequest,
         context: RunContext,
     ) -> WebSearchResult: ...
+
+
+class GeneralToolsPort(Protocol):
+    async def read_web_page(
+        self,
+        request: WebPageReadRequest,
+        context: RunContext,
+    ) -> WebPageReadResult: ...
+
+    async def calculate(
+        self,
+        request: CalculationRequest,
+        context: RunContext,
+    ) -> CalculationResult: ...
+
+    async def current_time(
+        self,
+        request: CurrentTimeRequest,
+        context: RunContext,
+    ) -> CurrentTimeResult: ...
 
 
 class ComputerWorkspacePort(Protocol):

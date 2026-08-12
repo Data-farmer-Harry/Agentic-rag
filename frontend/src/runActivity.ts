@@ -16,8 +16,17 @@ export function describeTool(tool: ToolEvent) {
   if (name.includes("graph")) {
     return { title: "查询知识图谱", detail: "已完成实体、关系或路径检索" };
   }
+  if (name.includes("read_web_page")) {
+    return { title: "阅读网页正文", detail: "已提取公开页面中的可引用内容" };
+  }
   if (name.includes("web") || name.includes("search_online")) {
     return { title: "搜索公开网页", detail: "已完成受控网络检索" };
+  }
+  if (name.includes("calculate")) {
+    return { title: "精确计算", detail: "已通过本地计算工具得到结果" };
+  }
+  if (name.includes("current_time")) {
+    return { title: "查询当前时间", detail: "已按指定时区读取当前时间" };
   }
   if (name.includes("retriev") || name.includes("knowledge") || name.includes("rag")) {
     return { title: "检索知识库", detail: "已搜索个人资料和参考知识" };

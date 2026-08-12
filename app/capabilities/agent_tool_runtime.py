@@ -12,6 +12,7 @@ from app.capabilities.capability_registry import (
 )
 from app.domain.contracts import (
     ComputerWorkspacePort,
+    GeneralToolsPort,
     GraphEntityResolutionPort,
     GraphRetrievalToolPort,
     GraphSearchPort,
@@ -20,7 +21,11 @@ from app.domain.contracts import (
 )
 from app.domain.enums import CapabilityEffect, RetryOwner
 from app.domain.models import (
+    CalculationRequest,
+    CalculationResult,
     CapabilitySpec,
+    CurrentTimeRequest,
+    CurrentTimeResult,
     GraphEntityCompareRequest,
     GraphEntityCompareResult,
     GraphEntityResolveRequest,
@@ -32,6 +37,8 @@ from app.domain.models import (
     GraphSearchResult,
     RetrievalBundle,
     RunContext,
+    WebPageReadRequest,
+    WebPageReadResult,
     WebSearchRequest,
     WebSearchResult,
     WorkspaceFileReadRequest,
@@ -58,6 +65,7 @@ class AgentToolRuntime(
     GraphRetrievalToolPort,
     WebSearchPort,
     ComputerWorkspacePort,
+    GeneralToolsPort,
 ):
     """The policy boundary between the Agent SDK and integration/data pipelines.
 
@@ -69,6 +77,7 @@ class AgentToolRuntime(
     GRAPH_SCOPE = "graph:read"
     WEB_SCOPE = "web:read"
     COMPUTER_SCOPE = "computer:read"
+    UTILITY_SCOPE = "utility:execute"
 
     def __init__(
         self,
@@ -76,6 +85,7 @@ class AgentToolRuntime(
         *,
         graph: GraphSearchPort | None = None,
         web_search: WebSearchPort | None = None,
+        general_tools: GeneralToolsPort | None = None,
         workspace: ComputerWorkspacePort | None = None,
         registry: CapabilityRegistry | None = None,
         timeout_seconds: int = 30,
@@ -85,6 +95,7 @@ class AgentToolRuntime(
         self._retrieval = retrieval
         self._graph = graph
         self._web_search = web_search
+        self._general_tools = general_tools
         self._workspace = workspace
         self._graph_toolkit: GraphRetrievalToolkit | None = None
         if graph is not None and callable(getattr(graph, "resolve_graph_entities", None)):
@@ -99,6 +110,11 @@ class AgentToolRuntime(
             self._register_graph(timeout_seconds, max_output_bytes)
         if web_search is not None:
             self._register_web_search(
+                web_timeout_seconds or timeout_seconds,
+                max_output_bytes,
+            )
+        if general_tools is not None:
+            self._register_general_tools(
                 web_timeout_seconds or timeout_seconds,
                 max_output_bytes,
             )
@@ -120,6 +136,10 @@ class AgentToolRuntime(
     @property
     def computer_workspace_enabled(self) -> bool:
         return self._workspace is not None
+
+    @property
+    def general_tools_enabled(self) -> bool:
+        return self._general_tools is not None
 
     async def retrieve(
         self,
@@ -214,6 +234,51 @@ class AgentToolRuntime(
             metadata=self._metadata(context),
         )
         return WebSearchResult.model_validate(result)
+
+    async def read_web_page(
+        self,
+        request: WebPageReadRequest,
+        context: RunContext,
+    ) -> WebPageReadResult:
+        self._require_general_tools()
+        result = await self.registry.invoke(
+            "read_web_page",
+            request.model_dump(mode="json"),
+            granted_scopes=(self.WEB_SCOPE,),
+            context=context,
+            metadata=self._metadata(context),
+        )
+        return WebPageReadResult.model_validate(result)
+
+    async def calculate(
+        self,
+        request: CalculationRequest,
+        context: RunContext,
+    ) -> CalculationResult:
+        self._require_general_tools()
+        result = await self.registry.invoke(
+            "calculate",
+            request.model_dump(mode="json"),
+            granted_scopes=(self.UTILITY_SCOPE,),
+            context=context,
+            metadata=self._metadata(context),
+        )
+        return CalculationResult.model_validate(result)
+
+    async def current_time(
+        self,
+        request: CurrentTimeRequest,
+        context: RunContext,
+    ) -> CurrentTimeResult:
+        self._require_general_tools()
+        result = await self.registry.invoke(
+            "current_time",
+            request.model_dump(mode="json"),
+            granted_scopes=(self.UTILITY_SCOPE,),
+            context=context,
+            metadata=self._metadata(context),
+        )
+        return CurrentTimeResult.model_validate(result)
 
     async def list_workspace_files(
         self,
@@ -521,6 +586,101 @@ class AgentToolRuntime(
             )
         )
 
+    def _register_general_tools(self, timeout_seconds: int, max_output_bytes: int) -> None:
+        general_tools = self._general_tools
+        if general_tools is None:
+            return
+
+        async def read_page_handler(
+            payload: Mapping[str, Any],
+            context: RunContext | None,
+            metadata: Mapping[str, Any],
+        ) -> WebPageReadResult:
+            del metadata
+            if context is None:
+                raise ValueError("read_web_page requires RunContext")
+            return await general_tools.read_web_page(
+                WebPageReadRequest.model_validate(payload), context
+            )
+
+        async def calculate_handler(
+            payload: Mapping[str, Any],
+            context: RunContext | None,
+            metadata: Mapping[str, Any],
+        ) -> CalculationResult:
+            del metadata
+            if context is None:
+                raise ValueError("calculate requires RunContext")
+            return await general_tools.calculate(
+                CalculationRequest.model_validate(payload), context
+            )
+
+        async def time_handler(
+            payload: Mapping[str, Any],
+            context: RunContext | None,
+            metadata: Mapping[str, Any],
+        ) -> CurrentTimeResult:
+            del metadata
+            if context is None:
+                raise ValueError("current_time requires RunContext")
+            return await general_tools.current_time(
+                CurrentTimeRequest.model_validate(payload), context
+            )
+
+        for spec, handler in (
+            (
+                CapabilitySpec(
+                    name="read_web_page",
+                    version="1.0.0",
+                    description=(
+                        "Read visible text from a public HTTP(S) page as untrusted evidence."
+                    ),
+                    input_schema=WebPageReadRequest.model_json_schema(),
+                    output_schema=WebPageReadResult.model_json_schema(),
+                    effect=CapabilityEffect.READ,
+                    required_scopes=[self.WEB_SCOPE],
+                    timeout_seconds=timeout_seconds,
+                    retry_owner=RetryOwner.INTEGRATION_RUNTIME,
+                    max_output_bytes=max_output_bytes,
+                    provenance_required=True,
+                ),
+                read_page_handler,
+            ),
+            (
+                CapabilitySpec(
+                    name="calculate",
+                    version="1.0.0",
+                    description="Evaluate a bounded arithmetic expression deterministically.",
+                    input_schema=CalculationRequest.model_json_schema(),
+                    output_schema=CalculationResult.model_json_schema(),
+                    effect=CapabilityEffect.READ,
+                    required_scopes=[self.UTILITY_SCOPE],
+                    timeout_seconds=min(timeout_seconds, 5),
+                    retry_owner=RetryOwner.AGENT_RUNTIME,
+                    max_output_bytes=max_output_bytes,
+                    provenance_required=False,
+                ),
+                calculate_handler,
+            ),
+            (
+                CapabilitySpec(
+                    name="current_time",
+                    version="1.0.0",
+                    description="Return the current time in an IANA timezone.",
+                    input_schema=CurrentTimeRequest.model_json_schema(),
+                    output_schema=CurrentTimeResult.model_json_schema(),
+                    effect=CapabilityEffect.READ,
+                    required_scopes=[self.UTILITY_SCOPE],
+                    timeout_seconds=min(timeout_seconds, 5),
+                    retry_owner=RetryOwner.AGENT_RUNTIME,
+                    max_output_bytes=max_output_bytes,
+                    provenance_required=False,
+                ),
+                time_handler,
+            ),
+        ):
+            self.registry.register(Capability(spec=spec, handler=handler))
+
     def _register_workspace(self, timeout_seconds: int, max_output_bytes: int) -> None:
         workspace = self._workspace
         if workspace is None:
@@ -628,7 +788,12 @@ class AgentToolRuntime(
 
     async def close(self) -> None:
         seen: set[int] = set()
-        for backend in (self._retrieval, self._graph, self._web_search):
+        for backend in (
+            self._retrieval,
+            self._graph,
+            self._web_search,
+            self._general_tools,
+        ):
             if backend is None or id(backend) in seen:
                 continue
             seen.add(id(backend))
@@ -645,6 +810,11 @@ class AgentToolRuntime(
         if self._workspace is None:
             raise RuntimeError("Computer workspace tools are not configured")
         return self._workspace
+
+    def _require_general_tools(self) -> GeneralToolsPort:
+        if self._general_tools is None:
+            raise RuntimeError("General tools are not configured")
+        return self._general_tools
 
     @staticmethod
     def _metadata(context: RunContext) -> dict[str, str]:

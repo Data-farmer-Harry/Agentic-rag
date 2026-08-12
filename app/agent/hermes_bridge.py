@@ -24,6 +24,7 @@ from app.application.run_event_recorder import RunEventRecorder
 from app.config import Settings
 from app.domain.contracts import (
     ComputerWorkspacePort,
+    GeneralToolsPort,
     GraphRetrievalToolPort,
     GraphSearchPort,
     LearningChangeSetRepository,
@@ -36,6 +37,8 @@ from app.domain.enums import RunStatus, SkillStatus
 from app.domain.models import (
     AgentAnswerDraft,
     AnswerResponse,
+    CalculationRequest,
+    CurrentTimeRequest,
     EvidenceRef,
     GovernedSkillActivationRequest,
     GovernedSkillActivationResult,
@@ -49,6 +52,7 @@ from app.domain.models import (
     RunContext,
     RunTrajectory,
     ToolEvent,
+    WebPageReadRequest,
     WebSearchRequest,
     WorkspaceFileReadRequest,
     WorkspaceListRequest,
@@ -124,6 +128,7 @@ class _RunState:
     retrieval_calls: int = 0
     graph_calls: int = 0
     web_search_calls: int = 0
+    general_calls: int = 0
     computer_calls: int = 0
     personal_calls: int = 0
     skill_activations: int = 0
@@ -147,6 +152,7 @@ class HermesCapabilityBridge:
         graph_search: GraphSearchPort | None = None,
         graph_tools: GraphRetrievalToolPort | None = None,
         web_search: WebSearchPort | None = None,
+        general_tools: GeneralToolsPort | None = None,
         workspace: ComputerWorkspacePort | None = None,
         memory_repository: MemoryRepository | None = None,
         skill_repository: SkillRepository | None = None,
@@ -162,6 +168,7 @@ class HermesCapabilityBridge:
         self._graph_search = graph_search
         self._graph_tools = graph_tools
         self._web_search = web_search
+        self._general_tools = general_tools
         self._workspace = workspace
         self._memory_repository = memory_repository
         self._skill_repository = skill_repository
@@ -385,17 +392,14 @@ class HermesCapabilityBridge:
             }
             if unknown_memories:
                 raise EvidencePublicationError(
-                    "Answer referred to memory outside this run: "
-                    f"{unknown_memories}"
+                    f"Answer referred to memory outside this run: {unknown_memories}"
                 )
             answer = self._publisher.publish(
                 draft,
                 allowed_evidence=list(state.allowed_evidence.values()),
                 graph_paths=list(state.graph_paths.values()),
             )
-            answer = answer.model_copy(
-                update={"memory_ids": list(dict.fromkeys(draft.memory_ids))}
-            )
+            answer = answer.model_copy(update={"memory_ids": list(dict.fromkeys(draft.memory_ids))})
             state.published_answer = answer
             state.published_at = datetime.now(UTC)
         await self._record_tool(
@@ -502,6 +506,34 @@ class HermesCapabilityBridge:
                 list(web_result.evidence),
                 [],
             )
+
+        if tool_name == "read_web_page":
+            if self._general_tools is None:
+                raise HermesBridgeError("Web page reading is not configured")
+            page_result = await self._general_tools.read_web_page(
+                WebPageReadRequest.model_validate(payload), context
+            )
+            return (
+                page_result.model_dump(mode="json", exclude_none=True),
+                list(page_result.evidence),
+                [],
+            )
+
+        if tool_name == "calculate":
+            if self._general_tools is None:
+                raise HermesBridgeError("General tools are not configured")
+            calculation = await self._general_tools.calculate(
+                CalculationRequest.model_validate(payload), context
+            )
+            return calculation.model_dump(mode="json", exclude_none=True), [], []
+
+        if tool_name == "current_time":
+            if self._general_tools is None:
+                raise HermesBridgeError("General tools are not configured")
+            current = await self._general_tools.current_time(
+                CurrentTimeRequest.model_validate(payload), context
+            )
+            return current.model_dump(mode="json", exclude_none=True), [], []
 
         if tool_name == "list_workspace_files":
             if self._workspace is None:
@@ -626,13 +658,8 @@ class HermesCapabilityBridge:
             request = GraphEntityCompareRequest.model_validate(payload)
         else:
             return payload
-        if (
-            policy.graph_hop_cap is not None
-            and request.max_hops > policy.graph_hop_cap
-        ):
-            request = request.model_copy(
-                update={"max_hops": policy.graph_hop_cap}
-            )
+        if policy.graph_hop_cap is not None and request.max_hops > policy.graph_hop_cap:
+            request = request.model_copy(update={"max_hops": policy.graph_hop_cap})
         return request.model_dump(mode="json")
 
     def _consume_per_tool_budget(self, state: _RunState, tool_name: str) -> None:
@@ -649,10 +676,14 @@ class HermesCapabilityBridge:
             if state.graph_calls >= self._settings.max_graph_tool_calls:
                 raise RunBudgetExceeded("Per-run graph tool call budget exhausted")
             state.graph_calls += 1
-        elif tool_name == "search_web":
+        elif tool_name in {"search_web", "read_web_page"}:
             if state.web_search_calls >= self._settings.max_web_search_tool_calls:
                 raise RunBudgetExceeded("Per-run web search call budget exhausted")
             state.web_search_calls += 1
+        elif tool_name in {"calculate", "current_time"}:
+            if state.general_calls >= self._settings.max_general_tool_calls:
+                raise RunBudgetExceeded("Per-run general tool call budget exhausted")
+            state.general_calls += 1
         elif tool_name in {
             "list_workspace_files",
             "read_workspace_file",
@@ -755,11 +786,7 @@ class HermesCapabilityBridge:
         """Compensate a post-hook native write when a snapshot makes it possible."""
 
         snapshot = audit.snapshot
-        if (
-            snapshot is None
-            or not snapshot.rollback_supported
-            or not snapshot.after_hash
-        ):
+        if snapshot is None or not snapshot.rollback_supported or not snapshot.after_hash:
             return {
                 "attempted": False,
                 "state": "rollback_unavailable",
@@ -980,10 +1007,13 @@ class HermesCapabilityBridge:
                 f"evidence_count={evidence_count}"
             )
         if tool_name == "search_workspace_files":
-            return (
-                f"match_count={len(result.get('matches', []))},"
-                f"evidence_count={evidence_count}"
-            )
+            return f"match_count={len(result.get('matches', []))},evidence_count={evidence_count}"
+        if tool_name == "read_web_page":
+            return f"chars={len(result.get('text', ''))},evidence_count={evidence_count}"
+        if tool_name == "calculate":
+            return "calculation=completed"
+        if tool_name == "current_time":
+            return f"timezone={result.get('timezone', '')}"
         if tool_name == "activate_governed_skill":
             return (
                 f"skill={result.get('name', '')}@{result.get('version', '')},"
@@ -998,9 +1028,7 @@ def _graph_tool_evidence(
 ) -> list[EvidenceRef]:
     """Retain graph-path evidence in the current run allowlist before publishing."""
 
-    evidence: dict[str, EvidenceRef] = {
-        str(item.evidence_id): item for item in top_level
-    }
+    evidence: dict[str, EvidenceRef] = {str(item.evidence_id): item for item in top_level}
     for path in paths:
         for item in path.evidence:
             evidence[str(item.evidence_id)] = item

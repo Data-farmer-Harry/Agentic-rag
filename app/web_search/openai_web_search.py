@@ -182,10 +182,7 @@ def _normalize_response(
             if not isinstance(annotations, list):
                 continue
             for annotation in annotations:
-                if (
-                    not isinstance(annotation, dict)
-                    or annotation.get("type") != "url_citation"
-                ):
+                if not isinstance(annotation, dict) or annotation.get("type") != "url_citation":
                     continue
                 normalized = _normalize_policy_url(
                     str(annotation.get("url", "")),
@@ -348,8 +345,7 @@ def _normalize_public_url(value: str) -> str | None:
         [
             (key, item)
             for key, item in parse_qsl(parsed.query, keep_blank_values=True)
-            if not key.lower().startswith("utm_")
-            and key.lower() not in {"fbclid", "gclid"}
+            if not key.lower().startswith("utm_") and key.lower() not in {"fbclid", "gclid"}
         ],
         doseq=True,
     )
@@ -372,9 +368,14 @@ def _normalize_policy_url(value: str, allowed_domains: list[str]) -> str | None:
     if hostname is None:
         return None
     host = hostname.lower().rstrip(".")
-    if not any(
-        host == domain or host.endswith(f".{domain}")
-        for domain in allowed_domains
-    ):
+    if not any(host == domain or host.endswith(f".{domain}") for domain in allowed_domains):
         return None
     return normalized
+
+
+def normalize_public_web_url(
+    value: str,
+    allowed_domains: list[str] | None = None,
+) -> str | None:
+    """Public URL policy shared by search fallbacks and page-reading tools."""
+    return _normalize_policy_url(value, allowed_domains or [])

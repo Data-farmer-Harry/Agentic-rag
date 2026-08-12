@@ -336,6 +336,42 @@ class WebSearchResult(StrictModel):
     trace: dict[str, Any] = Field(default_factory=dict)
 
 
+class WebPageReadRequest(StrictModel):
+    url: str = Field(min_length=8, max_length=2_000)
+    max_chars: int = Field(default=12_000, ge=500, le=20_000)
+
+
+class WebPageReadResult(StrictModel):
+    url: str = Field(min_length=8, max_length=2_000)
+    title: str = Field(min_length=1, max_length=500)
+    text: str = Field(default="", max_length=20_000)
+    content_type: str = Field(min_length=1, max_length=200)
+    truncated: bool = False
+    evidence: list[EvidenceRef] = Field(default_factory=list, max_length=1)
+    trace: dict[str, Any] = Field(default_factory=dict)
+
+
+class CalculationRequest(StrictModel):
+    expression: str = Field(min_length=1, max_length=500)
+
+
+class CalculationResult(StrictModel):
+    expression: str = Field(min_length=1, max_length=500)
+    result: str = Field(min_length=1, max_length=1_000)
+
+
+class CurrentTimeRequest(StrictModel):
+    timezone: str = Field(default="UTC", min_length=1, max_length=100)
+
+
+class CurrentTimeResult(StrictModel):
+    timezone: str = Field(min_length=1, max_length=100)
+    iso8601: str = Field(min_length=1, max_length=100)
+    date: str = Field(min_length=1, max_length=20)
+    time: str = Field(min_length=1, max_length=30)
+    utc_offset: str = Field(min_length=1, max_length=20)
+
+
 class WorkspaceListRequest(StrictModel):
     root: str = Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9_-]*$")
     path: str = Field(default=".", min_length=1, max_length=1_000)

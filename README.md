@@ -20,7 +20,7 @@ HermesGraph 是一个 Hermes-first、OpenAI-powered 的自进化多模态 Engine
 - 跨文档实体归并：稳定标识符、规范名称和别名重合只生成 `resolution` 建议；人工批准后才投影为有双文档证据的 `same_as`，归档任一来源立即撤下。
 - 图谱抽取质量门禁：受控中英文合同集与 18-case 自然 arXiv 集、category/difficulty/tag 切片、实体/关系 precision/recall/F1、类型与证据准确率、required 安全/负例、延迟、token usage 和运行时价格快照。
 - Hermes 严格发布：最终必须调用 `hermesgraph_publish_answer`，只提交 `AgentAnswerDraft` 和本轮 evidence ID；服务端从白名单补全 citation，禁止模型伪造来源、URI、scope 或视觉坐标。
-- Responses API hosted Web Search：`search_web` 通过 Integration Runtime 的 `web:read` scope 暴露；URL citation 归一化为本轮 `EvidenceRef`，疑似密钥查询、私网 URL、越过 domain allowlist 的结果和无引用摘要全部失败关闭。
+- 受控通用工具：`search_web` 优先使用 Responses hosted search，失败后降级 DuckDuckGo/Bing；`read_web_page` 读取有界公开正文并阻断 SSRF；`calculate` 与 `current_time` 在本地确定性执行。所有 Web 内容归一化为本轮 `untrusted EvidenceRef`，疑似密钥查询、私网 URL 和越过 domain allowlist 的结果全部失败关闭。
 - Web Search 版本化质量门禁：13-case v1 覆盖 freshness、一手来源、引用、domain policy、密钥/提示注入、无引用、冲突、timeout/5xx 和中英文；6 个 contract case 可在无网络、无 key 环境运行，live provider 成功率单独统计。
 - Computer Workspace Toolset：从显式配置、scope-bound 的只读 root 执行 list/read/search，支持文本、代码、PDF、DOCX 与 XLSX；阻断路径逃逸、隐藏/凭据文件、symlink 和压缩包膨胀，并把文件片段转为本轮可引用证据。
 - evidence-first 发布门禁：禁止引用本次运行没有返回的证据；仅有 `untrusted` Web citation 的 `verified` 结论会被确定性降级为 `supported`。

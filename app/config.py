@@ -102,6 +102,7 @@ class Settings(BaseSettings):
     max_retrieval_tool_calls: int = Field(default=3, ge=1, le=10)
     max_graph_tool_calls: int = Field(default=6, ge=1, le=20)
     max_web_search_tool_calls: int = Field(default=3, ge=1, le=10)
+    max_general_tool_calls: int = Field(default=6, ge=1, le=20)
     max_computer_tool_calls: int = Field(default=8, ge=1, le=20)
     max_personal_tool_calls: int = Field(default=8, ge=1, le=20)
     max_skill_activations: int = Field(default=3, ge=1, le=10)
@@ -193,7 +194,11 @@ class Settings(BaseSettings):
     web_search_max_results: int = Field(default=8, ge=1, le=20)
     web_search_max_output_tokens: int = Field(default=3_000, ge=512, le=10_000)
     web_search_timeout_seconds: int = Field(default=45, ge=5, le=300)
+    web_search_fallback_mode: Literal["disabled", "duckduckgo"] = "duckduckgo"
+    web_search_primary_timeout_seconds: int = Field(default=12, ge=3, le=60)
     web_search_allowed_domains: list[str] = Field(default_factory=list, max_length=100)
+    web_page_timeout_seconds: int = Field(default=15, ge=3, le=60)
+    web_page_max_download_bytes: int = Field(default=1_000_000, ge=10_000, le=10_000_000)
 
     computer_workspace_enabled: bool = False
     computer_workspace_roots: dict[str, Path] = Field(default_factory=dict, max_length=10)

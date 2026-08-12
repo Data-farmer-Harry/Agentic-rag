@@ -24,6 +24,7 @@ from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService
 from app.application.workspace_service import WorkspaceService
 from app.capabilities.agent_tool_runtime import AgentToolRuntime
+from app.capabilities.general_tools import GeneralToolService
 from app.config import Settings, get_settings
 from app.demo.enterprise_fixture import EnterpriseFixtureService
 from app.domain.contracts import (
@@ -45,6 +46,7 @@ from app.domain.contracts import (
     SkillRepository,
     SkillTransitionRepository,
     VisionAnalyzerPort,
+    WebSearchPort,
 )
 from app.domain.enums import TrustLevel
 from app.domain.models import (
@@ -122,7 +124,7 @@ from app.retrieval.hybrid_retrieval_pipeline import RetrievalPipeline
 from app.retrieval.in_memory_retriever import InMemoryRetriever
 from app.skills.skill_markdown_repository import SkillMarkdownRepository
 from app.skills.skill_registry import skill_is_eligible
-from app.web_search import OpenAIHostedWebSearch
+from app.web_search import DuckDuckGoWebSearch, FallbackWebSearch, OpenAIHostedWebSearch
 
 
 @dataclass(frozen=True)
@@ -255,9 +257,7 @@ def _build_vector_index(
             settings.qdrant_sparse_encoder,
             bm25_k1=settings.qdrant_bm25_k1,
             bm25_b=settings.qdrant_bm25_b,
-            bm25_average_document_tokens=(
-                settings.qdrant_bm25_average_document_tokens
-            ),
+            bm25_average_document_tokens=(settings.qdrant_bm25_average_document_tokens),
         ),
         collection_name=settings.qdrant_collection,
         prefetch_limit=settings.qdrant_prefetch_limit,
@@ -848,7 +848,25 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         lifecycle_resources_list.append(learning_artifact_migrator)
     if outbox_dispatcher is not None:
         lifecycle_resources_list.append(outbox_dispatcher)
-    web_search = OpenAIHostedWebSearch(resolved) if resolved.web_search_mode == "openai" else None
+    web_search: WebSearchPort | None = None
+    if resolved.web_search_mode == "openai":
+        primary_web_search = OpenAIHostedWebSearch(resolved)
+        if resolved.web_search_fallback_mode == "duckduckgo":
+            web_search = FallbackWebSearch(
+                primary_web_search,
+                DuckDuckGoWebSearch(
+                    timeout_seconds=min(8, resolved.web_page_timeout_seconds),
+                    allowed_domains=resolved.web_search_allowed_domains,
+                ),
+                primary_timeout_seconds=resolved.web_search_primary_timeout_seconds,
+            )
+        else:
+            web_search = primary_web_search
+    general_tools = GeneralToolService(
+        timeout_seconds=resolved.web_page_timeout_seconds,
+        max_download_bytes=resolved.web_page_max_download_bytes,
+        allowed_domains=resolved.web_search_allowed_domains,
+    )
     computer_workspace = (
         WorkspaceFileTools(
             resolved.computer_workspace_roots,
@@ -867,6 +885,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         retrieval,
         graph=graph,
         web_search=web_search,
+        general_tools=general_tools,
         workspace=computer_workspace,
         timeout_seconds=min(resolved.agent_timeout_seconds, 60),
         web_timeout_seconds=resolved.web_search_timeout_seconds,
@@ -899,6 +918,9 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             "search_graph",
             "search_knowledge",
             "search_web",
+            "read_web_page",
+            "calculate",
+            "current_time",
             "search_workspace_files",
         },
     )
@@ -1053,9 +1075,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         memory_tokens=resolved.context_memory_tokens,
         skill_tokens=resolved.context_skill_tokens,
         personal_tokens=resolved.context_personal_tokens,
-        memory_recency_half_life_days=(
-            resolved.context_memory_recency_half_life_days
-        ),
+        memory_recency_half_life_days=(resolved.context_memory_recency_half_life_days),
     )
     hermes_native_learning = HermesNativeLearningService(
         change_sets=change_sets,
@@ -1076,6 +1096,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
             graph_search=integration_runtime,
             graph_tools=integration_runtime,
             web_search=(integration_runtime if integration_runtime.web_search_enabled else None),
+            general_tools=integration_runtime,
             workspace=(
                 integration_runtime if integration_runtime.computer_workspace_enabled else None
             ),
@@ -1097,8 +1118,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
         runtime = OfflineAgentRuntime(integration_runtime, event_recorder=event_recorder)
     direct_conversation = None
     adaptive_router_enabled = (
-        resolved.conversation_fast_path_enabled
-        and resolved.adaptive_rag_router_enabled
+        resolved.conversation_fast_path_enabled and resolved.adaptive_rag_router_enabled
     )
     if resolved.runtime_mode == "hermes" and adaptive_router_enabled:
         from app.agent.model_provider import build_model_client
@@ -1115,9 +1135,7 @@ def build_components(settings: Settings | None = None) -> ApplicationComponents:
                     or resolved.conversation_fast_path_model
                     or resolved.openai_model
                 ),
-                max_completion_tokens=(
-                    resolved.adaptive_rag_router_max_completion_tokens
-                ),
+                max_completion_tokens=(resolved.adaptive_rag_router_max_completion_tokens),
                 reasoning_effort=resolved.adaptive_rag_router_reasoning_effort,
             )
         except ValueError:

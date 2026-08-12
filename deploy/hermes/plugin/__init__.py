@@ -361,6 +361,59 @@ def register(ctx: Any) -> None:
             ),
             handler=_tool_handler("search_web"),
         )
+        ctx.register_tool(
+            name="read_web_page",
+            toolset=TOOLSET,
+            schema=_schema(
+                "read_web_page",
+                "Read bounded visible text from a public HTTP(S) page as citable evidence.",
+                {
+                    "url": {"type": "string", "minLength": 8, "maxLength": 2000},
+                    "max_chars": {
+                        "type": "integer",
+                        "minimum": 500,
+                        "maximum": 20000,
+                    },
+                },
+                ["url"],
+            ),
+            handler=_tool_handler("read_web_page"),
+        )
+    if _feature_enabled("HERMESGRAPH_GENERAL_TOOLS_ENABLED", default=True):
+        ctx.register_tool(
+            name="calculate",
+            toolset=TOOLSET,
+            schema=_schema(
+                "calculate",
+                "Calculate a bounded arithmetic expression exactly without using the model.",
+                {
+                    "expression": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500,
+                    },
+                },
+                ["expression"],
+            ),
+            handler=_tool_handler("calculate"),
+        )
+        ctx.register_tool(
+            name="current_time",
+            toolset=TOOLSET,
+            schema=_schema(
+                "current_time",
+                "Get the current date and time in an IANA timezone such as Asia/Shanghai.",
+                {
+                    "timezone": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                    },
+                },
+                [],
+            ),
+            handler=_tool_handler("current_time"),
+        )
     if _feature_enabled("HERMESGRAPH_COMPUTER_ENABLED", default=False):
         ctx.register_tool(
             name="list_workspace_files",

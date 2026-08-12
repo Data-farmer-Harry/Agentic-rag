@@ -138,6 +138,26 @@ def test_hermes_plugin_registers_bounded_computer_workspace_tools(
     assert activation_schema["required"] == ["name"]
 
 
+def test_hermes_plugin_registers_web_reader_and_local_general_tools(
+    monkeypatch: Any,
+) -> None:
+    monkeypatch.setattr(plugin, "_start_native_admin", lambda: None)
+    monkeypatch.setenv("HERMESGRAPH_GRAPH_ENABLED", "false")
+    monkeypatch.setenv("HERMESGRAPH_WEB_SEARCH_ENABLED", "true")
+    monkeypatch.setenv("HERMESGRAPH_GENERAL_TOOLS_ENABLED", "true")
+    context = _FixturePluginContext()
+
+    plugin.register(context)
+
+    assert {"search_web", "read_web_page", "calculate", "current_time"} <= context.tools.keys()
+    page_schema = context.tools["read_web_page"]["schema"]["parameters"]
+    assert page_schema["required"] == ["url"]
+    assert page_schema["properties"]["max_chars"]["maximum"] == 20_000
+    calculator_schema = context.tools["calculate"]["schema"]["parameters"]
+    assert calculator_schema["required"] == ["expression"]
+    assert calculator_schema["additionalProperties"] is False
+
+
 def test_hermes_plugin_registers_personal_control_tools(monkeypatch: Any) -> None:
     monkeypatch.setattr(plugin, "_start_native_admin", lambda: None)
     monkeypatch.setenv("HERMESGRAPH_GRAPH_ENABLED", "false")

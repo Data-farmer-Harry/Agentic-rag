@@ -5,6 +5,7 @@ import {
   BookOpenText,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Database,
   ExternalLink,
@@ -291,6 +292,11 @@ function documentGraphStatus(document: KnowledgeDocument) {
   return labels[status] ?? status;
 }
 
+function documentGraphLabel(document: KnowledgeDocument) {
+  const status = documentGraphStatus(document);
+  return status === "未标注" ? "图谱未关联" : status;
+}
+
 function documentStatusLabel(status: KnowledgeDocument["status"]) {
   return status === "active" ? "可检索" : status === "archived" ? "已归档" : "失败";
 }
@@ -388,9 +394,11 @@ export function KnowledgeView({
   const [notice, setNotice] = useState<string>();
   const [error, setError] = useState<string>();
   const [jobs, setJobs] = useState<IngestionJob[]>([]);
+  const [showJobs, setShowJobs] = useState(false);
   const [busyJob, setBusyJob] = useState<string>();
   const [sourceFilter, setSourceFilter] = useState<SourceLayerLabel | "all">("all");
   const [query, setQuery] = useState("");
+  const [documentLimit, setDocumentLimit] = useState(20);
   const [sampleImport, setSampleImport] = useState<SampleWorkspaceImport>();
   const [sampleImportState, setSampleImportState] = useState<
     "idle" | "confirming" | "starting" | "succeeded" | "unavailable" | "error"
@@ -571,6 +579,20 @@ export function KnowledgeView({
   }
 
   const activeCount = documents.filter((item) => item.status === "active").length;
+  const activeDocuments = documents.filter((item) => item.status === "active");
+  const totalChunks = activeDocuments.reduce((sum, document) => sum + document.chunk_count, 0);
+  const teamDocumentCount = activeDocuments.filter(
+    (document) => documentSourceLayer(document) === "团队内部"
+  ).length;
+  const supplementalDocumentCount = activeDocuments.filter(
+    (document) => documentSourceLayer(document) !== "团队内部"
+  ).length;
+  const activeJobs = jobs.filter((job) => activeIngestionStatuses.has(job.status));
+  const failedJobs = jobs.filter((job) => job.status === "failed");
+  const succeededJobs = jobs.filter((job) => job.status === "succeeded");
+  const relevantJobs = jobs.filter((job) =>
+    activeIngestionStatuses.has(job.status) || job.status === "failed" || job.status === "cancelled"
+  );
   const sampleWorkspaceReady = documents.some(
     (document) =>
       document.status === "active" && document.source.fixture_id === "enterprise_knowledge"
@@ -582,13 +604,20 @@ export function KnowledgeView({
       `${document.title} ${document.filename}`.toLocaleLowerCase().includes(normalizedQuery);
     return layerMatches && queryMatches;
   });
+  const displayedDocuments = visibleDocuments.slice(0, documentLimit);
 
   return (
     <section className="data-view knowledge-view">
       <header className="view-header">
-        <div><span className="eyebrow">团队、个人与公共参考</span><h1>知识</h1></div>
-        <span className="view-count">{activeCount} 份可检索 / {documents.length} 份总计</span>
+        <div><span className="eyebrow">团队、个人与公共参考</span><h1>知识库</h1></div>
+        <span className="view-count">{activeCount} 份资料可参与回答</span>
       </header>
+      <div className="knowledge-overview" aria-label="知识库概览">
+        <div><span>可检索资料</span><strong>{activeCount}</strong><small>共 {documents.length} 份资料</small></div>
+        <div><span>知识分块</span><strong>{totalChunks}</strong><small>已完成解析与索引</small></div>
+        <div><span>团队知识</span><strong>{teamDocumentCount}</strong><small>研发规范与内部文档</small></div>
+        <div><span>补充资料</span><strong>{supplementalDocumentCount}</strong><small>个人资料与公共参考</small></div>
+      </div>
       <div
         className={`knowledge-command-bar ${dragging ? "is-dragging" : ""}`}
         onDragEnter={(event) => { event.preventDefault(); setDragging(true); }}
@@ -596,47 +625,51 @@ export function KnowledgeView({
         onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setDragging(false); }}
         onDrop={drop}
       >
-        <button className="primary-button" onClick={() => inputRef.current?.click()} disabled={uploading}>
-          {uploading ? <LoaderCircle className="spin" size={16} /> : <Upload size={16} />}
-          上传
-        </button>
-        {activeCount > 0 && (
-          <button className="text-button" onClick={() => onOpenChat()}>
-            <MessageSquareText size={15} />
-            开始提问
+        <div className="knowledge-primary-actions">
+          <button className="primary-button" onClick={() => inputRef.current?.click()} disabled={uploading}>
+            {uploading ? <LoaderCircle className="spin" size={16} /> : <Upload size={16} />}
+            上传资料
           </button>
-        )}
-        {!sampleWorkspaceReady ? (
-          <button
-            className="text-button knowledge-sample-button"
-            disabled={!sampleImportAvailable || sampleImportState === "starting"}
-            title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
-            onClick={() => setSampleImportState("confirming")}
-          >
-            <BookOpenText size={15} />
-            载入示例
-          </button>
-        ) : (
-          <span className="knowledge-sample-ready">
-            <CheckCircle2 size={14} />
-            示例已载入
-          </span>
-        )}
-        <label className="knowledge-filter">
-          <span>来源</span>
-          <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value as SourceLayerLabel | "all")}>
-            <option value="all">全部来源</option>
-            <option value="团队内部">团队内部</option>
-            <option value="个人资料">个人资料</option>
-            <option value="公共参考">公共参考</option>
-            <option value="未标注">未标注</option>
-          </select>
-        </label>
-        <label className="knowledge-search-input">
-          <Search size={15} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索资料" />
-        </label>
-        <span className="knowledge-drop-hint">拖放文件也可以上传</span>
+          {activeCount > 0 && (
+            <button className="text-button" onClick={() => onOpenChat()}>
+              <MessageSquareText size={15} />
+              向知识库提问
+            </button>
+          )}
+          {!sampleWorkspaceReady ? (
+            <button
+              className="text-button knowledge-sample-button"
+              disabled={!sampleImportAvailable || sampleImportState === "starting"}
+              title={sampleImportAvailable ? "载入虚构研发资料" : "示例工作区导入服务尚未启用"}
+              onClick={() => setSampleImportState("confirming")}
+            >
+              <BookOpenText size={15} />
+              载入示例
+            </button>
+          ) : (
+            <span className="knowledge-sample-ready">
+              <CheckCircle2 size={14} />
+              示例已载入
+            </span>
+          )}
+        </div>
+        <div className="knowledge-discovery-controls">
+          <label className="knowledge-search-input">
+            <Search size={15} />
+          <input value={query} onChange={(event) => { setQuery(event.target.value); setDocumentLimit(20); }} placeholder="搜索标题或文件名" />
+          </label>
+          <label className="knowledge-filter">
+            <span>来源</span>
+            <select value={sourceFilter} onChange={(event) => { setSourceFilter(event.target.value as SourceLayerLabel | "all"); setDocumentLimit(20); }}>
+              <option value="all">全部来源</option>
+              <option value="团队内部">团队内部</option>
+              <option value="个人资料">个人资料</option>
+              <option value="公共参考">公共参考</option>
+              <option value="未标注">未标注</option>
+            </select>
+          </label>
+        </div>
+        <span className="knowledge-drop-hint">也可将文件拖到这里</span>
         <input
           ref={inputRef}
           className="visually-hidden"
@@ -695,12 +728,19 @@ export function KnowledgeView({
       {error && <div className="error-banner">{error}</div>}
       {ingestionMode === "async" && jobs.length > 0 && (
         <section className="ingestion-queue" aria-label="入库任务">
-          <header>
-            <div><ListChecks size={15} /><strong>入库任务</strong></div>
-            <span>{jobs.filter((job) => activeIngestionStatuses.has(job.status)).length} 进行中</span>
-          </header>
-          <div className="ingestion-job-list">
-            {jobs.slice(0, 10).map((job) => (
+          <button className="ingestion-queue-summary" onClick={() => setShowJobs((current) => !current)} aria-expanded={showJobs}>
+            <span className="ingestion-summary-icon"><ListChecks size={16} /></span>
+            <span className="ingestion-summary-copy">
+              <strong>资料处理中心</strong>
+              <small>{activeJobs.length > 0 ? `${activeJobs.length} 项正在处理` : failedJobs.length > 0 ? `${failedJobs.length} 项需要处理` : `最近 ${succeededJobs.length} 项已完成`}</small>
+            </span>
+            <span className={`ingestion-summary-state ${failedJobs.length > 0 ? "has-error" : activeJobs.length > 0 ? "is-active" : "is-ready"}`}>
+              {failedJobs.length > 0 ? `${failedJobs.length} 失败` : activeJobs.length > 0 ? `${activeJobs.length} 进行中` : "全部就绪"}
+            </span>
+            <ChevronDown className={showJobs ? "is-open" : ""} size={16} />
+          </button>
+          {showJobs && <div className="ingestion-job-list">
+            {(relevantJobs.length > 0 ? relevantJobs : jobs.slice(0, 5)).slice(0, 8).map((job) => (
               <article className={`ingestion-job is-${job.status}`} key={job.job_id}>
                 <div className="ingestion-job-primary">
                   <span className="ingestion-job-icon">
@@ -752,9 +792,19 @@ export function KnowledgeView({
                 </div>
               </article>
             ))}
-          </div>
+            {relevantJobs.length === 0 && jobs.length > 5 && <div className="ingestion-history-note">另有 {jobs.length - 5} 项已完成历史未展开显示</div>}
+          </div>}
         </section>
       )}
+      <div className="knowledge-library-heading">
+        <div>
+          <strong>资料库</strong>
+          <span>{visibleDocuments.length} 份匹配资料</span>
+        </div>
+        {(query || sourceFilter !== "all") && (
+          <button className="text-button" onClick={() => { setSourceFilter("all"); setQuery(""); setDocumentLimit(20); }}>清除筛选</button>
+        )}
+      </div>
       {documents.length === 0 ? (
         <div className="knowledge-empty-state">
           <EmptyState icon={FileText} label="还没有资料可参与检索" />
@@ -768,9 +818,9 @@ export function KnowledgeView({
       ) : (
         <div className="document-list">
           <div className="document-head">
-            <span>资料</span><span>来源层</span><span>状态</span><span>分块</span><span>大小</span><span>图谱</span><span>更新时间</span><span />
+            <span>资料</span><span>来源</span><span>检索状态</span><span>知识结构</span><span>更新时间</span><span />
           </div>
-          {visibleDocuments.map((document) => (
+          {displayedDocuments.map((document) => (
             <article className={`document-row is-${document.status}`} key={document.document_id}>
               <div className="document-primary">
                 <span className="document-icon">
@@ -780,13 +830,17 @@ export function KnowledgeView({
                     <FileText size={17} />
                   )}
                 </span>
-                <div><strong>{document.filename}</strong><code>{document.content_hash.slice(0, 12)}</code></div>
+                <div>
+                  <strong>{document.title || document.filename}</strong>
+                  <small>{document.title && document.title !== document.filename ? document.filename : `${formatBytes(document.byte_size)} · ${document.media_type.split("/").pop()?.toUpperCase() ?? "FILE"}`}</small>
+                </div>
               </div>
               <span className={`source-layer source-${documentSourceLayer(document)}`}>{documentSourceLayer(document)}</span>
-              <span className={`document-status status-${document.status}`}>{documentStatusLabel(document.status)}</span>
-              <span>{document.chunk_count}</span>
-              <span>{formatBytes(document.byte_size)}</span>
-              <span className={`document-graph-status graph-${documentGraphStatus(document)}`}>{documentGraphStatus(document)}</span>
+              <span className={`document-status status-${document.status}`}><i />{documentStatusLabel(document.status)}</span>
+              <span className="document-structure">
+                <span>{document.chunk_count} 分块</span>
+                <span className={`document-graph-status graph-${documentGraphStatus(document)}`}>{documentGraphLabel(document)}</span>
+              </span>
               <span>{formatDate(document.updated_at)}</span>
               <div className="document-actions">
                 <button
@@ -808,6 +862,12 @@ export function KnowledgeView({
               </div>
             </article>
           ))}
+          {displayedDocuments.length < visibleDocuments.length && (
+            <button className="document-load-more" onClick={() => setDocumentLimit((current) => current + 20)}>
+              再显示 {Math.min(20, visibleDocuments.length - displayedDocuments.length)} 份资料
+              <ChevronDown size={15} />
+            </button>
+          )}
         </div>
       )}
     </section>

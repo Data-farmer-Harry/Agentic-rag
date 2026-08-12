@@ -76,7 +76,10 @@ resolve_graph_entities         canonical/alias/type 实体解析与来源证据
 retrieve_evidence_subgraph     文本检索与 1-3 hop 证据子图融合
 compare_graph_entities         连接路径、共享邻居和左右独有邻居
 search_graph                   固定模板邻居、路径和冲突遍历
-search_web                     当前或知识库外公共事实的受控 Responses hosted search（可选）
+search_web                     当前或知识库外公开事实的 hosted + 双源降级搜索（可选）
+read_web_page                  读取公开 URL 的有界可引用正文（可选）
+calculate                      AST 白名单本地计算，不消耗模型调用
+current_time                   IANA 时区当前日期与时间
 recall_project_memory          HermesGraph 受治理项目记忆
 hermesgraph_publish_answer     严格回答 draft 与 evidence ID 发布
 memory / skill_manage / todo   Hermes 原生个人学习与任务工具
@@ -1412,16 +1415,17 @@ projection 临时 evidence UUID 让同一来源重复扩张。对比工具只把
 ### 6.6 受控公共 Web Search
 
 联网检索不是把 provider hosted tool 直接挂到 Hermes 根 Agent。直接挂载会让 provider 生成的 citation
-绕过现有 `allowed_evidence -> AnswerPublisher` 白名单。当前实现把 Responses API
-`{"type": "web_search"}` 封装在 `OpenAIHostedWebSearch` 中，再由
-`AgentToolRuntime` 注册为 `search_web@1.0.0`：
+绕过现有 `allowed_evidence -> AnswerPublisher` 白名单。当前实现优先调用 Responses API hosted
+`web_search`；兼容网关超时、失败或没有引用证据时，在 12 秒 primary deadline 后依次降级到
+DuckDuckGo HTML 和 Bing HTML。所有结果仍由 `AgentToolRuntime` 注册为 `search_web@1.0.0`：
 
 ```text
 Hermes plugin tool search_web
   -> WebSearchRequest(query, max_results)
   -> CapabilityRegistry(web:read, timeout, output bytes)
   -> OpenAI Responses hosted web_search (tool_choice=required, store=false)
-  -> URL citation annotations
+  -> timeout/unsupported/empty 时 DuckDuckGo -> Bing
+  -> URL citation annotation 或公开搜索结果 snippet
   -> public URL + domain policy validation
   -> run-scoped EvidenceRef(untrusted)
   -> allowed_evidence
@@ -1431,8 +1435,8 @@ Hermes plugin tool search_web
 安全和发布合同：
 
 1. 查询最多 2,000 字符；疑似 private key、API key、access token 或常见 provider token 在发网前拒绝。
-2. prompt 与网页都视为 untrusted data；adapter 不执行网页动作、不抓取 citation URL，也不把网页指令
-   交给系统层。
+2. prompt 与网页都视为 untrusted data；搜索 adapter 不执行网页动作。`read_web_page` 只在 Agent 需要
+   来源全文时读取指定 URL，移除脚本/样式并生成独立的 run-scoped evidence。
 3. 仅接受 `http/https` 公网 URL；拒绝 userinfo、localhost、`.local` 和非 global IP。
 4. deployment domain allowlist 同时在 provider 请求和返回端执行；清理 fragment、`utm_*`、
    `fbclid/gclid` 后再去重。
@@ -1440,14 +1444,18 @@ Hermes plugin tool search_web
    `message.output_text.annotations[type=url_citation]` 为主。
 6. 每个 URL 聚合其 citation context，生成稳定 UUID5、content hash、run ID、provider/model/
    response revision 和 citation spans。原始未引用摘要不返回给 Agent。
-7. `search_web` 有独立 `MAX_WEB_SEARCH_TOOL_CALLS`，同时受全局工具预算、Capability timeout 和
-   `MAX_TOOL_OUTPUT_BYTES` 约束。失败只记录错误类型，不记录查询原文。
+7. `search_web` 与 `read_web_page` 共用独立 `MAX_WEB_SEARCH_TOOL_CALLS`，同时受全局工具预算、
+   Capability timeout 和 `MAX_TOOL_OUTPUT_BYTES` 约束。失败只记录错误类型，不记录查询原文。
 8. Web evidence 固定 `TrustLevel.UNTRUSTED`。模型若输出 `verified` claim/confidence，
    publisher 会确定性降级为 `supported`；直接绕过 publisher 构造 verified Web answer 会失败。
+9. `read_web_page` 只允许公网 HTTP(S)，解析 DNS 后拒绝 private/loopback/link-local/reserved 地址；
+   每一次重定向都重新做 URL、domain allowlist 和 DNS 校验，并限制 3 次重定向、1 MB 下载和 20,000 字符。
+10. `calculate` 使用 AST 运算符/函数白名单并限制深度、指数和结果范围；`current_time` 仅接受 IANA
+    timezone。两者使用 `MAX_GENERAL_TOOL_CALLS`，不访问模型或网络。
 
-历史上当前兼容端点曾通过 provider-level 单次 live citation gate 与完整 Agent API 纵向验收。
-版本化 Web golden set 已在 11.0.2 节实现；当前重新验收时最小 live case 经两次尝试均返回 HTTP
-503，因此 adapter/contract 已交付，当前 provider 的 live 生产晋级仍未获批。
+兼容 provider 的 hosted search 仍需单独质量门禁；它不可用时不会阻断公开搜索。2026-08-12 的
+双源降级 live probe 已返回 3 条 URL evidence（OpenAI 官方文档与 Microsoft 文档），但 HTML 搜索
+属于 best-effort transport，生产环境仍建议配置正式搜索 API 并保留当前证据与安全边界。
 
 ### 6.7 Agentic RAG 冻结基线
 

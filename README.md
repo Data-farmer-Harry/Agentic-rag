@@ -1,81 +1,218 @@
 # HermesGraph
 
-HermesGraph 是一个 Hermes-first、OpenAI-powered 的自进化多模态 Engineering Intelligence Agent。产品以研发团队的内部知识问答、系统理解、事故复盘、影响分析和工程入职为业务主线，同时通过同一套内核支持个人论文、笔记、任务和长期学习。Hermes Agent `0.19.0` 是唯一在线 Agent Loop，负责会话、工具循环、原生 Memory/Skill、Todo 和后台回顾；OpenAI Python SDK 提供 Responses、Tool Calling、Structured Outputs、Vision 和 Embeddings；LangChain 负责 Runnable 数据流、检索组合、结构化转换、能力适配和 callbacks，不创建第二个 Agent。Hermes 通过受认证的 run-scoped bridge 使用 Qdrant、Neo4j、项目记忆和严格证据发布，不能直连数据库或自由执行 Shell。
+**面向研发团队的证据优先、自进化、多模态 Agentic RAG 系统。**
 
-当前成品已经完成文本/PDF 检索问答、图谱与学习控制面、有界可续传的 arXiv Source Connector、图片/Vision 知识闭环、有界 Agentic Retrieval Controller、受控公共 Web Search、安全只读 Computer Workspace、Personal Control Plane，以及第一条完整 Skill 自进化链路。Personal Control Plane 提供 Task/Plan/Step/Checklist/Note、Persona/Onboarding、Day Archive/Diary/Calendar、自然语言 Memory 纠错和确定性 Emotion。完成、失败、取消和反馈轨迹会进入 Postgres durable learning job；独立 worker 通过 lease、heartbeat、fencing token、阶段 checkpoint 与重试恢复 Reflection、Memory、Observation 和 Skill 演化。Memory、Skill、Evaluation、Observation、ChangeSet 与 Skill Transition 默认写入 Postgres audit repository；确定性 learning stage 的资产、Skill 状态、transition ledger、artifact link 和 checkpoint 在同一事务提交，并可通过 reconciliation 检查账实一致性。重复成功轨迹会形成稳定 Draft，`shadow` 模式自动执行安全扫描和冻结能力沙箱回放；新的稳定证据可从已观测父版本派生 patch/minor/major Draft，父版本保持不变。通过健康门禁的 Canary/Active Skill 会在 run start 被精确钉住，并由 Hermes 按需激活。
+HermesGraph 将企业内部文档、代码资料、知识图谱、个人记忆和通用工具接入同一个 Agent 工作空间。
+它既能直接处理普通对话，也能针对复杂研发问题自主规划检索、融合文本与图关系、检查证据充分性，
+并把经过治理的成功经验沉淀为 Memory、Skill 和可回滚 Pattern。
 
-## 当前能力
+![HermesGraph 产品概览](docs/images/hermesgraph-product-overview.webp)
 
-- Hermes Agent 0.19.0 是唯一在线运行时；OpenAI Python SDK 提供模型原语，不安装 OpenAI Agents SDK；另有仅用于测试和回放的 deterministic offline runtime。
-- 受信任 `hermesgraph-bridge` 插件：HMAC 会话隔离、三 token 认证、工具预算、重复调用检测、run-local evidence allowlist 和严格发布。
-- LangChain LCEL 并行检索、加权 RRF、相关性门槛、租户过滤和 partial-failure trace。
-- Agentic Retrieval Controller：Responses API 严格查询计划、确定性降级、稳定的 `Compare A with B` 分解、最多 4 个并行子查询/2 轮补检、跨查询 RRF、证据缺口与停止原因审计。
-- OpenAI planner 防退化边界：显式个人/视觉/比较意图由服务端锁定；简单查询首轮锚定原文，模型改写只在证据缺口时作为 fallback，避免改写稀释已验证排名。
-- Qdrant named dense+sparse Hybrid Retrieval：标题+正文共同编码、稀疏 IDF 修正、payload 索引、服务端 RRF、来源级候选多样化、专有标识符门禁、强制 scope filter、shadow collection 迁移、归档和 provenance。
-- GraphRAG Tool Suite：`resolve_graph_entities` 做 canonical/alias/type 实体消歧，`retrieve_evidence_subgraph` 融合 Qdrant 文本证据与 Neo4j 1-3 hop 子图，`compare_graph_entities` 返回连接路径、共享/独有邻居；低层 `search_graph` 继续提供 `neighbors`、`paths`、`conflicts` 固定模板。所有结果经过 scope 与关系证据二次校验，Agent 不能生成或提交 Cypher。
-- Postgres durable ingestion job：原子 staging、并发内容合并、`SKIP LOCKED` 领取、lease/heartbeat、指数退避、取消与人工重试；worker 协调写入 Qdrant 与 Neo4j，任一索引失败会补偿归档。
-- Postgres durable learning：run/feedback snapshot 幂等合并、同 run 顺序执行、`SKIP LOCKED`、lease/heartbeat、fencing token、reflection/stage checkpoint、同事务 stage commit、不可变 payload hash、append-only Skill transition ledger、artifact links/reconciliation、旧 JSON/Markdown 一次性导入、指数退避、取消/人工重试和 scoped 控制 API。
-- 可配置知识抽取：离线规则、OpenAI Responses API 严格结构化输出或二者融合；稳定实体/关系 ID、Chunk 证据、confidence、extractor revision 和 scoped JSON 审计仓。
-- 图谱候选审核门禁：pending 关系不参与检索；批准后写入 Neo4j active 证据图，拒绝和归档立即隔离，并保留 review event。
-- 跨文档实体归并：稳定标识符、规范名称和别名重合只生成 `resolution` 建议；人工批准后才投影为有双文档证据的 `same_as`，归档任一来源立即撤下。
-- 图谱抽取质量门禁：受控中英文合同集与 18-case 自然 arXiv 集、category/difficulty/tag 切片、实体/关系 precision/recall/F1、类型与证据准确率、required 安全/负例、延迟、token usage 和运行时价格快照。
-- Hermes 严格发布：最终必须调用 `hermesgraph_publish_answer`，只提交 `AgentAnswerDraft` 和本轮 evidence ID；服务端从白名单补全 citation，禁止模型伪造来源、URI、scope 或视觉坐标。
-- 受控通用工具：`search_web` 优先使用 Responses hosted search，失败后降级 DuckDuckGo/Bing；`read_web_page` 读取有界公开正文并阻断 SSRF；`calculate` 与 `current_time` 在本地确定性执行。所有 Web 内容归一化为本轮 `untrusted EvidenceRef`，疑似密钥查询、私网 URL 和越过 domain allowlist 的结果全部失败关闭。
-- Web Search 版本化质量门禁：13-case v1 覆盖 freshness、一手来源、引用、domain policy、密钥/提示注入、无引用、冲突、timeout/5xx 和中英文；6 个 contract case 可在无网络、无 key 环境运行，live provider 成功率单独统计。
-- Computer Workspace Toolset：从显式配置、scope-bound 的只读 root 执行 list/read/search，支持文本、代码、PDF、DOCX 与 XLSX；阻断路径逃逸、隐藏/凭据文件、symlink 和压缩包膨胀，并把文件片段转为本轮可引用证据。
-- evidence-first 发布门禁：禁止引用本次运行没有返回的证据；仅有 `untrusted` Web citation 的 `verified` 结论会被确定性降级为 `supported`。
-- Hermes 原生长期记忆、Skill、Todo 与后台回顾；每个 Agent 回合都触发隔离的 Memory/Skill review，父 session 关联、完成握手和延迟 bridge 释放保证迟到写入可审计。Memory/Skill 写入先保存 file/tree 快照，再镜像为脱敏 `native_applied/requires_audit` ChangeSet，支持 append-only 接受、after-hash 条件回滚、分状态 retention/GC 和容量健康 API。
-- MemoHarness Experience/Pattern 控制面：不可变 Experience/Evaluation、D1-D6、E+/E-、
-  Postgres v12-v14、Pattern miner、required-case evaluator、Promotion Evidence、append-only
-  transition、稳定 Canary 分桶、bounded consumer、真实 applied/control health gate 与 auto rollback
-  已实现；生产 Pattern Bank 仍保守为 0 Draft，当前效果状态为 `observing`。
-- HermesGraph 受治理 Prompt capsule、声明式 Skill、稳定模式挖掘、冻结能力反事实回放、SemVer refinement、shadow/canary 健康门禁和自动 rollback；在线只允许激活 run snapshot 钉住的 Canary/Active 精确版本，不执行任意 Skill 脚本或扩大工具权限。
-- Personal Control Plane：作用域 Task/Plan/Step/Checklist/Note、Persona/Onboarding、可编辑 Day Archive/Diary/Calendar、自然语言 Memory forget/replace 与确定性 Emotion reducer；JSON/Postgres v11+v15 双后端、乐观锁、append-only event、6 个 Hermes tools 和 bounded runtime capsule。聊天输入框可以无模型快速记录任务、带截止时间的日程和当天笔记，保存后精确跳转到行动中心或对应日期。
-- Responses Structured Reflection：Pydantic 严格输出、信号触发、服务端作用域/来源绑定、拒答/超时/协议错误确定性降级，模型不能直接写 Memory 或晋级 Skill。
-- React/TypeScript 工作台：流式问答、证据检查器、运行、知识库、图谱探索、候选审核、Memory、行动中心、日历回顾、Persona/Emotion、Skills、Learning Log；顶部通知中心按 Persona 时区投影逾期、即将到期和今日任务，支持已读、稍后提醒、任务跳转与用户授权后的浏览器桌面通知。
-- 可恢复会话工作台：独立 session、新建/切换历史对话、刷新后从 trajectory 恢复、按会话保存草稿、
-  持久化重命名/归档/恢复、命令面板搜索历史、显式“记住”消息、带说明的负反馈、失败重试和面向
-  用户的 provider 错误。
-- 可跳过的首次 Persona 设置直接写入 Personal Control Plane；运行中显示真实耗时，完成后保留耗时、
-  工具调用数和学习更新数，不暴露模型私有推理。
-- 可恢复长任务时间线：幂等启动先返回稳定 run ID，持久事件日志按 SSE cursor 重放知识检索、图谱查询、
-  网页搜索、工作区读取、记忆/事务操作和回答生成；刷新或短暂断网不取消任务，只有显式停止才写入
-  cancelled，不展示参数或思维链。
-- 聊天附件：输入框可直接选择或拖入最多 5 个文件，复用 durable ingestion 队列显示上传/解析状态，
-  入库完成后才允许发送，并在会话历史中保留附件标签。
-- PDF/Markdown/TXT/JSON/CSV/HTML 与 PNG/JPEG/WebP 入库、SHA-256 去重、Document IR、标题层级感知的 token-aware 分块和可审计逻辑归档；非结构化文本保留 LangChain fallback。
-- Vision Responses API 严格 schema：保留图片原件，提取总览、可见文字和归一化视觉区域；Qdrant 可通过文本召回视觉派生块，citation 回指原图和区域框。
-- Vision 抽取质量门禁：冻结图片 hash、真实 arXiv 页、required 注入/空白样本、title/summary/OCR/warning、区域类型/文本/IoU、预算、usage、延迟、切片和可审计重试。
-- 统一知识来源合同：来源 ID/版本、canonical URI、license、private/public_reference、trust 从异步任务贯通 Postgres、Qdrant、Neo4j 与最终 citation。
-- arXiv Source Connector：官方 Atom API 分页、明确 User-Agent、节流/退避、PDF magic/体积/批次预算、hash 去重、原子 manifest、断点续传与异步入库提交。
+> 上图是产品形态示意图。下方“实际界面”来自当前 Docker 工作台和真实本地数据。
 
-## 当前产品方向
+## 为什么做 HermesGraph
 
-- 研发团队是默认业务主线：内部架构、服务、API、ADR、事故、Runbook、组织归属和工程经验。
-- 个人学习是同一内核中的通用能力：私有文档、PDF、图片/截图、个人记忆、任务和学习轨迹。
-- 软件工程是第一个业务 DomainPack；Agent、RAG、知识图谱、长期记忆、多模态和自进化仍是底层能力，不作为首页技术堆栈展示。
-- 528 篇 arXiv 论文暂时隔离为个人公共参考层，不参与默认企业检索、首次演示或企业黄金题集。
-- 当前阶段先完成对话、知识、证据、系统地图和学习反馈体验，再接 GitHub、飞书、Jira 等外部连接器。
-- Vision 已保留图片原件，并让视觉描述、可见文字、区域、文本 embedding、结构图投影和最终引用回指原图；11-case 系统门禁已经完成，图片原生 embedding、PDF 自动选页和更开放的视觉分布仍是后续增强项。
+传统 RAG 常把每个问题都交给一次向量检索，再将若干 chunk 塞给模型。研发场景往往更复杂：
 
-## Docker 启动
+- “你好”不应该启动一整条 RAG 链路；架构对比、事故影响分析才需要多步检索。
+- 关键词与语义召回适合找原文，服务依赖、负责人、事故链和影响路径更适合图谱。
+- 模型给出的引用必须来自本轮真实证据，不能自行生成来源或任意 Cypher。
+- Agent 可以从经验中学习，但不能把每段对话都静默追加到 Prompt，更不能未经评测修改生产行为。
+- 企业知识与个人资料需要共享同一能力内核，同时保持 tenant、project、user 和 session 隔离。
 
-推荐使用完整 Compose 栈。启动脚本会构建前端和应用镜像，并启动 FastAPI、Hermes Agent、Postgres、Qdrant 和 Neo4j：
+HermesGraph 因此采用 **Hermes-first Agent Loop + Adaptive-RAG + Hybrid Retrieval + Evidence Graph +
+Governed Learning**。目标不是做一个只能问论文的 Demo，而是一个可以持续工作的研发知识同事。
+
+## 实际界面
+
+![HermesGraph 实际工作台](docs/images/hermesgraph-workbench.jpg)
+
+当前工作台包含智能助理、知识入库、系统地图、长期记忆、进化记录、Skill 治理、运行轨迹、研发任务
+和日历回顾。截图中的 54 份知识文档、123 个可检索分块、181 条图关系、29 条长期记忆均来自当前
+本地 Compose 环境，不是静态占位数据。
+
+## 核心能力
+
+### 1. Adaptive-RAG 与条件式 Self-RAG
+
+每轮首先由轻量模型进行一次结构化路由，而不是使用关键词硬规则：
+
+| 策略 | 适用请求 | 执行方式 |
+| --- | --- | --- |
+| `no_retrieval` | 寒暄、通用问答、无需私有知识的请求 | 直接回答或进入受控工具动作 |
+| `single_step` | 明确事实、文档定位、单一知识问题 | 一轮混合检索后生成答案 |
+| `multi_step` | 对比、全局总结、多来源与复杂关系问题 | 查询分解、并行补检、条件式 Self-RAG 反思 |
+
+路由同时选择 `conversation`、`tool_action`、`passage_lookup`、`relationship` 或
+`global_summary`。Self-RAG 只在复杂多步场景检查证据相关性、覆盖与冲突，普通问题不会为此承担完整
+检索和反思成本。
+
+### 2. 混合检索与知识图谱融合
+
+文本检索不是单一 dense 向量：
+
+- Qdrant 使用 named dense + sparse vector、BM25 IDF、payload scope filter 和服务端 RRF。
+- Agentic Retrieval Controller 最多规划 4 个子查询、执行 2 轮检索，并记录证据缺口与停止原因。
+- 标题、正文、专有标识符和来源多样性共同参与排序，避免改写查询稀释已验证的原始命中。
+- Neo4j 保存可重建的 evidence graph；PostgreSQL 保存文档、版本、任务和审核真相。
+
+知识图谱按需使用，而不是每次强制执行。关系类请求先解析 canonical entity，再通过固定模板完成
+1-3 hop 子图、路径、邻居、冲突或实体比较；所有关系必须回连原始 Chunk 证据。模型不能生成任意
+Cypher，也不能直接访问 Neo4j driver。
+
+### 3. 多模态知识入库
+
+- 支持 PDF、Markdown、TXT、JSON、CSV、HTML、PNG、JPEG、WebP、DOCX 和 XLSX。
+- 文档先转换为统一 Document IR，再做标题层级感知、token-aware chunking 和原子 revision replacement。
+- 有文本层的 PDF 优先使用原生文本；低文本页面才进入 Responses Vision OCR。
+- 图片保留原件、可见文字、总览、视觉区域和归一化坐标，最终 citation 可回指原图区域。
+- durable ingestion job 提供 lease、heartbeat、fencing、重试、取消和跨 Qdrant/Neo4j 的补偿处理。
+
+### 4. 受治理的通用工具
+
+Agent 可以调用网页搜索、网页正文读取、计算器、时区时间和只读 Computer Workspace。所有能力都通过
+run-scoped Capability Bridge，执行 schema、scope、timeout、调用预算、SSRF、密钥和路径逃逸检查。
+网页与工作区片段会转成统一 `EvidenceRef`，而不是作为无来源文本直接注入答案。
+
+### 5. 长期记忆与上下文
+
+Context Engine 为历史、摘要、Memory、Skill 和个人状态分配独立 token 预算。长期记忆按照作用域、
+BM25/dense 相关性、信任、置信度和时间衰减排序，并处理等价内容去重与冲突。回答会保留
+`context_trace`，记录使用量和选择结果，但不暴露系统 Prompt 或私有推理。
+
+### 6. Hermes 式自进化
+
+![HermesGraph 自进化闭环](docs/images/self-evolution-loop.svg)
+
+每次完成、失败、取消和反馈都可形成不可变 Experience。重复模式先成为 versioned Draft，再经历安全
+扫描、冻结能力回放、质量评测、Shadow 和 Canary；只有满足 Promotion Evidence 的版本才能进入
+Active。生产运行在开始时钉住精确 Skill/Pattern 版本，质量或负反馈退化会写入 append-only decision
+并自动回滚。
+
+这套机制刻意区分三个层次：
+
+- **Memory**：经过确认的事实、偏好和长期上下文。
+- **Skill**：可复用的任务方法与执行约束，不是任意可执行脚本。
+- **Pattern**：从多次 Experience 归纳出的全局行为候选，必须评测和渐进发布。
+
+当前 Experience 采集与治理链路已经运行，但默认项目仍为 `0 Draft Pattern / observing`。项目不会把
+“能够记录经验”包装成“已经证明长期自学习增益”。
+
+### 7. 个人与团队同一内核
+
+研发团队是默认主线，覆盖内部架构、服务、API、ADR、事故、Runbook、工程规范和组织归属。个人模式
+复用同一 Agent，同时提供 Task、Plan、Checklist、Note、Persona、Emotion、日历、日归档和长期学习。
+不同模式只改变 Workspace Profile 与知识层，不复制第二套 Agent。
+
+## 系统架构
+
+![HermesGraph 系统架构](docs/images/system-architecture.svg)
+
+关键技术边界：
+
+- **Hermes Agent 0.19.0** 是唯一在线 Agent Loop，负责会话、工具循环和原生 Memory/Skill review。
+- **OpenAI Python SDK** 提供 Responses、Structured Outputs、Vision、Embeddings 和 hosted Web Search；
+  不再保留 OpenAI Agents SDK fallback。
+- **LangChain** 负责 LCEL 数据流、并行检索、结构化转换、adapter 和 callback，不拥有第二个 Agent Loop。
+- **Capability Bridge** 是 Agent 与外部系统之间唯一入口，负责认证、隔离、预算和证据白名单。
+- **Qdrant** 是混合检索投影，**Neo4j** 是关系查询投影，**PostgreSQL** 是业务状态与审计真相源。
+- **Strict Answer Publisher** 只接受本轮 allowlist 内的 evidence ID，并在服务端补全来源信息。
+
+在线问答主链：
+
+```text
+FastAPI / SSE
+  -> Adaptive-RAG Router
+  -> Context Engine
+  -> Hermes Agent Runtime
+  -> Capability Bridge
+  -> LangChain retrieval and governed tools
+  -> Qdrant + Neo4j + Memory
+  -> Strict Answer Publisher
+  -> Run trajectory and learning job
+```
+
+知识入库主链：
+
+```text
+Upload / arXiv source
+  -> Durable ingestion job
+  -> Document IR / OCR / Vision
+  -> Hierarchical token-aware chunks
+  -> PostgreSQL metadata
+  -> Qdrant retrieval projection
+  -> Pending graph candidates
+  -> Review gate
+  -> Neo4j active evidence graph
+```
+
+更详细的模块位置与调用顺序见 [项目目录结构](docs/PROJECT_STRUCTURE.md) 和
+[技术实现文档](docs/TECHNICAL_DESIGN.md)。
+
+## 技术栈
+
+| 层 | 主要技术 |
+| --- | --- |
+| Agent Runtime | Hermes Agent 0.19、OpenAI Python SDK、Pydantic Structured Outputs |
+| Orchestration | LangChain Core / LCEL、run-scoped Capability Bridge |
+| API | Python 3.11+、FastAPI、SSE、Uvicorn |
+| Retrieval | Qdrant dense+sparse、BM25、IDF、RRF、bounded multi-query |
+| Knowledge Graph | Neo4j、typed entity/relation、evidence-backed fixed traversal |
+| Persistence | PostgreSQL、durable jobs、outbox、lease、fencing、append-only ledger |
+| Multimodal | Responses Vision、PDF text layer、OCR、Document IR |
+| Frontend | React、TypeScript、Vite、Lucide、Markdown renderer |
+| Delivery | Docker Compose、pytest、Ruff、strict mypy、TypeScript build |
+
+## 快速开始
+
+### 环境要求
+
+- Docker Desktop 与 Docker Compose
+- 可用的 OpenAI 或 OpenAI-compatible model endpoint
+- 本地开发需要 Python 3.11+ 和 Node.js 20+
+
+### 1. 配置环境
+
+```bash
+cp .env.example .env
+```
+
+至少配置三组彼此独立的 Hermes token，并选择模型 provider：
+
+```dotenv
+RUNTIME_MODE=hermes
+HERMES_API_KEY=replace-with-at-least-32-random-characters
+HERMES_BRIDGE_TOKEN=replace-with-a-different-32-character-secret
+HERMES_NATIVE_ADMIN_TOKEN=replace-with-a-third-independent-secret
+
+# 官方 OpenAI
+OPENAI_API_KEY=...
+OPENAI_MODEL=your-model
+
+# 或 OpenAI-compatible provider
+MODEL_PROVIDER=openai-compatible
+MODEL_BASE_URL=https://your-provider.example/v1
+DOCKER_MODEL_BASE_URL=https://your-provider.example/v1
+MODEL_API_KEY=...
+```
+
+不要把真实 key 提交到仓库。`.env` 已被 Git 忽略。
+
+### 2. 启动完整系统
 
 ```bash
 ./scripts/docker_up.sh
 ```
 
-启动后访问：
+脚本会构建前端与应用镜像，并启动五个服务：
 
-- 工作台：`http://127.0.0.1:8001/`
-- API 文档：`http://127.0.0.1:8001/docs`
-- Hermes API：`http://127.0.0.1:8642/health`
-- Postgres：`127.0.0.1:5432`
-- Neo4j Browser：`http://127.0.0.1:7474/`
-- Qdrant HTTP：`http://127.0.0.1:6333/`
-
-检查状态与日志：
+| 服务 | 地址 | 用途 |
+| --- | --- | --- |
+| Workbench / API | `http://127.0.0.1:8001/` | 产品界面与 FastAPI |
+| API Docs | `http://127.0.0.1:8001/docs` | OpenAPI 文档 |
+| Hermes | `http://127.0.0.1:8642/health` | Agent sidecar 健康检查 |
+| Neo4j Browser | `http://127.0.0.1:7474/` | 图谱检查 |
+| Qdrant | `http://127.0.0.1:6333/` | 检索服务 |
 
 ```bash
 docker compose ps
@@ -83,120 +220,50 @@ docker compose logs -f app
 docker compose logs -f hermes
 ```
 
-未配置在线 provider 时，将 `RUNTIME_MODE=offline` 并使用 deterministic dense encoder 验证文本链路。该 encoder 只用于开发和回放，并通过词项门槛拒绝明显无关的候选，不代表生产语义检索质量；官方 OpenAI 环境在 `.env` 中配置：
-
-```dotenv
-RUNTIME_MODE=hermes
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-5.6
-HERMES_API_KEY=replace-with-at-least-32-characters
-HERMES_BRIDGE_TOKEN=replace-with-another-32-character-secret
-HERMES_NATIVE_ADMIN_TOKEN=replace-with-a-third-32-character-secret
-EMBEDDING_PROVIDER=openai
-EMBEDDING_MODEL=text-embedding-3-small
-EMBEDDING_DIMENSIONS=1024
-GRAPH_EXTRACTOR_MODE=hybrid
-GRAPH_EXTRACTION_MODEL=gpt-5.6
-INGESTION_MODE=async
-LEARNING_JOB_MODE=async
-```
-
-OpenAI-compatible provider 使用独立凭证，不把 key 写入 Compose 或源码：
-
-```dotenv
-RUNTIME_MODE=hermes
-OPENAI_MODEL=gpt-5.6-sol
-MODEL_PROVIDER=local-openai-compatible
-MODEL_BASE_URL=http://127.0.0.1:55523/v1
-DOCKER_MODEL_BASE_URL=http://host.docker.internal:55523/v1
-MODEL_API_KEY=...
-HERMES_API_KEY=...
-HERMES_BRIDGE_TOKEN=...
-HERMES_NATIVE_ADMIN_TOKEN=...
-GRAPH_EXTRACTOR_MODE=openai
-GRAPH_EXTRACTION_MODEL=gpt-5.6-sol
-VISION_ENABLED=true
-VISION_MODEL=gpt-5.6-sol
-VISION_DETAIL=high
-AGENTIC_RETRIEVAL_ENABLED=true
-RETRIEVAL_PLANNER_MODE=openai
-RETRIEVAL_PLANNER_MODEL=gpt-5.6-sol
-RETRIEVAL_PLANNER_TIMEOUT_SECONDS=30
-RETRIEVAL_MAX_ROUNDS=2
-RETRIEVAL_MAX_SUBQUERIES=4
-MAX_RETRIEVAL_TOOL_CALLS=3
-MAX_GRAPH_TOOL_CALLS=6
-WEB_SEARCH_MODE=openai
-WEB_SEARCH_MODEL=gpt-5.6-sol
-WEB_SEARCH_CONTEXT_SIZE=medium
-WEB_SEARCH_MAX_RESULTS=8
-MAX_WEB_SEARCH_TOOL_CALLS=3
-# Optional formal provider. The runtime order is Responses hosted -> Brave -> DuckDuckGo -> Bing.
-# Leave empty to skip Brave without changing the current fallback path.
-BRAVE_SEARCH_API_KEY=
-BRAVE_SEARCH_TIMEOUT_SECONDS=8
-BRAVE_SEARCH_COUNTRY=
-BRAVE_SEARCH_LANGUAGE=
-BRAVE_SEARCH_SAFESEARCH=moderate
-# 可选；必须是 JSON 数组，且只写 bare DNS domain
-WEB_SEARCH_ALLOWED_DOMAINS=[]
-LEARNING_REFLECTOR_MODE=openai
-LEARNING_REFLECTION_MODEL=gpt-5.6-sol
-LEARNING_REFLECTION_TRIGGER_MODE=signals
-LEARNING_JOB_MODE=async
-LEARNING_JOB_WORKER_ENABLED=true
-```
-
-验证当前 provider 的 Structured Reflection 合同：
-
-```bash
-./.venv/bin/python scripts/check_learning_reflection.py
-```
-
-输出只包含模型、reflector revision、降级类型和记忆类型，不打印凭据或原始反思内容。
-
-验证当前 provider 的 Responses hosted Web Search、URL citation 和证据归一化合同：
-
-```bash
-./.venv/bin/python -m app.web_search.cli
-```
-
-Web Search 默认关闭；启用时会先调用配置模型 provider 的 Responses hosted search。若配置
-`BRAVE_SEARCH_API_KEY`，hosted tool 超时、失败或无证据时会转入 Brave Search API；随后才是
-DuckDuckGo/Bing 的 best-effort HTML fallback。没有 Brave key 时会自动跳过正式 API，不改变既有
-`hosted -> DuckDuckGo -> Bing` 链路。不要把凭据、私有记录或无关个人信息放入联网查询。运行 trace
-只记录 provider 名、错误类型、耗时和公开 URL，不打印 key、请求 header 或 provider error body。
-
-运行固定 Web Search 门禁。`contract` 不读取 provider 凭据，也不联网；`live` 才会执行真实
-Responses hosted tool。报告不保存原始 query 或网页正文，只保存 query fingerprint、公开域名、
-错误分类、HTTP 状态、usage、延迟和质量指标：
-
-```bash
-./.venv/bin/python -m app.evaluation.web_search_cli \
-  --execution contract \
-  --output .data/evals/web_search_contract.json
-
-./.venv/bin/python -m app.evaluation.web_search_cli \
-  --execution live \
-  --output .data/evals/web_search_live.json
-```
-
-当前 `2026-07-19-v1` 有 7 个 live case 和 6 个 required contract case。contract 实跑 6/6；
-兼容端点凭据已于 2026-07-27 恢复基础模型与 Structured Outputs 调用，但尚未证明它支持
-Responses hosted Web Search，因此 7-case live 质量门禁仍未获批。这不推翻历史上曾通过的单次
-citation probe，也不能据此宣称当前 provider 的 hosted Web Search 可用于生产。
-
-改变 embedding 模型或维度时必须迁移 collection，或同时更换 `QDRANT_COLLECTION`，不能让不同 revision 混写同一 collection。
-
-`GRAPH_EXTRACTOR_MODE` 支持 `rule`、`openai`、`hybrid`。默认 `rule` 完全离线；`openai` 只使用结构化模型抽取；`hybrid` 并行运行规则和模型后按稳定候选 ID 去重。模型结果永远先进入 pending 候选，不能绕过审核直接成为 Neo4j active 事实。启用 `openai` 或 `hybrid` 时，官方 provider 配置 `OPENAI_API_KEY`；兼容 provider 配置 `MODEL_BASE_URL` 与 `MODEL_API_KEY`。默认 extractor 只有在对应 live golden gate 通过后才切换。
-
 停止服务但保留数据：
 
 ```bash
 docker compose down
 ```
 
-不要随意加 `-v`；它会删除应用、Postgres、Qdrant 和 Neo4j 的持久卷。
+不要随意使用 `docker compose down -v`，它会删除 PostgreSQL、Qdrant、Neo4j 和应用持久卷。
+
+### 3. 载入企业研发示例库
+
+工作台首次使用时可以点击“载入示例工作区”。也可以通过正式 CLI 验证并导入：
+
+```bash
+docker compose exec -T app hermesgraph-enterprise-fixture --dry-run
+docker compose exec -T app hermesgraph-enterprise-fixture
+```
+
+样例位于 `examples/enterprise_knowledge/`，包含服务说明、系统架构、ADR、事故、Runbook、基础设施、
+安全、AI 平台和团队归属。它是虚构但结构完整的研发知识库，适合演示 RAG、GraphRAG 和时效冲突。
+
+### 4. 发起一个可恢复 Agent Run
+
+```bash
+curl -X POST http://127.0.0.1:8001/v1/projects/default/runs/start \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "input": "Polaris 和 Constellation 分别负责什么？它们使用哪些存储？",
+    "session_id": "readme-demo",
+    "idempotency_key": "readme-demo-001"
+  }'
+```
+
+接口立即返回稳定 `run_id`。工作台通过带 cursor 的 SSE 恢复检索、图谱、工具和回答进度；刷新页面
+不会取消服务端任务，只有显式停止才写入 `cancelled`。
+
+### 5. 上传自己的知识
+
+```bash
+curl -F file=@examples/knowledge/mission_protocol.md \
+  http://127.0.0.1:8001/v1/projects/default/ingestion-jobs
+```
+
+Compose 默认使用异步 durable ingestion。接口返回 job ID，工作台展示等待、处理、重试、成功、失败
+或取消。归档旧文档会同时隔离它在 Qdrant 与 Neo4j 中的检索投影。
 
 ## 本地开发
 
@@ -208,374 +275,120 @@ npm --prefix frontend run build
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 ```
 
-应用入口 `get_settings()` 读取 `.env`；测试直接构造 `Settings(...)`，不会被开发机 `.env` 污染。`.env.example` 保留本地降级配置，Compose 会显式覆盖为容器内 Qdrant/Neo4j 地址。
+核心目录：
 
-上传并提问：
-
-```bash
-curl -F file=@examples/knowledge/mission_protocol.md \
-  http://127.0.0.1:8001/v1/projects/default/ingestion-jobs
-
-curl -F file=@/path/to/architecture.png \
-  http://127.0.0.1:8001/v1/projects/default/ingestion-jobs
-
-curl http://127.0.0.1:8001/v1/projects/default/ingestion-jobs
+```text
+app/                 后端产品源码
+  agent/             Adaptive-RAG、Context Engine、Hermes runtime
+  retrieval/         混合召回与 Agentic Retrieval Controller
+  graph/             图谱抽取、治理、Neo4j 与 GraphRAG tools
+  knowledge/         Document IR、解析、chunking 与 ingestion
+  learning/          Reflection、Memory/Skill 与 durable learning
+  harness/           Experience/Pattern 与渐进发布治理
+  capabilities/      LangChain 桥接和通用工具
+frontend/            React/Vite 工作台
+deploy/hermes/       Hermes sidecar、插件和 toolset
+examples/            企业知识库与版本化评测集
+tests/               unit、contract 和 integration tests
+docs/                产品、架构、ADR、进度与使用文档
 ```
 
-知识图谱检索既可由 Hermes 自动选择工具，也可通过同一领域合同直接验证：
-
-```bash
-curl -X POST http://127.0.0.1:8001/v1/projects/default/graph/entities/resolve \
-  -H 'Content-Type: application/json' \
-  -d '{"mentions":["GraphRAG","RAG"],"entity_types":["Method"]}'
-
-curl -X POST http://127.0.0.1:8001/v1/projects/default/graph/retrieve \
-  -H 'Content-Type: application/json' \
-  -d '{"query":"GraphRAG 如何支持多跳检索？","seed_entities":["GraphRAG"],"max_hops":3}'
-
-curl -X POST http://127.0.0.1:8001/v1/projects/default/graph/compare \
-  -H 'Content-Type: application/json' \
-  -d '{"left_entity":"GraphRAG","right_entity":"Vector RAG","max_hops":3}'
-```
-
-`retrieve_evidence_subgraph` 的 `evidence` 是文本召回、实体解析来源和图关系来源的去重并集；
-`graph_paths` 只保留同 tenant/project 且每条关系至少带一个 `EvidenceRef` 的路径。API、Hermes 插件
-和 LangChain Integration Runtime 使用完全相同的 Pydantic 合同。
-
-Compose 默认使用 `INGESTION_MODE=async`。提交接口立即返回 `202` 和 job ID，工作台自动轮询并展示等待、处理、重试、成功、失败或取消状态。原同步文档接口仍保留，便于本地降级和兼容已有调用方。
-
-查看或控制后台学习任务：
-
-```bash
-curl http://127.0.0.1:8001/v1/projects/default/learning-jobs
-curl http://127.0.0.1:8001/v1/projects/default/learning-jobs/{job_id}
-curl -X DELETE http://127.0.0.1:8001/v1/projects/default/learning-jobs/{job_id}
-curl -X POST http://127.0.0.1:8001/v1/projects/default/learning-jobs/{job_id}/retry
-curl http://127.0.0.1:8001/v1/projects/default/skills/{skill_id}/transitions
-```
-
-Compose 默认使用 `LEARNING_JOB_MODE=async`；本地 `Settings` 默认 `inline`。公开任务响应不会返回轨迹快照、lease owner 或 fencing token。
-需要独立扩容后台 worker 时运行 `hermesgraph-worker` 或 `python -m app.worker`；该进程不启动 HTTP 服务，并与 API 进程竞争同一 Postgres 队列。
-检查并修复 checkpoint 派生 link、验证 artifact/result 一致性时运行
-`hermesgraph-reconcile-learning`；发现 artifact 丢失或结果不一致会返回非零退出码并把任务标为
-`reconciliation_status=required`，不会伪造或补写 artifact 本体。
-
-同步计算机/AI arXiv 公共参考语料，默认只缓存 25 篇、单篇最多 10 MB、单次最多 250 MB：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_cli \
-  --root .data/arxiv \
-  --max-results 100 \
-  --max-downloads 25
-```
-
-应用启动后，可在同一次可恢复同步中把已下载 PDF 提交到独立项目：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_cli \
-  --root .data/arxiv \
-  --max-results 100 \
-  --max-downloads 0 \
-  --ingest-base-url http://127.0.0.1:8001 \
-  --project-id computer-science
-```
-
-已经缓存完成后，推荐使用不访问 arXiv、且只提交没有 job ID 的版本：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_cli \
-  --root .data/arxiv \
-  --ingest-base-url http://127.0.0.1:8001 \
-  --project-id computer-science \
-  --submit-pending
-```
-
-manifest 保存在 `.data/arxiv/manifest.json`；重复执行会跳过已缓存和已提交版本。新版本以新的 `source_revision` 保留，不覆盖旧证据。
-
-当前本地快照为 777 个候选版本、528 篇唯一且逐文件校验的 PDF，共 `1,059,247,539` 字节；528 篇均已成为 `computer-science` 项目的 active 文档。全量 Vision 补页与 Document IR v1 重切后形成 43,872 个 active chunks。本轮 500 个新 durable ingestion job 全部成功，4 个经历一次可恢复重试、0 失败，Outbox 无积压。同步与入库预算分离：新同步单篇仍限制为 10 MB，应用上传上限为 20 MB，以兼容早期缓存中 6 篇 10-13.3 MB 的有效 PDF。
-
-为全部缓存论文生成按页 Markdown，并仅对缺少有效文本层的页面调用 GPT Vision OCR：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_ocr_cli \
-  --source-root .data/arxiv \
-  --output-root .data/arxiv/ocr \
-  --model gpt-5.6-sol \
-  --detail high
-```
-
-没有模型 API 时先完成 PDF 文本层提取，并把扫描页明确留在待补队列：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_ocr_cli \
-  --source-root .data/arxiv \
-  --output-root .data/arxiv/ocr \
-  --text-only
-```
-
-`--text-only` 不构造模型 client，也不渲染低文本页；这些页面以
-`unresolved_low_text` 写入 manifest。以后恢复 Vision 模式时，只有包含待补页的文档会重新处理，
-已经完成的文本层和 GPT OCR 文档继续按源 PDF hash 跳过。
-
-输出位于 `.data/arxiv/ocr/texts`，可续传清单位于 `.data/arxiv/ocr/manifest.json`。当前 528 篇共 11,023 页，其中 10,995 页直接使用 PDF 文本层、28 页使用 GPT Vision OCR，`unresolved_low_text=0`、失败文档为 0。528/528 个 sidecar 均为 `document-ir-pdf-v1`，共生成 168,531 个可追溯 block，其中 167,487 个来自原生文本、1,044 个来自 Vision OCR。重复运行会按源 PDF hash 和 parser revision 跳过已完成文档。
-
-不调用模型、不触发知识图谱抽取地把现有论文迁移到新版层级分块：
-
-```bash
-./.venv/bin/python -m app.knowledge.rechunk_cli \
-  --project-id computer-science \
-  --concurrency 4
-```
-
-命令先校验 PDF hash 和 Document IR revision，再将相邻短 section 打包为目标不超过 400 tokens 的 chunk；向量写入成功后才原子替换 Postgres chunks，并清理 Qdrant 中该文档的陈旧 point。进度写入 `.data/knowledge_rechunk_manifest_v2.json`，进程锁、防重复和逐文档 checkpoint 使中断后可续跑。该链路只发出 `knowledge.document.rechunked` 审计事件，不触发图谱 backfill。
-
-需要更换稀疏索引配置时，在新 collection 中重建全部项目，再通过环境变量一次切换：
-
-```bash
-./.venv/bin/python -m app.knowledge.reindex_cli \
-  --project-id default \
-  --project-id computer-science \
-  --qdrant-collection hermesgraph_chunks_v3_idf \
-  --sparse-idf
-```
-
-本地当前活动 collection 是 `hermesgraph_chunks_v3_idf`，包含 `computer-science` 的 43,872 个 chunks 和 `default` 的 31 个 chunks，共 43,903 points。`QDRANT_COLLECTION=hermesgraph_chunks_v3_idf` 与 `QDRANT_SPARSE_IDF=true` 必须成对切换；旧 collection 保留作回滚点。
-
-当来源合同或索引编码升级时，可只读取本地 manifest 和缓存 PDF，幂等富化已有文档并重建索引；该命令不访问 arXiv，也不重新解析或重复保存 PDF：
-
-```bash
-./.venv/bin/python -m app.sources.arxiv_cli \
-  --root .data/arxiv \
-  --ingest-base-url http://127.0.0.1:8001 \
-  --project-id computer-science \
-  --refresh-submitted
-```
-
-也可以验证两个真实基础设施适配器；脚本使用隔离 scope，结束后清理 fixture：
-
-```bash
-./.venv/bin/python scripts/infrastructure_smoke.py
-```
-
-离线运行图谱抽取质量门禁并生成报告：
-
-```bash
-./.venv/bin/python -m app.evaluation.graph_cli \
-  --mode rule \
-  --report-only \
-  --output .data/evals/graph_rule_baseline.json
-```
-
-安装项目或在 Docker 镜像内可直接使用 `hermesgraph-eval-graph`。`openai`/`hybrid` 模式读取当前模型 provider 的凭证；默认门禁失败会返回非零退出码，`--report-only` 只用于建立基线。token 美元估算不内置易过期价格，必须通过 `--input-cost-per-million`、`--cached-input-cost-per-million` 和 `--output-cost-per-million` 显式传入，并随报告固化。
-
-对自然计算机论文分布运行生产图谱门禁：
-
-```bash
-./.venv/bin/python -m app.evaluation.graph_cli \
-  --mode openai \
-  --dataset examples/evaluation/graph_extraction_arxiv_golden.json \
-  --output .data/evals/graph_arxiv_openai.json
-```
-
-该数据集固定为 18 条、14 个 arXiv 来源，覆盖架构、方法、评测、多 Chunk、自然负例与提示注入。报告按 category、difficulty 和 tag 聚合，并以 fsync 后原子替换写入；required 安全/负例失败会单独阻断。
-
-当前生产候选 revision 是 `openai-graph-extraction-v6-window-map-reduce:c6000:n4:o1:gpt-5.6-sol`。2026-07-28 的 5-case 合同集和 18-case 自然 arXiv 集均全部通过，实体/关系、类型和证据指标均为 `1.0`；报告分别位于 `.data/evaluations/graph_openai_v6_contract_20260728.json` 与 `.data/evaluations/graph_openai_v6_arxiv_20260728.json`。这只批准 v6 生成 pending candidate，不自动晋级为 active 图事实。
-
-不调用模型即可把 Postgres 当前 Document/Chunk revision 重投影到 Neo4j，并归档旧结构：
-
-```bash
-hermesgraph-reindex-graph-structure \
-  --project-id computer-science \
-  --concurrency 4
-```
-
-当前结构投影为 528 个 active Document、43,872 个 active Chunk 和 43,872 条 active `HAS_CHUNK`；旧版本 32,129 个 Chunk/关系已标记 archived。结构命令有进程锁、逐文档 checkpoint、content hash/parser revision 跳过和 dry-run。
-
-候选审核库位于 Docker `app_data` 卷。chunk revision 变化后，应先预览再归档证据已失效的 pending 候选；approved/rejected 和 review event 不会被覆盖：
-
-```bash
-docker compose exec -T app env \
-  RUNTIME_MODE=offline GRAPH_EXTRACTOR_MODE=rule VISION_ENABLED=false \
-  OUTBOX_DISPATCHER_ENABLED=false INGESTION_WORKER_ENABLED=false \
-  LEARNING_JOB_WORKER_ENABLED=false \
-  hermesgraph-reconcile-graph-candidates \
-  --project-id computer-science --dry-run
-```
-
-去掉 `--dry-run` 后应用。当前已归档 12,920 个旧 pending 实体、925 条旧 pending 关系和 4,989 个旧 pending 消歧候选；二次 dry-run 为全零。全量 v6 模型 backfill 仍未执行，恢复时必须在 app 容器内运行 `hermesgraph-backfill-graph`，确保 checkpoint 和候选审计仓都落在同一 `/data` 卷。
-
-仓库提供了 Docker 包装脚本。它默认只跑 20 篇并使用 2 并发，可通过 `--concurrency 1..12` 调整；脚本复用 `/data/graph_backfill_manifest.json`
-断点，自动构建当前 app 代码，并显示完成数、成功/失败、实体/关系、耗时和 ETA 进度条；key 从 shell
-或 `.env` 读取，不写入脚本。先预览，再跑 pilot：
-
-```bash
-./scripts/run_kg_extraction.sh --dry-run
-./scripts/run_kg_extraction.sh --limit 20 --concurrency 2
-```
-
-pilot 的 `documents_failed=0` 且网关延迟稳定后，再运行全部未完成文档：
-
-```bash
-./scripts/run_kg_extraction.sh --full
-```
-
-`--full` 和 `--force` 会要求确认；所有模型结果仍只是 pending candidate，不会自动成为 active 图事实。
-完整参数使用 `./scripts/run_kg_extraction.sh --help` 查看。
-
-镜像内固定设置 `TIKTOKEN_CACHE_DIR=/opt/hermesgraph/tiktoken-cache`，并内置经过官方 expected hash
-校验的 `o200k_base` cache object。Docker build 会离线构造 tokenizer 验证资产，KG backfill、OCR、
-rechunk 和应用启动不会再临时访问 `openaipublic.blob.core.windows.net`。若 build 报 tokenizer hash
-错误，应修复或更新构建资产，不能在运行容器中关闭 hash 检查。
-
-运行多模态视觉知识抽取门禁：
-
-```bash
-./.venv/bin/python -m app.evaluation.vision_cli \
-  --dataset examples/evaluation/vision_golden.json \
-  --output .data/evals/vision_openai.json
-```
-
-当前 `2026-07-16-v4` 数据集有 11 个冻结 hash 的图片 case、13 个期望区域，包括架构图、图表、表格、应用界面、扫描笔记、多区域代码/流程、安全提示注入、近空白负例和 3 张真实 arXiv 页面。最终 `openai-vision-knowledge-v3:gpt-5.6-sol` 报告为 11/11 调用成功、10/11 case 严格全项通过；标题、OCR、区域召回/类型/文本/框和禁止内容均为 `1.0`，摘要术语召回 `0.9773`，required 安全与空白 case 均通过。CLI 支持重复 `--case-id` 做可复现子集探针，并只对连接、超时、限流和服务端错误执行有记录的样本级恢复。
-
-运行有界 Agentic Retrieval 评测并原子生成 JSON 报告：
-
-```bash
-./.venv/bin/python -m app.evaluation.retrieval_cli \
-  --planner-mode deterministic \
-  --output .data/evals/retrieval_agentic_deterministic_v1.json
-```
-
-当前受控 5-case 基线覆盖私有标识符、比较、视觉检索、scope 隔离与 hard negative，结果为 5/5、平均 Recall@K 1.0、MRR 1.0。它只验证控制器合同和可重复回放，不代表真实 arXiv 分布或生产 embedding 的检索质量。
-
-对当前 528 篇/43,872 chunks 的真实 Qdrant arXiv 语料运行只读自然检索门禁：
-
-```bash
-./.venv/bin/python -m app.evaluation.retrieval_cli \
-  --backend qdrant \
-  --dataset examples/evaluation/arxiv_retrieval_golden.json \
-  --planner-mode deterministic \
-  --output .data/evaluations/arxiv_retrieval_v4_vision_complete.json
-```
-
-当前 v2 数据集有 57 条：28 个逐论文事实定位、15 个困难同义改写、5 个跨论文比较、3 个 hard negative、2 个 scope isolation、3 个个人知识查询和 1 个视觉查询。Vision 补页后的 `hermesgraph_chunks_v3_idf` 全量门禁为 57/57、Recall@20 `1.0`、MRR `0.8924`、P95 `34 ms`，全部类别和难度切片通过；最终报告为 `.data/evaluations/arxiv_retrieval_v4_vision_complete.json`。历史 28 篇 collection 的 deterministic/OpenAI planner v3 基线均为 57/57、MRR `0.9113`，分别保存在 `.data/evals/arxiv_personal_retrieval_deterministic_v6.json` 和 `.data/evals/arxiv_personal_retrieval_openai_planner_v3.json`。这些成绩验证离线 deterministic 检索和 controller，不证明生产 embedding。
-
-使用新 collection 校准 OpenAI embedding；命令会拒绝覆盖当前活动 collection，从 Postgres 幂等重建数据，记录 embedding 请求/token/可选价格、运行同一 57-case gate，并自动比较 deterministic baseline：
-
-```bash
-./.venv/bin/python -m app.evaluation.embedding_calibration_cli \
-  --target-collection hermesgraph_chunks_openai_te3s_1024_v1 \
-  --dataset examples/evaluation/arxiv_retrieval_golden.json \
-  --baseline .data/evals/arxiv_personal_retrieval_deterministic_v6.json \
-  --output .data/evals/embedding_calibration_openai_te3s_1024_v1.json
-```
-
-当前兼容端点只公布 GPT/Image 模型，`text-embedding-3-small` 探测被明确拒绝为 `model_not_available`；失败报告保存在 `.data/evals/embedding_calibration_openai_te3s_1024_probe_v1.json`，目标索引写入 0 条。运行态当前使用 deterministic 256 维 encoder 与 IDF sparse index，不能声称生产 embedding 已通过。
-
-## 架构边界
-
-```mermaid
-flowchart LR
-    U["User / API / Workbench"] --> RT["HermesAgentRuntime"]
-    RT --> H["Hermes Agent 0.19.0\nOnly online agent loop"]
-    H --> MODEL["OpenAI-compatible model gateway"]
-    H --> PLUGIN["Trusted hermesgraph-bridge plugin"]
-    PLUGIN --> CAP["Run-scoped Capability Bridge\nIntegration Runtime"]
-    CAP --> LC["LangChain LCEL\nDataflow and adapters"]
-    LC --> Q["Qdrant\nDense + sparse + RRF"]
-    CAP --> N["Neo4j\nAllowlisted evidence graph"]
-    U --> JOB["Postgres ingestion jobs\nLease and retry state"]
-    IMG["Personal images\nPNG / JPEG / WebP"] --> JOB
-    AX["arXiv Source Connector\nBudgeted and resumable"] --> JOB
-    JOB --> ING["Durable ingestion worker"]
-    ING --> VISION["Responses API Vision\nStrict regions and visible text"]
-    VISION --> LC
-    ING --> EXT["Candidate extraction\nRule or structured model"]
-    EXT --> RESOLVE["Cross-document resolver\nAuditable proposals"]
-    RESOLVE --> REVIEW["Review gate\nPending / approved / rejected"]
-    REVIEW --> N
-    CAP --> PUB["Strict evidence publisher gate"]
-    H --> NATIVE["Hermes Memory / Skills / Todo"]
-    NATIVE --> AUDIT["Native write audit\nrequires_audit ChangeSet"]
-    RT --> TRACE["Run trajectory"]
-    TRACE --> LJOB["Postgres learning jobs\nLease, fencing and retry"]
-    LJOB --> LEARN["Learning worker\nControl plane"]
-    LEARN --> MEM["Memory candidates"]
-    LEARN --> SKILL["Draft skills"]
-    LEARN --> CHANGE["Auditable change sets"]
-```
-
-Hermes 不直接访问 driver、自由 Cypher、Qdrant collection 或 HermesGraph 写接口。所有外部能力必须经过 Capability Bridge 的认证、schema、scope、timeout、预算、evidence allowlist 和审计门禁。Hermes 原生 Memory/Skill 只能写 sidecar profile，并同步为待审计 ChangeSet。
-
-## 验证
+## 评测与真实结果
+
+HermesGraph 不把“程序能跑”当作 RAG 质量。仓库内有分层、fail-closed 的评测：
+
+| 门禁 | 当前已记录结果 | 说明 |
+| --- | --- | --- |
+| 自然 arXiv 检索 | 57/57，Recall@20 `1.0`，MRR `0.8924`，P95 `34 ms` | 528 篇、43,872 chunks；deterministic dense + sparse IDF |
+| KG 抽取 | 合同集 5/5、自然 arXiv 18/18 | v6 candidate extractor；结果仍需审核才能 active |
+| Vision | 11/11 API，10/11 严格 case | OCR/region 指标为 1.0，summary recall `0.9773` |
+| Agent E2E | 5/5 | 寒暄、计算器、时区、网页搜索、网页读取 |
+| Live Self-RAG 回答 | 5/5 claims、10/10 citation links、hallucination `0.0` | 单个真实企业问题，不等于 A/B 增益已验证 |
+| 自学习效果 | `observing` | Experience 已采集；尚无 Active Pattern 的真实增益结论 |
+
+运行主要质量门禁：
 
 ```bash
 ./.venv/bin/pytest -q
 ./.venv/bin/ruff check app tests scripts
 ./.venv/bin/mypy app
 npm --prefix frontend run build
-npm --prefix frontend audit --omit=dev
-docker compose config
-./.venv/bin/python scripts/infrastructure_smoke.py
-./.venv/bin/python -m app.evaluation.graph_cli --mode rule --report-only
-./.venv/bin/python -m app.evaluation.vision_cli --report-only
-./.venv/bin/python -m app.evaluation.retrieval_cli --planner-mode deterministic
-./.venv/bin/python -m app.evaluation.web_search_cli --execution contract
-./.venv/bin/python scripts/agent_e2e.py \
-  --output .data/evaluations/agent_e2e.json
-./.venv/bin/python -m app.evaluation.answer_quality_cli \
-  --use-embedded-fixture \
-  --output .data/evaluations/answer_quality_fixture.json
-./.venv/bin/python -m app.evaluation.answer_quality_live_cli \
-  --base-url http://127.0.0.1:8001 \
-  --project-id default \
-  --dataset examples/evaluation/answer_quality_enterprise_live_spec.json \
-  --annotation examples/evaluation/annotations/self_rag_polaris_constellation_98ea9834.json \
-  --output .data/evaluations/answer_quality_self_rag_live.json
+docker compose config --quiet
+
+./.venv/bin/python -m app.evaluation.retrieval_cli \
+  --backend qdrant \
+  --dataset examples/evaluation/arxiv_retrieval_golden.json \
+  --planner-mode deterministic \
+  --output .data/evaluations/arxiv_retrieval.json
+
 ./.venv/bin/python -m app.evaluation.answer_quality_cli \
   --dataset examples/evaluation/answer_quality_enterprise_live_spec.json \
-  --answers .data/evaluations/answer_quality_self_rag_live.json \
-  --output .data/evaluations/answer_quality_self_rag_live_report.json
+  --answers .data/evaluations/answer_quality_self_rag_live_20260812.json \
+  --output .data/evaluations/answer_quality_report.json
+
 ./.venv/bin/python -m app.evaluation.self_learning_cli \
   --base-url http://127.0.0.1:8001 \
   --output .data/evaluations/self_learning_live.json
 ```
 
-`answer_quality_fixture` 只验证评测器与门槛，不是在线质量成绩。真实比较必须通过 `--answers` 输入
-带 `live_run` provenance 的已录制 GraphRAG/vector-only 或 Self-RAG/single-step 成对 artifacts。live
-collector 会从 scoped Run API 读取已完成 trajectory，并 fail-closed 校验 project、run、实际路由、完整
-claim inventory、答案原文 quote 以及运行时 citation source 到冻结 evidence ID 的映射；人工 annotation
-只做 claim identity 对齐，不能自行补造答案或证据。单个 `self_rag` artifact 只证明该运行的绝对质量，
-不能替代同一 case 的受控 `single_step` 对照。
-自学习报告只有在 Pattern 经审批进入 Canary/Active、真实 applied/control 样本均达标且观测增益为正时
-才返回 `validated`；Experience 已采集但尚无这种证据时返回 `observing`。
+离线 fixture 只验证 evaluator 合同，不能伪装成 live benchmark。Self-RAG 相对 single-step、
+GraphRAG 相对 vector-only 的增益必须来自同一 case 的成对真实 artifact。
 
-当前仍未完成的关键项包括公开 `/v1` 用户认证/scope 授权、交互 Run 的 SSE
-cursor/resume、DOCX/XLSX durable ingestion、开放分布 Skill replay 与真实 provider/tool 仿真、
-Web Search 7-case live provider 门禁、生产 embedding 校准、图片原生 embedding、PDF 自动选页、
-arXiv OAI-PMH 定时增量、S3 对象存储、版本化索引和跨文档隐式别名消解。durable learning 的
-确定性 Postgres stage 已原子化，但外部模型调用仍是 at-least-once；系统不宣称跨模型 provider
-与数据库的 exactly-once。ChatTutor/Desktop-Claw 逐源码功能矩阵见
-[`docs/REFERENCE_PROJECT_COMPARISON.md`](docs/REFERENCE_PROJECT_COMPARISON.md)。
+## 数据资产
 
-Hermes 0.19.0 sidecar、插件/toolset、conversation history、幂等发布、正常 finalizer、每回合
-Memory/Skill review、原生学习快照/回滚 admin 与五服务 Compose 已验证。真实 Agent 回合完成首个发布
-并在约 12 秒返回，随后正常结束并启动后台 review；review 实际调用 memory/skills 工具并生成通用
-约束遵循 Skill。最终 review-completion 握手发布后，上游模型网关进入 `429 model_cooldown`，所以
-该最后一步以无模型桥接契约验证，待 provider 恢复后补一次 live 重验。
+仓库当前本地工作资产还包括：
 
-arXiv 数据接入遵守其[官方 API 指南](https://info.arxiv.org/help/api/index.html)与[批量访问说明](https://info.arxiv.org/help/bulk_data.html)。产品展示 canonical arXiv 回链，并感谢 arXiv 提供开放互操作能力。
+- 528 篇计算机、LLM 与 Agent 相关 arXiv PDF，共 11,023 页。
+- 10,995 页原生文本与 28 页 Vision OCR，`unresolved_low_text=0`。
+- 168,531 个 Document IR blocks 和 43,872 个 active chunks。
+- 528 个 active Document 与对应 Neo4j 结构投影。
+- 可续传 manifest、revision、source provenance 和逐文件 SHA-256。
 
-修改架构前先阅读：
+arXiv 语料默认位于独立 `computer-science` 项目，作为个人公共参考层；它不参与企业默认工作区或
+企业黄金题集。下载、OCR、rechunk、KG backfill 与索引迁移的准确命令见
+[技术实现文档](docs/TECHNICAL_DESIGN.md) 和 [当前进度](docs/PROGRESS.md)。
 
-- [Intent lock](docs/INTENT.md)
-- [Progress](docs/PROGRESS.md)
-- [Product requirements](docs/PRD.md)
-- [Technical design](docs/TECHNICAL_DESIGN.md)
-- [Project structure and ownership](docs/PROJECT_STRUCTURE.md)
-- [Agentic RAG frozen baseline](docs/AGENTIC_RAG_LOCK.md)
-- [MemoHarness memory consolidation plan](docs/MEMOHARNESS_MEMORY_CONSOLIDATION_PLAN.md)
-- [Harness Pattern governance ADR](docs/ADR-011-harness-pattern-governance.md)
-- [Open-source Agentic RAG gap analysis](docs/OPEN_SOURCE_AGENTIC_RAG_GAP_ANALYSIS.md)
-- [Hermes-first ADR](docs/ADR-008-hermes-first-runtime.md)
-- [Hermes 0.19 native review lifecycle ADR](docs/ADR-010-hermes-019-native-review-lifecycle.md)
-- [Semantic GraphRAG tools ADR](docs/ADR-012-semantic-graphrag-tools.md)
+## 安全与治理边界
+
+- tenant、project、user、session scope 在 API、检索、图谱、记忆、工具和审计中贯通。
+- Hermes 不直连 Qdrant、Neo4j driver、数据库写接口或任意 Shell。
+- 图谱仅允许参数化固定查询模板；pending/rejected/archived 关系不参与在线回答。
+- Web 页面和外部文件默认为 `untrusted`，并执行提示注入、SSRF、私网 URL、密钥和路径检查。
+- 最终答案只能引用本次 Run 实际返回的 evidence；来源、URI、scope 和视觉坐标由服务端补全。
+- 学习资产有版本、快照、hash、transition ledger、审批、健康门禁和条件回滚。
+- 项目不宣称跨模型 provider 与数据库 exactly-once，也不宣称当前已完成多副本线性一致性。
+
+## 当前边界与路线
+
+已经是完整可运行的 Agentic RAG 产品原型，但仍有几项不能夸大：
+
+1. 真实回答质量集需要从 1 个 Self-RAG case 扩展到 20-50 个研发场景，并补同题 single-step A/B。
+2. KG v6 抽取架构与门禁已完成，但 528 篇论文的语义 candidate backfill 尚未全部执行。
+3. MemoHarness 当前为 `observing`，需要真实 Canary/Active treatment-control 样本后才能证明学习增益。
+4. 当前兼容 provider 不提供目标 embedding 模型，生产 embedding 校准尚未通过；运行态不能宣称使用
+   已验证的 OpenAI embedding。
+5. 公开部署仍需完善用户认证、对象存储、多副本协调和企业连接器；GitHub、飞书与 Jira 暂不阻塞
+   核心产品体验。
+
+详细事实边界见 [Agentic RAG 冻结基线](docs/AGENTIC_RAG_LOCK.md) 和
+[开源项目差距分析](docs/OPEN_SOURCE_AGENTIC_RAG_GAP_ANALYSIS.md)。
+
+## 文档导航
+
+| 文档 | 内容 |
+| --- | --- |
+| [Intent Lock](docs/INTENT.md) | 产品北极星与不可漂移约束 |
+| [PRD](docs/PRD.md) | 用户、场景、功能范围与验收标准 |
+| [研发智能 Agent 交付设计](docs/ENGINEERING_INTELLIGENCE_AGENT_DELIVERY.md) | 企业研发主线、完整体验与 Definition of Done |
+| [技术实现文档](docs/TECHNICAL_DESIGN.md) | 架构、数据模型、API、RAG、KG、学习与部署 |
+| [使用指南](docs/USER_GUIDE.md) | 从启动到知识、会话、记忆和失败恢复 |
+| [项目目录结构](docs/PROJECT_STRUCTURE.md) | 文件责任与两条核心调用链 |
+| [当前进度](docs/PROGRESS.md) | 已验证结果、风险与未完成项 |
+| [ADR 索引](docs/README.md) | Hermes-first、框架边界、学习治理与 GraphRAG 决策 |
+
+推荐阅读顺序：README → Intent Lock → PRD → 技术实现文档 → 当前进度。
+
+## License
+
+Apache-2.0。arXiv 数据接入遵循其官方 API 与批量访问规范，公开内容保留 canonical 来源链接与
+provenance；企业示例数据为仓库内虚构 fixture。

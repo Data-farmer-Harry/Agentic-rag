@@ -1499,3 +1499,16 @@
 - 该结果是可追溯的单次 live Self-RAG 绝对质量门禁，不是总体 benchmark，也不证明 Self-RAG 相对
   single-step 的增益。下一步需要同一冻结 case 的受控策略 replay，生成真实 paired artifacts 后才允许
   报告增益。
+
+## 2026-08-12 README 与项目展示资产
+
+- 根 README 从按实现时间累积的能力与运维长列表，重构为面向首次访问者的项目首页：依次说明业务
+  问题、实际产品、Adaptive/Self-RAG、Qdrant/Neo4j 融合、多模态入库、工具、上下文、自进化、架构、
+  快速启动、真实门禁、数据资产、安全边界、路线和文档导航。
+- 新增一张明确标记为示意的克制 SaaS 产品概览图，以及当前 Docker 环境的真实工作台截图；后者保留
+  当前 54 份知识文档、123 个可检索分块、181 条图关系和 29 条长期记忆，避免用静态占位界面冒充成品。
+- 新增可版本控制的系统架构与自进化治理 SVG。架构图明确 Hermes 是唯一 Agent Loop、LangChain 的
+  中间层职责、Capability Bridge 和三种存储边界；进化图明确 Experience、Pattern、评测、Shadow/
+  Canary、Active、人工治理和自动回滚，不将经验采集包装成未经验证的自主进化。
+- 四张 README 图片总大小低于 150 KB；本地链接、SVG XML、完整宽幅渲染、文字溢出和箭头关系均已
+  检查。详细历史运行日志继续由本文保存，README 不再复制全部运维过程。

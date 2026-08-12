@@ -8,6 +8,7 @@ from httpx import ASGITransport, AsyncClient
 
 from app.agent.adaptive_rag_router import AdaptiveRAGRouterError
 from app.agent.hermes_bridge import HermesCapabilityBridge
+from app.agent.hermes_runtime import HermesRunTimeoutError
 from app.api.app import create_app
 from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService
@@ -35,6 +36,12 @@ class BusyRuntime:
     async def run(self, user_input: str, context: RunContext) -> AnswerResponse:
         del user_input, context
         raise RuntimeError("HTTP 429 model_cooldown with private provider details")
+
+
+class TimeoutRuntime:
+    async def run(self, user_input: str, context: RunContext) -> AnswerResponse:
+        del user_input, context
+        raise HermesRunTimeoutError("Hermes run timed out after 90 seconds private-run-id")
 
 
 class UnavailableAdaptiveRouterRuntime(StubRuntime):
@@ -256,6 +263,31 @@ async def test_adaptive_router_failure_is_a_public_retryable_503(tmp_path: Path)
 
     assert response.status_code == 503
     assert response.json() == {"detail": "模型路由服务暂时不可用，请稍后重试。"}
+
+
+@pytest.mark.asyncio
+async def test_sync_run_timeout_is_a_stable_public_504(tmp_path: Path) -> None:
+    service = RunService(
+        runtime=TimeoutRuntime(),
+        trajectories=JsonlTrajectoryRepository(tmp_path / "runs.jsonl"),
+        settings=Settings(app_env="test", data_dir=tmp_path),
+    )
+    transport = ASGITransport(app=create_app(service))
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/v1/projects/default/runs",
+            json={"input": "复杂任务"},
+        )
+
+    assert response.status_code == 504
+    assert response.json() == {
+        "detail": {
+            "code": "provider_timeout",
+            "message": "模型响应超时，请重新发送；复杂任务也可以稍后再试。",
+            "retryable": True,
+        }
+    }
+    assert "private-run-id" not in response.text
 
 
 @pytest.mark.asyncio

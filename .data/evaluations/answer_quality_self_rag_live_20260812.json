@@ -1,0 +1,75 @@
+{
+  "provenance": {
+    "kind": "live_run",
+    "label": "HermesGraph live runs; annotations=human-annotation-v1",
+    "run_id": null,
+    "run_ids": [
+      "98ea9834-f53e-4496-a6b8-1ae4aee6e065"
+    ],
+    "model_revision": "gpt-5.6-luna"
+  },
+  "answers": [
+    {
+      "case_id": "polaris-constellation-boundary",
+      "variant": "self_rag",
+      "answer_markdown": "Atlas 中两者的边界可以概括为：Polaris 负责“找相关文本证据”，Constellation 负责“沿已批准关系做图谱查询”。实际调用应由 Relay 按受控服务合同编排，调用方不应直接访问 Qdrant 或 Neo4j。\n\n职责\nPolaris：提供团队、个人和公共参考知识的文本检索，采用 dense + sparse 两路召回，再由 Qdrant 服务端执行 RRF；它还负责按 active revision、来源层级和租户/工作区范围返回检索证据。[a7369a89-01b6-456b-86c8-4ac69e555f7b][6f830902-2f41-4183-9362-551d13b8f46a]\n\nConstellation：提供研发知识图谱能力，包括实体解析、邻居查询、最短证据路径、影响分析和实体比较；查询只能使用固定模板，并且关系结论必须回连 source Chunk 才能发布。[cc0c18d2-2d93-4632-a8af-9302227c9ea1]\n\n底层存储\nPolaris：主要使用 Qdrant 保存 Chunk 的 dense/sparse 检索 point 和 workspace payload filter；PostgreSQL 保存 Document/Chunk 元数据、revision、来源及 active 状态，因此 Qdrant 是检索投影，不是业务状态真相源。Polaris 不直接依赖 Neo4j。[bef221aa-33c0-48ab-acfb-e786a528bb72][a3982f41-435b-4c38-98a8-c052600de5b4]\n\nConstellation：使用 Neo4j 作为可重建的结构关系查询投影；候选审核真相不放在 Neo4j，只有审核后成为 active 的语义关系才投影进去。整体数据边界中，Neo4j 不承担文档版本真相。[cc0c18d2-2d93-4632-a8af-9302227c9ea1][a3982f41-435b-4c38-98a8-c052600de5b4]\n\n调用场景\n调用 Polaris：用户问题需要从文档、服务说明、Runbook、事故记录等文本中检索答案时，例如团队知识问题、按关键词或语义查找资料。Atlas 请求数据流明确规定团队知识问题查询 atlas_chunks_v3，并使用 dense、sparse 与 server-side RRF。[8d4498dd-c544-4eeb-add5-094ca3375e31]\n\n调用 Constellation：问题涉及依赖关系、负责人归属、事故链、影响分析、路径、邻居或实体比较时，例如“某服务由谁负责”“某事故影响了什么”“某组件依赖哪些服务”。这类请求应在已有文本证据基础上由 Relay 调用 Constellation；图查询不能替代文本检索。[8d4498dd-c544-4eeb-add5-094ca3375e31][6f830902-2f41-4183-9362-551d13b8f46a]\n\n简化决策：事实内容和原文依据优先用 Polaris；关系结构和多跳影响分析用 Constellation；需要同时回答“是什么”和“与谁/什么有关”时，先用 Polaris 获取文本锚点，再用 Constellation 做受限关系查询。[6f830902-2f41-4183-9362-551d13b8f46a][cc0c18d2-2d93-4632-a8af-9302227c9ea1]",
+      "claim_inventory_complete": true,
+      "citation_inventory_complete": true,
+      "claims": [
+        {
+          "claim_id": "service-responsibility",
+          "text": "Polaris 负责基于文本证据的混合检索，Constellation 负责实体关系、路径、影响分析和比较。",
+          "answer_quote": "Polaris 负责“找相关文本证据”，Constellation 负责“沿已批准关系做图谱查询”。",
+          "citation_ids": [
+            "polaris-service",
+            "constellation-service"
+          ]
+        },
+        {
+          "claim_id": "polaris-storage",
+          "text": "Polaris 的检索层使用 Qdrant，PostgreSQL 保存其元数据与版本真相；Polaris 不直接依赖 Neo4j。",
+          "answer_quote": "Polaris 不直接依赖 Neo4j。",
+          "citation_ids": [
+            "polaris-storage-dependencies",
+            "storage-boundaries"
+          ]
+        },
+        {
+          "claim_id": "constellation-storage",
+          "text": "Constellation 使用 Neo4j 作为可重建的结构关系查询投影，审核真相不放在 Neo4j。",
+          "answer_quote": "Constellation：使用 Neo4j 作为可重建的结构关系查询投影",
+          "citation_ids": [
+            "constellation-service",
+            "storage-boundaries"
+          ]
+        },
+        {
+          "claim_id": "routing-scenarios",
+          "text": "团队知识和文档内容问题调用 Polaris；依赖、负责人、事故关系、影响分析和实体比较调用 Constellation。",
+          "answer_quote": "调用 Polaris：用户问题需要从文档、服务说明、Runbook、事故记录等文本中检索答案时",
+          "citation_ids": [
+            "request-data-flow",
+            "hybrid-retrieval-adr"
+          ]
+        },
+        {
+          "claim_id": "combined-flow",
+          "text": "需要文本事实与关系结构联合回答时，应先以 Polaris 取得文本锚点，再由 Relay 在证据基础上调用 Constellation。",
+          "answer_quote": "先用 Polaris 获取文本锚点，再用 Constellation 做受限关系查询。",
+          "citation_ids": [
+            "hybrid-retrieval-adr",
+            "constellation-service"
+          ]
+        }
+      ],
+      "cited_evidence_ids": [
+        "constellation-service",
+        "hybrid-retrieval-adr",
+        "polaris-service",
+        "polaris-storage-dependencies",
+        "request-data-flow",
+        "storage-boundaries"
+      ]
+    }
+  ]
+}

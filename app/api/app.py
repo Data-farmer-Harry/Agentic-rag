@@ -23,6 +23,7 @@ from app.agent.hermes_native_learning import (
     HermesNativeLearningConflict,
     HermesNativeLearningUnavailable,
 )
+from app.agent.hermes_runtime import HermesRuntimeError, HermesRunTimeoutError
 from app.api.auth import (
     ApiAuthenticator,
     ApiIdentityMiddleware,
@@ -45,7 +46,7 @@ from app.api.schemas import (
     UpdateConversationRequest,
 )
 from app.application.run_service import RunService, answer_from_trajectory
-from app.application.run_stream import RunStreamCoordinator
+from app.application.run_stream import RunStreamCoordinator, public_run_error
 from app.application.workspace_service import WorkspaceService
 from app.config import Settings
 from app.demo.enterprise_fixture import EnterpriseFixtureError
@@ -210,6 +211,10 @@ def create_app(
                 status_code=503,
                 detail="模型路由服务暂时不可用，请稍后重试。",
             ) from exc
+        except HermesRunTimeoutError as exc:
+            raise HTTPException(status_code=504, detail=public_run_error(exc)) from exc
+        except HermesRuntimeError as exc:
+            raise HTTPException(status_code=503, detail=public_run_error(exc)) from exc
         return RunResponse(
             run_id=str(trajectory.context.run_id),
             status="completed",

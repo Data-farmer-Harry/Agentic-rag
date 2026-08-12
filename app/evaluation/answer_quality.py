@@ -38,7 +38,7 @@ AnswerQualityComparison = Literal[
 ]
 
 _ID_PATTERN = r"^[a-z0-9][a-z0-9_-]{1,99}$"
-_SOURCE_ID_PATTERN = r"^[A-Za-z0-9][A-Za-z0-9:._/-]{0,299}$"
+_SOURCE_ID_PATTERN = r"^[A-Za-z0-9][A-Za-z0-9:._/#=-]{0,299}$"
 _COMPARISON_VARIANTS: dict[
     AnswerQualityComparison,
     tuple[AnswerQualityVariant, AnswerQualityVariant],
@@ -177,8 +177,7 @@ class AnswerQualityCase(StrictModel):
         )
         if unsupported_references:
             raise ValueError(
-                "evidence references unknown expected claim IDs: "
-                f"{unsupported_references}"
+                f"evidence references unknown expected claim IDs: {unsupported_references}"
             )
         if not any(item.required for item in self.expected_claims):
             raise ValueError("an answer-quality case must require at least one claim")
@@ -186,8 +185,7 @@ class AnswerQualityCase(StrictModel):
             _, candidate = _COMPARISON_VARIANTS[comparison]
             if candidate not in self.required_variants:
                 raise ValueError(
-                    "a required comparison must require its candidate variant: "
-                    f"{comparison}"
+                    f"a required comparison must require its candidate variant: {comparison}"
                 )
         return self
 
@@ -198,6 +196,7 @@ class AnswerQualityArtifactProvenance(StrictModel):
     kind: Literal["offline_fixture", "live_run", "external_unverified"]
     label: str = Field(min_length=1, max_length=300)
     run_id: str | None = Field(default=None, min_length=1, max_length=300)
+    run_ids: list[str] = Field(default_factory=list, max_length=10_000)
     model_revision: str | None = Field(default=None, min_length=1, max_length=300)
 
     @field_validator("label")
@@ -218,12 +217,25 @@ class AnswerQualityArtifactProvenance(StrictModel):
             raise ValueError("provenance values must not be blank")
         return normalized
 
+    @field_validator("run_ids")
+    @classmethod
+    def normalize_run_ids(cls, values: list[str]) -> list[str]:
+        normalized = [item.strip() for item in values]
+        if any(not item for item in normalized):
+            raise ValueError("live run IDs must not be blank")
+        if len(normalized) != len(set(normalized)):
+            raise ValueError("live run IDs must be unique")
+        return normalized
+
     @model_validator(mode="after")
     def validate_origin(self) -> Self:
-        if self.kind == "live_run" and self.run_id is None:
-            raise ValueError("live_run artifacts require a non-empty run_id")
-        if self.kind != "live_run" and self.run_id is not None:
-            raise ValueError("only live_run artifacts may declare a run_id")
+        values = ([self.run_id] if self.run_id is not None else []) + self.run_ids
+        if self.kind == "live_run" and not values:
+            raise ValueError("live_run artifacts require at least one run ID")
+        if self.kind != "live_run" and values:
+            raise ValueError("only live_run artifacts may declare run IDs")
+        if len(values) != len(set(values)):
+            raise ValueError("live run IDs must be unique")
         return self
 
 
@@ -232,11 +244,14 @@ class AnswerQualityObservedClaim(StrictModel):
 
     claim_id: str = Field(pattern=_ID_PATTERN)
     text: str = Field(min_length=1, max_length=10_000)
+    answer_quote: str | None = Field(default=None, min_length=1, max_length=10_000)
     citation_ids: list[str] = Field(default_factory=list, max_length=100)
 
-    @field_validator("text")
+    @field_validator("text", "answer_quote")
     @classmethod
-    def normalize_text(cls, value: str) -> str:
+    def normalize_text(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         normalized = " ".join(value.split())
         if not normalized:
             raise ValueError("observed claim text must not be empty")
@@ -517,9 +532,7 @@ class AnswerQualityEvaluator:
 
         expected_claims = {item.claim_id: item for item in case.expected_claims}
         expected_evidence = {item.evidence_id: item for item in case.evidence}
-        required_claim_ids = {
-            item.claim_id for item in case.expected_claims if item.required
-        }
+        required_claim_ids = {item.claim_id for item in case.expected_claims if item.required}
         observed_claim_ids = {item.claim_id for item in observation.claims}
         missing_required_claim_ids = sorted(required_claim_ids.difference(observed_claim_ids))
         unknown_claim_ids: list[str] = []
@@ -532,7 +545,8 @@ class AnswerQualityEvaluator:
         for claim in observation.claims:
             if claim.claim_id not in expected_claims:
                 unknown_claim_ids.append(claim.claim_id)
-            if _normalized_claim_text(claim.text) not in _normalized_claim_text(
+            answer_text = claim.answer_quote or claim.text
+            if _normalized_claim_text(answer_text) not in _normalized_claim_text(
                 observation.answer_markdown
             ):
                 claims_missing_from_answer_markdown.append(claim.claim_id)
@@ -597,10 +611,7 @@ class AnswerQualityEvaluator:
             failures.append("claim_support_rate_below_threshold")
         if metrics.citation_coverage < case.minimum_citation_coverage:
             failures.append("citation_coverage_below_threshold")
-        if (
-            metrics.citation_claim_support_rate
-            < case.minimum_citation_claim_support_rate
-        ):
+        if metrics.citation_claim_support_rate < case.minimum_citation_claim_support_rate:
             failures.append("citation_claim_support_rate_below_threshold")
         if metrics.hallucination_rate > case.maximum_hallucination_rate:
             failures.append("hallucination_rate_above_threshold")
@@ -667,10 +678,7 @@ class AnswerQualityEvaluator:
             < policy.minimum_citation_claim_support_rate_gain
         ):
             failures.append("citation_claim_support_rate_regression")
-        if (
-            metrics.hallucination_rate_reduction
-            < policy.minimum_hallucination_rate_reduction
-        ):
+        if metrics.hallucination_rate_reduction < policy.minimum_hallucination_rate_reduction:
             failures.append("hallucination_rate_regression")
         return AnswerQualityPairResult(
             case_id=case.case_id,
@@ -749,10 +757,7 @@ def _slice_metrics(
     for result in results:
         if result.required_for_gate:
             grouped[categories[result.case_id]].append(result)
-    return {
-        category: _build_slice_metrics(items)
-        for category, items in sorted(grouped.items())
-    }
+    return {category: _build_slice_metrics(items) for category, items in sorted(grouped.items())}
 
 
 def _build_slice_metrics(
@@ -763,9 +768,7 @@ def _build_slice_metrics(
         total_gating_variants=total,
         passed_gating_variants=sum(item.passed for item in results),
         gate_pass_rate=_ratio(sum(item.passed for item in results), total),
-        mean_claim_support_rate=_mean(
-            item.metrics.claim_support_rate for item in results
-        ),
+        mean_claim_support_rate=_mean(item.metrics.claim_support_rate for item in results),
         mean_citation_coverage=_mean(item.metrics.citation_coverage for item in results),
         mean_citation_claim_support_rate=_mean(
             item.metrics.citation_claim_support_rate for item in results
@@ -796,9 +799,7 @@ def _build_comparison_metrics(
         available_pair_count=len(available),
         passed_pair_count=sum(item.passed for item in pairs),
         regression_count=sum(not item.passed for item in pairs),
-        mean_claim_support_rate_gain=_mean(
-            item.claim_support_rate_gain for item in metrics
-        ),
+        mean_claim_support_rate_gain=_mean(item.claim_support_rate_gain for item in metrics),
         mean_citation_coverage_gain=_mean(item.citation_coverage_gain for item in metrics),
         mean_citation_claim_support_rate_gain=_mean(
             item.citation_claim_support_rate_gain for item in metrics

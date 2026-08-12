@@ -361,6 +361,12 @@ class HermesCapabilityBridge:
         async with self._lock:
             self._runs.pop(bridge_id, None)
 
+    async def active_run_count(self) -> int:
+        """Return run-scoped bridge state count for health checks and leak tests."""
+        async with self._lock:
+            self._prune_locked()
+            return len(self._runs)
+
     async def _publish(
         self,
         state: _RunState,

@@ -64,6 +64,7 @@
 | arXiv 计算机语料同步 | 完成（有界 connector + 528-PDF corpus） | `app/sources/arxiv.py`、CLI、原子 manifest、来源合同 | 777 个候选版本、528 篇唯一 PDF、`1,059,247,539` 字节逐文件校验；528 active 文档、43,872 chunks |
 | arXiv PDF OCR/文本化 | 完成（文本层 + Vision + IR） | `app/sources/arxiv_ocr.py`、CLI、按页 Markdown、`DocumentIR`、原子 OCR manifest | 528/528、11,023 页：10,995 文本层 + 28 Vision OCR；168,531 blocks、0 unresolved、0 失败 |
 | Agentic Retrieval Controller | 完成（有界 v3） | 严格计划、显式意图约束、原查询锚定、模型 fallback、LangChain 并行补检、usage/trace/UI | deterministic 与真实 `gpt-5.6-sol` controller 均 57/57、MRR 0.911；OpenAI 55 plans + 2 deterministic fallbacks |
+| 回答质量门禁 | 完成（live collector v1；成对增益待样本） | fail-closed evaluator、scoped Run collector、冻结 evidence mapping、人工 claim annotation | 首个真实 Self-RAG 运行 5/5 claims、10/10 citation links、coverage 1.0、hallucination 0.0；尚无同题 single-step 对照 |
 | Agentic RAG 冻结基线 | 完成（设计冻结）/实施延期 | `docs/AGENTIC_RAG_LOCK.md` | 完成代码与数据事实审计；判定为有界、证据优先的 Agentic RAG v1，并锁定 `RAG-001` 至 `RAG-010` |
 | 自然 arXiv/个人 Retrieval Gate | 完成（57-case v2 + 528-doc v4） | 分类/难度切片、Qdrant eval backend、source-root metrics、原子 JSON | Vision 完成版 57/57、Recall@20 1.0、MRR 0.8924、P95 34 ms；全部类别与难度切片通过 |
 | 生产 Embedding 校准器 | 完成（能力）/受阻（live） | 隔离 collection 重建、分批 usage、成本参数、baseline diff、MRR 防退化门槛 | 当前 Key 对 `text-embedding-3-small` 返回 `model_not_available`；0 points 写入，未切换 |
@@ -1482,3 +1483,19 @@
   真实在线学习增益证据。
 - 新增 Canary/Active Pattern health monitor：只比较匹配任务的真实 applied/control 经验；样本不足
   时不动作，质量、失败率、负反馈或严重负反馈越界时写 append-only health gate 并自动 rollback。
+
+## 2026-08-12 Hermes 超时边界与真实回答质量样本
+
+- Hermes sidecar 等待回答现在使用显式 `HermesRunTimeoutError`；超时会主动停止 sidecar run 并清理
+  bridge 中的 active handle。同步 Run API 返回稳定 HTTP 504 / `provider_timeout`，SSE 使用同一公开错误
+  投影，不再向用户暴露内部 run ID 或把 provider 长尾混成通用 500。
+- 新增 `hermesgraph-collect-answer-quality`。采集器从 scoped Run API 读取真实完成轨迹，核对 project/run、
+  实际 Adaptive-RAG route、声明完整性、答案原文 quote、引用完整性和 source ID；运行时 UUID citation
+  只有映射到冻结 evaluation spec 后才可进入质量 artifact。
+- 首个真实样本来自 run `98ea9834-f53e-4496-a6b8-1ae4aee6e065`，模型为 `gpt-5.6-luna`，实际路由为
+  `multi_step/global_summary/self_reflection`。对 Polaris/Constellation 边界问题的结果为 5/5 required
+  claims supported、10/10 citation links supported、6 个引用源全部分配，claim support/citation coverage/
+  citation-claim support 均为 `1.0`，hallucination rate 为 `0.0`。
+- 该结果是可追溯的单次 live Self-RAG 绝对质量门禁，不是总体 benchmark，也不证明 Self-RAG 相对
+  single-step 的增益。下一步需要同一冻结 case 的受控策略 replay，生成真实 paired artifacts 后才允许
+  报告增益。

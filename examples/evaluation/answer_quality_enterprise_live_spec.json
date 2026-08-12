@@ -1,0 +1,78 @@
+{
+  "name": "HermesGraph enterprise live answer-quality specification",
+  "revision": "2026-08-12-v1",
+  "dataset_kind": "evaluation_spec",
+  "cases": [
+    {
+      "case_id": "polaris-constellation-boundary",
+      "query": "对比 Atlas 中 Polaris 和 Constellation 的职责、底层存储以及分别应该在什么场景调用；每项结论都引用内部资料。",
+      "category": "enterprise_service_comparison",
+      "expected_claims": [
+        {
+          "claim_id": "service-responsibility",
+          "text": "Polaris 负责文本混合检索，Constellation 负责实体关系、路径、影响分析和比较。"
+        },
+        {
+          "claim_id": "polaris-storage",
+          "text": "Polaris 使用 Qdrant 检索投影和 PostgreSQL 元数据真相，不直接依赖 Neo4j。"
+        },
+        {
+          "claim_id": "constellation-storage",
+          "text": "Constellation 使用 Neo4j 作为可重建的关系查询投影。"
+        },
+        {
+          "claim_id": "routing-scenarios",
+          "text": "文档知识问题调用 Polaris，关系与影响分析调用 Constellation。"
+        },
+        {
+          "claim_id": "combined-flow",
+          "text": "联合回答先获得文本锚点，再执行受限图查询。"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "polaris-service",
+          "source_id": "northstar:service:polaris#chunk=0",
+          "text": "Polaris 提供团队、个人和公共参考知识检索。",
+          "supports_claim_ids": ["service-responsibility"]
+        },
+        {
+          "evidence_id": "hybrid-retrieval-adr",
+          "source_id": "northstar:adr:003#chunk=0",
+          "text": "ADR-003 规定 Dense、Sparse 与 RRF 混合检索。",
+          "supports_claim_ids": ["service-responsibility", "routing-scenarios", "combined-flow"]
+        },
+        {
+          "evidence_id": "constellation-service",
+          "source_id": "northstar:service:constellation#chunk=0",
+          "text": "Constellation 提供实体解析、路径、影响分析和实体比较，并使用 Neo4j 查询投影。",
+          "supports_claim_ids": ["service-responsibility", "constellation-storage", "combined-flow"]
+        },
+        {
+          "evidence_id": "polaris-storage-dependencies",
+          "source_id": "northstar:service:polaris#chunk=1",
+          "text": "Polaris 的存储依赖包括 Qdrant 与 PostgreSQL，并且不直接依赖 Neo4j。",
+          "supports_claim_ids": ["polaris-storage"]
+        },
+        {
+          "evidence_id": "storage-boundaries",
+          "source_id": "northstar:architecture:data-storage-boundaries#chunk=0",
+          "text": "PostgreSQL 是状态真相源，Qdrant 与 Neo4j 是可重建投影。",
+          "supports_claim_ids": ["polaris-storage", "constellation-storage"]
+        },
+        {
+          "evidence_id": "request-data-flow",
+          "source_id": "northstar:architecture:request-data-flow#chunk=0",
+          "text": "团队知识问题使用文本检索，关系与影响分析使用受控图谱查询。",
+          "supports_claim_ids": ["routing-scenarios"]
+        }
+      ],
+      "required_variants": ["self_rag"],
+      "required_comparisons": [],
+      "minimum_claim_support_rate": 1.0,
+      "minimum_citation_coverage": 1.0,
+      "minimum_citation_claim_support_rate": 1.0,
+      "maximum_hallucination_rate": 0.0
+    }
+  ]
+}

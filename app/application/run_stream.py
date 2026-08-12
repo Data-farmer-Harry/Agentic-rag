@@ -9,6 +9,7 @@ from time import perf_counter
 from typing import Any
 from uuid import UUID, uuid4
 
+from app.agent.hermes_runtime import HermesRunTimeoutError
 from app.application.run_event_recorder import RunEventRecorder
 from app.application.run_service import RunService, answer_from_trajectory
 from app.application.workspace_service import WorkspaceService
@@ -27,7 +28,9 @@ def public_run_error(exc: Exception) -> dict[str, object]:
             "message": "模型服务当前繁忙，请稍后重试。",
             "retryable": True,
         }
-    if "timeout" in detail or "timed out" in detail:
+    if isinstance(exc, (TimeoutError, HermesRunTimeoutError)) or (
+        "timeout" in detail or "timed out" in detail
+    ):
         return {
             "code": "provider_timeout",
             "message": "模型响应超时，请重新发送；复杂任务也可以稍后再试。",

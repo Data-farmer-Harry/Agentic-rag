@@ -12,7 +12,7 @@ from app.agent.hermes_bridge import (
     HermesCapabilityBridge,
     HermesNativeToolAudit,
 )
-from app.agent.hermes_runtime import HermesAgentRuntime
+from app.agent.hermes_runtime import HermesAgentRuntime, HermesRunTimeoutError
 from app.bootstrap import build_components
 from app.config import Settings
 from app.domain.enums import EvidenceLevel, MemoryType, TrustLevel
@@ -191,6 +191,37 @@ async def test_runtime_fails_closed_when_hermes_does_not_publish() -> None:
 
     with pytest.raises(HermesAnswerNotPublishedError):
         await runtime.run("hello", RunContext())
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_runtime_timeout_stops_sidecar_run_and_discards_bridge() -> None:
+    resolved = settings().model_copy(update={"agent_timeout_seconds": 0.01})
+    bridge = HermesCapabilityBridge(settings=resolved, retrieval=EmptyRetrieval())
+    stopped = asyncio.Event()
+
+    async def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/v1/runs" and request.method == "POST":
+            return httpx.Response(202, json={"run_id": "run_timeout"})
+        if request.url.path == "/v1/runs/run_timeout/events":
+            await asyncio.sleep(60)
+            raise AssertionError("event stream should be cancelled")
+        if request.url.path == "/v1/runs/run_timeout/stop":
+            stopped.set()
+            return httpx.Response(200, json={"status": "stopping"})
+        raise AssertionError(f"Unexpected request: {request.method} {request.url}")
+
+    client = httpx.AsyncClient(
+        base_url="http://hermes.test",
+        transport=httpx.MockTransport(handler),
+    )
+    runtime = HermesAgentRuntime(settings=resolved, bridge=bridge, client=client)
+
+    with pytest.raises(HermesRunTimeoutError, match="timed out"):
+        await runtime.run("slow task", RunContext())
+
+    assert stopped.is_set()
+    assert await bridge.active_run_count() == 0
     await client.aclose()
 
 

@@ -34,10 +34,7 @@ def test_offline_fixture_is_explicit_and_reports_paired_gains() -> None:
     assert report.artifact_provenance.kind == "offline_fixture"
     assert report.gating_variant_total == 2
     assert report.comparison_metrics["graph_rag_vs_vector_only"].pair_count == 1
-    assert (
-        report.comparison_metrics["graph_rag_vs_vector_only"].mean_citation_coverage_gain
-        == 0.5
-    )
+    assert report.comparison_metrics["graph_rag_vs_vector_only"].mean_citation_coverage_gain == 0.5
     assert report.comparison_metrics["self_rag_vs_single_step"].mean_citation_coverage_gain == 0.5
 
 
@@ -150,6 +147,28 @@ def test_complete_inventory_flags_are_required_and_citation_inventory_must_match
     assert "citation_ids_missing_from_inventory" in result.failures
 
 
+def test_live_provenance_supports_complete_paired_run_identity() -> None:
+    provenance = AnswerQualityArtifactProvenance(
+        kind="live_run",
+        label="paired live run",
+        run_ids=["baseline-run", "candidate-run"],
+    )
+
+    assert provenance.run_ids == ["baseline-run", "candidate-run"]
+    with pytest.raises(ValidationError, match="at least one run ID"):
+        AnswerQualityArtifactProvenance(kind="live_run", label="missing")
+
+
+def test_live_provenance_normalizes_multiple_run_ids() -> None:
+    provenance = AnswerQualityArtifactProvenance(
+        kind="live_run",
+        label="paired live run",
+        run_ids=[" baseline-run ", "candidate-run"],
+    )
+
+    assert provenance.run_ids == ["baseline-run", "candidate-run"]
+
+
 def test_evaluator_rejects_unlisted_variants_and_claims_absent_from_answer() -> None:
     case = _case()
     dataset = _dataset(case)
@@ -173,33 +192,37 @@ def test_evaluator_rejects_unlisted_variants_and_claims_absent_from_answer() -> 
             )
         )
 
-    result = AnswerQualityEvaluator(dataset).evaluate(
-        AnswerQualityArtifactSet(
-            provenance=provenance,
-            answers=[
-                AnswerQualityVariantObservation(
-                    case_id=case.case_id,
-                    variant="graph_rag",
-                    answer_markdown="The answer never states the canonical claims.",
-                    claim_inventory_complete=True,
-                    citation_inventory_complete=True,
-                    claims=[
-                        AnswerQualityObservedClaim(
-                            claim_id="claim-one",
-                            text="Claim one",
-                            citation_ids=["evidence-one"],
-                        ),
-                        AnswerQualityObservedClaim(
-                            claim_id="claim-two",
-                            text="Claim two",
-                            citation_ids=["evidence-two"],
-                        ),
-                    ],
-                    cited_evidence_ids=["evidence-one", "evidence-two"],
-                )
-            ],
+    result = (
+        AnswerQualityEvaluator(dataset)
+        .evaluate(
+            AnswerQualityArtifactSet(
+                provenance=provenance,
+                answers=[
+                    AnswerQualityVariantObservation(
+                        case_id=case.case_id,
+                        variant="graph_rag",
+                        answer_markdown="The answer never states the canonical claims.",
+                        claim_inventory_complete=True,
+                        citation_inventory_complete=True,
+                        claims=[
+                            AnswerQualityObservedClaim(
+                                claim_id="claim-one",
+                                text="Claim one",
+                                citation_ids=["evidence-one"],
+                            ),
+                            AnswerQualityObservedClaim(
+                                claim_id="claim-two",
+                                text="Claim two",
+                                citation_ids=["evidence-two"],
+                            ),
+                        ],
+                        cited_evidence_ids=["evidence-one", "evidence-two"],
+                    )
+                ],
+            )
         )
-    ).variants[0]
+        .variants[0]
+    )
 
     assert result.claims_missing_from_answer_markdown == ["claim-one", "claim-two"]
     assert "claims_missing_from_answer_markdown" in result.failures

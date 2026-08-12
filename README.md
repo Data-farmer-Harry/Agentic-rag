@@ -525,13 +525,27 @@ docker compose config
 ./.venv/bin/python -m app.evaluation.answer_quality_cli \
   --use-embedded-fixture \
   --output .data/evaluations/answer_quality_fixture.json
+./.venv/bin/python -m app.evaluation.answer_quality_live_cli \
+  --base-url http://127.0.0.1:8001 \
+  --project-id default \
+  --dataset examples/evaluation/answer_quality_enterprise_live_spec.json \
+  --annotation examples/evaluation/annotations/self_rag_polaris_constellation_98ea9834.json \
+  --output .data/evaluations/answer_quality_self_rag_live.json
+./.venv/bin/python -m app.evaluation.answer_quality_cli \
+  --dataset examples/evaluation/answer_quality_enterprise_live_spec.json \
+  --answers .data/evaluations/answer_quality_self_rag_live.json \
+  --output .data/evaluations/answer_quality_self_rag_live_report.json
 ./.venv/bin/python -m app.evaluation.self_learning_cli \
   --base-url http://127.0.0.1:8001 \
   --output .data/evaluations/self_learning_live.json
 ```
 
 `answer_quality_fixture` 只验证评测器与门槛，不是在线质量成绩。真实比较必须通过 `--answers` 输入
-带 `live_run` provenance 的已录制 GraphRAG/vector-only 或 Self-RAG/single-step 成对 artifacts。
+带 `live_run` provenance 的已录制 GraphRAG/vector-only 或 Self-RAG/single-step 成对 artifacts。live
+collector 会从 scoped Run API 读取已完成 trajectory，并 fail-closed 校验 project、run、实际路由、完整
+claim inventory、答案原文 quote 以及运行时 citation source 到冻结 evidence ID 的映射；人工 annotation
+只做 claim identity 对齐，不能自行补造答案或证据。单个 `self_rag` artifact 只证明该运行的绝对质量，
+不能替代同一 case 的受控 `single_step` 对照。
 自学习报告只有在 Pattern 经审批进入 Canary/Active、真实 applied/control 样本均达标且观测增益为正时
 才返回 `validated`；Experience 已采集但尚无这种证据时返回 `observing`。
 

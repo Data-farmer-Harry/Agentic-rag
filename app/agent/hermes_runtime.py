@@ -28,6 +28,10 @@ class HermesRuntimeError(RuntimeError):
     pass
 
 
+class HermesRunTimeoutError(HermesRuntimeError):
+    """The sidecar did not publish or terminate within the public run budget."""
+
+
 ContextCapsuleProvider = Callable[
     [RunContext, str],
     Awaitable[str | RuntimeCapsule],
@@ -163,7 +167,10 @@ class HermesAgentRuntime:
                 return_when=asyncio.FIRST_COMPLETED,
             )
             if not done:
-                raise TimeoutError
+                raise HermesRunTimeoutError(
+                    "Hermes run timed out after "
+                    f"{self._settings.agent_timeout_seconds} seconds"
+                )
             if published_task in done:
                 answer = published_task.result()
                 assert terminal_task is not None
